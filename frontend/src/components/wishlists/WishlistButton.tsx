@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 import { togglePropertyInWishlist, checkPropertyInWishlist } from '@/lib/api/wishlists';
 
 interface WishlistButtonProps {
   propertyId: number;
   variant?: 'default' | 'icon';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
 }
 
 export default function WishlistButton({
   propertyId,
   variant = 'icon',
-  size = 'md',
+  size = 'default',
   className = '',
 }: WishlistButtonProps) {
   const [isFavorite, setIsFavorite] = useState(false);

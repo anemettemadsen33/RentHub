@@ -75,33 +75,34 @@ export default function PropertiesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Find Your Perfect Stay</h1>
-          <p className="text-xl text-blue-100">Discover amazing properties for your next adventure</p>
+      <div className="relative bg-gradient-to-br from-primary via-blue-600 to-primary text-primary-foreground py-20 border-b">
+        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
+        <div className="relative container mx-auto px-4">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Find Your Perfect Stay</h1>
+          <p className="text-xl text-primary-foreground/80">Discover amazing properties for your next adventure</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+      <div className="container mx-auto px-4 -mt-8">
         {/* Search Bar */}
         <SearchBar onSearch={handleSearch} loading={loading} />
 
         {/* Sort & Results Count */}
-        <div className="flex flex-wrap items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between mb-6 mt-6">
           <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <span className="text-gray-600 font-medium">
+            <span className="text-muted-foreground font-medium">
               {pagination.total} properties found
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-gray-600 text-sm">Sort by:</span>
+            <span className="text-muted-foreground text-sm">Sort by:</span>
             <select
               value={filters.sort_by}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-input rounded-md text-sm bg-background focus:ring-2 focus:ring-ring"
             >
               <option value="created_at">Newest</option>
               <option value="price">Price</option>
@@ -112,7 +113,7 @@ export default function PropertiesPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          <div className="mb-6 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
@@ -121,20 +122,20 @@ export default function PropertiesPage() {
         {loading && (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Loading properties...</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground text-lg">Loading properties...</p>
             </div>
           </div>
         )}
 
         {/* Properties Grid */}
         {!loading && properties.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-card border rounded-lg shadow-sm p-12 text-center">
+            <svg className="mx-auto h-16 w-16 text-muted-foreground mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No properties found</h3>
-            <p className="text-gray-600">Try adjusting your search filters to find more results.</p>
+            <h3 className="text-xl font-medium mb-2">No properties found</h3>
+            <p className="text-muted-foreground">Try adjusting your search filters to find more results.</p>
           </div>
         ) : (
           <>

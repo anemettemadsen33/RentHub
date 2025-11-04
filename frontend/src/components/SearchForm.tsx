@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { MapPin, Search, Users, Calendar } from 'lucide-react'
 
 interface SearchFormProps {
@@ -40,61 +41,74 @@ export const SearchForm = ({ onSearch, className = '' }: SearchFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
+    <form onSubmit={handleSubmit} className={`bg-card rounded-lg shadow-lg p-6 border ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Location */}
         <div className="lg:col-span-2">
-          <Input
-            placeholder="Unde vrei să mergi?"
-            value={formData.location}
-            onChange={(e) => handleInputChange('location', e.target.value)}
-            icon={<MapPin className="h-4 w-4 text-gray-400" />}
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Unde vrei să mergi?"
+              value={formData.location}
+              onChange={(e) => handleInputChange('location', e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {/* Check-in */}
         <div>
-          <Input
-            type="date"
-            placeholder="Check-in"
-            value={formData.checkIn}
-            onChange={(e) => handleInputChange('checkIn', e.target.value)}
-            icon={<Calendar className="h-4 w-4 text-gray-400" />}
-          />
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              type="date"
+              placeholder="Check-in"
+              value={formData.checkIn}
+              onChange={(e) => handleInputChange('checkIn', e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {/* Check-out */}
         <div>
-          <Input
-            type="date"
-            placeholder="Check-out"
-            value={formData.checkOut}
-            onChange={(e) => handleInputChange('checkOut', e.target.value)}
-            icon={<Calendar className="h-4 w-4 text-gray-400" />}
-          />
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              type="date"
+              placeholder="Check-out"
+              value={formData.checkOut}
+              onChange={(e) => handleInputChange('checkOut', e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {/* Guests */}
         <div className="flex gap-2">
-          <Input
-            type="number"
-            min="1"
-            max="20"
-            placeholder="Oaspeți"
-            value={formData.guests?.toString() || ''}
-            onChange={(e) => handleInputChange('guests', parseInt(e.target.value) || 1)}
-            icon={<Users className="h-4 w-4 text-gray-400" />}
-          />
+          <div className="relative flex-1">
+            <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="number"
+              min="1"
+              max="20"
+              placeholder="Oaspeți"
+              value={formData.guests?.toString() || ''}
+              onChange={(e) => handleInputChange('guests', parseInt(e.target.value) || 1)}
+              className="pl-10"
+            />
+          </div>
         </div>
       </div>
 
       {/* Advanced Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="space-y-2">
+          <Label htmlFor="priceMin">
             Preț minim (RON/noapte)
-          </label>
+          </Label>
           <Input
+            id="priceMin"
             type="number"
             min="0"
             placeholder="0"
@@ -103,11 +117,12 @@ export const SearchForm = ({ onSearch, className = '' }: SearchFormProps) => {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="space-y-2">
+          <Label htmlFor="priceMax">
             Preț maxim (RON/noapte)
-          </label>
+          </Label>
           <Input
+            id="priceMax"
             type="number"
             min="0"
             placeholder="1000"

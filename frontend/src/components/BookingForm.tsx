@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/hooks/useAuth'
 import { useCreateBooking, useCheckAvailability } from '@/hooks/useBookings'
 import { Property } from '@/types'
@@ -194,34 +195,42 @@ export const BookingForm = ({ property, onClose }: BookingFormProps) => {
             )}
 
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="Check-in"
-                type="date"
-                value={formData.check_in}
-                onChange={(e) => handleInputChange('check_in', e.target.value)}
-                error={errors.check_in}
-                min={new Date().toISOString().split('T')[0]}
-              />
-              <Input
-                label="Check-out"
-                type="date"
-                value={formData.check_out}
-                onChange={(e) => handleInputChange('check_out', e.target.value)}
-                error={errors.check_out}
-                min={formData.check_in || new Date().toISOString().split('T')[0]}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="check_in">Check-in</Label>
+                <Input
+                  id="check_in"
+                  type="date"
+                  value={formData.check_in}
+                  onChange={(e) => handleInputChange('check_in', e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                />
+                {errors.check_in && <p className="text-sm text-destructive">{errors.check_in}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="check_out">Check-out</Label>
+                <Input
+                  id="check_out"
+                  type="date"
+                  value={formData.check_out}
+                  onChange={(e) => handleInputChange('check_out', e.target.value)}
+                  min={formData.check_in || new Date().toISOString().split('T')[0]}
+                />
+                {errors.check_out && <p className="text-sm text-destructive">{errors.check_out}</p>}
+              </div>
             </div>
 
-            <Input
-              label="Numărul de oaspeți"
-              type="number"
-              min="1"
-              max={property.guests.toString()}
-              value={formData.guests.toString()}
-              onChange={(e) => handleInputChange('guests', parseInt(e.target.value) || 1)}
-              error={errors.guests}
-              icon={<Users className="h-4 w-4 text-gray-400" />}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="guests">Numărul de oaspeți</Label>
+              <Input
+                id="guests"
+                type="number"
+                min="1"
+                max={property.guests.toString()}
+                value={formData.guests.toString()}
+                onChange={(e) => handleInputChange('guests', parseInt(e.target.value) || 1)}
+              />
+              {errors.guests && <p className="text-sm text-destructive">{errors.guests}</p>}
+            </div>
 
             {pricing.nights > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg">
@@ -256,37 +265,45 @@ export const BookingForm = ({ property, onClose }: BookingFormProps) => {
             <CardTitle>Detaliile oaspeților</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Input
-              label="Numele complet"
-              value={formData.guest_name}
-              onChange={(e) => handleInputChange('guest_name', e.target.value)}
-              error={errors.guest_name}
-              required
-            />
+            <div className="space-y-2">
+              <Label htmlFor="guest_name">Numele complet</Label>
+              <Input
+                id="guest_name"
+                value={formData.guest_name}
+                onChange={(e) => handleInputChange('guest_name', e.target.value)}
+                required
+              />
+              {errors.guest_name && <p className="text-sm text-destructive">{errors.guest_name}</p>}
+            </div>
 
-            <Input
-              label="Email"
-              type="email"
-              value={formData.guest_email}
-              onChange={(e) => handleInputChange('guest_email', e.target.value)}
-              error={errors.guest_email}
-              required
-            />
+            <div className="space-y-2">
+              <Label htmlFor="guest_email">Email</Label>
+              <Input
+                id="guest_email"
+                type="email"
+                value={formData.guest_email}
+                onChange={(e) => handleInputChange('guest_email', e.target.value)}
+                required
+              />
+              {errors.guest_email && <p className="text-sm text-destructive">{errors.guest_email}</p>}
+            </div>
 
-            <Input
-              label="Telefon (opțional)"
-              type="tel"
-              value={formData.guest_phone}
-              onChange={(e) => handleInputChange('guest_phone', e.target.value)}
-              error={errors.guest_phone}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="guest_phone">Telefon (opțional)</Label>
+              <Input
+                id="guest_phone"
+                type="tel"
+                value={formData.guest_phone}
+                onChange={(e) => handleInputChange('guest_phone', e.target.value)}
+              />
+              {errors.guest_phone && <p className="text-sm text-destructive">{errors.guest_phone}</p>}
+            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cereri speciale (opțional)
-              </label>
+            <div className="space-y-2">
+              <Label htmlFor="special_requests">Cereri speciale (opțional)</Label>
               <textarea
-                className="w-full h-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                id="special_requests"
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Ex: check-in târziu, preferințe pentru camera..."
                 value={formData.special_requests}
                 onChange={(e) => handleInputChange('special_requests', e.target.value)}
