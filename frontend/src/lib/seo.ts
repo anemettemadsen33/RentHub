@@ -163,5 +163,4 @@ export const DEFAULT_METADATA = generateMetadata({
 export const DEFAULT_VIEWPORT: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
 };
