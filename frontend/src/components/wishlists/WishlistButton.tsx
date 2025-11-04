@@ -9,14 +9,14 @@ import { togglePropertyInWishlist, checkPropertyInWishlist } from '@/lib/api/wis
 interface WishlistButtonProps {
   propertyId: number;
   variant?: 'default' | 'icon';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
 }
 
 export default function WishlistButton({
   propertyId,
   variant = 'icon',
-  size = 'md',
+  size = 'default',
   className = '',
 }: WishlistButtonProps) {
   const [isFavorite, setIsFavorite] = useState(false);

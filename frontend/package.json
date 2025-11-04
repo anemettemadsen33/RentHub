@@ -56,6 +56,6 @@
     "eslint-config-next": "16.0.1",
     "schema-dts": "^1.1.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "5.9.3"
   }
 }
