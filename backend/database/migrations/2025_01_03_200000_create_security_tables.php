@@ -8,96 +8,62 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Security audit logs
-        Schema::create('security_audit_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('action');
-            $table->string('ip_address')->index();
-            $table->string('user_agent')->nullable();
-            $table->json('metadata')->nullable();
-            $table->enum('severity', ['low', 'medium', 'high', 'critical'])->default('low');
-            $table->timestamp('created_at');
-            
-            $table->index(['action', 'created_at']);
-            $table->index(['user_id', 'created_at']);
-        });
+        // Security audit logs - skip if already exists (created by 2025_01_03_000001_create_security_tables.php)
+        // This table is already created by an earlier migration
 
-        // API keys management
-        Schema::create('api_keys', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('key')->unique();
-            $table->text('permissions')->nullable();
-            $table->integer('rate_limit')->default(60);
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-            
-            $table->index(['user_id', 'is_active']);
-            $table->index('key');
-        });
+        // API keys management - skip if already exists (created by 2024_11_03_000003_create_api_keys_table.php)
+        // This table is already created by an earlier migration
 
         // Session management
-        Schema::create('active_sessions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('session_id')->unique();
-            $table->string('ip_address');
-            $table->string('user_agent');
-            $table->string('device_type')->nullable();
-            $table->timestamp('last_activity');
-            $table->timestamp('expires_at');
-            $table->timestamps();
-            
-            $table->index(['user_id', 'expires_at']);
-        });
+        if (!Schema::hasTable('active_sessions')) {
+            Schema::create('active_sessions', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->string('session_id')->unique();
+                $table->string('ip_address');
+                $table->string('user_agent');
+                $table->string('device_type')->nullable();
+                $table->timestamp('last_activity');
+                $table->timestamp('expires_at');
+                $table->timestamps();
+                
+                $table->index(['user_id', 'expires_at']);
+            });
+        }
 
         // Data requests (GDPR)
-        Schema::create('data_requests', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['export', 'deletion', 'rectification']);
-            $table->enum('status', ['pending', 'processing', 'completed', 'rejected'])->default('pending');
-            $table->text('notes')->nullable();
-            $table->timestamp('requested_at');
-            $table->timestamp('completed_at')->nullable();
-            $table->timestamps();
-            
-            $table->index(['user_id', 'status']);
-            $table->index(['type', 'status']);
-        });
+        if (!Schema::hasTable('data_requests')) {
+            Schema::create('data_requests', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->enum('type', ['export', 'deletion', 'rectification']);
+                $table->enum('status', ['pending', 'processing', 'completed', 'rejected'])->default('pending');
+                $table->text('notes')->nullable();
+                $table->timestamp('requested_at');
+                $table->timestamp('completed_at')->nullable();
+                $table->timestamps();
+                
+                $table->index(['user_id', 'status']);
+                $table->index(['type', 'status']);
+            });
+        }
 
-        // Security incidents
-        Schema::create('security_incidents', function (Blueprint $table) {
-            $table->id();
-            $table->string('type');
-            $table->enum('severity', ['low', 'medium', 'high', 'critical']);
-            $table->text('description');
-            $table->json('affected_systems')->nullable();
-            $table->json('affected_users')->nullable();
-            $table->enum('status', ['detected', 'investigating', 'contained', 'resolved'])->default('detected');
-            $table->timestamp('detected_at');
-            $table->timestamp('resolved_at')->nullable();
-            $table->timestamps();
-            
-            $table->index(['type', 'severity']);
-            $table->index('status');
-        });
+        // Security incidents - skip if already exists (created by 2025_01_03_000001_create_security_tables.php)
+        // This table is already created by an earlier migration
 
         // Failed login attempts
-        Schema::create('failed_login_attempts', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->index();
-            $table->string('ip_address')->index();
-            $table->string('user_agent')->nullable();
-            $table->timestamp('attempted_at');
-            
-            $table->index(['email', 'attempted_at']);
-            $table->index(['ip_address', 'attempted_at']);
-        });
+        if (!Schema::hasTable('failed_login_attempts')) {
+            Schema::create('failed_login_attempts', function (Blueprint $table) {
+                $table->id();
+                $table->string('email')->index();
+                $table->string('ip_address')->index();
+                $table->string('user_agent')->nullable();
+                $table->timestamp('attempted_at');
+                
+                $table->index(['email', 'attempted_at']);
+                $table->index(['ip_address', 'attempted_at']);
+            });
+        }
     }
 
     public function down(): void
