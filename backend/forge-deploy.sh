@@ -51,7 +51,8 @@ npm run build
 # Set correct permissions
 echo "Setting permissions..."
 chmod -R 775 storage bootstrap/cache
-chown -R forge:forge storage bootstrap/cache
+# Note: chown is typically not needed on Forge as the forge user owns the files
+# If needed, it should be run with sudo: sudo chown -R forge:forge storage bootstrap/cache
 
 # Restart queue workers
 echo "Restarting queue workers..."
