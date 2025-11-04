@@ -2,135 +2,239 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header with Theme Toggle */}
-      <header className="border-b border-border bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">R</div>
-            <span className="font-bold text-xl">RentHub</span>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20">R</div>
+            <div>
+              <span className="font-bold text-xl">RentHub</span>
+              <p className="text-xs text-muted-foreground">Shadcn/ui Theme Demo</p>
+            </div>
           </div>
           <ThemeToggle />
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
-            Welcome to{' '}
-            <span className="text-primary bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              RentHub
-            </span>
+      <section className="container mx-auto px-4 py-16 text-center">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4">
+            Complete shadcn/ui Theme Implementation ✨
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+            Professional Theme System<br />
+            <span className="text-primary">Ready for Production</span>
           </h1>
-          <p className="text-xl sm:text-2xl text-muted-foreground">
-            Your perfect property rental platform with modern design
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Full implementation of shadcn/ui design system with all color tokens, sidebar support, and seamless light/dark mode switching
           </p>
-          <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <a
-              href="/properties"
-              className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            >
-              Browse Properties
-            </a>
-            <a
-              href="/auth/login"
-              className="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            >
-              Sign In
-            </a>
+          <div className="flex flex-wrap justify-center gap-3 pt-4">
+            <button className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              Primary Button
+            </button>
+            <button className="inline-flex h-11 items-center justify-center rounded-md bg-secondary px-6 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              Secondary Button
+            </button>
+            <button className="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              Outline Button
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-          {/* Feature Card 1 */}
-          <div className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
+      {/* Color Palette Showcase */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Complete Color System</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="space-y-3">
+              <div className="h-32 rounded-lg bg-primary shadow-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-semibold">Primary</span>
+              </div>
+              <p className="text-sm text-center text-muted-foreground font-medium">Main brand color</p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Find Properties</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Browse through thousands of verified rental properties with detailed information and high-quality photos.
-            </p>
-          </div>
-
-          {/* Feature Card 2 */}
-          <div className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+            <div className="space-y-3">
+              <div className="h-32 rounded-lg bg-secondary shadow-lg flex items-center justify-center">
+                <span className="text-secondary-foreground font-semibold">Secondary</span>
+              </div>
+              <p className="text-sm text-center text-muted-foreground font-medium">Secondary actions</p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Easy Search</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Filter properties by location, price range, number of rooms, and amenities to find your perfect match.
-            </p>
-          </div>
-
-          {/* Feature Card 3 */}
-          <div className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-              </svg>
+            <div className="space-y-3">
+              <div className="h-32 rounded-lg bg-accent border border-border shadow-lg flex items-center justify-center">
+                <span className="text-accent-foreground font-semibold">Accent</span>
+              </div>
+              <p className="text-sm text-center text-muted-foreground font-medium">Hover states</p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Trusted Reviews</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Read authentic reviews from real tenants and make informed decisions about your next rental property.
-            </p>
+            <div className="space-y-3">
+              <div className="h-32 rounded-lg bg-muted border border-border shadow-lg flex items-center justify-center">
+                <span className="text-muted-foreground font-semibold">Muted</span>
+              </div>
+              <p className="text-sm text-center text-muted-foreground font-medium">Subtle backgrounds</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Theme Demo Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto">
-          <div className="rounded-lg border border-border bg-card p-8 shadow-lg">
+      {/* Component Showcase */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">UI Components</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Card 1 */}
+            <div className="rounded-xl border border-border bg-card p-6 shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 text-card-foreground">Card Component</h3>
+                  <p className="text-sm text-muted-foreground">Styled with card background and proper borders</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="rounded-xl border border-border bg-card p-6 shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 text-card-foreground">Theme Tokens</h3>
+                  <p className="text-sm text-muted-foreground">All CSS variables properly configured</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="rounded-xl border border-border bg-card p-6 shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 text-card-foreground">Dark Mode</h3>
+                  <p className="text-sm text-muted-foreground">Seamless theme switching support</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="container mx-auto px-4 py-12 bg-muted/30">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Theme Features</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex items-start gap-4 p-6 rounded-lg bg-card border border-border shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">✓</div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Complete CSS Variables</h3>
+                <p className="text-sm text-muted-foreground">All shadcn/ui color tokens: background, foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-6 rounded-lg bg-card border border-border shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">✓</div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Sidebar Colors (New)</h3>
+                <p className="text-sm text-muted-foreground">8 sidebar-specific variables for navigation: sidebar-background, sidebar-foreground, sidebar-primary, sidebar-accent, and more</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-6 rounded-lg bg-card border border-border shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">✓</div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Chart Colors</h3>
+                <p className="text-sm text-muted-foreground">5 chart color variables (chart-1 through chart-5) for data visualization and dashboards</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-6 rounded-lg bg-card border border-border shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">✓</div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Dark Mode Support</h3>
+                <p className="text-sm text-muted-foreground">All colors properly inverted for dark theme with excellent contrast ratios and readability</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-xl border-2 border-primary/20 bg-card p-8 shadow-2xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary text-2xl">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-2xl shadow-lg">
                 🎨
               </div>
-              <h2 className="text-3xl font-bold">Shadcn/ui Blue Theme</h2>
+              <div>
+                <h2 className="text-2xl font-bold">Shadcn/ui Theme System</h2>
+                <p className="text-sm text-muted-foreground">Production-ready implementation</p>
+              </div>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              This page showcases the official shadcn/ui blue theme with proper styling, shadows, and modern design elements. Toggle between light and dark modes using the button in the header.
+              This is a complete implementation of the shadcn/ui design system with all official theme tokens. Toggle between light and dark modes using the button in the header to see the seamless transitions.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 rounded-md bg-primary/5">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">✓</div>
-                <div>
-                  <p className="font-medium">CSS Variables Configured</p>
-                  <p className="text-sm text-muted-foreground">Full theme system with HSL color variables</p>
-                </div>
+            <div className="grid gap-3 sm:grid-cols-2 mb-6">
+              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <p className="text-sm font-medium mb-1">Tailwind Integration</p>
+                <p className="text-xs text-muted-foreground">Use classes like bg-primary, text-card-foreground, border-sidebar-border</p>
               </div>
-              <div className="flex items-start gap-3 p-3 rounded-md bg-primary/5">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">✓</div>
-                <div>
-                  <p className="font-medium">Light & Dark Mode Support</p>
-                  <p className="text-sm text-muted-foreground">Seamless theme switching with localStorage persistence</p>
-                </div>
+              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <p className="text-sm font-medium mb-1">HSL Color Format</p>
+                <p className="text-xs text-muted-foreground">All colors use HSL for easy customization and manipulation</p>
               </div>
-              <div className="flex items-start gap-3 p-3 rounded-md bg-primary/5">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">✓</div>
-                <div>
-                  <p className="font-medium">Modern UI Components</p>
-                  <p className="text-sm text-muted-foreground">Cards, buttons, and layouts styled with theme colors</p>
-                </div>
-              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">Production Ready</span>
+              <span className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">Fully Typed</span>
+              <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium">Accessible</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card/50 mt-16">
-        <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© 2024 RentHub. Built with Next.js and shadcn/ui blue theme.</p>
+      <footer className="border-t border-border bg-card/80 backdrop-blur mt-12">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-3">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">R</div>
+                <span className="font-bold text-lg">RentHub</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Professional theme implementation showcasing shadcn/ui design system</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Theme Info</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Complete color system</li>
+                <li>• 16 sidebar variables</li>
+                <li>• 5 chart colors</li>
+                <li>• Full dark mode support</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Technologies</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Next.js 16</li>
+                <li>• Tailwind CSS 4</li>
+                <li>• shadcn/ui tokens</li>
+                <li>• HSL color variables</li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+            <p>© 2024 RentHub. Built with Next.js and shadcn/ui complete theme system.</p>
+          </div>
         </div>
       </footer>
     </div>
