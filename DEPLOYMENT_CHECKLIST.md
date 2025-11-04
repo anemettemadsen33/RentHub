@@ -6,7 +6,7 @@ Use this checklist to deploy your configured RentHub application.
 
 ✅ Backend configured with Forge URL: `https://renthub-dji696t0.on-forge.com`
 ✅ Frontend configured with Vercel URL: `https://rent-hub-six.vercel.app`
-✅ Database password configured: `TRKqxZJypXmdr81y0n63`
+✅ Database password configured (stored in .env file)
 ✅ CORS configured to allow frontend domain
 ✅ Sanctum configured for stateful authentication
 

@@ -6,7 +6,7 @@ This guide explains how to deploy RentHub with the configured production URLs.
 
 - **Backend (Laravel)**: https://renthub-dji696t0.on-forge.com/
 - **Frontend (Next.js)**: https://rent-hub-six.vercel.app/
-- **Database**: MySQL on Forge with password `TRKqxZJypXmdr81y0n63`
+- **Database**: MySQL on Forge (password configured in .env file)
 
 ## Backend Deployment on Laravel Forge
 
@@ -46,7 +46,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=forge
 DB_USERNAME=forge
-DB_PASSWORD=TRKqxZJypXmdr81y0n63
+DB_PASSWORD=your_database_password
 
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
