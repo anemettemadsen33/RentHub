@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 
 export interface SEOConfig {
   title: string;
@@ -65,11 +65,6 @@ export function generateMetadata(config: SEOConfig): Metadata {
       images: [imageUrl],
       creator: '@renthub',
       site: '@renthub',
-    },
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-      maximumScale: 5,
     },
     verification: {
       google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
@@ -164,3 +159,9 @@ export const DEFAULT_METADATA = generateMetadata({
   ],
   canonical: '/',
 });
+
+export const DEFAULT_VIEWPORT: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};

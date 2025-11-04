@@ -85,6 +85,9 @@ Route::prefix('v1')->group(function () {
     // Property Comparison (Public - guests can compare too)
     Route::get('/property-comparison', [PropertyComparisonController::class, 'index']);
     Route::post('/property-comparison/compare', [PropertyComparisonController::class, 'compare']);
+    Route::post('/property-comparison/add', [PropertyComparisonController::class, 'add']);
+    Route::delete('/property-comparison/remove/{propertyId}', [PropertyComparisonController::class, 'remove']);
+    Route::delete('/property-comparison/clear', [PropertyComparisonController::class, 'clear']);
 
     // Public reviews
     Route::get('/reviews', [ReviewController::class, 'index']);
