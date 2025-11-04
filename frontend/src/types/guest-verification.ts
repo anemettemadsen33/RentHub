@@ -32,7 +32,7 @@ export interface GuestVerification {
   background_checked_at?: string;
   
   // References
-  references?: any[];
+  references?: unknown[];
   references_verified: number;
   
   // Trust Score

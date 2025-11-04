@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\Property;
 use App\Models\PricingRule;
+use App\Models\Property;
 use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,13 +14,14 @@ class PricingServiceTest extends TestCase
     use RefreshDatabase;
 
     protected PricingService $pricingService;
+
     protected Property $property;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->pricingService = new PricingService();
+        $this->pricingService = new PricingService;
         $this->property = Property::factory()->create([
             'price_per_night' => 100,
         ]);
@@ -29,7 +30,7 @@ class PricingServiceTest extends TestCase
     public function test_calculates_base_price_for_date()
     {
         $date = Carbon::now()->addDays(7);
-        
+
         $price = $this->pricingService->calculatePriceForDate($this->property, $date);
 
         $this->assertEquals(100, $price);
@@ -50,7 +51,7 @@ class PricingServiceTest extends TestCase
     {
         // Find next Saturday
         $saturday = Carbon::now()->next(Carbon::SATURDAY);
-        
+
         PricingRule::factory()->create([
             'property_id' => $this->property->id,
             'type' => 'weekend',
@@ -67,7 +68,7 @@ class PricingServiceTest extends TestCase
     public function test_applies_seasonal_pricing_rule()
     {
         $date = Carbon::parse('2025-12-25'); // Christmas
-        
+
         PricingRule::factory()->create([
             'property_id' => $this->property->id,
             'type' => 'seasonal',

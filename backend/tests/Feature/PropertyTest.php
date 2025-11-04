@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -14,6 +13,7 @@ class PropertyTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $owner;
 
     protected function setUp(): void
@@ -34,8 +34,8 @@ class PropertyTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'title', 'price', 'type', 'status']
-                ]
+                    '*' => ['id', 'title', 'price', 'type', 'status'],
+                ],
             ]);
     }
 

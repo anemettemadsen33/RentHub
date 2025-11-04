@@ -23,8 +23,9 @@ export default function ForgotPasswordPage() {
       } else {
         setError(response.data.message || 'Failed to send reset email');
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to send reset email. Please try again.');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Failed to send reset email. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -54,10 +55,10 @@ export default function ForgotPasswordPage() {
               Check your email
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              We've sent a password reset link to <strong>{email}</strong>
+              We&apos;ve sent a password reset link to <strong>{email}</strong>
             </p>
             <p className="mt-4 text-center text-sm text-gray-600">
-              Didn't receive the email? Check your spam folder or{' '}
+              Didn&apos;t receive the email? Check your spam folder or{' '}
               <button
                 onClick={() => setSuccess(false)}
                 className="font-medium text-blue-600 hover:text-blue-500"
@@ -85,7 +86,7 @@ export default function ForgotPasswordPage() {
             Forgot your password?
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we&apos;ll send you a link to reset your password.
           </p>
         </div>
 

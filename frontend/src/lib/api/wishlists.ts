@@ -22,7 +22,7 @@ export interface WishlistItem {
   notify_availability: boolean;
   created_at: string;
   updated_at: string;
-  property?: any;
+  property?: unknown;
 }
 
 export interface CreateWishlistData {

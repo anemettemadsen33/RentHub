@@ -6,6 +6,7 @@ import { propertiesApi, Property } from '@/lib/api/properties';
 import { bookingsApi, BookingFormData, BookingCalculation } from '@/lib/api/bookings';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function NewBookingContent() {
   const router = useRouter();
@@ -43,7 +44,7 @@ function NewBookingContent() {
     }
 
     fetchProperty(parseInt(propertyId));
-  }, [propertyId, user]);
+  }, [propertyId, user, router]);
 
   useEffect(() => {
     if (user) {
@@ -60,6 +61,7 @@ function NewBookingContent() {
     if (formData.check_in && formData.check_out && formData.guests) {
       calculatePrice();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.check_in, formData.check_out, formData.guests]);
 
   const fetchProperty = async (id: number) => {
@@ -69,7 +71,7 @@ function NewBookingContent() {
       if (response.data.success && response.data.data) {
         setProperty(response.data.data);
       }
-    } catch (err: any) {
+    } catch (_err: unknown) {
       setError('Property not found');
     } finally {
       setLoading(false);
@@ -91,7 +93,7 @@ function NewBookingContent() {
       if (response.data.success && response.data.data) {
         setCalculation(response.data.data);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Calculation error:', err);
     } finally {
       setCalculating(false);
@@ -117,8 +119,9 @@ function NewBookingContent() {
       if (response.data.success && response.data.data) {
         router.push(`/bookings/${response.data.data.id}`);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create booking');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Failed to create booking');
     } finally {
       setSubmitting(false);
     }
@@ -180,9 +183,11 @@ function NewBookingContent() {
                 <h2 className="text-xl font-semibold mb-3">Property Details</h2>
                 <div className="flex gap-4">
                   {property.main_image && (
-                    <img
+                    <Image
                       src={property.main_image}
                       alt={property.title}
+                      width={96}
+                      height={96}
                       className="w-24 h-24 object-cover rounded-lg"
                     />
                   )}
@@ -388,7 +393,7 @@ function NewBookingContent() {
 
               <div className="mt-6 pt-6 border-t">
                 <p className="text-xs text-gray-500 text-center">
-                  You won't be charged yet. The host will review and confirm your booking.
+                  You won&apos;t be charged yet. The host will review and confirm your booking.
                 </p>
               </div>
             </div>

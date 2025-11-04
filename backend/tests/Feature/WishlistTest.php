@@ -14,6 +14,7 @@ class WishlistTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Property $property;
 
     protected function setUp(): void

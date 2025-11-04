@@ -67,8 +67,9 @@ function ResetPasswordForm() {
       } else {
         setError(response.data.message || 'Failed to reset password');
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to reset password. The link may have expired.');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Failed to reset password. The link may have expired.');
     } finally {
       setLoading(false);
     }

@@ -14,7 +14,9 @@ class BookingTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $owner;
+
     protected Property $property;
 
     protected function setUp(): void

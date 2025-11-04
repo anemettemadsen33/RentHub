@@ -16,8 +16,8 @@ export interface Review {
   is_approved: boolean;
   owner_response?: string;
   owner_response_at?: string;
-  property?: any;
-  user?: any;
+  property?: unknown;
+  user?: unknown;
   created_at: string;
   updated_at: string;
 }

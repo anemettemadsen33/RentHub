@@ -1,4 +1,4 @@
-import { Thing, WithContext, Organization, WebSite, BreadcrumbList, Product, AggregateRating } from 'schema-dts';
+import { Thing, WithContext, Organization, WebSite, BreadcrumbList, Product } from 'schema-dts';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.com';
 
@@ -26,7 +26,7 @@ export function getOrganizationSchema(): WithContext<Organization> {
   };
 }
 
-export function getWebsiteSchema(): WithContext<WebSite> {
+export function getWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -39,9 +39,37 @@ export function getWebsiteSchema(): WithContext<WebSite> {
         urlTemplate: `${SITE_URL}/properties?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
-    } as any,
-  };
+    },
+  } as WithContext<WebSite>;
 }
+
+type PropertySchemaBase = {
+  '@context': 'https://schema.org';
+  '@type': 'Product';
+  name: string;
+  description: string;
+  image: string[];
+  offers: {
+    '@type': 'Offer';
+    price: string;
+    priceCurrency: string;
+    availability: string;
+    url: string;
+    priceValidUntil: string;
+  };
+  brand: {
+    '@type': 'Brand';
+    name: string;
+  };
+  category: string;
+  aggregateRating?: {
+    '@type': 'AggregateRating';
+    ratingValue: string;
+    reviewCount: string;
+    bestRating: string;
+    worstRating: string;
+  };
+};
 
 export function getPropertySchema(property: {
   id: number;
@@ -62,23 +90,18 @@ export function getPropertySchema(property: {
   amenities?: string[];
   rating?: number;
   reviewCount?: number;
-}) {
+}): PropertySchemaBase {
   const {
     id,
     title,
     description,
     price,
-    location,
     images = [],
-    bedrooms,
-    bathrooms,
-    area,
-    amenities = [],
     rating,
     reviewCount,
   } = property;
 
-  const schema: WithContext<Product> = {
+  const schema: PropertySchemaBase = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: title,
@@ -106,7 +129,7 @@ export function getPropertySchema(property: {
       reviewCount: String(reviewCount),
       bestRating: '5',
       worstRating: '1',
-    } as any;
+    };
   }
 
   return schema;
@@ -168,7 +191,7 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
   };
 }
 
-export function renderJsonLd(schema: WithContext<Thing> | any) {
+export function renderJsonLd(schema: WithContext<Thing> | unknown) {
   return {
     __html: JSON.stringify(schema),
   };

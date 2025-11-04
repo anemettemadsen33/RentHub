@@ -16,8 +16,11 @@ class ReviewTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $owner;
+
     protected Property $property;
+
     protected Booking $booking;
 
     protected function setUp(): void
