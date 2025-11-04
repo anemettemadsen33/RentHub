@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserVerification;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -16,7 +14,7 @@ class UserVerificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         if ($user->isAdmin()) {
             $verifications = UserVerification::with(['user', 'reviewer'])
                 ->when($request->status, function ($query, $status) {
@@ -39,10 +37,10 @@ class UserVerificationController extends Controller
     public function show(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         $verification = UserVerification::with(['user', 'reviewer'])->findOrFail($id);
-        
-        if (!$user->isAdmin() && $verification->user_id !== $user->id) {
+
+        if (! $user->isAdmin() && $verification->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -52,7 +50,7 @@ class UserVerificationController extends Controller
     public function getMyVerification(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $verification = UserVerification::firstOrCreate(
             ['user_id' => $user->id],
             [
@@ -82,12 +80,12 @@ class UserVerificationController extends Controller
         $verification = UserVerification::firstOrCreate(['user_id' => $user->id]);
 
         // Upload images
-        $idFrontPath = $request->file('id_front_image')->store('verifications/id/' . $user->id, 'public');
-        $selfiePath = $request->file('selfie_image')->store('verifications/selfie/' . $user->id, 'public');
-        
+        $idFrontPath = $request->file('id_front_image')->store('verifications/id/'.$user->id, 'public');
+        $selfiePath = $request->file('selfie_image')->store('verifications/selfie/'.$user->id, 'public');
+
         $idBackPath = null;
         if ($request->hasFile('id_back_image')) {
-            $idBackPath = $request->file('id_back_image')->store('verifications/id/' . $user->id, 'public');
+            $idBackPath = $request->file('id_back_image')->store('verifications/id/'.$user->id, 'public');
         }
 
         // Update verification
@@ -104,7 +102,7 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'ID verification submitted successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
@@ -134,7 +132,7 @@ class UserVerificationController extends Controller
         // TODO: Send SMS with code using Twilio or similar service
         // For now, we'll return the code in development mode
         $response = ['message' => 'Verification code sent to your phone'];
-        
+
         if (config('app.debug')) {
             $response['code'] = $code;
         }
@@ -174,7 +172,7 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'Phone verified successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
@@ -194,7 +192,7 @@ class UserVerificationController extends Controller
         $verification = UserVerification::firstOrCreate(['user_id' => $user->id]);
 
         // Upload document
-        $addressProofPath = $request->file('address_proof_image')->store('verifications/address/' . $user->id, 'public');
+        $addressProofPath = $request->file('address_proof_image')->store('verifications/address/'.$user->id, 'public');
 
         $verification->update([
             'address' => $request->address,
@@ -207,7 +205,7 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'Address verification submitted successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
@@ -216,33 +214,33 @@ class UserVerificationController extends Controller
         $user = $request->user();
         $verification = UserVerification::where('user_id', $user->id)->firstOrFail();
 
-        if (!$verification->canRequestBackgroundCheck()) {
+        if (! $verification->canRequestBackgroundCheck()) {
             return response()->json([
-                'message' => 'ID verification must be approved before requesting background check'
+                'message' => 'ID verification must be approved before requesting background check',
             ], 422);
         }
 
         $verification->update([
             'background_check_status' => 'pending',
             'background_check_provider' => 'system',
-            'background_check_reference' => 'BG-' . Str::random(10),
+            'background_check_reference' => 'BG-'.Str::random(10),
         ]);
 
         return response()->json([
             'message' => 'Background check requested successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
     // Admin endpoints
     public function approveId(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = UserVerification::findOrFail($id);
-        
+
         $verification->update([
             'id_verification_status' => 'approved',
             'id_verified_at' => now(),
@@ -254,13 +252,13 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'ID verification approved',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function rejectId(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -273,7 +271,7 @@ class UserVerificationController extends Controller
         }
 
         $verification = UserVerification::findOrFail($id);
-        
+
         $verification->update([
             'id_verification_status' => 'rejected',
             'id_rejection_reason' => $request->reason,
@@ -284,18 +282,18 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'ID verification rejected',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function approveAddress(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = UserVerification::findOrFail($id);
-        
+
         $verification->update([
             'address_verification_status' => 'approved',
             'address_verified_at' => now(),
@@ -307,13 +305,13 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'Address verification approved',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function rejectAddress(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -326,7 +324,7 @@ class UserVerificationController extends Controller
         }
 
         $verification = UserVerification::findOrFail($id);
-        
+
         $verification->update([
             'address_verification_status' => 'rejected',
             'address_rejection_reason' => $request->reason,
@@ -337,13 +335,13 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'Address verification rejected',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function completeBackgroundCheck(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -357,7 +355,7 @@ class UserVerificationController extends Controller
         }
 
         $verification = UserVerification::findOrFail($id);
-        
+
         $verification->update([
             'background_check_status' => $request->status,
             'background_check_result' => $request->result,
@@ -369,13 +367,13 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'message' => 'Background check completed',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function getStatistics(Request $request): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

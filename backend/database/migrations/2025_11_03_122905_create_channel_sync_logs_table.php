@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('started_at');
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
-            
+
             $table->index(['channel_connection_id', 'created_at']);
             $table->index('status');
         });

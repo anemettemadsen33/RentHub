@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->text('metadata')->nullable(); // JSON for additional tracking
             $table->timestamps();
-            
+
             $table->index('referral_code');
             $table->index('status');
             $table->index(['referrer_id', 'status']);

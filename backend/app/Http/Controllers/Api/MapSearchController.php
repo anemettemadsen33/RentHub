@@ -11,8 +11,9 @@ class MapSearchController extends Controller
 {
     /**
      * Search properties within radius
-     * 
+     *
      * @group Map Search
+     *
      * @bodyParam latitude float required Center latitude. Example: 44.4268
      * @bodyParam longitude float required Center longitude. Example: 26.1025
      * @bodyParam radius float required Radius in kilometers. Example: 10
@@ -44,13 +45,13 @@ class MapSearchController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $filters = $request->only([
-            'type', 'min_price', 'max_price', 
-            'bedrooms', 'bathrooms', 'guests', 'amenities'
+            'type', 'min_price', 'max_price',
+            'bedrooms', 'bathrooms', 'guests', 'amenities',
         ]);
 
         $properties = GeoSearchService::searchWithinRadius(
@@ -70,14 +71,15 @@ class MapSearchController extends Controller
                     'longitude' => $request->longitude,
                 ],
                 'radius' => $request->radius,
-            ]
+            ],
         ]);
     }
 
     /**
      * Search properties within map bounds
-     * 
+     *
      * @group Map Search
+     *
      * @bodyParam sw_lat float required Southwest corner latitude. Example: 44.3968
      * @bodyParam sw_lng float required Southwest corner longitude. Example: 26.0725
      * @bodyParam ne_lat float required Northeast corner latitude. Example: 44.4568
@@ -113,13 +115,13 @@ class MapSearchController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $filters = $request->only([
-            'type', 'min_price', 'max_price', 
-            'bedrooms', 'bathrooms', 'guests', 'amenities'
+            'type', 'min_price', 'max_price',
+            'bedrooms', 'bathrooms', 'guests', 'amenities',
         ]);
 
         $properties = GeoSearchService::searchWithinBounds(
@@ -149,13 +151,13 @@ class MapSearchController extends Controller
                         'lng' => $request->ne_lng,
                     ],
                 ],
-            ]
+            ],
         ]);
     }
 
     /**
      * Get property details for map popup
-     * 
+     *
      * @group Map Search
      */
     public function getPropertyMapData($id)
@@ -189,14 +191,15 @@ class MapSearchController extends Controller
                 ],
                 'rating' => $property->reviews()->avg('rating'),
                 'reviews_count' => $property->reviews()->count(),
-            ]
+            ],
         ]);
     }
 
     /**
      * Geocode address to coordinates
-     * 
+     *
      * @group Map Search
+     *
      * @bodyParam address string required Full address. Example: "Strada Aviatorilor 10, București, România"
      */
     public function geocode(Request $request)
@@ -209,7 +212,7 @@ class MapSearchController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -218,7 +221,7 @@ class MapSearchController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Geocoding endpoint - integrate with your preferred geocoding service',
-            'data' => null
+            'data' => null,
         ]);
     }
 }

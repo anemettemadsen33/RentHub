@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('account_type')->default('business'); // business, personal
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             // Index for faster queries
             $table->index('user_id');
             $table->index('is_default');

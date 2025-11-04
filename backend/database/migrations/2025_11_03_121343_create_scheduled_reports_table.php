@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('next_run_at')->nullable();
             $table->integer('run_count')->default(0);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'is_active']);
             $table->index('next_run_at');
         });

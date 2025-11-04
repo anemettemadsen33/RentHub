@@ -3,16 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Jobs\AnalyzeFraudJob;
-use App\Models\User;
-use App\Models\Property;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Property;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class AnalyzeFraudCommand extends Command
 {
     protected $signature = 'ai:analyze-fraud {type : Type: user, property, booking, payment, review, all} {--id= : Specific entity ID}';
+
     protected $description = 'Analyze entities for fraud using AI';
 
     public function handle(): int
@@ -22,16 +23,19 @@ class AnalyzeFraudCommand extends Command
         if ($this->option('id')) {
             if ($type === 'all') {
                 $this->error('Cannot use --id with type "all"');
+
                 return 1;
             }
 
             AnalyzeFraudJob::dispatch($type, $this->option('id'));
             $this->info("Queued fraud analysis for {$type} #{$this->option('id')}");
+
             return 0;
         }
 
         if ($type === 'all') {
             $this->analyzeAll();
+
             return 0;
         }
 
@@ -46,11 +50,12 @@ class AnalyzeFraudCommand extends Command
 
         if ($entities->isEmpty()) {
             $this->info("No recent {$type} entities to analyze");
+
             return 0;
         }
 
         $this->info("Queuing fraud analysis for {$entities->count()} {$type} entities...");
-        
+
         $bar = $this->output->createProgressBar($entities->count());
         $bar->start();
 
@@ -62,13 +67,14 @@ class AnalyzeFraudCommand extends Command
         $bar->finish();
         $this->newLine();
         $this->info("Queued fraud analysis for {$entities->count()} {$type} entities");
+
         return 0;
     }
 
     private function analyzeAll(): void
     {
         $types = ['user', 'property', 'booking', 'payment', 'review'];
-        
+
         foreach ($types as $type) {
             $this->call('ai:analyze-fraud', ['type' => $type]);
         }

@@ -50,18 +50,18 @@ class ConciergeService extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return number_format($this->base_price, 2) . ' ' . $this->price_unit;
+        return number_format($this->base_price, 2).' '.$this->price_unit;
     }
 
     public function getEstimatedDurationAttribute(): string
     {
-        if (!$this->duration_minutes) {
+        if (! $this->duration_minutes) {
             return 'Variable';
         }
-        
+
         $hours = floor($this->duration_minutes / 60);
         $minutes = $this->duration_minutes % 60;
-        
+
         if ($hours > 0 && $minutes > 0) {
             return "{$hours}h {$minutes}m";
         } elseif ($hours > 0) {

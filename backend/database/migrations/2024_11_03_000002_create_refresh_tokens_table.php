@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('last_used_at')->nullable();
             $table->boolean('revoked')->default(false);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'revoked']);
             $table->index('expires_at');
         });

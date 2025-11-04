@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ConciergeService;
 use App\Models\ServiceProvider;
+use Illuminate\Database\Seeder;
 
 class ConciergeServiceSeeder extends Seeder
 {
@@ -92,7 +92,7 @@ class ConciergeServiceSeeder extends Seeder
         $createdProviders = [];
         foreach ($providers as $providerData) {
             $provider = ServiceProvider::where('email', $providerData['email'])->first();
-            if (!$provider) {
+            if (! $provider) {
                 $provider = ServiceProvider::create($providerData);
             }
             $createdProviders[] = $provider;
@@ -353,6 +353,6 @@ class ConciergeServiceSeeder extends Seeder
             ConciergeService::create($serviceData);
         }
 
-        $this->command->info('✅ Created ' . count($services) . ' concierge services with ' . count($providers) . ' service providers');
+        $this->command->info('✅ Created '.count($services).' concierge services with '.count($providers).' service providers');
     }
 }

@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -31,7 +31,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -55,7 +55,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'token' => $token,
-            ]
+            ],
         ], 201);
     }
 
@@ -73,14 +73,14 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-        if (!Auth::attempt($request->only('email', 'password'), $request->remember)) {
+        if (! Auth::attempt($request->only('email', 'password'), $request->remember)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
@@ -90,14 +90,14 @@ class AuthController extends Controller
         if ($user->two_factor_enabled) {
             // Generate and send 2FA code
             $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            
+
             $user->update([
                 'two_factor_code' => $code,
                 'two_factor_code_expires_at' => now()->addMinutes(10),
             ]);
 
             // TODO: Send code via email/SMS
-            
+
             Auth::logout();
 
             return response()->json([
@@ -116,7 +116,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'token' => $token,
-            ]
+            ],
         ]);
     }
 
@@ -129,7 +129,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 
@@ -140,7 +140,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $request->user()
+            'data' => $request->user(),
         ]);
     }
 
@@ -151,17 +151,17 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid verification link'
+                'message' => 'Invalid verification link',
             ], 403);
         }
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Email already verified'
+                'message' => 'Email already verified',
             ]);
         }
 
@@ -169,7 +169,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Email verified successfully'
+            'message' => 'Email verified successfully',
         ]);
     }
 
@@ -181,7 +181,7 @@ class AuthController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email already verified'
+                'message' => 'Email already verified',
             ], 400);
         }
 
@@ -189,7 +189,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Verification email sent'
+            'message' => 'Verification email sent',
         ]);
     }
 
@@ -205,15 +205,15 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
-        
+
         // Generate 6-digit code
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
+
         // Update user
         $user->update([
             'phone' => $request->phone,
@@ -223,7 +223,7 @@ class AuthController extends Controller
 
         // TODO: Send SMS with code using Twilio/Vonage
         // For now, return code in response (ONLY FOR DEVELOPMENT)
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Verification code sent to your phone',
@@ -243,30 +243,30 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
 
-        if (!$user->phone_verification_code) {
+        if (! $user->phone_verification_code) {
             return response()->json([
                 'success' => false,
-                'message' => 'No verification code found. Please request a new one.'
+                'message' => 'No verification code found. Please request a new one.',
             ], 400);
         }
 
         if ($user->phone_verification_code_expires_at < now()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Verification code has expired. Please request a new one.'
+                'message' => 'Verification code has expired. Please request a new one.',
             ], 400);
         }
 
         if ($user->phone_verification_code !== $request->code) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid verification code'
+                'message' => 'Invalid verification code',
             ], 400);
         }
 
@@ -279,7 +279,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Phone verified successfully'
+            'message' => 'Phone verified successfully',
         ]);
     }
 
@@ -305,14 +305,14 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to authenticate with ' . $provider
+                'message' => 'Failed to authenticate with '.$provider,
             ], 401);
         }
 
         // Find or create user
         $user = User::where('email', $socialUser->getEmail())->first();
 
-        if (!$user) {
+        if (! $user) {
             // Create new user
             $user = User::create([
                 'name' => $socialUser->getName(),
@@ -333,7 +333,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'token' => $token,
-            ]
+            ],
         ]);
     }
 
@@ -342,7 +342,7 @@ class AuthController extends Controller
      */
     protected function validateProvider($provider)
     {
-        if (!in_array($provider, ['google', 'facebook'])) {
+        if (! in_array($provider, ['google', 'facebook'])) {
             abort(404);
         }
     }
@@ -359,7 +359,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -370,13 +370,13 @@ class AuthController extends Controller
         if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
             return response()->json([
                 'success' => true,
-                'message' => 'Password reset link sent to your email'
+                'message' => 'Password reset link sent to your email',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Unable to send password reset link'
+            'message' => 'Unable to send password reset link',
         ], 400);
     }
 
@@ -394,7 +394,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -402,7 +402,7 @@ class AuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ])->save();
 
                 $user->tokens()->delete(); // Revoke all tokens
@@ -412,13 +412,13 @@ class AuthController extends Controller
         if ($status === \Illuminate\Support\Facades\Password::PASSWORD_RESET) {
             return response()->json([
                 'success' => true,
-                'message' => 'Password reset successfully'
+                'message' => 'Password reset successfully',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Failed to reset password'
+            'message' => 'Failed to reset password',
         ], 400);
     }
 
@@ -432,14 +432,14 @@ class AuthController extends Controller
         if ($user->two_factor_enabled) {
             return response()->json([
                 'success' => false,
-                'message' => 'Two-factor authentication is already enabled'
+                'message' => 'Two-factor authentication is already enabled',
             ], 400);
         }
 
         // Generate recovery codes
         $recoveryCodes = [];
         for ($i = 0; $i < 8; $i++) {
-            $recoveryCodes[] = Str::random(10) . '-' . Str::random(10);
+            $recoveryCodes[] = Str::random(10).'-'.Str::random(10);
         }
 
         $user->update([
@@ -451,8 +451,8 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Two-factor authentication enabled',
             'data' => [
-                'recovery_codes' => $recoveryCodes
-            ]
+                'recovery_codes' => $recoveryCodes,
+            ],
         ]);
     }
 
@@ -468,16 +468,16 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
 
-        if (!Hash::check($request->password, $user->password)) {
+        if (! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid password'
+                'message' => 'Invalid password',
             ], 401);
         }
 
@@ -491,7 +491,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Two-factor authentication disabled'
+            'message' => 'Two-factor authentication disabled',
         ]);
     }
 
@@ -507,16 +507,16 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !$user->two_factor_enabled) {
+        if (! $user || ! $user->two_factor_enabled) {
             return response()->json([
                 'success' => false,
-                'message' => 'Two-factor authentication is not enabled for this account'
+                'message' => 'Two-factor authentication is not enabled for this account',
             ], 400);
         }
 
@@ -551,37 +551,37 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
-        if (!$user->two_factor_code) {
+        if (! $user->two_factor_code) {
             return response()->json([
                 'success' => false,
-                'message' => 'No 2FA code found. Please request a new one.'
+                'message' => 'No 2FA code found. Please request a new one.',
             ], 400);
         }
 
         if ($user->two_factor_code_expires_at < now()) {
             return response()->json([
                 'success' => false,
-                'message' => '2FA code has expired. Please request a new one.'
+                'message' => '2FA code has expired. Please request a new one.',
             ], 400);
         }
 
         if ($user->two_factor_code !== $request->code) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid 2FA code'
+                'message' => 'Invalid 2FA code',
             ], 400);
         }
 
@@ -600,7 +600,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'token' => $token,
-            ]
+            ],
         ]);
     }
 
@@ -617,25 +617,25 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !$user->two_factor_enabled) {
+        if (! $user || ! $user->two_factor_enabled) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
         $recoveryCodes = json_decode($user->two_factor_recovery_codes, true);
 
-        if (!in_array($request->recovery_code, $recoveryCodes)) {
+        if (! in_array($request->recovery_code, $recoveryCodes)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid recovery code'
+                'message' => 'Invalid recovery code',
             ], 400);
         }
 
@@ -655,7 +655,7 @@ class AuthController extends Controller
                 'user' => $user,
                 'token' => $token,
                 'remaining_recovery_codes' => count($recoveryCodes),
-            ]
+            ],
         ]);
     }
 }

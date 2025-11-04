@@ -10,11 +10,11 @@ class ReviewHelpfulVote extends Model
     protected $fillable = [
         'review_id',
         'user_id',
-        'is_helpful'
+        'is_helpful',
     ];
 
     protected $casts = [
-        'is_helpful' => 'boolean'
+        'is_helpful' => 'boolean',
     ];
 
     // Relationships

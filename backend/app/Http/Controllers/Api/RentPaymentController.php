@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\RentPayment;
-use App\Models\Invoice;
 use App\Mail\InvoiceMail;
+use App\Models\Invoice;
+use App\Models\RentPayment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class RentPaymentController extends Controller
 {
@@ -48,7 +48,7 @@ class RentPaymentController extends Controller
         $payment = RentPayment::with([
             'longTermRental.property',
             'tenant',
-            'invoice'
+            'invoice',
         ])->findOrFail($id);
 
         return response()->json($payment);
@@ -81,7 +81,7 @@ class RentPaymentController extends Controller
 
         return response()->json([
             'message' => 'Payment marked as paid successfully',
-            'payment' => $payment->fresh(['invoice'])
+            'payment' => $payment->fresh(['invoice']),
         ]);
     }
 
@@ -95,7 +95,7 @@ class RentPaymentController extends Controller
 
         return response()->json([
             'message' => 'Overdue payments updated',
-            'count' => $overduePayments->count()
+            'count' => $overduePayments->count(),
         ]);
     }
 
@@ -108,16 +108,16 @@ class RentPaymentController extends Controller
         $payment->update(['reminder_sent_at' => now()]);
 
         return response()->json([
-            'message' => 'Reminder sent successfully'
+            'message' => 'Reminder sent successfully',
         ]);
     }
 
     private function generateInvoice(RentPayment $payment)
     {
         $rental = $payment->longTermRental()->with(['property', 'owner'])->first();
-        
+
         $invoice = Invoice::create([
-            'invoice_number' => 'RENT-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT),
+            'invoice_number' => 'RENT-'.str_pad($payment->id, 6, '0', STR_PAD_LEFT),
             'user_id' => $payment->tenant_id,
             'booking_id' => null,
             'bank_account_id' => $rental->owner->bankAccounts()->first()?->id,
@@ -134,7 +134,7 @@ class RentPaymentController extends Controller
         try {
             Mail::to($payment->tenant->email)->send(new InvoiceMail($invoice));
         } catch (\Exception $e) {
-            \Log::error('Failed to send rent invoice email: ' . $e->getMessage());
+            \Log::error('Failed to send rent invoice email: '.$e->getMessage());
         }
 
         return $invoice;

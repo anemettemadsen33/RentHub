@@ -73,7 +73,7 @@ class Referral extends Model
 
     public function isExpired(): bool
     {
-        if (!$this->expires_at) {
+        if (! $this->expires_at) {
             return false;
         }
 

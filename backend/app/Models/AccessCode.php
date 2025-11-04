@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AccessCode extends Model
 {
@@ -107,6 +106,6 @@ class AccessCode extends Model
             return str_repeat('*', strlen($this->code));
         }
 
-        return str_repeat('*', strlen($this->code) - 2) . substr($this->code, -2);
+        return str_repeat('*', strlen($this->code) - 2).substr($this->code, -2);
     }
 }

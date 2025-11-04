@@ -5,7 +5,6 @@ namespace App\Services\Security;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 use ZipArchive;
 
 class GDPRService
@@ -33,15 +32,15 @@ class GDPRService
             'bookings' => $user->bookings()->get()->toArray(),
             'reviews' => $user->reviews()->get()->toArray(),
             'payments' => $user->payments()->select([
-                'id', 'amount', 'status', 'created_at'
+                'id', 'amount', 'status', 'created_at',
             ])->get()->toArray(),
             'messages' => $user->messages()->get()->toArray(),
             'activity_logs' => $user->activityLogs()->get()->toArray(),
         ];
 
-        $filename = 'user_data_' . $user->id . '_' . time() . '.json';
-        $path = 'exports/' . $filename;
-        
+        $filename = 'user_data_'.$user->id.'_'.time().'.json';
+        $path = 'exports/'.$filename;
+
         Storage::put($path, json_encode($data, JSON_PRETTY_PRINT));
 
         return Storage::path($path);
@@ -52,10 +51,10 @@ class GDPRService
      */
     public function exportUserDataZip(User $user): string
     {
-        $zipFilename = 'user_data_' . $user->id . '_' . time() . '.zip';
-        $zipPath = storage_path('app/exports/' . $zipFilename);
+        $zipFilename = 'user_data_'.$user->id.'_'.time().'.zip';
+        $zipPath = storage_path('app/exports/'.$zipFilename);
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
             throw new \Exception('Could not create ZIP file');
         }
@@ -68,7 +67,7 @@ class GDPRService
         if ($user->profile_picture && Storage::exists($user->profile_picture)) {
             $zip->addFile(
                 Storage::path($user->profile_picture),
-                'profile_picture.' . pathinfo($user->profile_picture, PATHINFO_EXTENSION)
+                'profile_picture.'.pathinfo($user->profile_picture, PATHINFO_EXTENSION)
             );
         }
 
@@ -78,7 +77,7 @@ class GDPRService
                 if (Storage::exists($document->path)) {
                     $zip->addFile(
                         Storage::path($document->path),
-                        'documents/' . basename($document->path)
+                        'documents/'.basename($document->path)
                     );
                 }
             }
@@ -100,7 +99,7 @@ class GDPRService
             if ($anonymize) {
                 // Anonymize instead of delete (for legal/audit purposes)
                 $this->anonymizationService->anonymizeUser($user);
-                
+
                 // Anonymize related data
                 $user->bookings()->update([
                     'guest_name' => 'Deleted User',
@@ -114,42 +113,43 @@ class GDPRService
 
             } else {
                 // Hard delete
-                
+
                 // Delete OAuth providers
                 $user->oauthProviders()->delete();
-                
+
                 // Delete API keys
                 $user->apiKeys()->delete();
-                
+
                 // Delete refresh tokens
                 $user->refreshTokens()->delete();
-                
+
                 // Delete roles and permissions
                 $user->roles()->detach();
                 $user->permissions()->detach();
-                
+
                 // Delete files
                 if ($user->profile_picture) {
                     Storage::delete($user->profile_picture);
                 }
-                
+
                 // Soft delete bookings (keep for records)
                 $user->bookings()->update(['deleted_at' => now()]);
-                
+
                 // Delete messages
                 $user->messages()->delete();
-                
+
                 // Delete reviews
                 $user->reviews()->delete();
-                
+
                 // Delete activity logs
                 $user->activityLogs()->delete();
-                
+
                 // Finally delete user
                 $user->delete();
             }
 
             DB::commit();
+
             return true;
 
         } catch (\Exception $e) {

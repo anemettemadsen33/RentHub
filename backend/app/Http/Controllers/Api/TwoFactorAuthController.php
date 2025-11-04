@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Security\TwoFactorAuthService;
 use App\Services\Security\AuditLogService;
-use Illuminate\Http\Request;
+use App\Services\Security\TwoFactorAuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class TwoFactorAuthController extends Controller
@@ -29,7 +29,7 @@ class TwoFactorAuthController extends Controller
         $user = $request->user();
 
         // Verify password
-        if (!Hash::check($validated['password'], $user->password)) {
+        if (! Hash::check($validated['password'], $user->password)) {
             return response()->json(['error' => 'Invalid password'], 401);
         }
 
@@ -68,7 +68,7 @@ class TwoFactorAuthController extends Controller
         }
 
         $this->auditLogService->logSecurityEvent('2fa_verification_failed', false, [
-            'code' => substr($validated['code'], 0, 2) . '****',
+            'code' => substr($validated['code'], 0, 2).'****',
         ]);
 
         return response()->json(['error' => 'Invalid code'], 400);
@@ -102,7 +102,7 @@ class TwoFactorAuthController extends Controller
         $user = $request->user();
 
         // Verify password
-        if (!Hash::check($validated['password'], $user->password)) {
+        if (! Hash::check($validated['password'], $user->password)) {
             return response()->json(['error' => 'Invalid password'], 401);
         }
 
@@ -129,7 +129,7 @@ class TwoFactorAuthController extends Controller
         $user = $request->user();
 
         // Verify password
-        if (!Hash::check($validated['password'], $user->password)) {
+        if (! Hash::check($validated['password'], $user->password)) {
             return response()->json(['error' => 'Invalid password'], 401);
         }
 

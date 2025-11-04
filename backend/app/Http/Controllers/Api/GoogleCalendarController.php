@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\GoogleCalendarToken;
 use App\Models\Property;
 use App\Services\GoogleCalendarService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class GoogleCalendarController extends Controller
 {
@@ -27,8 +27,8 @@ class GoogleCalendarController extends Controller
         ]);
 
         $user = $request->user();
-        $property = $request->property_id 
-            ? Property::findOrFail($request->property_id) 
+        $property = $request->property_id
+            ? Property::findOrFail($request->property_id)
             : null;
 
         // Check authorization
@@ -69,8 +69,8 @@ class GoogleCalendarController extends Controller
 
         try {
             $state = json_decode(base64_decode($request->state), true);
-            
-            if (!$state || !isset($state['user_id'])) {
+
+            if (! $state || ! isset($state['user_id'])) {
                 return response()->json([
                     'message' => 'Invalid state parameter',
                 ], 400);
@@ -108,11 +108,11 @@ class GoogleCalendarController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $calendars = GoogleCalendarToken::where('user_id', $user->id)
             ->with('property:id,title')
             ->get()
-            ->map(fn($token) => [
+            ->map(fn ($token) => [
                 'id' => $token->id,
                 'calendar_id' => $token->calendar_id,
                 'calendar_name' => $token->calendar_name,
@@ -123,7 +123,7 @@ class GoogleCalendarController extends Controller
                 'sync_enabled' => $token->sync_enabled,
                 'last_sync_at' => $token->last_sync_at?->toISOString(),
                 'webhook_expires_at' => $token->webhook_expiration?->toISOString(),
-                'has_errors' => !empty($token->sync_errors),
+                'has_errors' => ! empty($token->sync_errors),
             ]);
 
         return response()->json([
@@ -171,11 +171,11 @@ class GoogleCalendarController extends Controller
         }
 
         $googleCalendarToken->update([
-            'sync_enabled' => !$googleCalendarToken->sync_enabled,
+            'sync_enabled' => ! $googleCalendarToken->sync_enabled,
         ]);
 
         return response()->json([
-            'message' => 'Sync ' . ($googleCalendarToken->sync_enabled ? 'enabled' : 'disabled'),
+            'message' => 'Sync '.($googleCalendarToken->sync_enabled ? 'enabled' : 'disabled'),
             'data' => [
                 'sync_enabled' => $googleCalendarToken->sync_enabled,
             ],
@@ -193,7 +193,7 @@ class GoogleCalendarController extends Controller
             ], 403);
         }
 
-        if (!$googleCalendarToken->property) {
+        if (! $googleCalendarToken->property) {
             return response()->json([
                 'message' => 'No property associated with this calendar',
             ], 400);
@@ -302,7 +302,7 @@ class GoogleCalendarController extends Controller
         $resourceId = $request->header('X-Goog-Resource-ID');
         $resourceState = $request->header('X-Goog-Resource-State');
 
-        if (!$channelId || !$resourceId) {
+        if (! $channelId || ! $resourceId) {
             return response()->json([
                 'message' => 'Invalid webhook request',
             ], 400);
@@ -315,7 +315,7 @@ class GoogleCalendarController extends Controller
         ]);
 
         // Only process 'exists' and 'update' events
-        if (!in_array($resourceState, ['exists', 'sync'])) {
+        if (! in_array($resourceState, ['exists', 'sync'])) {
             $this->googleCalendarService->handleWebhook($channelId, $resourceId);
         }
 

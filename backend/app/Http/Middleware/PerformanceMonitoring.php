@@ -25,13 +25,13 @@ class PerformanceMonitoring
             Log::warning('Slow request detected', [
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
-                'execution_time' => $executionTime . 'ms',
-                'memory_used' => $memoryUsed . 'MB',
+                'execution_time' => $executionTime.'ms',
+                'memory_used' => $memoryUsed.'MB',
             ]);
         }
 
-        $response->headers->set('X-Execution-Time', $executionTime . 'ms');
-        $response->headers->set('X-Memory-Usage', $memoryUsed . 'MB');
+        $response->headers->set('X-Execution-Time', $executionTime.'ms');
+        $response->headers->set('X-Memory-Usage', $memoryUsed.'MB');
 
         return $response;
     }

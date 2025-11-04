@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use App\Models\PriceSuggestion;
+use App\Models\Property;
 use App\Services\PricingService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 
 class PriceSuggestionController extends Controller
 {
@@ -27,7 +27,7 @@ class PriceSuggestionController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -56,7 +56,7 @@ class PriceSuggestionController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -94,7 +94,7 @@ class PriceSuggestionController extends Controller
         $suggestion = PriceSuggestion::where('property_id', $property->id)->findOrFail($suggestionId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -113,7 +113,7 @@ class PriceSuggestionController extends Controller
         $suggestion = PriceSuggestion::where('property_id', $property->id)->findOrFail($suggestionId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -126,6 +126,7 @@ class PriceSuggestionController extends Controller
 
         if ($suggestion->isExpired()) {
             $suggestion->update(['status' => 'expired']);
+
             return response()->json([
                 'success' => false,
                 'error' => 'This suggestion has expired',
@@ -150,7 +151,7 @@ class PriceSuggestionController extends Controller
         $suggestion = PriceSuggestion::where('property_id', $property->id)->findOrFail($suggestionId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -179,7 +180,7 @@ class PriceSuggestionController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -224,7 +225,7 @@ class PriceSuggestionController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -238,7 +239,7 @@ class PriceSuggestionController extends Controller
 
         while ($currentStart->lt($endDate)) {
             $currentEnd = min($currentStart->copy()->addDays(30), $endDate);
-            
+
             $suggestion = $this->pricingService->generatePriceSuggestion(
                 $property,
                 $currentStart,
@@ -270,7 +271,7 @@ class PriceSuggestionController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -283,7 +284,7 @@ class PriceSuggestionController extends Controller
 
         $acceptedCount = 0;
         foreach ($suggestions as $suggestion) {
-            if (!$suggestion->isExpired()) {
+            if (! $suggestion->isExpired()) {
                 $suggestion->accept();
                 $acceptedCount++;
             }

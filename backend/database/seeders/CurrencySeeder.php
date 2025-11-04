@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Currency;
 use App\Models\ExchangeRate;
+use Illuminate\Database\Seeder;
 
 class CurrencySeeder extends Seeder
 {
@@ -19,11 +19,11 @@ class CurrencySeeder extends Seeder
             ['code' => 'AUD', 'symbol' => 'A$', 'name' => 'Australian Dollar', 'decimal_places' => 2],
             ['code' => 'RON', 'symbol' => 'lei', 'name' => 'Romanian Leu', 'decimal_places' => 2],
         ];
-        
+
         foreach ($currencies as $currency) {
             Currency::updateOrCreate(['code' => $currency['code']], $currency);
         }
-        
+
         // Create exchange rates (USD as base)
         $usd = Currency::where('code', 'USD')->first();
         $rates = [
@@ -34,7 +34,7 @@ class CurrencySeeder extends Seeder
             ['to' => 'AUD', 'rate' => 1.53],
             ['to' => 'RON', 'rate' => 4.57],
         ];
-        
+
         foreach ($rates as $rate) {
             $toCurrency = Currency::where('code', $rate['to'])->first();
             if ($usd && $toCurrency) {

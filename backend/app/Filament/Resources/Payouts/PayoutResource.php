@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Payouts;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Payouts\Pages\CreatePayout;
 use App\Filament\Resources\Payouts\Pages\EditPayout;
 use App\Filament\Resources\Payouts\Pages\ListPayouts;
@@ -9,7 +10,6 @@ use App\Filament\Resources\Payouts\Pages\ViewPayout;
 use App\Filament\Resources\Payouts\Schemas\PayoutForm;
 use App\Filament\Resources\Payouts\Schemas\PayoutInfolist;
 use App\Filament\Resources\Payouts\Tables\PayoutsTable;
-use App\Enums\NavigationGroup;
 use App\Models\Payout;
 use BackedEnum;
 use Filament\Resources\Resource;

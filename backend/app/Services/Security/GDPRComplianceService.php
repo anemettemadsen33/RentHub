@@ -2,9 +2,9 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
 use App\Models\Booking;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -51,14 +51,14 @@ class GDPRComplianceService
     public function anonymizeUser(User $user): bool
     {
         DB::beginTransaction();
-        
+
         try {
             $anonymousId = $this->encryptionService->anonymize($user->email);
 
             // Anonymize user data
             $user->update([
                 'name' => 'Anonymous User',
-                'email' => $anonymousId . '@anonymized.local',
+                'email' => $anonymousId.'@anonymized.local',
                 'phone' => null,
                 'avatar' => null,
                 'bio' => null,
@@ -73,7 +73,7 @@ class GDPRComplianceService
             // Keep bookings but anonymize guest info
             Booking::where('user_id', $user->id)->update([
                 'guest_name' => 'Anonymous Guest',
-                'guest_email' => $anonymousId . '@anonymized.local',
+                'guest_email' => $anonymousId.'@anonymized.local',
                 'guest_phone' => null,
             ]);
 
@@ -85,6 +85,7 @@ class GDPRComplianceService
             ]);
 
             DB::commit();
+
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -92,6 +93,7 @@ class GDPRComplianceService
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -123,7 +125,7 @@ class GDPRComplianceService
             $user->messages()->delete();
             $user->wishlist()->detach();
             $user->paymentMethods()->delete();
-            
+
             // Force delete user
             $user->forceDelete();
 

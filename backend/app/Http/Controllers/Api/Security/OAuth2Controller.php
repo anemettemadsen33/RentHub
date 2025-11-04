@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\OAuth2Service;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class OAuth2Controller extends Controller
 {
@@ -27,11 +27,11 @@ class OAuth2Controller extends Controller
 
         $user = $request->user();
         $client = \App\Models\OAuthClient::where('client_id', $request->client_id)->firstOrFail();
-        
+
         $scopes = $request->scope ? explode(' ', $request->scope) : [];
         $code = $this->oauth2Service->generateAuthorizationCode($user, $client, $scopes);
 
-        $redirectUri = $request->redirect_uri . '?code=' . $code;
+        $redirectUri = $request->redirect_uri.'?code='.$code;
 
         return response()->json([
             'redirect_uri' => $redirectUri,

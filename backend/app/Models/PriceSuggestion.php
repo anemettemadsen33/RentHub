@@ -75,7 +75,7 @@ class PriceSuggestion extends Model
     /**
      * Reject the suggestion
      */
-    public function reject(string $reason = null): void
+    public function reject(?string $reason = null): void
     {
         $this->update([
             'status' => 'rejected',

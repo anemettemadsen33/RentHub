@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['created_at', 'level']);
             $table->index(['user_id', 'created_at']);
         });

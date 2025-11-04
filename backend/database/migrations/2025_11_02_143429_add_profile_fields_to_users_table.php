@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('state', 100)->nullable()->after('city');
             $table->string('country', 100)->nullable()->after('state');
             $table->string('zip_code', 20)->nullable()->after('country');
-            
+
             // Settings & Privacy
             $table->json('settings')->nullable()->after('profile_completed_at');
             $table->json('privacy_settings')->nullable()->after('settings');
-            
+
             // Verification badges
             $table->timestamp('identity_verified_at')->nullable()->after('phone_verified_at');
             $table->timestamp('government_id_verified_at')->nullable()->after('identity_verified_at');

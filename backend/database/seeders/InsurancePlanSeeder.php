@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\InsurancePlan;
+use Illuminate\Database\Seeder;
 
 class InsurancePlanSeeder extends Seeder
 {
@@ -23,7 +23,7 @@ class InsurancePlanSeeder extends Seeder
                     'Medical Emergency' => 'Full refund if cancelled due to medical emergency with doctor\'s note',
                     'Family Emergency' => 'Full refund if cancelled due to immediate family emergency',
                     'Natural Disaster' => 'Full refund if cancelled due to natural disaster affecting travel',
-                    'Job Loss' => 'Partial refund if cancelled due to involuntary job loss'
+                    'Job Loss' => 'Partial refund if cancelled due to involuntary job loss',
                 ],
                 'exclusions' => [
                     'Change of mind or personal preference',

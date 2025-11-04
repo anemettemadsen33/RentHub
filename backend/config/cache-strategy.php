@@ -82,7 +82,7 @@ return [
     'warming' => [
         'enabled' => env('CACHE_WARMING_ENABLED', true),
         'schedule' => '0 */6 * * *', // Every 6 hours
-        
+
         'routes' => [
             '/api/properties/featured',
             '/api/properties/popular',
@@ -102,7 +102,7 @@ return [
         'algorithm' => env('COMPRESSION_ALGORITHM', 'gzip'), // gzip, brotli
         'level' => env('COMPRESSION_LEVEL', 6), // 1-9
         'min_size' => 1024, // Minimum response size to compress (bytes)
-        
+
         'mime_types' => [
             'application/json',
             'application/xml',
@@ -124,12 +124,12 @@ return [
             'max_age' => 31536000, // 1 year
             'paths' => ['/assets/*', '/images/*'],
         ],
-        
+
         'dynamic_content' => [
             'max_age' => 3600, // 1 hour
             'paths' => ['/api/*'],
         ],
-        
+
         'no_cache' => [
             'paths' => ['/admin/*', '/auth/*'],
         ],
@@ -184,7 +184,7 @@ return [
 
     'read_replicas' => [
         'enabled' => env('DB_READ_REPLICAS_ENABLED', false),
-        
+
         'connections' => [
             [
                 'host' => env('DB_READ_HOST_1'),

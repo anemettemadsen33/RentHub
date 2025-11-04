@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Booking;
-use App\Models\Review;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -86,7 +84,7 @@ class GDPRComplianceService
                 $user->notifications()->delete();
                 $user->wishlists()->delete();
                 $user->bookings()->delete();
-                
+
                 // Delete properties and their related data
                 foreach ($user->properties as $property) {
                     $property->images()->delete();
@@ -95,7 +93,7 @@ class GDPRComplianceService
                     $property->reviews()->delete();
                     $property->delete();
                 }
-                
+
                 // Delete user
                 $user->delete();
             }
@@ -110,7 +108,7 @@ class GDPRComplianceService
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Failed to delete user data', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
@@ -126,8 +124,8 @@ class GDPRComplianceService
     private function anonymizeUserData(User $user): void
     {
         $anonymousData = [
-            'name' => 'Anonymous User ' . substr(md5($user->id), 0, 8),
-            'email' => 'deleted_' . time() . '_' . $user->id . '@anonymized.local',
+            'name' => 'Anonymous User '.substr(md5($user->id), 0, 8),
+            'email' => 'deleted_'.time().'_'.$user->id.'@anonymized.local',
             'phone' => null,
             'password' => bcrypt(bin2hex(random_bytes(32))),
             'email_verified_at' => null,
@@ -136,7 +134,7 @@ class GDPRComplianceService
         ];
 
         $user->update($anonymousData);
-        
+
         // Anonymize profile
         if ($user->profile) {
             $user->profile->update([
@@ -158,7 +156,7 @@ class GDPRComplianceService
      */
     public function shouldDeleteInactiveUser(User $user, int $inactiveDays = 730): bool
     {
-        if (!$user->last_login_at) {
+        if (! $user->last_login_at) {
             return false;
         }
 

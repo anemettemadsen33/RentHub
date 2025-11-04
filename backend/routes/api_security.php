@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\SecurityController;
 use App\Http\Controllers\Api\PerformanceController;
+use App\Http\Controllers\Api\SecurityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    
+
     // GDPR & Data Privacy Routes
     Route::prefix('security')->group(function () {
         Route::get('/data-export', [SecurityController::class, 'requestDataExport']);

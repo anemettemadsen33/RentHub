@@ -12,7 +12,7 @@ enum ConciergeServiceType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AIRPORT_PICKUP => 'Airport Pickup',
             self::GROCERY_DELIVERY => 'Grocery Delivery',
             self::LOCAL_EXPERIENCES => 'Local Experiences',
@@ -23,7 +23,7 @@ enum ConciergeServiceType: string
 
     public function icon(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AIRPORT_PICKUP => 'heroicon-o-truck',
             self::GROCERY_DELIVERY => 'heroicon-o-shopping-bag',
             self::LOCAL_EXPERIENCES => 'heroicon-o-map',
@@ -34,7 +34,7 @@ enum ConciergeServiceType: string
 
     public function description(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AIRPORT_PICKUP => 'Professional airport transfer service',
             self::GROCERY_DELIVERY => 'Fresh groceries delivered to your property',
             self::LOCAL_EXPERIENCES => 'Guided tours and local activities',

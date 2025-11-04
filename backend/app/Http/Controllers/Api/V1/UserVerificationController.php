@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserVerification;
 use App\Models\VerificationDocument;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +26,7 @@ class UserVerificationController extends Controller
             'data' => [
                 'verification' => $verification,
                 'documents' => $verification->documents()->get(),
-            ]
+            ],
         ]);
     }
 
@@ -36,7 +36,7 @@ class UserVerificationController extends Controller
     public function submitIdVerification(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'id_document_type' => ['required', Rule::in(['passport', 'driving_license', 'national_id'])],
             'id_document_number' => 'required|string|max:50',
@@ -66,7 +66,7 @@ class UserVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'ID verification submitted successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -76,7 +76,7 @@ class UserVerificationController extends Controller
     public function sendPhoneVerification(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'phone_number' => 'required|string|max:20',
         ]);
@@ -89,7 +89,7 @@ class UserVerificationController extends Controller
         $verification->phone_verification_code = $code;
         $verification->phone_verification_code_sent_at = now();
         $verification->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Verification code sent to phone',
@@ -103,31 +103,31 @@ class UserVerificationController extends Controller
     public function verifyPhone(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'code' => 'required|string|size:6',
         ]);
 
         $verification = $user->verification;
 
-        if (!$verification || !$verification->phone_verification_code) {
+        if (! $verification || ! $verification->phone_verification_code) {
             return response()->json([
                 'success' => false,
-                'message' => 'No verification code found. Please request a new code.'
+                'message' => 'No verification code found. Please request a new code.',
             ], 400);
         }
 
         if ($verification->phone_verification_code_sent_at->diffInMinutes(now()) > 10) {
             return response()->json([
                 'success' => false,
-                'message' => 'Verification code expired. Please request a new code.'
+                'message' => 'Verification code expired. Please request a new code.',
             ], 400);
         }
 
         if ($verification->phone_verification_code !== $validated['code']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid verification code.'
+                'message' => 'Invalid verification code.',
             ], 400);
         }
 
@@ -139,7 +139,7 @@ class UserVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Phone number verified successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -149,7 +149,7 @@ class UserVerificationController extends Controller
     public function submitAddressVerification(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'address' => 'required|string|max:500',
             'address_proof_document' => ['required', Rule::in(['utility_bill', 'bank_statement', 'rental_contract', 'other'])],
@@ -159,7 +159,7 @@ class UserVerificationController extends Controller
         $verification = $user->verification ?? UserVerification::create(['user_id' => $user->id]);
 
         $proofPath = $request->file('address_proof_image')->store('verifications/address-proofs', 'public');
-        
+
         $verification->address = $validated['address'];
         $verification->address_proof_document = $validated['address_proof_document'];
         $verification->address_proof_image = $proofPath;
@@ -169,7 +169,7 @@ class UserVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Address verification submitted successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -181,10 +181,10 @@ class UserVerificationController extends Controller
         $user = $request->user();
         $verification = $user->verification;
 
-        if (!$verification || !$verification->canRequestBackgroundCheck()) {
+        if (! $verification || ! $verification->canRequestBackgroundCheck()) {
             return response()->json([
                 'success' => false,
-                'message' => 'You must complete ID verification first'
+                'message' => 'You must complete ID verification first',
             ], 400);
         }
 
@@ -194,7 +194,7 @@ class UserVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Background check requested successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -204,11 +204,11 @@ class UserVerificationController extends Controller
     public function uploadDocument(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'document_type' => ['required', Rule::in([
                 'id_card', 'passport', 'driving_license', 'selfie',
-                'address_proof', 'bank_statement', 'other'
+                'address_proof', 'bank_statement', 'other',
             ])],
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240',
             'metadata' => 'nullable|array',
@@ -235,7 +235,7 @@ class UserVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Document uploaded successfully',
-            'data' => $document
+            'data' => $document,
         ]);
     }
 
@@ -250,14 +250,14 @@ class UserVerificationController extends Controller
         if ($document->uploaded_by !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         if ($document->status !== 'pending') {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete reviewed documents'
+                'message' => 'Cannot delete reviewed documents',
             ], 400);
         }
 
@@ -269,7 +269,7 @@ class UserVerificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Document deleted successfully'
+            'message' => 'Document deleted successfully',
         ]);
     }
 }

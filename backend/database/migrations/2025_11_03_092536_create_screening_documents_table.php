@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('guest_screening_id')->constrained()->onDelete('cascade');
             $table->foreignId('uploaded_by')->constrained('users')->onDelete('cascade');
-            
+
             $table->enum('document_type', [
                 'passport',
                 'id_card',
@@ -24,28 +24,28 @@ return new class extends Migration
                 'employment_letter',
                 'bank_statement',
                 'utility_bill',
-                'other'
+                'other',
             ]);
             $table->string('document_number')->nullable();
             $table->string('file_path');
             $table->string('file_name');
             $table->string('file_type');
             $table->integer('file_size');
-            
+
             // Verification
             $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
             $table->foreignId('verified_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('verified_at')->nullable();
             $table->text('verification_notes')->nullable();
-            
+
             // Document metadata
             $table->date('issue_date')->nullable();
             $table->date('expiry_date')->nullable();
             $table->string('issuing_country')->nullable();
             $table->string('issuing_authority')->nullable();
-            
+
             $table->timestamps();
-            
+
             // Indexes
             $table->index('guest_screening_id');
             $table->index('document_type');

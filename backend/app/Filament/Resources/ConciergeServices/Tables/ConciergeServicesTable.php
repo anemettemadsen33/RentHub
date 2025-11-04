@@ -29,13 +29,13 @@ class ConciergeServicesTable
                     ->stacked()
                     ->limit(1)
                     ->defaultImageUrl(url('/images/placeholder-service.jpg')),
-                
+
                 TextColumn::make('name')
                     ->label('Service Name')
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
-                
+
                 TextColumn::make('service_type')
                     ->label('Type')
                     ->badge()
@@ -43,45 +43,48 @@ class ConciergeServicesTable
                     ->icon(fn ($state) => ConciergeServiceType::from($state)->icon())
                     ->searchable()
                     ->sortable(),
-                
+
                 TextColumn::make('serviceProvider.name')
                     ->label('Provider')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                
+
                 TextColumn::make('base_price')
                     ->label('Price')
                     ->money('USD')
                     ->sortable()
-                    ->suffix(fn ($record) => ' / ' . $record->price_unit),
-                
+                    ->suffix(fn ($record) => ' / '.$record->price_unit),
+
                 TextColumn::make('duration_minutes')
                     ->label('Duration')
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return 'Variable';
+                        if (! $state) {
+                            return 'Variable';
+                        }
                         $hours = floor($state / 60);
                         $minutes = $state % 60;
                         if ($hours > 0) {
-                            return $hours . 'h' . ($minutes > 0 ? ' ' . $minutes . 'm' : '');
+                            return $hours.'h'.($minutes > 0 ? ' '.$minutes.'m' : '');
                         }
-                        return $minutes . 'm';
+
+                        return $minutes.'m';
                     })
                     ->sortable()
                     ->toggleable(),
-                
+
                 IconColumn::make('is_available')
                     ->label('Available')
                     ->boolean()
                     ->sortable(),
-                
+
                 TextColumn::make('bookings_count')
                     ->label('Bookings')
                     ->counts('bookings')
                     ->badge()
                     ->color('success')
                     ->sortable(),
-                
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -92,18 +95,18 @@ class ConciergeServicesTable
                     ->label('Service Type')
                     ->options(ConciergeServiceType::class)
                     ->multiple(),
-                
+
                 TernaryFilter::make('is_available')
                     ->label('Availability')
                     ->placeholder('All services')
                     ->trueLabel('Available only')
                     ->falseLabel('Unavailable only'),
-                
+
                 SelectFilter::make('service_provider')
                     ->relationship('serviceProvider', 'name')
                     ->searchable()
                     ->preload(),
-                
+
                 TrashedFilter::make(),
             ])
             ->recordActions([

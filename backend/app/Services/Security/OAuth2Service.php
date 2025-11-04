@@ -2,19 +2,21 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
-use App\Models\OAuthClient;
 use App\Models\OAuthAccessToken;
+use App\Models\OAuthClient;
 use App\Models\OAuthRefreshToken;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class OAuth2Service
 {
     private const ACCESS_TOKEN_LIFETIME = 3600; // 1 hour
+
     private const REFRESH_TOKEN_LIFETIME = 2592000; // 30 days
+
     private const AUTHORIZATION_CODE_LIFETIME = 600; // 10 minutes
 
     /**
@@ -23,7 +25,7 @@ class OAuth2Service
     public function generateAuthorizationCode(User $user, OAuthClient $client, array $scopes = []): string
     {
         $code = Str::random(64);
-        
+
         cache()->put(
             "oauth:auth_code:{$code}",
             [
@@ -48,14 +50,14 @@ class OAuth2Service
         string $redirectUri
     ): array {
         $authData = cache()->get("oauth:auth_code:{$code}");
-        
-        if (!$authData) {
+
+        if (! $authData) {
             throw new Exception('Invalid or expired authorization code');
         }
 
         $client = OAuthClient::where('client_id', $clientId)->first();
-        
-        if (!$client || !Hash::check($clientSecret, $client->client_secret)) {
+
+        if (! $client || ! Hash::check($clientSecret, $client->client_secret)) {
             throw new Exception('Invalid client credentials');
         }
 
@@ -126,13 +128,13 @@ class OAuth2Service
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$token) {
+        if (! $token) {
             throw new Exception('Invalid or expired refresh token');
         }
 
         $client = OAuthClient::where('client_id', $clientId)->first();
-        
-        if (!$client || !Hash::check($clientSecret, $client->client_secret)) {
+
+        if (! $client || ! Hash::check($clientSecret, $client->client_secret)) {
             throw new Exception('Invalid client credentials');
         }
 
@@ -155,7 +157,7 @@ class OAuth2Service
     {
         OAuthAccessToken::where('token', $token)->delete();
         OAuthRefreshToken::where('token', $token)->delete();
-        
+
         return true;
     }
 
@@ -176,7 +178,7 @@ class OAuth2Service
     {
         $accessToken = $this->validateAccessToken($token);
 
-        if (!$accessToken) {
+        if (! $accessToken) {
             return ['active' => false];
         }
 

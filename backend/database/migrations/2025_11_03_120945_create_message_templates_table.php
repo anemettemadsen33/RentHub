@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
             $table->integer('usage_count')->default(0);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'category']);
             $table->index('trigger_event');
         });

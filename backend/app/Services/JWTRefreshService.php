@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\RefreshToken;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class JWTRefreshService
 {
@@ -20,7 +19,7 @@ class JWTRefreshService
             ->where('revoked', false)
             ->first();
 
-        if (!$tokenRecord) {
+        if (! $tokenRecord) {
             throw new \Exception('Invalid or expired refresh token');
         }
 
@@ -149,7 +148,7 @@ class JWTRefreshService
             ->update(['revoked' => true]);
 
         $children = RefreshToken::where('parent_token_id', $tokenId)->pluck('id');
-        
+
         foreach ($children as $childId) {
             $this->revokeTokenDescendants($childId);
         }
@@ -161,7 +160,7 @@ class JWTRefreshService
     private function forceLogoutUser(int $userId): void
     {
         RefreshToken::where('user_id', $userId)->update(['revoked' => true]);
-        
+
         // Clear user sessions
         \Cache::forget("user_sessions:{$userId}");
     }
@@ -172,7 +171,7 @@ class JWTRefreshService
     private function getUserPermissions(User $user): array
     {
         $cacheKey = "user_permissions:{$user->id}";
-        
+
         return \Cache::remember($cacheKey, 300, function () use ($user) {
             return $user->getAllPermissions()->pluck('name')->toArray();
         });
@@ -186,8 +185,8 @@ class JWTRefreshService
         $header = base64_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
         $payload = base64_encode(json_encode($payload));
         $signature = hash_hmac('sha256', "$header.$payload", config('jwt.secret'));
-        
-        return "$header.$payload." . base64_encode($signature);
+
+        return "$header.$payload.".base64_encode($signature);
     }
 
     /**
@@ -196,13 +195,13 @@ class JWTRefreshService
     public function decodeJWT(string $token): ?array
     {
         $parts = explode('.', $token);
-        
+
         if (count($parts) !== 3) {
             return null;
         }
 
         [$header, $payload, $signature] = $parts;
-        
+
         // Verify signature
         $validSignature = base64_encode(
             hash_hmac('sha256', "$header.$payload", config('jwt.secret'))

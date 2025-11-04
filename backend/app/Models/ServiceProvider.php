@@ -115,8 +115,8 @@ class ServiceProvider extends Model
         // Check if provider works on this day
         $dayOfWeek = strtolower(date('l', strtotime($date)));
         $workingHours = $this->working_hours[$dayOfWeek] ?? null;
-        
-        if (!$workingHours) {
+
+        if (! $workingHours) {
             return false;
         }
 
@@ -157,7 +157,7 @@ class ServiceProvider extends Model
 
     public function canServiceArea(string $city): bool
     {
-        if (!$this->service_areas) {
+        if (! $this->service_areas) {
             return true; // Services all areas if not specified
         }
 

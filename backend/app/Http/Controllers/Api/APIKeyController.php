@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Services\Auth\APIKeyService;
 use App\Models\ApiKey;
-use Illuminate\Http\Request;
+use App\Services\Auth\APIKeyService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class APIKeyController extends Controller
 {
@@ -147,8 +147,8 @@ class APIKeyController extends Controller
                 'expires_at' => $apiKey->expires_at,
                 'is_active' => $apiKey->active,
                 'is_expired' => $apiKey->is_expired,
-                'days_until_expiry' => $apiKey->expires_at 
-                    ? now()->diffInDays($apiKey->expires_at, false) 
+                'days_until_expiry' => $apiKey->expires_at
+                    ? now()->diffInDays($apiKey->expires_at, false)
                     : null,
             ],
         ]);

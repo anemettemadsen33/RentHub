@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->json('provider_data')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['provider', 'provider_id']);
         });
     }

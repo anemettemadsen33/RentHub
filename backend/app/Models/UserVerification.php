@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class UserVerification extends Model
 {
@@ -79,13 +79,23 @@ class UserVerification extends Model
     public function calculateVerificationScore(): int
     {
         $score = 0;
-        
-        if ($this->id_verification_status === 'approved') $score += 30;
-        if ($this->phone_verification_status === 'verified') $score += 20;
-        if ($this->email_verification_status === 'verified') $score += 20;
-        if ($this->address_verification_status === 'approved') $score += 20;
-        if ($this->background_check_status === 'completed') $score += 10;
-        
+
+        if ($this->id_verification_status === 'approved') {
+            $score += 30;
+        }
+        if ($this->phone_verification_status === 'verified') {
+            $score += 20;
+        }
+        if ($this->email_verification_status === 'verified') {
+            $score += 20;
+        }
+        if ($this->address_verification_status === 'approved') {
+            $score += 20;
+        }
+        if ($this->background_check_status === 'completed') {
+            $score += 10;
+        }
+
         return $score;
     }
 
@@ -93,7 +103,7 @@ class UserVerification extends Model
     {
         $score = $this->calculateVerificationScore();
         $this->verification_score = $score;
-        
+
         if ($score === 0) {
             $this->overall_status = 'unverified';
         } elseif ($score < 70) {
@@ -101,7 +111,7 @@ class UserVerification extends Model
         } else {
             $this->overall_status = 'fully_verified';
         }
-        
+
         $this->save();
     }
 
@@ -112,7 +122,7 @@ class UserVerification extends Model
 
     public function canRequestBackgroundCheck(): bool
     {
-        return $this->id_verification_status === 'approved' 
+        return $this->id_verification_status === 'approved'
             && $this->background_check_status === 'not_requested';
     }
 }

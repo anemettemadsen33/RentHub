@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class MessagePolicy
 {
@@ -16,7 +15,8 @@ class MessagePolicy
     public function view(User $user, Message $message): bool
     {
         $conversation = $message->conversation;
-        return $user->id === $conversation->tenant_id 
+
+        return $user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id
             || $user->isAdmin();
     }
@@ -28,7 +28,7 @@ class MessagePolicy
 
     public function update(User $user, Message $message): bool
     {
-        return $user->id === $message->sender_id 
+        return $user->id === $message->sender_id
             && $message->created_at->diffInMinutes(now()) <= 15;
     }
 

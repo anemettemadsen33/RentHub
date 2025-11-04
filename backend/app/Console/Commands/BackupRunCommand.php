@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\BackupService;
+use Illuminate\Console\Command;
 
 class BackupRunCommand extends Command
 {
@@ -16,12 +16,12 @@ class BackupRunCommand extends Command
     public function handle(BackupService $backupService)
     {
         $type = $this->option('type');
-        
+
         $this->info("Starting {$type} backup...");
-        
+
         try {
             $startTime = microtime(true);
-            
+
             switch ($type) {
                 case 'database':
                     $result = $backupService->backupDatabase();
@@ -34,28 +34,29 @@ class BackupRunCommand extends Command
                     $result = $backupService->createFullBackup();
                     break;
             }
-            
+
             $duration = round(microtime(true) - $startTime, 2);
-            
+
             $this->info("Backup completed successfully in {$duration} seconds");
-            
+
             if ($this->option('verify')) {
                 $this->info('Verifying backup...');
                 // Verification logic
             }
-            
+
             $this->table(
                 ['Metric', 'Value'],
                 [
-                    ['Duration', $duration . 's'],
+                    ['Duration', $duration.'s'],
                     ['Type', $type],
                     ['Status', 'Success'],
                 ]
             );
-            
+
             return 0;
         } catch (\Exception $e) {
-            $this->error('Backup failed: ' . $e->getMessage());
+            $this->error('Backup failed: '.$e->getMessage());
+
             return 1;
         }
     }

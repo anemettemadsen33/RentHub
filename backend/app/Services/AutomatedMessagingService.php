@@ -118,6 +118,7 @@ class AutomatedMessagingService
         // Create new conversation
         if ($scheduledMessage->booking_id) {
             $booking = $scheduledMessage->booking;
+
             return Conversation::firstOrCreate([
                 'booking_id' => $booking->id,
                 'owner_id' => $booking->property->user_id,
@@ -165,7 +166,7 @@ class AutomatedMessagingService
         $conversation = $message->conversation;
         $ownerId = $conversation->owner_id ?? $conversation->property?->user_id;
 
-        if (!$ownerId || $message->sender_id == $ownerId) {
+        if (! $ownerId || $message->sender_id == $ownerId) {
             return null;
         }
 
@@ -174,9 +175,9 @@ class AutomatedMessagingService
             ->active()
             ->byPriority()
             ->get()
-            ->first(fn($ar) => $ar->matches($message->message));
+            ->first(fn ($ar) => $ar->matches($message->message));
 
-        if (!$autoResponse) {
+        if (! $autoResponse) {
             return null;
         }
 
@@ -297,39 +298,39 @@ class AutomatedMessagingService
         // Inquiry responses
         if (str_contains($content, 'available') || str_contains($content, 'book')) {
             $suggestions[] = "Yes, it's available for those dates! Would you like to proceed with the booking?";
-            $suggestions[] = "Let me check the availability and get back to you shortly.";
+            $suggestions[] = 'Let me check the availability and get back to you shortly.';
         }
 
         // Pricing inquiries
         if (str_contains($content, 'price') || str_contains($content, 'cost') || str_contains($content, 'how much')) {
-            $suggestions[] = "The nightly rate is shown on the listing. Would you like more details about pricing?";
-            $suggestions[] = "I can offer you a special rate for longer stays. How many nights are you planning?";
+            $suggestions[] = 'The nightly rate is shown on the listing. Would you like more details about pricing?';
+            $suggestions[] = 'I can offer you a special rate for longer stays. How many nights are you planning?';
         }
 
         // Amenity questions
         if (str_contains($content, 'wifi') || str_contains($content, 'internet')) {
-            $suggestions[] = "Yes, we provide high-speed WiFi. The password will be shared upon check-in.";
+            $suggestions[] = 'Yes, we provide high-speed WiFi. The password will be shared upon check-in.';
         }
 
         if (str_contains($content, 'parking')) {
-            $suggestions[] = "Yes, free parking is available on the premises.";
-            $suggestions[] = "Street parking is available nearby.";
+            $suggestions[] = 'Yes, free parking is available on the premises.';
+            $suggestions[] = 'Street parking is available nearby.';
         }
 
         // Check-in/out
         if (str_contains($content, 'check in') || str_contains($content, 'check-in')) {
             $suggestions[] = "Check-in is at 3:00 PM. I'll send you detailed instructions closer to your arrival date.";
-            $suggestions[] = "Early check-in may be available. Let me check and confirm.";
+            $suggestions[] = 'Early check-in may be available. Let me check and confirm.';
         }
 
         if (str_contains($content, 'check out') || str_contains($content, 'checkout')) {
-            $suggestions[] = "Check-out is at 11:00 AM. Late checkout can be arranged if needed.";
+            $suggestions[] = 'Check-out is at 11:00 AM. Late checkout can be arranged if needed.';
         }
 
         // General
         if (empty($suggestions)) {
             $suggestions[] = "Thank you for your message! I'll get back to you shortly.";
-            $suggestions[] = "Thanks for reaching out! How can I help you?";
+            $suggestions[] = 'Thanks for reaching out! How can I help you?';
         }
 
         return array_slice($suggestions, 0, 3); // Return max 3 suggestions
@@ -342,6 +343,7 @@ class AutomatedMessagingService
     {
         if ($message->isPending()) {
             $message->cancel();
+
             return true;
         }
 

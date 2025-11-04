@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('session_id')->nullable()->index(); // For guest users
             $table->timestamp('expires_at')->nullable(); // Auto-cleanup old comparisons
             $table->timestamps();
-            
+
             $table->index(['user_id', 'created_at']);
             $table->index(['session_id', 'created_at']);
         });

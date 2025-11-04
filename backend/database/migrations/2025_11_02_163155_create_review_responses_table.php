@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // owner
             $table->text('response');
             $table->timestamps();
-            
+
             // Indexes
             $table->index('review_id');
             $table->index('user_id');

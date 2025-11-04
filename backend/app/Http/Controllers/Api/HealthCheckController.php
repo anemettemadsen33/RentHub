@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Queue;
 
 class HealthCheckController extends Controller
 {
@@ -30,27 +30,37 @@ class HealthCheckController extends Controller
         // Database check
         $dbCheck = $this->checkDatabase();
         $checks['checks']['database'] = $dbCheck;
-        if (!$dbCheck['healthy']) $allHealthy = false;
+        if (! $dbCheck['healthy']) {
+            $allHealthy = false;
+        }
 
         // Redis check
         $redisCheck = $this->checkRedis();
         $checks['checks']['redis'] = $redisCheck;
-        if (!$redisCheck['healthy']) $allHealthy = false;
+        if (! $redisCheck['healthy']) {
+            $allHealthy = false;
+        }
 
         // Cache check
         $cacheCheck = $this->checkCache();
         $checks['checks']['cache'] = $cacheCheck;
-        if (!$cacheCheck['healthy']) $allHealthy = false;
+        if (! $cacheCheck['healthy']) {
+            $allHealthy = false;
+        }
 
         // Storage check
         $storageCheck = $this->checkStorage();
         $checks['checks']['storage'] = $storageCheck;
-        if (!$storageCheck['healthy']) $allHealthy = false;
+        if (! $storageCheck['healthy']) {
+            $allHealthy = false;
+        }
 
         // Queue check
         $queueCheck = $this->checkQueue();
         $checks['checks']['queue'] = $queueCheck;
-        if (!$queueCheck['healthy']) $allHealthy = false;
+        if (! $queueCheck['healthy']) {
+            $allHealthy = false;
+        }
 
         // System resources
         $checks['resources'] = $this->getSystemResources();
@@ -110,14 +120,14 @@ class HealthCheckController extends Controller
     private function checkDatabase(): array
     {
         $start = microtime(true);
-        
+
         try {
             DB::connection()->getPdo();
             $latency = round((microtime(true) - $start) * 1000, 2);
-            
+
             // Test query
             $result = DB::select('SELECT 1 as test');
-            
+
             return [
                 'healthy' => true,
                 'latency_ms' => $latency,
@@ -137,11 +147,11 @@ class HealthCheckController extends Controller
     private function checkRedis(): array
     {
         $start = microtime(true);
-        
+
         try {
             $pong = Redis::ping();
             $latency = round((microtime(true) - $start) * 1000, 2);
-            
+
             return [
                 'healthy' => $pong === true || $pong === 'PONG',
                 'latency_ms' => $latency,
@@ -160,17 +170,17 @@ class HealthCheckController extends Controller
     private function checkCache(): array
     {
         $start = microtime(true);
-        
+
         try {
-            $testKey = 'health_check_' . time();
+            $testKey = 'health_check_'.time();
             $testValue = 'test';
-            
+
             Cache::put($testKey, $testValue, 60);
             $retrieved = Cache::get($testKey);
             Cache::forget($testKey);
-            
+
             $latency = round((microtime(true) - $start) * 1000, 2);
-            
+
             return [
                 'healthy' => $retrieved === $testValue,
                 'latency_ms' => $latency,
@@ -191,22 +201,22 @@ class HealthCheckController extends Controller
     {
         try {
             $disk = Storage::getDefaultDriver();
-            $testFile = 'health_check_' . time() . '.txt';
-            
+            $testFile = 'health_check_'.time().'.txt';
+
             // Write test
             Storage::put($testFile, 'test');
-            
+
             // Read test
             $content = Storage::get($testFile);
-            
+
             // Delete test
             Storage::delete($testFile);
-            
+
             // Disk usage
             $totalSpace = disk_total_space(storage_path());
             $freeSpace = disk_free_space(storage_path());
             $usedPercent = round((($totalSpace - $freeSpace) / $totalSpace) * 100, 2);
-            
+
             return [
                 'healthy' => $content === 'test',
                 'driver' => $disk,
@@ -229,7 +239,7 @@ class HealthCheckController extends Controller
         try {
             $connection = config('queue.default');
             $size = Queue::size();
-            
+
             return [
                 'healthy' => true,
                 'connection' => $connection,
@@ -381,11 +391,12 @@ class HealthCheckController extends Controller
 function uptime(): int
 {
     $uptimeFile = storage_path('framework/uptime');
-    
-    if (!file_exists($uptimeFile)) {
+
+    if (! file_exists($uptimeFile)) {
         file_put_contents($uptimeFile, time());
     }
-    
+
     $startTime = (int) file_get_contents($uptimeFile);
+
     return time() - $startTime;
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Security\InputValidationService;
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\Security\InputValidationService;
 use Symfony\Component\HttpFoundation\Response;
 
 class XssProtectionMiddleware
@@ -18,7 +18,7 @@ class XssProtectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!config('security.app_security.xss_protection.enabled', true)) {
+        if (! config('security.app_security.xss_protection.enabled', true)) {
             return $next($request);
         }
 
@@ -41,7 +41,7 @@ class XssProtectionMiddleware
      */
     protected function sanitizeInput(Request $request): void
     {
-        if (!config('security.app_security.xss_protection.sanitize_output', true)) {
+        if (! config('security.app_security.xss_protection.sanitize_output', true)) {
             return;
         }
 

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Property;
 use App\Models\BlogPost;
-use Illuminate\Http\Request;
+use App\Models\Property;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -18,10 +17,10 @@ class SEOController extends Controller
         $sitemap = Cache::remember('sitemap', 3600, function () {
             $xml = '<?xml version="1.0" encoding="UTF-8"?>';
             $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-            
+
             // Homepage
             $xml .= $this->addUrl(url('/'), now(), 'daily', '1.0');
-            
+
             // Static pages
             $staticPages = [
                 '/about',
@@ -31,55 +30,55 @@ class SEOController extends Controller
                 '/privacy',
                 '/properties',
             ];
-            
+
             foreach ($staticPages as $page) {
                 $xml .= $this->addUrl(url($page), now(), 'weekly', '0.8');
             }
-            
+
             // Properties
             $properties = Property::where('status', 'active')->get();
             foreach ($properties as $property) {
                 $xml .= $this->addUrl(
-                    url('/properties/' . $property->slug),
+                    url('/properties/'.$property->slug),
                     $property->updated_at,
                     'weekly',
                     '0.9'
                 );
             }
-            
+
             // Locations
             $locations = Property::select('city', 'country')
                 ->distinct()
                 ->get();
-            
+
             foreach ($locations as $location) {
-                $slug = Str::slug($location->city . '-' . $location->country);
+                $slug = Str::slug($location->city.'-'.$location->country);
                 $xml .= $this->addUrl(
-                    url('/locations/' . $slug),
+                    url('/locations/'.$slug),
                     now(),
                     'weekly',
                     '0.7'
                 );
             }
-            
+
             // Blog posts
             if (class_exists(BlogPost::class)) {
                 $posts = BlogPost::where('published', true)->get();
                 foreach ($posts as $post) {
                     $xml .= $this->addUrl(
-                        url('/blog/' . $post->slug),
+                        url('/blog/'.$post->slug),
                         $post->updated_at,
                         'monthly',
                         '0.6'
                     );
                 }
             }
-            
+
             $xml .= '</urlset>';
-            
+
             return $xml;
         });
-        
+
         return response($sitemap, 200)
             ->header('Content-Type', 'application/xml');
     }
@@ -95,8 +94,8 @@ class SEOController extends Controller
         $content .= "Disallow: /api/\n";
         $content .= "Disallow: /dashboard/\n";
         $content .= "\n";
-        $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
-        
+        $content .= 'Sitemap: '.url('/sitemap.xml')."\n";
+
         return response($content, 200)
             ->header('Content-Type', 'text/plain');
     }
@@ -107,7 +106,7 @@ class SEOController extends Controller
     public function propertyMeta(Property $property)
     {
         $meta = [
-            'title' => $property->title . ' - RentHub',
+            'title' => $property->title.' - RentHub',
             'description' => Str::limit($property->description, 160),
             'keywords' => implode(', ', [
                 $property->property_type,
@@ -120,15 +119,15 @@ class SEOController extends Controller
             'og:title' => $property->title,
             'og:description' => Str::limit($property->description, 200),
             'og:image' => $property->images->first()?->url ?? url('/default-property.jpg'),
-            'og:url' => url('/properties/' . $property->slug),
+            'og:url' => url('/properties/'.$property->slug),
             'og:type' => 'website',
             'twitter:card' => 'summary_large_image',
             'twitter:title' => $property->title,
             'twitter:description' => Str::limit($property->description, 200),
             'twitter:image' => $property->images->first()?->url ?? url('/default-property.jpg'),
-            'canonical' => url('/properties/' . $property->slug),
+            'canonical' => url('/properties/'.$property->slug),
         ];
-        
+
         return response()->json($meta);
     }
 
@@ -145,14 +144,14 @@ class SEOController extends Controller
             'image' => $property->images->pluck('url')->toArray(),
             'brand' => [
                 '@type' => 'Brand',
-                'name' => 'RentHub'
+                'name' => 'RentHub',
             ],
             'offers' => [
                 '@type' => 'Offer',
                 'price' => $property->price,
                 'priceCurrency' => 'USD',
                 'availability' => 'https://schema.org/InStock',
-                'url' => url('/properties/' . $property->slug),
+                'url' => url('/properties/'.$property->slug),
             ],
             'aggregateRating' => [
                 '@type' => 'AggregateRating',
@@ -165,7 +164,7 @@ class SEOController extends Controller
                 'addressCountry' => $property->country,
             ],
         ];
-        
+
         return response()->json($structuredData);
     }
 
@@ -175,12 +174,12 @@ class SEOController extends Controller
     private function addUrl(string $loc, $lastmod, string $changefreq, string $priority): string
     {
         $xml = '<url>';
-        $xml .= '<loc>' . htmlspecialchars($loc) . '</loc>';
-        $xml .= '<lastmod>' . $lastmod->format('Y-m-d') . '</lastmod>';
-        $xml .= '<changefreq>' . $changefreq . '</changefreq>';
-        $xml .= '<priority>' . $priority . '</priority>';
+        $xml .= '<loc>'.htmlspecialchars($loc).'</loc>';
+        $xml .= '<lastmod>'.$lastmod->format('Y-m-d').'</lastmod>';
+        $xml .= '<changefreq>'.$changefreq.'</changefreq>';
+        $xml .= '<priority>'.$priority.'</priority>';
         $xml .= '</url>';
-        
+
         return $xml;
     }
 
@@ -192,18 +191,18 @@ class SEOController extends Controller
         [$city, $country] = explode('-', $slug, 2);
         $city = str_replace('-', ' ', $city);
         $country = str_replace('-', ' ', $country);
-        
+
         $properties = Property::where('city', 'LIKE', "%{$city}%")
             ->where('country', 'LIKE', "%{$country}%")
             ->where('status', 'active')
             ->paginate(12);
-        
+
         $meta = [
             'title' => "Vacation Rentals in {$city}, {$country} - RentHub",
             'description' => "Find the perfect vacation rental in {$city}, {$country}. Browse {$properties->total()} properties with great reviews and instant booking.",
-            'canonical' => url('/locations/' . $slug),
+            'canonical' => url('/locations/'.$slug),
         ];
-        
+
         return response()->json([
             'properties' => $properties,
             'location' => ['city' => $city, 'country' => $country],
@@ -217,17 +216,17 @@ class SEOController extends Controller
     public function propertyTypePage(string $type)
     {
         $typeName = str_replace('-', ' ', $type);
-        
+
         $properties = Property::where('property_type', 'LIKE', "%{$typeName}%")
             ->where('status', 'active')
             ->paginate(12);
-        
+
         $meta = [
-            'title' => ucfirst($typeName) . " Rentals - RentHub",
+            'title' => ucfirst($typeName).' Rentals - RentHub',
             'description' => "Book your perfect {$typeName} rental. Browse {$properties->total()} verified properties with instant booking and great prices.",
-            'canonical' => url('/property-types/' . $type),
+            'canonical' => url('/property-types/'.$type),
         ];
-        
+
         return response()->json([
             'properties' => $properties,
             'type' => $typeName,

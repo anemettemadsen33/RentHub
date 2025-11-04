@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class RBACService
@@ -15,28 +15,28 @@ class RBACService
     public function hasRole(User $user, string|array $roles): bool
     {
         $roles = is_array($roles) ? $roles : [$roles];
-        
+
         return $user->roles()
             ->whereIn('name', $roles)
             ->exists();
     }
-    
+
     /**
      * Check if user has permission
      */
     public function hasPermission(User $user, string|array $permissions): bool
     {
         $permissions = is_array($permissions) ? $permissions : [$permissions];
-        
+
         // Check direct permissions
         $hasDirectPermission = $user->permissions()
             ->whereIn('name', $permissions)
             ->exists();
-            
+
         if ($hasDirectPermission) {
             return true;
         }
-        
+
         // Check permissions through roles
         return $user->roles()
             ->whereHas('permissions', function ($query) use ($permissions) {
@@ -44,7 +44,7 @@ class RBACService
             })
             ->exists();
     }
-    
+
     /**
      * Check if user has any permission
      */
@@ -55,24 +55,24 @@ class RBACService
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Check if user has all permissions
      */
     public function hasAllPermissions(User $user, array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($user, $permission)) {
+            if (! $this->hasPermission($user, $permission)) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Assign role to user
      */
@@ -81,13 +81,13 @@ class RBACService
         if (is_string($role)) {
             $role = Role::where('name', $role)->firstOrFail();
         }
-        
-        if (!$user->roles()->where('role_id', $role->id)->exists()) {
+
+        if (! $user->roles()->where('role_id', $role->id)->exists()) {
             $user->roles()->attach($role->id);
             $this->clearUserCache($user);
         }
     }
-    
+
     /**
      * Remove role from user
      */
@@ -96,11 +96,11 @@ class RBACService
         if (is_string($role)) {
             $role = Role::where('name', $role)->firstOrFail();
         }
-        
+
         $user->roles()->detach($role->id);
         $this->clearUserCache($user);
     }
-    
+
     /**
      * Assign permission to user
      */
@@ -109,13 +109,13 @@ class RBACService
         if (is_string($permission)) {
             $permission = Permission::where('name', $permission)->firstOrFail();
         }
-        
-        if (!$user->permissions()->where('permission_id', $permission->id)->exists()) {
+
+        if (! $user->permissions()->where('permission_id', $permission->id)->exists()) {
             $user->permissions()->attach($permission->id);
             $this->clearUserCache($user);
         }
     }
-    
+
     /**
      * Revoke permission from user
      */
@@ -124,11 +124,11 @@ class RBACService
         if (is_string($permission)) {
             $permission = Permission::where('name', $permission)->firstOrFail();
         }
-        
+
         $user->permissions()->detach($permission->id);
         $this->clearUserCache($user);
     }
-    
+
     /**
      * Get all user permissions (including role permissions)
      */
@@ -136,7 +136,7 @@ class RBACService
     {
         return Cache::remember("user:{$user->id}:permissions", 3600, function () use ($user) {
             $directPermissions = $user->permissions->pluck('name')->toArray();
-            
+
             $rolePermissions = $user->roles()
                 ->with('permissions')
                 ->get()
@@ -144,11 +144,11 @@ class RBACService
                 ->flatten()
                 ->pluck('name')
                 ->toArray();
-            
+
             return array_unique(array_merge($directPermissions, $rolePermissions));
         });
     }
-    
+
     /**
      * Get all user roles
      */
@@ -158,29 +158,29 @@ class RBACService
             return $user->roles->pluck('name')->toArray();
         });
     }
-    
+
     /**
      * Create role
      */
-    public function createRole(string $name, string $description = null, array $permissions = []): Role
+    public function createRole(string $name, ?string $description = null, array $permissions = []): Role
     {
         $role = Role::create([
             'name' => $name,
             'description' => $description,
         ]);
-        
-        if (!empty($permissions)) {
+
+        if (! empty($permissions)) {
             $permissionIds = Permission::whereIn('name', $permissions)->pluck('id');
             $role->permissions()->attach($permissionIds);
         }
-        
+
         return $role;
     }
-    
+
     /**
      * Create permission
      */
-    public function createPermission(string $name, string $description = null, string $group = null): Permission
+    public function createPermission(string $name, ?string $description = null, ?string $group = null): Permission
     {
         return Permission::create([
             'name' => $name,
@@ -188,7 +188,7 @@ class RBACService
             'group' => $group,
         ]);
     }
-    
+
     /**
      * Sync user roles
      */
@@ -198,7 +198,7 @@ class RBACService
         $user->roles()->sync($roleIds);
         $this->clearUserCache($user);
     }
-    
+
     /**
      * Sync user permissions
      */
@@ -208,7 +208,7 @@ class RBACService
         $user->permissions()->sync($permissionIds);
         $this->clearUserCache($user);
     }
-    
+
     /**
      * Clear user cache
      */
@@ -217,7 +217,7 @@ class RBACService
         Cache::forget("user:{$user->id}:permissions");
         Cache::forget("user:{$user->id}:roles");
     }
-    
+
     /**
      * Check resource ownership
      */
@@ -226,18 +226,18 @@ class RBACService
         if (method_exists($resource, 'user')) {
             return $resource->user()->is($user);
         }
-        
+
         if (method_exists($resource, 'owner')) {
             return $resource->owner()->is($user);
         }
-        
+
         if (property_exists($resource, 'user_id')) {
             return $resource->user_id === $user->id;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Check if user can perform action on resource
      */
@@ -247,18 +247,18 @@ class RBACService
         if ($this->hasRole($user, 'admin')) {
             return true;
         }
-        
+
         // Check permission
-        if (!$this->hasPermission($user, $action)) {
+        if (! $this->hasPermission($user, $action)) {
             return false;
         }
-        
+
         // If resource provided, check ownership
-        if ($resource && !$this->ownsResource($user, $resource)) {
+        if ($resource && ! $this->ownsResource($user, $resource)) {
             // Check if user has permission to manage others' resources
             return $this->hasPermission($user, "{$action}.others");
         }
-        
+
         return true;
     }
 }

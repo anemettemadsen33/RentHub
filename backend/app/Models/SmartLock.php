@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SmartLock extends Model
 {
@@ -65,17 +65,17 @@ class SmartLock extends Model
 
     public function isOnline(): bool
     {
-        return $this->status === 'active' && 
-               $this->last_synced_at && 
+        return $this->status === 'active' &&
+               $this->last_synced_at &&
                $this->last_synced_at->diffInMinutes(now()) < 30;
     }
 
     public function needsBatteryReplacement(): bool
     {
-        if (!$this->battery_level) {
+        if (! $this->battery_level) {
             return false;
         }
-        
+
         return (int) $this->battery_level < 20;
     }
 }

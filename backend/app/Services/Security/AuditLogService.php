@@ -5,7 +5,6 @@ namespace App\Services\Security;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 
 class AuditLogService
 {
@@ -14,7 +13,7 @@ class AuditLogService
      */
     public function logAuthentication(User $user, string $event, bool $success, array $metadata = []): void
     {
-        if (!config('security.audit.log_authentication', true)) {
+        if (! config('security.audit.log_authentication', true)) {
             return;
         }
 
@@ -37,7 +36,7 @@ class AuditLogService
      */
     public function logAuthorizationFailure(User $user, string $resource, string $action, array $metadata = []): void
     {
-        if (!config('security.audit.log_authorization_failures', true)) {
+        if (! config('security.audit.log_authorization_failures', true)) {
             return;
         }
 
@@ -67,7 +66,7 @@ class AuditLogService
      */
     public function logDataAccess(User $user, string $model, $modelId, string $action = 'view', array $metadata = []): void
     {
-        if (!config('security.audit.log_data_access', true)) {
+        if (! config('security.audit.log_data_access', true)) {
             return;
         }
 
@@ -97,7 +96,7 @@ class AuditLogService
         array $oldValues = [],
         array $newValues = []
     ): void {
-        if (!config('security.audit.log_data_modifications', true)) {
+        if (! config('security.audit.log_data_modifications', true)) {
             return;
         }
 
@@ -124,7 +123,7 @@ class AuditLogService
      */
     public function logAdminAction(User $admin, string $action, array $metadata = []): void
     {
-        if (!config('security.audit.log_admin_actions', true)) {
+        if (! config('security.audit.log_admin_actions', true)) {
             return;
         }
 
@@ -167,7 +166,7 @@ class AuditLogService
             'metadata' => $metadata,
         ]);
 
-        if (!$success) {
+        if (! $success) {
             Log::warning('Security event', [
                 'event' => $event,
                 'metadata' => $metadata,

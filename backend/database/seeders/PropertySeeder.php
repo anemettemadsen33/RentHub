@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\Amenity;
 use App\Models\Property;
 use App\Models\User;
-use App\Models\Amenity;
+use Illuminate\Database\Seeder;
 
 class PropertySeeder extends Seeder
 {
@@ -23,7 +22,7 @@ class PropertySeeder extends Seeder
                 'password' => bcrypt('password'),
                 'role' => 'owner',
                 'is_verified' => true,
-                'verified_at' => now()
+                'verified_at' => now(),
             ]
         );
 
@@ -101,12 +100,12 @@ class PropertySeeder extends Seeder
                 'is_active' => true,
                 'is_featured' => false,
                 'user_id' => $user->id,
-            ]
+            ],
         ];
 
         foreach ($properties as $propertyData) {
             $property = Property::create($propertyData);
-            
+
             // Attach random amenities
             $randomAmenities = Amenity::inRandomOrder()->take(rand(2, 4))->get();
             $property->amenities()->sync($randomAmenities->pluck('id'));

@@ -28,7 +28,7 @@ return new class extends Migration
             $table->text('sync_error')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['user_id', 'transaction_date']);
             $table->index('external_id');
             $table->index('sync_status');

@@ -2,16 +2,15 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class BackupService
 {
     protected $config;
+
     protected $backupPath;
 
     public function __construct()
@@ -53,7 +52,7 @@ class BackupService
         } catch (\Exception $e) {
             $results['success'] = false;
             $results['error'] = $e->getMessage();
-            
+
             Log::error('Full backup failed', ['error' => $e->getMessage()]);
             $this->notifyBackupFailure('full', $e);
 
@@ -68,12 +67,12 @@ class BackupService
     {
         $timestamp = now()->format('Y-m-d_His');
         $filename = "database_backup_{$timestamp}.sql";
-        
+
         if ($this->config['database']['backup_options']['compress']) {
             $filename .= '.gz';
         }
 
-        $backupFile = $this->backupPath . '/database/' . $filename;
+        $backupFile = $this->backupPath.'/database/'.$filename;
         $this->ensureDirectoryExists(dirname($backupFile));
 
         try {
@@ -102,13 +101,13 @@ class BackupService
                 $command .= ' | gzip';
             }
 
-            $command .= ' > ' . escapeshellarg($backupFile);
+            $command .= ' > '.escapeshellarg($backupFile);
 
             // Execute backup
             exec($command, $output, $returnCode);
 
             if ($returnCode !== 0) {
-                throw new \Exception('Database backup failed with code ' . $returnCode);
+                throw new \Exception('Database backup failed with code '.$returnCode);
             }
 
             // Verify backup
@@ -128,7 +127,7 @@ class BackupService
             $this->saveBackupMetadata($metadata);
 
             // Upload to remote destinations
-            $this->uploadToRemoteDestinations($backupFile, 'database/' . $filename);
+            $this->uploadToRemoteDestinations($backupFile, 'database/'.$filename);
 
             return $metadata;
         } catch (\Exception $e) {
@@ -144,8 +143,8 @@ class BackupService
     {
         $timestamp = now()->format('Y-m-d_His');
         $filename = "files_backup_{$timestamp}.tar.gz";
-        $backupFile = $this->backupPath . '/files/' . $filename;
-        
+        $backupFile = $this->backupPath.'/files/'.$filename;
+
         $this->ensureDirectoryExists(dirname($backupFile));
 
         try {
@@ -177,7 +176,7 @@ class BackupService
             unlink($tempList);
 
             if ($returnCode !== 0) {
-                throw new \Exception('Files backup failed with code ' . $returnCode);
+                throw new \Exception('Files backup failed with code '.$returnCode);
             }
 
             // Verify backup
@@ -195,7 +194,7 @@ class BackupService
             ];
 
             $this->saveBackupMetadata($metadata);
-            $this->uploadToRemoteDestinations($backupFile, 'files/' . $filename);
+            $this->uploadToRemoteDestinations($backupFile, 'files/'.$filename);
 
             return $metadata;
         } catch (\Exception $e) {
@@ -212,8 +211,8 @@ class BackupService
         try {
             Log::info('Starting database restore', ['file' => $backupFile]);
 
-            if (!file_exists($backupFile)) {
-                throw new \Exception('Backup file not found: ' . $backupFile);
+            if (! file_exists($backupFile)) {
+                throw new \Exception('Backup file not found: '.$backupFile);
             }
 
             $connection = $this->config['database']['connections']['mysql'];
@@ -245,7 +244,7 @@ class BackupService
             exec($command, $output, $returnCode);
 
             if ($returnCode !== 0) {
-                throw new \Exception('Database restore failed with code ' . $returnCode);
+                throw new \Exception('Database restore failed with code '.$returnCode);
             }
 
             Log::info('Database restore completed successfully');
@@ -267,8 +266,8 @@ class BackupService
         try {
             Log::info('Starting files restore', ['file' => $backupFile]);
 
-            if (!file_exists($backupFile)) {
-                throw new \Exception('Backup file not found: ' . $backupFile);
+            if (! file_exists($backupFile)) {
+                throw new \Exception('Backup file not found: '.$backupFile);
             }
 
             $destination = $destination ?? base_path();
@@ -282,7 +281,7 @@ class BackupService
             exec($command, $output, $returnCode);
 
             if ($returnCode !== 0) {
-                throw new \Exception('Files restore failed with code ' . $returnCode);
+                throw new \Exception('Files restore failed with code '.$returnCode);
             }
 
             Log::info('Files restore completed successfully');
@@ -302,17 +301,17 @@ class BackupService
     public function listBackups(string $type = 'all'): array
     {
         $backups = [];
-        $metadataPath = $this->backupPath . '/metadata';
+        $metadataPath = $this->backupPath.'/metadata';
 
-        if (!is_dir($metadataPath)) {
+        if (! is_dir($metadataPath)) {
             return $backups;
         }
 
-        $files = glob($metadataPath . '/*.json');
+        $files = glob($metadataPath.'/*.json');
 
         foreach ($files as $file) {
             $metadata = json_decode(file_get_contents($file), true);
-            
+
             if ($type === 'all' || $metadata['type'] === $type) {
                 $backups[] = $metadata;
             }
@@ -355,10 +354,10 @@ class BackupService
                 if ($shouldDelete && file_exists($backup['path'])) {
                     $size = filesize($backup['path']);
                     unlink($backup['path']);
-                    
+
                     // Remove metadata
-                    $metadataFile = $this->backupPath . '/metadata/' . 
-                                   pathinfo($backup['filename'], PATHINFO_FILENAME) . '.json';
+                    $metadataFile = $this->backupPath.'/metadata/'.
+                                   pathinfo($backup['filename'], PATHINFO_FILENAME).'.json';
                     if (file_exists($metadataFile)) {
                         unlink($metadataFile);
                     }
@@ -369,6 +368,7 @@ class BackupService
             }
 
             Log::info('Backup cleanup completed', $results);
+
             return $results;
         } catch (\Exception $e) {
             Log::error('Backup cleanup failed', ['error' => $e->getMessage()]);
@@ -385,9 +385,10 @@ class BackupService
 
         try {
             // File exists check
-            if (!file_exists($backupFile)) {
+            if (! file_exists($backupFile)) {
                 $results['valid'] = false;
                 $results['checks']['exists'] = false;
+
                 return $results;
             }
             $results['checks']['exists'] = true;
@@ -412,7 +413,7 @@ class BackupService
 
             // Compression test
             if (str_ends_with($backupFile, '.gz')) {
-                exec('gzip -t ' . escapeshellarg($backupFile), $output, $returnCode);
+                exec('gzip -t '.escapeshellarg($backupFile), $output, $returnCode);
                 $results['checks']['compression'] = $returnCode === 0;
                 if ($returnCode !== 0) {
                     $results['valid'] = false;
@@ -422,6 +423,7 @@ class BackupService
             return $results;
         } catch (\Exception $e) {
             Log::error('Backup verification failed', ['error' => $e->getMessage()]);
+
             return ['valid' => false, 'error' => $e->getMessage()];
         }
     }
@@ -458,18 +460,17 @@ class BackupService
             'total_size' => $totalSize,
             'total_size_gb' => round($totalSize / 1024 / 1024 / 1024, 2),
             'by_type' => $byType,
-            'oldest_backup' => !empty($backups) ? end($backups)['created_at'] : null,
-            'newest_backup' => !empty($backups) ? $backups[0]['created_at'] : null,
+            'oldest_backup' => ! empty($backups) ? end($backups)['created_at'] : null,
+            'newest_backup' => ! empty($backups) ? $backups[0]['created_at'] : null,
         ];
     }
 
     /**
      * Helper methods
      */
-
     protected function ensureDirectoryExists(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             mkdir($path, 0755, true);
         }
     }
@@ -483,8 +484,8 @@ class BackupService
         );
 
         foreach ($iterator as $file) {
-            $relativePath = str_replace($path . DIRECTORY_SEPARATOR, '', $file->getPathname());
-            
+            $relativePath = str_replace($path.DIRECTORY_SEPARATOR, '', $file->getPathname());
+
             $shouldExclude = false;
             foreach ($exclude as $pattern) {
                 if (str_contains($relativePath, $pattern)) {
@@ -493,7 +494,7 @@ class BackupService
                 }
             }
 
-            if (!$shouldExclude && $file->isFile()) {
+            if (! $shouldExclude && $file->isFile()) {
                 $files[] = $file->getPathname();
             }
         }
@@ -503,19 +504,19 @@ class BackupService
 
     protected function saveBackupMetadata(array $metadata): void
     {
-        $metadataPath = $this->backupPath . '/metadata';
+        $metadataPath = $this->backupPath.'/metadata';
         $this->ensureDirectoryExists($metadataPath);
 
-        $filename = pathinfo($metadata['filename'], PATHINFO_FILENAME) . '.json';
-        $filepath = $metadataPath . '/' . $filename;
+        $filename = pathinfo($metadata['filename'], PATHINFO_FILENAME).'.json';
+        $filepath = $metadataPath.'/'.$filename;
 
         file_put_contents($filepath, json_encode($metadata, JSON_PRETTY_PRINT));
     }
 
     protected function getBackupMetadata(string $filename): ?array
     {
-        $metadataFile = $this->backupPath . '/metadata/' . 
-                       pathinfo($filename, PATHINFO_FILENAME) . '.json';
+        $metadataFile = $this->backupPath.'/metadata/'.
+                       pathinfo($filename, PATHINFO_FILENAME).'.json';
 
         if (file_exists($metadataFile)) {
             return json_decode(file_get_contents($metadataFile), true);
@@ -527,7 +528,7 @@ class BackupService
     protected function uploadToRemoteDestinations(string $localFile, string $remotePath): void
     {
         foreach ($this->config['destinations'] as $name => $destination) {
-            if ($name === 'local' || !($destination['enabled'] ?? false)) {
+            if ($name === 'local' || ! ($destination['enabled'] ?? false)) {
                 continue;
             }
 
@@ -546,36 +547,36 @@ class BackupService
             case 's3':
                 Storage::disk('s3')->put($remotePath, file_get_contents($localFile));
                 break;
-            // Add other destinations as needed
+                // Add other destinations as needed
         }
     }
 
     protected function notifyBackupSuccess(string $type, array $details): void
     {
-        if (!$this->config['notifications']['enabled']) {
+        if (! $this->config['notifications']['enabled']) {
             return;
         }
 
         // Send notifications via configured channels
-        Log::info("Backup success notification sent", ['type' => $type]);
+        Log::info('Backup success notification sent', ['type' => $type]);
     }
 
     protected function notifyBackupFailure(string $type, \Exception $e): void
     {
-        if (!$this->config['notifications']['enabled']) {
+        if (! $this->config['notifications']['enabled']) {
             return;
         }
 
-        Log::error("Backup failure notification sent", ['type' => $type, 'error' => $e->getMessage()]);
+        Log::error('Backup failure notification sent', ['type' => $type, 'error' => $e->getMessage()]);
     }
 
     protected function notifyRestoreSuccess(string $type, string $file): void
     {
-        Log::info("Restore success notification sent", ['type' => $type]);
+        Log::info('Restore success notification sent', ['type' => $type]);
     }
 
     protected function notifyRestoreFailure(string $type, \Exception $e): void
     {
-        Log::error("Restore failure notification sent", ['type' => $type, 'error' => $e->getMessage()]);
+        Log::error('Restore failure notification sent', ['type' => $type, 'error' => $e->getMessage()]);
     }
 }

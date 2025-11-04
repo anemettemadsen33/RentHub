@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('connected_at')->nullable();
             $table->text('error_message')->nullable();
             $table->timestamps();
-            
+
             $table->index(['user_id', 'provider']);
         });
     }

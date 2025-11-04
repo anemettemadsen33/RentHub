@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Database\Eloquent\Model;
 
 class CacheService
 {
@@ -20,7 +20,7 @@ class CacheService
      */
     public function cacheApiResponse(string $key, callable $callback, ?int $ttl = null): mixed
     {
-        if (!$this->config['strategies']['api_responses']['enabled']) {
+        if (! $this->config['strategies']['api_responses']['enabled']) {
             return $callback();
         }
 
@@ -36,7 +36,7 @@ class CacheService
      */
     public function cacheQuery(string $key, callable $callback, ?int $ttl = null): mixed
     {
-        if (!$this->config['strategies']['database_queries']['enabled']) {
+        if (! $this->config['strategies']['database_queries']['enabled']) {
             return $callback();
         }
 
@@ -52,12 +52,12 @@ class CacheService
      */
     public function cachePage(string $url, string $content, ?int $ttl = null): void
     {
-        if (!$this->config['strategies']['page_cache']['enabled']) {
+        if (! $this->config['strategies']['page_cache']['enabled']) {
             return;
         }
 
         $ttl = $ttl ?? $this->config['strategies']['page_cache']['ttl'];
-        $key = "page:" . md5($url);
+        $key = 'page:'.md5($url);
 
         Cache::tags($this->config['strategies']['page_cache']['tags'])
             ->put($key, $content, $ttl);
@@ -68,12 +68,12 @@ class CacheService
      */
     public function getCachedPage(string $url): ?string
     {
-        if (!$this->config['strategies']['page_cache']['enabled']) {
+        if (! $this->config['strategies']['page_cache']['enabled']) {
             return null;
         }
 
-        $key = "page:" . md5($url);
-        
+        $key = 'page:'.md5($url);
+
         return Cache::tags($this->config['strategies']['page_cache']['tags'])
             ->get($key);
     }
@@ -94,7 +94,7 @@ class CacheService
         $modelClass = class_basename($model);
         $tags = $this->config['invalidation']['models'][$modelClass] ?? [];
 
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             $this->invalidateByTags($tags);
         }
 
@@ -107,7 +107,7 @@ class CacheService
      */
     public function warmCache(): void
     {
-        if (!$this->config['warming']['enabled']) {
+        if (! $this->config['warming']['enabled']) {
             return;
         }
 
@@ -122,7 +122,7 @@ class CacheService
                 }
             } catch (\Exception $e) {
                 \Log::warning("Failed to warm cache for route: {$route}", [
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -135,7 +135,7 @@ class CacheService
     {
         try {
             $redis = Redis::connection();
-            
+
             return [
                 'hits' => $redis->get('cache:hits') ?? 0,
                 'misses' => $redis->get('cache:misses') ?? 0,
@@ -186,9 +186,11 @@ class CacheService
     {
         try {
             Cache::flush();
+
             return true;
         } catch (\Exception $e) {
             \Log::error('Failed to clear cache', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -202,6 +204,7 @@ class CacheService
 
         return $cache->remember($key, $ttl, function () use ($callback) {
             $this->recordMiss();
+
             return $callback();
         });
     }

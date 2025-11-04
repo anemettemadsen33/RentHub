@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\SecurityAuditLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class SecurityAuditService
 {

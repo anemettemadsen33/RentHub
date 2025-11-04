@@ -76,7 +76,7 @@ class AdvancedRBACMiddleware
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
@@ -90,7 +90,7 @@ class AdvancedRBACMiddleware
             }
         }
 
-        if (!$hasPermission) {
+        if (! $hasPermission) {
             Log::warning('RBAC: Access denied', [
                 'user_id' => $user->id,
                 'role' => $user->role,
@@ -177,7 +177,7 @@ class AdvancedRBACMiddleware
     {
         // Convert pattern to regex
         $regex = str_replace('*', '.*', $pattern);
-        $regex = '/^' . $regex . '$/';
+        $regex = '/^'.$regex.'$/';
 
         return preg_match($regex, $permission) === 1;
     }
@@ -193,7 +193,7 @@ class AdvancedRBACMiddleware
         // Get resource ID from route parameters
         $resourceId = $request->route($resource) ?? $request->route('id');
 
-        if (!$resourceId) {
+        if (! $resourceId) {
             return false;
         }
 
@@ -217,7 +217,7 @@ class AdvancedRBACMiddleware
     private function checkBookingOwnership($user, $bookingId): bool
     {
         $booking = \App\Models\Booking::find($bookingId);
-        
+
         return $booking && (
             $booking->user_id === $user->id ||
             $booking->property->owner_id === $user->id
@@ -234,7 +234,7 @@ class AdvancedRBACMiddleware
     private function checkMessageOwnership($user, $messageId): bool
     {
         $message = \App\Models\Message::find($messageId);
-        
+
         return $message && (
             $message->sender_id === $user->id ||
             $message->recipient_id === $user->id

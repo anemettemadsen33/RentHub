@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 
 class DataEncryptionService
@@ -19,6 +19,7 @@ class DataEncryptionService
             Log::error('Data encryption failed', [
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -34,6 +35,7 @@ class DataEncryptionService
             Log::error('Data decryption failed', [
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -48,6 +50,7 @@ class DataEncryptionService
                 $data[$field] = $this->encryptData($data[$field]);
             }
         }
+
         return $data;
     }
 
@@ -61,6 +64,7 @@ class DataEncryptionService
                 $data[$field] = $this->decryptData($data[$field]);
             }
         }
+
         return $data;
     }
 
@@ -70,27 +74,27 @@ class DataEncryptionService
     public function anonymizePII(array $data): array
     {
         $anonymized = $data;
-        
+
         // Anonymize email
         if (isset($anonymized['email'])) {
             $anonymized['email'] = $this->anonymizeEmail($anonymized['email']);
         }
-        
+
         // Anonymize phone
         if (isset($anonymized['phone'])) {
             $anonymized['phone'] = $this->anonymizePhone($anonymized['phone']);
         }
-        
+
         // Anonymize name
         if (isset($anonymized['name'])) {
             $anonymized['name'] = 'Anonymous User';
         }
-        
+
         // Anonymize address
         if (isset($anonymized['address'])) {
             $anonymized['address'] = '[REDACTED]';
         }
-        
+
         return $anonymized;
     }
 
@@ -103,13 +107,13 @@ class DataEncryptionService
         if (count($parts) !== 2) {
             return '[REDACTED]@example.com';
         }
-        
+
         $username = $parts[0];
         $domain = $parts[1];
-        
-        $anonymizedUsername = substr($username, 0, 2) . str_repeat('*', strlen($username) - 2);
-        
-        return $anonymizedUsername . '@' . $domain;
+
+        $anonymizedUsername = substr($username, 0, 2).str_repeat('*', strlen($username) - 2);
+
+        return $anonymizedUsername.'@'.$domain;
     }
 
     /**
@@ -118,14 +122,14 @@ class DataEncryptionService
     private function anonymizePhone(string $phone): string
     {
         $cleaned = preg_replace('/[^0-9]/', '', $phone);
-        
+
         if (strlen($cleaned) < 4) {
             return str_repeat('*', strlen($cleaned));
         }
-        
+
         $lastFour = substr($cleaned, -4);
-        $masked = str_repeat('*', strlen($cleaned) - 4) . $lastFour;
-        
+        $masked = str_repeat('*', strlen($cleaned) - 4).$lastFour;
+
         return $masked;
     }
 
@@ -143,12 +147,13 @@ class DataEncryptionService
     public function tokenizeCreditCard(string $cardNumber): string
     {
         $cleaned = preg_replace('/[^0-9]/', '', $cardNumber);
-        
+
         if (strlen($cleaned) < 4) {
             return str_repeat('*', strlen($cleaned));
         }
-        
+
         $lastFour = substr($cleaned, -4);
-        return str_repeat('*', strlen($cleaned) - 4) . $lastFour;
+
+        return str_repeat('*', strlen($cleaned) - 4).$lastFour;
     }
 }

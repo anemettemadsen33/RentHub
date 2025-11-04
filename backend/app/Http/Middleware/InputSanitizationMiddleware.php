@@ -17,9 +17,9 @@ class InputSanitizationMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $input = $request->all();
-        
+
         array_walk_recursive($input, function (&$value, $key) {
-            if (!in_array($key, $this->except) && is_string($value)) {
+            if (! in_array($key, $this->except) && is_string($value)) {
                 $value = $this->sanitize($value);
             }
         });

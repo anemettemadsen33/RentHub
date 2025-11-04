@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\AI\RecommendationService;
 use App\Models\PropertyRecommendation;
 use App\Models\UserBehavior;
-use Illuminate\Http\Request;
+use App\Services\AI\RecommendationService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AIRecommendationController extends Controller
 {
@@ -21,7 +21,7 @@ class AIRecommendationController extends Controller
     public function getRecommendations(Request $request): JsonResponse
     {
         $userId = auth()->id();
-        
+
         $recommendations = $this->recommendationService->generateRecommendations($userId);
 
         // Mark as shown
@@ -120,7 +120,7 @@ class AIRecommendationController extends Controller
     public function getSimilarProperties(int $propertyId): JsonResponse
     {
         $property = \App\Models\Property::findOrFail($propertyId);
-        
+
         $similar = \App\Models\SimilarProperty::where('property_id', $propertyId)
             ->with('similarProperty')
             ->orderByDesc('similarity_score')

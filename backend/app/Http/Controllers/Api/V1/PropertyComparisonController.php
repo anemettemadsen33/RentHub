@@ -17,7 +17,7 @@ class PropertyComparisonController extends Controller
     public function index(Request $request)
     {
         $sessionId = $request->header('X-Session-Id');
-        
+
         if ($request->user()) {
             $comparison = PropertyComparison::where('user_id', $request->user()->id)
                 ->latest()
@@ -33,7 +33,7 @@ class PropertyComparisonController extends Controller
             ]);
         }
 
-        if (!$comparison) {
+        if (! $comparison) {
             return response()->json([
                 'property_ids' => [],
                 'properties' => [],
@@ -114,7 +114,7 @@ class PropertyComparisonController extends Controller
 
         $success = $comparison->addProperty($propertyId);
 
-        if (!$success) {
+        if (! $success) {
             return response()->json([
                 'message' => 'Maximum 4 properties can be compared at once',
             ], 400);
@@ -142,7 +142,7 @@ class PropertyComparisonController extends Controller
             return response()->json(['message' => 'Comparison not found'], 404);
         }
 
-        if (!$comparison) {
+        if (! $comparison) {
             return response()->json(['message' => 'Comparison not found'], 404);
         }
 
@@ -197,14 +197,14 @@ class PropertyComparisonController extends Controller
                 'description' => $property->description,
                 'type' => $property->type,
                 'furnishing_status' => $property->furnishing_status,
-                
+
                 // Pricing
                 'price_per_night' => $property->price_per_night,
                 'price_per_week' => $property->price_per_week,
                 'price_per_month' => $property->price_per_month,
                 'cleaning_fee' => $property->cleaning_fee,
                 'security_deposit' => $property->security_deposit,
-                
+
                 // Property details
                 'bedrooms' => $property->bedrooms,
                 'bathrooms' => $property->bathrooms,
@@ -213,7 +213,7 @@ class PropertyComparisonController extends Controller
                 'square_footage' => $property->square_footage,
                 'built_year' => $property->built_year,
                 'floor_number' => $property->floor_number,
-                
+
                 // Location
                 'street_address' => $property->street_address,
                 'city' => $property->city,
@@ -221,25 +221,25 @@ class PropertyComparisonController extends Controller
                 'country' => $property->country,
                 'latitude' => $property->latitude,
                 'longitude' => $property->longitude,
-                
+
                 // Amenities & Features
-                'amenities' => $property->amenities->map(fn($a) => [
+                'amenities' => $property->amenities->map(fn ($a) => [
                     'id' => $a->id,
                     'name' => $a->name,
                     'icon' => $a->icon,
                 ]),
                 'parking_available' => $property->parking_available,
                 'parking_spaces' => $property->parking_spaces,
-                
+
                 // Booking rules
                 'min_nights' => $property->min_nights,
                 'max_nights' => $property->max_nights,
                 'cancellation_policy' => $property->cancellation_policy,
                 'rules' => $property->rules,
-                
+
                 // Media
                 'images' => $property->images,
-                
+
                 // Reviews
                 'average_rating' => round($property->reviews->avg('rating'), 1),
                 'review_count' => $property->reviews->count(),
@@ -251,7 +251,7 @@ class PropertyComparisonController extends Controller
                     'checkin' => round($property->reviews->avg('checkin_rating'), 1),
                     'value' => round($property->reviews->avg('value_rating'), 1),
                 ],
-                
+
                 // Owner
                 'owner' => [
                     'id' => $property->user->id,

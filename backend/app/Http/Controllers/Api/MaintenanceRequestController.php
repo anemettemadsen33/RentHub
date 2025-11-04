@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\MaintenanceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 
 class MaintenanceRequestController extends Controller
 {
@@ -96,7 +95,7 @@ class MaintenanceRequestController extends Controller
 
         return response()->json([
             'message' => 'Maintenance request created successfully',
-            'request' => $maintenanceRequest
+            'request' => $maintenanceRequest,
         ], 201);
     }
 
@@ -107,7 +106,7 @@ class MaintenanceRequestController extends Controller
             'property',
             'tenant',
             'assignedTo',
-            'serviceProvider'
+            'serviceProvider',
         ])->findOrFail($id);
 
         return response()->json($maintenanceRequest);
@@ -139,7 +138,7 @@ class MaintenanceRequestController extends Controller
 
         return response()->json([
             'message' => 'Maintenance request updated successfully',
-            'request' => $maintenanceRequest
+            'request' => $maintenanceRequest,
         ]);
     }
 
@@ -177,7 +176,7 @@ class MaintenanceRequestController extends Controller
 
         return response()->json([
             'message' => 'Maintenance request completed successfully',
-            'request' => $maintenanceRequest
+            'request' => $maintenanceRequest,
         ]);
     }
 
@@ -195,17 +194,17 @@ class MaintenanceRequestController extends Controller
         }
 
         $maintenanceRequest->assign($request->assigned_to);
-        
+
         if ($request->has('service_provider_id')) {
             $maintenanceRequest->update(['service_provider_id' => $request->service_provider_id]);
         }
 
         return response()->json([
             'message' => 'Maintenance request assigned successfully',
-            'request' => $maintenanceRequest->fresh(['assignedTo', 'serviceProvider'])
+            'request' => $maintenanceRequest->fresh(['assignedTo', 'serviceProvider']),
         ]);
     }
-    
+
     public function assignServiceProvider(Request $request, $id)
     {
         $maintenanceRequest = MaintenanceRequest::findOrFail($id);
@@ -225,7 +224,7 @@ class MaintenanceRequestController extends Controller
 
         return response()->json([
             'message' => 'Service provider assigned successfully',
-            'request' => $maintenanceRequest->fresh('serviceProvider')
+            'request' => $maintenanceRequest->fresh('serviceProvider'),
         ]);
     }
 
@@ -235,14 +234,14 @@ class MaintenanceRequestController extends Controller
 
         if ($maintenanceRequest->status === 'in_progress') {
             return response()->json([
-                'error' => 'Cannot delete maintenance request in progress'
+                'error' => 'Cannot delete maintenance request in progress',
             ], 422);
         }
 
         $maintenanceRequest->delete();
 
         return response()->json([
-            'message' => 'Maintenance request deleted successfully'
+            'message' => 'Maintenance request deleted successfully',
         ]);
     }
 }

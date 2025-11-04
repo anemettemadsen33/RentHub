@@ -24,7 +24,7 @@ class GenerateRevenueSuggestionsJob implements ShouldQueue
             $priceOptimizationService->generateRevenueSuggestions($this->propertyId);
             Log::info("Generated revenue suggestions for property {$this->propertyId}");
         } catch (\Exception $e) {
-            Log::error("Failed to generate revenue suggestions for property {$this->propertyId}: " . $e->getMessage());
+            Log::error("Failed to generate revenue suggestions for property {$this->propertyId}: ".$e->getMessage());
             throw $e;
         }
     }

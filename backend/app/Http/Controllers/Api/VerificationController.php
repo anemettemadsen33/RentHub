@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 
 class VerificationController extends Controller
 {
@@ -24,7 +23,7 @@ class VerificationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -55,7 +54,7 @@ class VerificationController extends Controller
             'data' => [
                 'status' => 'pending',
                 'submitted_at' => now(),
-            ]
+            ],
         ]);
     }
 
@@ -74,7 +73,7 @@ class VerificationController extends Controller
                 'identity_verified' => $user->identity_verified_at !== null,
                 'government_id_status' => $user->id_verification_status ?? 'not_submitted',
                 'government_id_verified' => $user->government_id_verified_at !== null,
-            ]
+            ],
         ]);
     }
 
@@ -87,7 +86,7 @@ class VerificationController extends Controller
         if ($request->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -103,7 +102,7 @@ class VerificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Government ID approved successfully'
+            'message' => 'Government ID approved successfully',
         ]);
     }
 
@@ -116,7 +115,7 @@ class VerificationController extends Controller
         if ($request->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -127,7 +126,7 @@ class VerificationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -142,7 +141,7 @@ class VerificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Government ID rejected'
+            'message' => 'Government ID rejected',
         ]);
     }
 }

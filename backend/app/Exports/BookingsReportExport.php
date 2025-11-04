@@ -3,13 +3,13 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class BookingsReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class BookingsReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $data;
 
@@ -48,7 +48,7 @@ class BookingsReportExport implements FromCollection, WithHeadings, WithMapping,
             $row['check_in'] ?? '-',
             $row['check_out'] ?? '-',
             $row['nights'] ?? 0,
-            '$' . number_format($row['total_amount'] ?? 0, 2),
+            '$'.number_format($row['total_amount'] ?? 0, 2),
             ucfirst($row['status'] ?? '-'),
         ];
     }

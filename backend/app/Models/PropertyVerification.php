@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Carbon\Carbon;
 
 class PropertyVerification extends Model
 {
@@ -100,26 +100,38 @@ class PropertyVerification extends Model
     public function calculateVerificationScore(): int
     {
         $score = 0;
-        
+
         // Ownership verification (30 points)
-        if ($this->ownership_status === 'approved') $score += 30;
-        
+        if ($this->ownership_status === 'approved') {
+            $score += 30;
+        }
+
         // Inspection (25 points)
         if ($this->inspection_status === 'completed') {
             $score += ($this->inspection_score ? ($this->inspection_score * 0.25) : 25);
         }
-        
+
         // Photos verification (15 points)
-        if ($this->photos_status === 'approved') $score += 15;
-        
+        if ($this->photos_status === 'approved') {
+            $score += 15;
+        }
+
         // Details verification (15 points)
-        if ($this->details_status === 'approved') $score += 15;
-        
+        if ($this->details_status === 'approved') {
+            $score += 15;
+        }
+
         // Legal compliance (15 points total)
-        if ($this->has_business_license) $score += 5;
-        if ($this->has_safety_certificate) $score += 5;
-        if ($this->has_insurance && !$this->isInsuranceExpired()) $score += 5;
-        
+        if ($this->has_business_license) {
+            $score += 5;
+        }
+        if ($this->has_safety_certificate) {
+            $score += 5;
+        }
+        if ($this->has_insurance && ! $this->isInsuranceExpired()) {
+            $score += 5;
+        }
+
         return min(100, (int) $score);
     }
 
@@ -127,7 +139,7 @@ class PropertyVerification extends Model
     {
         $score = $this->calculateVerificationScore();
         $this->verification_score = $score;
-        
+
         if ($score >= 80 && $this->ownership_status === 'approved') {
             $this->overall_status = 'verified';
             $this->has_verified_badge = true;
@@ -140,7 +152,7 @@ class PropertyVerification extends Model
             $this->overall_status = 'unverified';
             $this->has_verified_badge = false;
         }
-        
+
         $this->save();
     }
 
@@ -151,19 +163,19 @@ class PropertyVerification extends Model
 
     public function needsReverification(): bool
     {
-        if (!$this->next_verification_due) {
+        if (! $this->next_verification_due) {
             return false;
         }
-        
+
         return Carbon::now()->gte($this->next_verification_due);
     }
 
     public function isInsuranceExpired(): bool
     {
-        if (!$this->has_insurance || !$this->insurance_expiry_date) {
+        if (! $this->has_insurance || ! $this->insurance_expiry_date) {
             return true;
         }
-        
+
         return Carbon::now()->gt($this->insurance_expiry_date);
     }
 
@@ -183,7 +195,7 @@ class PropertyVerification extends Model
         $this->updateOverallStatus();
     }
 
-    public function reject(User $admin, string $reason = null): void
+    public function reject(User $admin, ?string $reason = null): void
     {
         $this->overall_status = 'rejected';
         $this->has_verified_badge = false;

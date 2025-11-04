@@ -44,7 +44,7 @@ class PricingRule extends Model
      */
     public function calculatePrice(float $basePrice): float
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return $basePrice;
         }
 
@@ -60,7 +60,7 @@ class PricingRule extends Model
      */
     public function appliesTo(\Carbon\Carbon $date): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -74,7 +74,7 @@ class PricingRule extends Model
         }
 
         // Check day of week
-        if ($this->days_of_week && !in_array($date->dayOfWeek, $this->days_of_week)) {
+        if ($this->days_of_week && ! in_array($date->dayOfWeek, $this->days_of_week)) {
             return false;
         }
 

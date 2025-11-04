@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CreditCheck;
-use App\Models\GuestScreening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,21 +12,21 @@ class CreditCheckController extends Controller
     public function index(Request $request)
     {
         $query = CreditCheck::with(['screening.user', 'user', 'requester']);
-        
+
         if ($request->has('user_id')) {
             $query->where('user_id', $request->user_id);
         }
-        
+
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->has('credit_rating')) {
             $query->where('credit_rating', $request->credit_rating);
         }
-        
+
         $creditChecks = $query->latest()->paginate($request->per_page ?? 15);
-        
+
         return response()->json($creditChecks);
     }
 
@@ -56,7 +55,7 @@ class CreditCheckController extends Controller
 
         return response()->json([
             'message' => 'Credit check initiated successfully',
-            'credit_check' => $creditCheck->load(['screening', 'user', 'requester'])
+            'credit_check' => $creditCheck->load(['screening', 'user', 'requester']),
         ], 201);
     }
 
@@ -64,14 +63,14 @@ class CreditCheckController extends Controller
     {
         $creditCheck = CreditCheck::with(['screening.user', 'user', 'requester'])
             ->findOrFail($id);
-        
+
         return response()->json($creditCheck);
     }
 
     public function update(Request $request, $id)
     {
         $creditCheck = CreditCheck::findOrFail($id);
-        
+
         $validator = Validator::make($request->all(), [
             'status' => 'sometimes|in:pending,completed,failed,expired',
             'credit_score' => 'nullable|integer|min:300|max:850',
@@ -96,13 +95,13 @@ class CreditCheckController extends Controller
 
         $creditCheck->fill($request->except(['guest_screening_id', 'user_id', 'requested_by']));
 
-        if ($request->has('credit_score') && !$request->has('credit_rating')) {
+        if ($request->has('credit_score') && ! $request->has('credit_rating')) {
             $creditCheck->credit_rating = $creditCheck->calculateCreditRating();
         }
 
         if ($request->status === 'completed') {
             $creditCheck->completed_at = now();
-            
+
             $screening = $creditCheck->screening;
             $screening->credit_check_completed = true;
             $screening->credit_check_completed_at = now();
@@ -117,7 +116,7 @@ class CreditCheckController extends Controller
 
         return response()->json([
             'message' => 'Credit check updated successfully',
-            'credit_check' => $creditCheck->load(['screening', 'user', 'requester'])
+            'credit_check' => $creditCheck->load(['screening', 'user', 'requester']),
         ]);
     }
 
@@ -127,7 +126,7 @@ class CreditCheckController extends Controller
         $creditCheck->delete();
 
         return response()->json([
-            'message' => 'Credit check deleted successfully'
+            'message' => 'Credit check deleted successfully',
         ]);
     }
 
@@ -142,10 +141,10 @@ class CreditCheckController extends Controller
         }
 
         $creditCheck = CreditCheck::findOrFail($id);
-        
+
         $score = $request->credit_score;
         $rating = $creditCheck->calculateCreditRating();
-        
+
         $simulatedData = [
             'credit_score' => $score,
             'max_score' => 850,
@@ -170,7 +169,7 @@ class CreditCheckController extends Controller
         ];
 
         $creditCheck->update($simulatedData);
-        
+
         $screening = $creditCheck->screening;
         $screening->credit_check_completed = true;
         $screening->credit_check_completed_at = now();
@@ -182,7 +181,7 @@ class CreditCheckController extends Controller
 
         return response()->json([
             'message' => 'Credit check simulated successfully',
-            'credit_check' => $creditCheck->load(['screening', 'user'])
+            'credit_check' => $creditCheck->load(['screening', 'user']),
         ]);
     }
 
@@ -204,7 +203,7 @@ class CreditCheckController extends Controller
             ->latest()
             ->first();
 
-        if (!$creditCheck) {
+        if (! $creditCheck) {
             return response()->json(['message' => 'No credit check found'], 404);
         }
 

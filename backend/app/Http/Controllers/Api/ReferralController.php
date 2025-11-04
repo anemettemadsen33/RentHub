@@ -115,7 +115,7 @@ class ReferralController extends Controller
 
         $referrer = $this->referralService->validateReferralCode($request->code);
 
-        if (!$referrer) {
+        if (! $referrer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid referral code',

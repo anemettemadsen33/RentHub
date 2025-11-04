@@ -43,7 +43,7 @@ return [
         'provider' => env('AUTO_SCALING_PROVIDER', 'aws'), // aws, azure, gcp
         'min_instances' => env('AUTO_SCALING_MIN_INSTANCES', 2),
         'max_instances' => env('AUTO_SCALING_MAX_INSTANCES', 10),
-        
+
         'metrics' => [
             'cpu' => [
                 'target' => env('AUTO_SCALING_CPU_TARGET', 70), // percentage
@@ -79,7 +79,7 @@ return [
 
     'database_replication' => [
         'enabled' => env('DB_REPLICATION_ENABLED', false),
-        
+
         'read_replicas' => [
             [
                 'host' => env('DB_READ_REPLICA_1_HOST', '127.0.0.1'),
@@ -122,7 +122,7 @@ return [
     'microservices' => [
         'enabled' => env('MICROSERVICES_ENABLED', false),
         'gateway_url' => env('MICROSERVICES_GATEWAY_URL', 'http://localhost:8080'),
-        
+
         'services' => [
             'auth' => [
                 'url' => env('MICROSERVICE_AUTH_URL', 'http://auth-service:8001'),
@@ -170,7 +170,7 @@ return [
 
     'cache_scaling' => [
         'strategy' => env('CACHE_SCALING_STRATEGY', 'redis_cluster'), // redis_cluster, memcached_pool
-        
+
         'redis_cluster' => [
             'nodes' => [
                 env('REDIS_CLUSTER_NODE_1', '127.0.0.1:6379'),
@@ -196,7 +196,7 @@ return [
     'queue_scaling' => [
         'enabled' => env('QUEUE_SCALING_ENABLED', false),
         'driver' => env('QUEUE_DRIVER', 'redis'),
-        
+
         'workers' => [
             'min' => env('QUEUE_WORKERS_MIN', 1),
             'max' => env('QUEUE_WORKERS_MAX', 10),
@@ -227,7 +227,7 @@ return [
     'health_check' => [
         'enabled' => env('HEALTH_CHECK_ENABLED', true),
         'endpoint' => env('HEALTH_CHECK_ENDPOINT', '/health'),
-        
+
         'checks' => [
             'database' => true,
             'redis' => true,

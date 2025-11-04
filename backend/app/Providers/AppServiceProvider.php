@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
+use App\Models\BlockedDate;
 use App\Models\Booking;
 use App\Models\Property;
-use App\Models\BlockedDate;
+use App\Observers\BlockedDateObserver;
 use App\Observers\BookingObserver;
 use App\Observers\PropertyObserver;
-use App\Observers\BlockedDateObserver;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,16 +20,16 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register Smart Lock Service as singleton
         $this->app->singleton(\App\Services\SmartLock\SmartLockService::class, function ($app) {
-            $service = new \App\Services\SmartLock\SmartLockService();
-            
+            $service = new \App\Services\SmartLock\SmartLockService;
+
             // Register available providers
-            $service->registerProvider('mock', new \App\Services\SmartLock\Providers\MockSmartLockProvider());
-            $service->registerProvider('generic', new \App\Services\SmartLock\Providers\GenericWebhookProvider());
-            
+            $service->registerProvider('mock', new \App\Services\SmartLock\Providers\MockSmartLockProvider);
+            $service->registerProvider('generic', new \App\Services\SmartLock\Providers\GenericWebhookProvider);
+
             // Additional providers can be registered here
             // $service->registerProvider('august', new \App\Services\SmartLock\Providers\AugustProvider());
             // $service->registerProvider('yale', new \App\Services\SmartLock\Providers\YaleProvider());
-            
+
             return $service;
         });
     }
@@ -44,19 +44,21 @@ class AppServiceProvider extends ServiceProvider
         // Uncomment after Google API client is properly configured and autoloaded
         // Booking::observe(BookingObserver::class);
         // BlockedDate::observe(BlockedDateObserver::class);
-        
+
         Property::observe(PropertyObserver::class);
 
         // Add socialite event listeners
         $this->app->make(SocialiteFactory::class)
             ->extend('google', function ($app) {
                 $config = $app['config']['services.google'];
+
                 return \SocialiteProviders\Manager\OAuth2\User::class;
             });
 
         $this->app->make(SocialiteFactory::class)
             ->extend('facebook', function ($app) {
                 $config = $app['config']['services.facebook'];
+
                 return \SocialiteProviders\Manager\OAuth2\User::class;
             });
     }

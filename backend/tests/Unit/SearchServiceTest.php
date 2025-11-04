@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Services\SearchService;
 use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class SearchServiceTest extends TestCase
 {
@@ -13,7 +13,7 @@ class SearchServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->searchService = new SearchService();
+        $this->searchService = new SearchService;
     }
 
     public function test_can_search_properties()

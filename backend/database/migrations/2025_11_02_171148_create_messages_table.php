@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('is_system_message')->default(false);
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('conversation_id');
             $table->index('sender_id');
             $table->index('read_at');

@@ -7,9 +7,9 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Review;
 use App\Models\Wishlist;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class TenantDashboardController extends Controller
 {
@@ -101,7 +101,7 @@ class TenantDashboardController extends Controller
             ->where('status', 'completed')
             ->where('created_at', '>=', $startDate)
             ->select(
-                DB::raw($this->getDateGrouping($groupBy) . ' as period'),
+                DB::raw($this->getDateGrouping($groupBy).' as period'),
                 DB::raw('SUM(amount) as total_spent'),
                 DB::raw('COUNT(*) as total_bookings'),
                 DB::raw('AVG(amount) as average_booking_cost')
@@ -169,7 +169,7 @@ class TenantDashboardController extends Controller
                             'id' => $item->property->id,
                             'title' => $item->property->title,
                             'price' => $item->property->price_per_night,
-                            'location' => $item->property->city . ', ' . $item->property->country,
+                            'location' => $item->property->city.', '.$item->property->country,
                             'added_at' => $item->created_at,
                         ];
                     }),

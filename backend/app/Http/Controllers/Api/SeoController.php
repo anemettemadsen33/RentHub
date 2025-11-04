@@ -21,7 +21,7 @@ class SeoController extends Controller
                 ->distinct()
                 ->get()
                 ->map(function ($property) {
-                    return $property->city . ', ' . $property->country;
+                    return $property->city.', '.$property->country;
                 })
                 ->unique()
                 ->values()
@@ -65,7 +65,7 @@ class SeoController extends Controller
                 ->orderByDesc('count')
                 ->limit(20)
                 ->get()
-                ->map(fn($item) => [
+                ->map(fn ($item) => [
                     'query' => $item->city,
                     'type' => 'location',
                     'count' => $item->count,
@@ -79,7 +79,7 @@ class SeoController extends Controller
                 ->groupBy('property_type')
                 ->orderByDesc('count')
                 ->get()
-                ->map(fn($item) => [
+                ->map(fn ($item) => [
                     'query' => $item->property_type,
                     'type' => 'property_type',
                     'count' => $item->count,
@@ -112,7 +112,7 @@ class SeoController extends Controller
                 'country' => $property->country,
                 'postalCode' => $property->postal_code,
             ],
-            'images' => $property->images->map(fn($img) => $img->image_url)->take(5)->toArray(),
+            'images' => $property->images->map(fn ($img) => $img->image_url)->take(5)->toArray(),
             'bedrooms' => $property->bedrooms,
             'bathrooms' => $property->bathrooms,
             'area' => $property->square_feet,
@@ -135,7 +135,7 @@ class SeoController extends Controller
             '@type' => 'Organization',
             'name' => 'RentHub',
             'url' => config('app.url'),
-            'logo' => config('app.url') . '/logo.png',
+            'logo' => config('app.url').'/logo.png',
             'description' => 'Leading property rental platform for finding and booking rental properties worldwide',
             'contactPoint' => [
                 '@type' => 'ContactPoint',

@@ -51,8 +51,8 @@ class MessageTemplate extends Model
         $content = $this->content;
 
         foreach ($data as $key => $value) {
-            $content = str_replace('{{' . $key . '}}', $value, $content);
-            $content = str_replace('{{ ' . $key . ' }}', $value, $content);
+            $content = str_replace('{{'.$key.'}}', $value, $content);
+            $content = str_replace('{{ '.$key.' }}', $value, $content);
         }
 
         return $content;

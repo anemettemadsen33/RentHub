@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
-use App\Models\WishlistItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +19,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $wishlists
+            'data' => $wishlists,
         ]);
     }
 
@@ -35,7 +34,7 @@ class WishlistController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -44,7 +43,7 @@ class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Wishlist created successfully',
-            'data' => $wishlist
+            'data' => $wishlist,
         ], 201);
     }
 
@@ -58,7 +57,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $wishlist
+            'data' => $wishlist,
         ]);
     }
 
@@ -75,7 +74,7 @@ class WishlistController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -84,7 +83,7 @@ class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Wishlist updated successfully',
-            'data' => $wishlist
+            'data' => $wishlist,
         ]);
     }
 
@@ -95,7 +94,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Wishlist deleted successfully'
+            'message' => 'Wishlist deleted successfully',
         ]);
     }
 
@@ -113,7 +112,7 @@ class WishlistController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -124,7 +123,7 @@ class WishlistController extends Controller
         if ($existingItem) {
             return response()->json([
                 'success' => false,
-                'message' => 'Property already in wishlist'
+                'message' => 'Property already in wishlist',
             ], 409);
         }
 
@@ -133,7 +132,7 @@ class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Property added to wishlist',
-            'data' => $item->load('property')
+            'data' => $item->load('property'),
         ], 201);
     }
 
@@ -145,7 +144,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Property removed from wishlist'
+            'message' => 'Property removed from wishlist',
         ]);
     }
 
@@ -163,7 +162,7 @@ class WishlistController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -172,7 +171,7 @@ class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Wishlist item updated successfully',
-            'data' => $item->load('property')
+            'data' => $item->load('property'),
         ]);
     }
 
@@ -186,7 +185,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $wishlist
+            'data' => $wishlist,
         ]);
     }
 
@@ -200,19 +199,19 @@ class WishlistController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $wishlistId = $request->wishlist_id;
 
-        if (!$wishlistId) {
+        if (! $wishlistId) {
             $defaultWishlist = $request->user()
                 ->wishlists()
                 ->where('name', 'My Favorites')
                 ->first();
 
-            if (!$defaultWishlist) {
+            if (! $defaultWishlist) {
                 $defaultWishlist = $request->user()->wishlists()->create([
                     'name' => 'My Favorites',
                     'is_public' => false,
@@ -230,21 +229,22 @@ class WishlistController extends Controller
 
         if ($item) {
             $item->delete();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Property removed from wishlist',
-                'action' => 'removed'
+                'action' => 'removed',
             ]);
         } else {
             $item = $wishlist->items()->create([
-                'property_id' => $request->property_id
+                'property_id' => $request->property_id,
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Property added to wishlist',
                 'action' => 'added',
-                'data' => $item->load('property')
+                'data' => $item->load('property'),
             ], 201);
         }
     }
@@ -264,7 +264,7 @@ class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'in_wishlist' => $inWishlist->isNotEmpty(),
-            'wishlists' => $inWishlist
+            'wishlists' => $inWishlist,
         ]);
     }
 }

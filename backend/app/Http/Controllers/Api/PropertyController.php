@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use App\Http\Requests\StorePropertyRequest;
 use App\Http\Requests\UpdatePropertyRequest;
-use Illuminate\Http\Request;
+use App\Models\Property;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
@@ -24,9 +24,9 @@ class PropertyController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('city', 'like', "%{$search}%")
-                  ->orWhere('country', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('country', 'like', "%{$search}%");
             });
         }
 
@@ -64,7 +64,7 @@ class PropertyController extends Controller
         // Sorting
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
-        
+
         if ($sortBy === 'price') {
             $query->orderBy('price_per_night', $sortOrder);
         } elseif ($sortBy === 'rating') {
@@ -90,10 +90,10 @@ class PropertyController extends Controller
             'user:id,name,email,phone,bio,avatar',
             'reviews' => function ($query) {
                 $query->where('is_approved', true)
-                      ->with('user:id,name,avatar')
-                      ->orderBy('created_at', 'desc')
-                      ->take(10);
-            }
+                    ->with('user:id,name,avatar')
+                    ->orderBy('created_at', 'desc')
+                    ->take(10);
+            },
         ]);
 
         $property->loadCount('reviews');
@@ -108,15 +108,15 @@ class PropertyController extends Controller
     public function store(StorePropertyRequest $request): JsonResponse
     {
         $data = $request->validated();
-        
+
         // Set default values
         $data['user_id'] = auth()->id();
         $data['status'] = $data['status'] ?? 'draft';
         $data['is_active'] = ($data['status'] ?? 'draft') === 'published';
-        
+
         // Create property
         $property = Property::create($data);
-        
+
         // Attach amenities if provided
         if ($request->filled('amenities')) {
             $property->amenities()->attach($request->amenities);
@@ -134,12 +134,12 @@ class PropertyController extends Controller
     public function update(UpdatePropertyRequest $request, Property $property): JsonResponse
     {
         $data = $request->validated();
-        
+
         // Update is_active based on status
         if (isset($data['status'])) {
             $data['is_active'] = $data['status'] === 'published';
         }
-        
+
         $property->update($data);
 
         // Sync amenities if provided
@@ -202,8 +202,8 @@ class PropertyController extends Controller
             $location = $request->get('location');
             $query->where(function ($q) use ($location) {
                 $q->where('city', 'like', "%{$location}%")
-                  ->orWhere('country', 'like', "%{$location}%")
-                  ->orWhere('state', 'like', "%{$location}%");
+                    ->orWhere('country', 'like', "%{$location}%")
+                    ->orWhere('state', 'like', "%{$location}%");
             });
         }
 
@@ -253,18 +253,18 @@ class PropertyController extends Controller
     public function publish(Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         // Validate required fields for publishing
-        if (!$property->title || !$property->description || !$property->price_per_night) {
+        if (! $property->title || ! $property->description || ! $property->price_per_night) {
             return response()->json([
                 'success' => false,
-                'message' => 'Property must have title, description and price to be published'
+                'message' => 'Property must have title, description and price to be published',
             ], 422);
         }
 
@@ -283,10 +283,10 @@ class PropertyController extends Controller
     public function unpublish(Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -305,10 +305,10 @@ class PropertyController extends Controller
     public function blockDates(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -334,10 +334,10 @@ class PropertyController extends Controller
     public function unblockDates(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -363,10 +363,10 @@ class PropertyController extends Controller
     public function setCustomPricing(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -393,10 +393,10 @@ class PropertyController extends Controller
     public function uploadImages(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -437,19 +437,19 @@ class PropertyController extends Controller
     public function deleteImage(Request $request, Property $property, $imageIndex): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         $images = $property->images ?? [];
 
-        if (!isset($images[$imageIndex])) {
+        if (! isset($images[$imageIndex])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Image not found'
+                'message' => 'Image not found',
             ], 404);
         }
 
@@ -486,10 +486,10 @@ class PropertyController extends Controller
     public function setMainImage(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -499,10 +499,10 @@ class PropertyController extends Controller
 
         $images = $property->images ?? [];
 
-        if (!isset($images[$request->image_index])) {
+        if (! isset($images[$request->image_index])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Image not found'
+                'message' => 'Image not found',
             ], 404);
         }
 

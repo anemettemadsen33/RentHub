@@ -32,7 +32,7 @@ class DataConsent extends Model
 
     public function isActive(): bool
     {
-        return $this->granted && !$this->revoked_at;
+        return $this->granted && ! $this->revoked_at;
     }
 
     public function revoke(): bool

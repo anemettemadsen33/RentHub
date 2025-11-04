@@ -2,8 +2,8 @@
 
 namespace App\Services\Security;
 
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 class EncryptionService
 {
@@ -22,9 +22,10 @@ class EncryptionService
     {
         try {
             $decrypted = Crypt::decryptString($encrypted);
+
             return json_decode($decrypted, true);
         } catch (DecryptException $e) {
-            throw new \Exception('Failed to decrypt data: ' . $e->getMessage());
+            throw new \Exception('Failed to decrypt data: '.$e->getMessage());
         }
     }
 
@@ -43,7 +44,8 @@ class EncryptionService
     {
         $content = file_get_contents($filePath);
         $encrypted = Crypt::encryptString($content);
-        return file_put_contents($filePath . '.enc', $encrypted) !== false;
+
+        return file_put_contents($filePath.'.enc', $encrypted) !== false;
     }
 
     /**
@@ -54,6 +56,7 @@ class EncryptionService
         try {
             $encrypted = file_get_contents($encryptedPath);
             $decrypted = Crypt::decryptString($encrypted);
+
             return file_put_contents($outputPath, $decrypted) !== false;
         } catch (DecryptException $e) {
             return false;

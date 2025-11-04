@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Review;
-use App\Models\ReviewResponse;
-use App\Models\ReviewHelpfulVote;
-use App\Models\Property;
 use App\Models\Booking;
+use App\Models\Property;
+use App\Models\Review;
+use App\Models\ReviewHelpfulVote;
+use App\Models\ReviewResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -66,7 +66,7 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $reviews
+            'data' => $reviews,
         ]);
     }
 
@@ -82,7 +82,7 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $reviews
+            'data' => $reviews,
         ]);
     }
 
@@ -103,23 +103,23 @@ class ReviewController extends Controller
             'location_rating' => 'nullable|integer|min:1|max:5',
             'value_rating' => 'nullable|integer|min:1|max:5',
             'photos' => 'nullable|array|max:5',
-            'photos.*' => 'image|mimes:jpeg,png,jpg|max:5120'
+            'photos.*' => 'image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         // Check if property exists
         $property = Property::find($request->property_id);
-        if (!$property) {
+        if (! $property) {
             return response()->json([
                 'success' => false,
-                'message' => 'Property not found'
+                'message' => 'Property not found',
             ], 404);
         }
 
@@ -132,7 +132,7 @@ class ReviewController extends Controller
             if ($existingReview) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You have already reviewed this booking'
+                    'message' => 'You have already reviewed this booking',
                 ], 422);
             }
         }
@@ -160,7 +160,7 @@ class ReviewController extends Controller
             'location_rating' => $request->location_rating,
             'value_rating' => $request->value_rating,
             'photos' => $photos,
-            'is_approved' => true // Auto-approve (can be changed based on requirements)
+            'is_approved' => true, // Auto-approve (can be changed based on requirements)
         ]);
 
         $review->load(['user', 'property']);
@@ -168,7 +168,7 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Review submitted successfully',
-            'data' => $review
+            'data' => $review,
         ], 201);
     }
 
@@ -182,7 +182,7 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $review
+            'data' => $review,
         ]);
     }
 
@@ -194,10 +194,10 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
 
         // Check authorization
-        if (!$review->canBeEditedBy($request->user())) {
+        if (! $review->canBeEditedBy($request->user())) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized to edit this review'
+                'message' => 'Unauthorized to edit this review',
             ], 403);
         }
 
@@ -211,14 +211,14 @@ class ReviewController extends Controller
             'location_rating' => 'nullable|integer|min:1|max:5',
             'value_rating' => 'nullable|integer|min:1|max:5',
             'photos' => 'nullable|array|max:5',
-            'photos.*' => 'image|mimes:jpeg,png,jpg|max:5120'
+            'photos.*' => 'image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -241,7 +241,7 @@ class ReviewController extends Controller
             'accuracy_rating' => $request->accuracy_rating,
             'location_rating' => $request->location_rating,
             'value_rating' => $request->value_rating,
-            'photos' => $photos
+            'photos' => $photos,
         ]);
 
         $review->load(['user', 'property']);
@@ -249,7 +249,7 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Review updated successfully',
-            'data' => $review
+            'data' => $review,
         ]);
     }
 
@@ -261,10 +261,10 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
 
         // Check authorization
-        if (!$review->canBeDeletedBy($request->user())) {
+        if (! $review->canBeDeletedBy($request->user())) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized to delete this review'
+                'message' => 'Unauthorized to delete this review',
             ], 403);
         }
 
@@ -280,7 +280,7 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Review deleted successfully'
+            'message' => 'Review deleted successfully',
         ]);
     }
 
@@ -292,22 +292,22 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
 
         // Check authorization
-        if (!$review->canBeRespondedBy($request->user())) {
+        if (! $review->canBeRespondedBy($request->user())) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized to respond to this review'
+                'message' => 'Unauthorized to respond to this review',
             ], 403);
         }
 
         $validator = Validator::make($request->all(), [
-            'response' => 'required|string|max:1000'
+            'response' => 'required|string|max:1000',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -315,13 +315,13 @@ class ReviewController extends Controller
         $response = ReviewResponse::create([
             'review_id' => $review->id,
             'user_id' => $request->user()->id,
-            'response' => $request->response
+            'response' => $request->response,
         ]);
 
         // Update review with latest response info
         $review->update([
             'owner_response' => $request->response,
-            'owner_response_at' => now()
+            'owner_response_at' => now(),
         ]);
 
         $response->load('user');
@@ -329,7 +329,7 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Response added successfully',
-            'data' => $response
+            'data' => $response,
         ], 201);
     }
 
@@ -341,14 +341,14 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'is_helpful' => 'required|boolean'
+            'is_helpful' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -360,14 +360,14 @@ class ReviewController extends Controller
         if ($existingVote) {
             // Update existing vote
             $existingVote->update([
-                'is_helpful' => $request->is_helpful
+                'is_helpful' => $request->is_helpful,
             ]);
         } else {
             // Create new vote
             ReviewHelpfulVote::create([
                 'review_id' => $review->id,
                 'user_id' => $request->user()->id,
-                'is_helpful' => $request->is_helpful
+                'is_helpful' => $request->is_helpful,
             ]);
         }
 
@@ -382,8 +382,8 @@ class ReviewController extends Controller
             'success' => true,
             'message' => 'Vote recorded successfully',
             'data' => [
-                'helpful_count' => $helpfulCount
-            ]
+                'helpful_count' => $helpfulCount,
+            ],
         ]);
     }
 
@@ -424,8 +424,8 @@ class ReviewController extends Controller
                 'average_rating' => round($averageRating, 2),
                 'total_reviews' => $totalReviews,
                 'rating_breakdown' => $ratingBreakdown,
-                'category_averages' => $categoryAverages
-            ]
+                'category_averages' => $categoryAverages,
+            ],
         ]);
     }
 }

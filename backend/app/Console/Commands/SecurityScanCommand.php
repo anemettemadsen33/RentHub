@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\Security\VulnerabilityScanner;
+use Illuminate\Console\Command;
 
 class SecurityScanCommand extends Command
 {
@@ -22,6 +22,7 @@ class SecurityScanCommand extends Command
 
         if ($this->option('json')) {
             $this->line(json_encode($results, JSON_PRETTY_PRINT));
+
             return 0;
         }
 
@@ -29,7 +30,7 @@ class SecurityScanCommand extends Command
 
         if ($this->option('report')) {
             $report = $scanner->generateReport();
-            $filename = 'security_report_' . date('Y-m-d_His') . '.md';
+            $filename = 'security_report_'.date('Y-m-d_His').'.md';
             file_put_contents(storage_path("logs/{$filename}"), $report);
             $this->info("Detailed report saved to: storage/logs/{$filename}");
         }
@@ -50,13 +51,13 @@ class SecurityScanCommand extends Command
             ]
         );
 
-        if (!empty($results['vulnerabilities'])) {
+        if (! empty($results['vulnerabilities'])) {
             $this->newLine();
             $this->warn('Vulnerabilities Found:');
             $this->newLine();
 
             foreach ($results['vulnerabilities'] as $vuln) {
-                $color = match($vuln['severity']) {
+                $color = match ($vuln['severity']) {
                     'critical' => 'red',
                     'high' => 'yellow',
                     'medium' => 'blue',

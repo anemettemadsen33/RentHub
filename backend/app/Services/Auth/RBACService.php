@@ -2,9 +2,9 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -29,13 +29,13 @@ class RBACService
     public function hasAnyPermission(User $user, array $permissions): bool
     {
         $userPermissions = $this->getUserPermissions($user);
-        
+
         foreach ($permissions as $permission) {
             if ($userPermissions->contains($permission)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -45,13 +45,13 @@ class RBACService
     public function hasAllPermissions(User $user, array $permissions): bool
     {
         $userPermissions = $this->getUserPermissions($user);
-        
+
         foreach ($permissions as $permission) {
-            if (!$userPermissions->contains($permission)) {
+            if (! $userPermissions->contains($permission)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -63,7 +63,7 @@ class RBACService
         return Cache::remember(
             "user:{$user->id}:permissions",
             $this->cacheTtl,
-            fn() => $this->loadUserPermissions($user)
+            fn () => $this->loadUserPermissions($user)
         );
     }
 
@@ -74,7 +74,7 @@ class RBACService
     {
         // Get direct permissions
         $directPermissions = $user->permissions->pluck('name');
-        
+
         // Get role permissions
         $rolePermissions = $user->roles()
             ->with('permissions')
@@ -82,7 +82,7 @@ class RBACService
             ->pluck('permissions')
             ->flatten()
             ->pluck('name');
-        
+
         return $directPermissions->merge($rolePermissions)->unique();
     }
 
@@ -92,13 +92,14 @@ class RBACService
     public function assignRole(User $user, string $roleName): bool
     {
         $role = Role::where('name', $roleName)->firstOrFail();
-        
-        if (!$user->roles->contains($role->id)) {
+
+        if (! $user->roles->contains($role->id)) {
             $user->roles()->attach($role->id);
             $this->clearUserCache($user);
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -108,13 +109,14 @@ class RBACService
     public function removeRole(User $user, string $roleName): bool
     {
         $role = Role::where('name', $roleName)->firstOrFail();
-        
+
         if ($user->roles->contains($role->id)) {
             $user->roles()->detach($role->id);
             $this->clearUserCache($user);
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -134,13 +136,14 @@ class RBACService
     public function grantPermission(User $user, string $permissionName): bool
     {
         $permission = Permission::where('name', $permissionName)->firstOrFail();
-        
-        if (!$user->permissions->contains($permission->id)) {
+
+        if (! $user->permissions->contains($permission->id)) {
             $user->permissions()->attach($permission->id);
             $this->clearUserCache($user);
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -150,13 +153,14 @@ class RBACService
     public function revokePermission(User $user, string $permissionName): bool
     {
         $permission = Permission::where('name', $permissionName)->firstOrFail();
-        
+
         if ($user->permissions->contains($permission->id)) {
             $user->permissions()->detach($permission->id);
             $this->clearUserCache($user);
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -169,12 +173,12 @@ class RBACService
             'name' => $name,
             'description' => $description,
         ]);
-        
-        if (!empty($permissionNames)) {
+
+        if (! empty($permissionNames)) {
             $permissions = Permission::whereIn('name', $permissionNames)->pluck('id');
             $role->permissions()->sync($permissions);
         }
-        
+
         return $role;
     }
 
@@ -197,13 +201,14 @@ class RBACService
     {
         $role = Role::where('name', $roleName)->firstOrFail();
         $permission = Permission::where('name', $permissionName)->firstOrFail();
-        
-        if (!$role->permissions->contains($permission->id)) {
+
+        if (! $role->permissions->contains($permission->id)) {
             $role->permissions()->attach($permission->id);
             $this->clearRoleCache($role);
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -225,7 +230,7 @@ class RBACService
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -251,7 +256,7 @@ class RBACService
     public function clearRoleCache(Role $role): void
     {
         // Clear cache for all users with this role
-        $role->users->each(fn($user) => $this->clearUserCache($user));
+        $role->users->each(fn ($user) => $this->clearUserCache($user));
     }
 
     /**
@@ -274,19 +279,19 @@ class RBACService
             ['name' => 'properties.create', 'description' => 'Create properties', 'group' => 'properties'],
             ['name' => 'properties.update', 'description' => 'Update properties', 'group' => 'properties'],
             ['name' => 'properties.delete', 'description' => 'Delete properties', 'group' => 'properties'],
-            
+
             // Booking permissions
             ['name' => 'bookings.view', 'description' => 'View bookings', 'group' => 'bookings'],
             ['name' => 'bookings.create', 'description' => 'Create bookings', 'group' => 'bookings'],
             ['name' => 'bookings.update', 'description' => 'Update bookings', 'group' => 'bookings'],
             ['name' => 'bookings.cancel', 'description' => 'Cancel bookings', 'group' => 'bookings'],
-            
+
             // User permissions
             ['name' => 'users.view', 'description' => 'View users', 'group' => 'users'],
             ['name' => 'users.create', 'description' => 'Create users', 'group' => 'users'],
             ['name' => 'users.update', 'description' => 'Update users', 'group' => 'users'],
             ['name' => 'users.delete', 'description' => 'Delete users', 'group' => 'users'],
-            
+
             // Payment permissions
             ['name' => 'payments.view', 'description' => 'View payments', 'group' => 'payments'],
             ['name' => 'payments.process', 'description' => 'Process payments', 'group' => 'payments'],
@@ -308,7 +313,7 @@ class RBACService
 
         // Assign permissions to roles
         $admin->permissions()->sync(Permission::all());
-        
+
         $landlord->permissions()->sync(
             Permission::whereIn('name', [
                 'properties.view', 'properties.create', 'properties.update', 'properties.delete',
@@ -316,7 +321,7 @@ class RBACService
                 'payments.view',
             ])->pluck('id')
         );
-        
+
         $tenant->permissions()->sync(
             Permission::whereIn('name', [
                 'properties.view',
@@ -324,7 +329,7 @@ class RBACService
                 'payments.view',
             ])->pluck('id')
         );
-        
+
         $guest->permissions()->sync(
             Permission::whereIn('name', [
                 'properties.view',

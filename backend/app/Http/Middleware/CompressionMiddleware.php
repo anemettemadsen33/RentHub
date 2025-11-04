@@ -17,13 +17,13 @@ class CompressionMiddleware
 
         // Only compress if client accepts it
         $acceptEncoding = $request->header('Accept-Encoding', '');
-        
-        if (!$this->shouldCompress($response)) {
+
+        if (! $this->shouldCompress($response)) {
             return $response;
         }
 
         $content = $response->getContent();
-        
+
         // Try Brotli first (better compression)
         if (str_contains($acceptEncoding, 'br') && function_exists('brotli_compress')) {
             $compressed = brotli_compress($content, 11, BROTLI_TEXT);
@@ -31,6 +31,7 @@ class CompressionMiddleware
                 $response->setContent($compressed);
                 $response->headers->set('Content-Encoding', 'br');
                 $response->headers->set('Content-Length', strlen($compressed));
+
                 return $response;
             }
         }
@@ -42,6 +43,7 @@ class CompressionMiddleware
                 $response->setContent($compressed);
                 $response->headers->set('Content-Encoding', 'gzip');
                 $response->headers->set('Content-Length', strlen($compressed));
+
                 return $response;
             }
         }

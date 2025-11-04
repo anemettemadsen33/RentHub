@@ -25,9 +25,13 @@ class NotificationPreference extends Model
 
     // Available notification types
     public const TYPE_BOOKING = 'booking';
+
     public const TYPE_PAYMENT = 'payment';
+
     public const TYPE_REVIEW = 'review';
+
     public const TYPE_ACCOUNT = 'account';
+
     public const TYPE_SYSTEM = 'system';
 
     public static function types(): array
@@ -75,8 +79,8 @@ class NotificationPreference extends Model
     public static function isChannelEnabled(int $userId, string $type, string $channel): bool
     {
         $preference = static::getForUser($userId, $type);
-        
-        if (!$preference) {
+
+        if (! $preference) {
             // Default to enabled if no preference set
             return in_array($channel, ['email', 'database']);
         }

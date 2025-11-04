@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use App\Models\PricingRule;
+use App\Models\Property;
 use App\Services\PricingService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 
 class PricingRuleController extends Controller
 {
@@ -27,7 +27,7 @@ class PricingRuleController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -50,7 +50,7 @@ class PricingRuleController extends Controller
         $property = Property::findOrFail($propertyId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -97,7 +97,7 @@ class PricingRuleController extends Controller
         $rule = PricingRule::where('property_id', $property->id)->findOrFail($ruleId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -116,7 +116,7 @@ class PricingRuleController extends Controller
         $rule = PricingRule::where('property_id', $property->id)->findOrFail($ruleId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -163,7 +163,7 @@ class PricingRuleController extends Controller
         $rule = PricingRule::where('property_id', $property->id)->findOrFail($ruleId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -244,11 +244,11 @@ class PricingRuleController extends Controller
         $rule = PricingRule::where('property_id', $property->id)->findOrFail($ruleId);
 
         // Check authorization
-        if ($request->user()->id !== $property->user_id && !$request->user()->isAdmin()) {
+        if ($request->user()->id !== $property->user_id && ! $request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $rule->update(['is_active' => !$rule->is_active]);
+        $rule->update(['is_active' => ! $rule->is_active]);
 
         return response()->json([
             'success' => true,

@@ -29,7 +29,7 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject('Verify Your Email Address - RentHub')
-            ->greeting('Hello ' . $notifiable->name . '!')
+            ->greeting('Hello '.$notifiable->name.'!')
             ->line('Thank you for registering with RentHub.')
             ->line('Please click the button below to verify your email address.')
             ->action('Verify Email Address', $verificationUrl)
@@ -43,7 +43,7 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
     protected function verificationUrl($notifiable)
     {
         $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
-        
+
         return URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),

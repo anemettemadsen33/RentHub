@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\NotificationPreference;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class NotificationController extends Controller
@@ -16,7 +16,7 @@ class NotificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $notifications = $user->notifications()
             ->when($request->has('unread_only'), function ($query) use ($request) {
                 if ($request->boolean('unread_only')) {
@@ -24,14 +24,14 @@ class NotificationController extends Controller
                 }
             })
             ->when($request->has('type'), function ($query) use ($request) {
-                $query->where('type', 'like', '%' . $request->type . '%');
+                $query->where('type', 'like', '%'.$request->type.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($request->get('per_page', 15));
-        
+
         return response()->json([
             'success' => true,
-            'data' => $notifications
+            'data' => $notifications,
         ]);
     }
 
@@ -41,10 +41,10 @@ class NotificationController extends Controller
     public function unreadCount(Request $request): JsonResponse
     {
         $count = $request->user()->unreadNotifications()->count();
-        
+
         return response()->json([
             'success' => true,
-            'count' => $count
+            'count' => $count,
         ]);
     }
 
@@ -55,19 +55,19 @@ class NotificationController extends Controller
     {
         $user = $request->user();
         $notification = $user->notifications()->where('id', $id)->first();
-        
-        if (!$notification) {
+
+        if (! $notification) {
             return response()->json([
                 'success' => false,
-                'message' => 'Notification not found'
+                'message' => 'Notification not found',
             ], 404);
         }
-        
+
         $notification->markAsRead();
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Notification marked as read'
+            'message' => 'Notification marked as read',
         ]);
     }
 
@@ -77,10 +77,10 @@ class NotificationController extends Controller
     public function markAllAsRead(Request $request): JsonResponse
     {
         $request->user()->unreadNotifications->markAsRead();
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'All notifications marked as read'
+            'message' => 'All notifications marked as read',
         ]);
     }
 
@@ -91,19 +91,19 @@ class NotificationController extends Controller
     {
         $user = $request->user();
         $notification = $user->notifications()->where('id', $id)->first();
-        
-        if (!$notification) {
+
+        if (! $notification) {
             return response()->json([
                 'success' => false,
-                'message' => 'Notification not found'
+                'message' => 'Notification not found',
             ], 404);
         }
-        
+
         $notification->delete();
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Notification deleted'
+            'message' => 'Notification deleted',
         ]);
     }
 
@@ -114,15 +114,15 @@ class NotificationController extends Controller
     {
         $user = $request->user();
         $preferences = [];
-        
+
         foreach (NotificationPreference::types() as $type) {
             $preference = NotificationPreference::getOrCreateDefaults($user->id, $type);
             $preferences[] = $preference;
         }
-        
+
         return response()->json([
             'success' => true,
-            'data' => $preferences
+            'data' => $preferences,
         ]);
     }
 
@@ -133,7 +133,7 @@ class NotificationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'preferences' => 'required|array',
-            'preferences.*.notification_type' => 'required|in:' . implode(',', NotificationPreference::types()),
+            'preferences.*.notification_type' => 'required|in:'.implode(',', NotificationPreference::types()),
             'preferences.*.channel_email' => 'boolean',
             'preferences.*.channel_database' => 'boolean',
             'preferences.*.channel_sms' => 'boolean',
@@ -144,7 +144,7 @@ class NotificationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -155,7 +155,7 @@ class NotificationController extends Controller
             $preference = NotificationPreference::updateOrCreate(
                 [
                     'user_id' => $user->id,
-                    'notification_type' => $pref['notification_type']
+                    'notification_type' => $pref['notification_type'],
                 ],
                 [
                     'channel_email' => $pref['channel_email'] ?? true,
@@ -164,14 +164,14 @@ class NotificationController extends Controller
                     'channel_push' => $pref['channel_push'] ?? false,
                 ]
             );
-            
+
             $updated[] = $preference;
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Notification preferences updated successfully',
-            'data' => $updated
+            'data' => $updated,
         ]);
     }
 
@@ -180,20 +180,20 @@ class NotificationController extends Controller
      */
     public function testNotification(Request $request): JsonResponse
     {
-        if (!app()->environment('local')) {
+        if (! app()->environment('local')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Test notifications only available in local environment'
+                'message' => 'Test notifications only available in local environment',
             ], 403);
         }
 
         $user = $request->user();
-        
-        $user->notify(new \App\Notifications\Account\WelcomeNotification());
-        
+
+        $user->notify(new \App\Notifications\Account\WelcomeNotification);
+
         return response()->json([
             'success' => true,
-            'message' => 'Test notification sent'
+            'message' => 'Test notification sent',
         ]);
     }
 }

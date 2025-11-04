@@ -75,9 +75,11 @@ class CreditCheck extends Model
 
     public function calculateCreditRating(): string
     {
-        if (!$this->credit_score) return 'none';
+        if (! $this->credit_score) {
+            return 'none';
+        }
 
-        return match(true) {
+        return match (true) {
             $this->credit_score >= 750 => 'excellent',
             $this->credit_score >= 700 => 'good',
             $this->credit_score >= 650 => 'fair',

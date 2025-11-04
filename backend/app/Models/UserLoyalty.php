@@ -45,21 +45,21 @@ class UserLoyalty extends Model
     public function updateTier(): void
     {
         $newTier = LoyaltyTier::getTierForPoints($this->total_points_earned);
-        
-        if ($newTier && (!$this->current_tier_id || $newTier->id !== $this->current_tier_id)) {
+
+        if ($newTier && (! $this->current_tier_id || $newTier->id !== $this->current_tier_id)) {
             $this->current_tier_id = $newTier->id;
             $this->tier_achieved_at = now();
-            
+
             // Calculate points needed for next tier
             $nextTier = LoyaltyTier::active()
                 ->where('min_points', '>', $newTier->min_points)
                 ->orderBy('min_points')
                 ->first();
-            
-            $this->next_tier_points = $nextTier 
-                ? $nextTier->min_points - $this->total_points_earned 
+
+            $this->next_tier_points = $nextTier
+                ? $nextTier->min_points - $this->total_points_earned
                 : null;
-            
+
             $this->save();
         }
     }
@@ -71,7 +71,7 @@ class UserLoyalty extends Model
 
     public function getProgressToNextTierAttribute(): ?float
     {
-        if (!$this->currentTier || !$this->next_tier_points) {
+        if (! $this->currentTier || ! $this->next_tier_points) {
             return null;
         }
 
@@ -80,7 +80,7 @@ class UserLoyalty extends Model
             ->orderBy('min_points')
             ->first();
 
-        if (!$nextTier) {
+        if (! $nextTier) {
             return 100; // Max tier reached
         }
 

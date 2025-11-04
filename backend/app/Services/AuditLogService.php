@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class AuditLogService
 {
@@ -55,7 +54,7 @@ class AuditLogService
     {
         $sensitiveKeys = [
             'password', 'token', 'secret', 'api_key', 'credit_card',
-            'ssn', 'passport', 'bank_account'
+            'ssn', 'passport', 'bank_account',
         ];
 
         $sanitized = [];

@@ -100,10 +100,10 @@ class BankAccount extends Model
     // Check if all required fields are filled
     public function isComplete(): bool
     {
-        return !empty($this->iban) 
-            && !empty($this->bic_swift) 
-            && !empty($this->bank_name) 
-            && !empty($this->account_holder_name);
+        return ! empty($this->iban)
+            && ! empty($this->bic_swift)
+            && ! empty($this->bank_name)
+            && ! empty($this->account_holder_name);
     }
 
     // Get account description for display
@@ -112,7 +112,7 @@ class BankAccount extends Model
         $type = $this->isCompanyAccount() ? 'Company' : 'Personal';
         $status = $this->is_active ? 'Active' : 'Inactive';
         $default = $this->is_default ? ' (Default)' : '';
-        
+
         return "{$this->account_name} - {$type} - {$status}{$default}";
     }
 }

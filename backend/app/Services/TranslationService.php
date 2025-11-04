@@ -2,20 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Translation;
 use App\Models\SupportedLanguage;
+use App\Models\Translation;
 use Illuminate\Support\Facades\Cache;
 
 class TranslationService
 {
-    public function getTranslation(string $key, string $locale = null, string $group = 'common', $default = null)
+    public function getTranslation(string $key, ?string $locale = null, string $group = 'common', $default = null)
     {
         return Translation::get($key, $locale, $group, $default);
     }
 
-    public function getAllTranslations(string $locale, string $group = null): array
+    public function getAllTranslations(string $locale, ?string $group = null): array
     {
-        $cacheKey = $group 
+        $cacheKey = $group
             ? "translations.{$locale}.{$group}"
             : "translations.{$locale}.all";
 
@@ -49,7 +49,7 @@ class TranslationService
     public function getSupportedLanguages(bool $activeOnly = true): array
     {
         $query = SupportedLanguage::query();
-        
+
         if ($activeOnly) {
             $query->active();
         }
@@ -77,11 +77,11 @@ class TranslationService
     protected function parseAcceptLanguage(string $acceptLanguage): array
     {
         $locales = [];
-        
+
         foreach (explode(',', $acceptLanguage) as $lang) {
             $parts = explode(';', $lang);
             $locale = trim($parts[0]);
-            
+
             if (strlen($locale) >= 2) {
                 $locales[] = substr($locale, 0, 2);
             }
@@ -109,7 +109,7 @@ class TranslationService
         return $count;
     }
 
-    public function exportTranslations(string $locale, string $group = null): array
+    public function exportTranslations(string $locale, ?string $group = null): array
     {
         return $this->getAllTranslations($locale, $group);
     }

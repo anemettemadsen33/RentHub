@@ -45,7 +45,7 @@ class IoTDeviceCommand extends Model
         ]);
     }
 
-    public function markAsExecuted(string $response = null): void
+    public function markAsExecuted(?string $response = null): void
     {
         $this->update([
             'status' => 'executed',
@@ -54,7 +54,7 @@ class IoTDeviceCommand extends Model
         ]);
     }
 
-    public function markAsFailed(string $response = null): void
+    public function markAsFailed(?string $response = null): void
     {
         $this->update([
             'status' => 'failed',

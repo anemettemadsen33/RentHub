@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\CleaningSchedule;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class ProcessCleaningSchedules extends Command
@@ -33,6 +33,7 @@ class ProcessCleaningSchedules extends Command
 
         if ($schedules->isEmpty()) {
             $this->info('No schedules due for execution.');
+
             return 0;
         }
 
@@ -42,7 +43,7 @@ class ProcessCleaningSchedules extends Command
         foreach ($schedules as $schedule) {
             try {
                 $cleaningService = $schedule->execute();
-                
+
                 if ($cleaningService) {
                     $this->info("Created cleaning service #{$cleaningService->id} for property #{$schedule->property_id}");
                     $processed++;
@@ -51,7 +52,7 @@ class ProcessCleaningSchedules extends Command
                 }
             } catch (\Exception $e) {
                 $this->error("Error processing schedule #{$schedule->id}: {$e->getMessage()}");
-                Log::error("Error processing cleaning schedule", [
+                Log::error('Error processing cleaning schedule', [
                     'schedule_id' => $schedule->id,
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
@@ -61,6 +62,7 @@ class ProcessCleaningSchedules extends Command
         }
 
         $this->info("Processing complete: {$processed} cleaning services created, {$errors} errors.");
+
         return 0;
     }
 }

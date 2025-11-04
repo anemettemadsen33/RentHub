@@ -12,10 +12,10 @@ class CacheStrategyService
      */
     public function appCache(string $key, $value, int $ttl = 3600, array $tags = [])
     {
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             return Cache::tags($tags)->put($key, $value, $ttl);
         }
-        
+
         return Cache::put($key, $value, $ttl);
     }
 
@@ -24,10 +24,10 @@ class CacheStrategyService
      */
     public function getAppCache(string $key, array $tags = [])
     {
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             return Cache::tags($tags)->get($key);
         }
-        
+
         return Cache::get($key);
     }
 
@@ -69,7 +69,7 @@ class CacheStrategyService
     public function invalidateByPattern(string $pattern): void
     {
         $keys = $this->getKeysByPattern($pattern);
-        
+
         foreach ($keys as $key) {
             Cache::forget($key);
         }
@@ -93,7 +93,7 @@ class CacheStrategyService
     public function warmUpCache(array $items): void
     {
         foreach ($items as $key => $callback) {
-            if (!Cache::has($key)) {
+            if (! Cache::has($key)) {
                 $value = is_callable($callback) ? $callback() : $callback;
                 Cache::put($key, $value, 3600);
             }
@@ -108,7 +108,7 @@ class CacheStrategyService
         try {
             $redis = Redis::connection();
             $info = $redis->info();
-            
+
             return [
                 'memory_used' => $info['used_memory_human'] ?? 'N/A',
                 'total_keys' => $redis->dbSize(),
@@ -138,7 +138,7 @@ class CacheStrategyService
     {
         return [
             'Cache-Control' => "public, max-age={$maxAge}",
-            'Expires' => gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT',
+            'Expires' => gmdate('D, d M Y H:i:s', time() + $maxAge).' GMT',
             'Pragma' => 'public',
         ];
     }

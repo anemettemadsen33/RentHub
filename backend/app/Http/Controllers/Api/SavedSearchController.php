@@ -189,13 +189,13 @@ class SavedSearchController extends Controller
             ->findOrFail($id);
 
         $savedSearch->update([
-            'enable_alerts' => !$savedSearch->enable_alerts,
+            'enable_alerts' => ! $savedSearch->enable_alerts,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => $savedSearch->enable_alerts 
-                ? 'Alerts enabled successfully' 
+            'message' => $savedSearch->enable_alerts
+                ? 'Alerts enabled successfully'
                 : 'Alerts disabled successfully',
             'data' => $savedSearch,
         ]);
@@ -207,7 +207,7 @@ class SavedSearchController extends Controller
     public function statistics()
     {
         $user = Auth::user();
-        
+
         $stats = [
             'total_searches' => $user->savedSearches()->count(),
             'active_searches' => $user->savedSearches()->where('is_active', true)->count(),

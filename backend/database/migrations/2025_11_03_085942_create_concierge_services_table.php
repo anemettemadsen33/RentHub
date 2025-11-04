@@ -28,7 +28,7 @@ return new class extends Migration
                 'babysitting',
                 'housekeeping',
                 'pet_care',
-                'other'
+                'other',
             ]);
             $table->decimal('base_price', 10, 2);
             $table->string('price_unit')->default('per service'); // per hour, per service, per person
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->integer('advance_booking_hours')->default(24); // Minimum hours in advance
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('service_type');
             $table->index('service_provider_id');
             $table->index('is_available');

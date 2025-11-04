@@ -23,8 +23,8 @@ class LoyaltyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
-        if (!$user->loyalty) {
+
+        if (! $user->loyalty) {
             $this->loyaltyService->initializeLoyaltyAccount($user);
             $user->load('loyalty');
         }
@@ -74,7 +74,7 @@ class LoyaltyController extends Controller
                         ->active()
                         ->ordered()
                         ->get()
-                        ->map(fn($benefit) => [
+                        ->map(fn ($benefit) => [
                             'name' => $benefit->name,
                             'description' => $benefit->description,
                             'type' => $benefit->benefit_type,
@@ -96,7 +96,7 @@ class LoyaltyController extends Controller
     public function transactions(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $transactions = $user->loyaltyTransactions()
             ->with('booking')
             ->orderBy('created_at', 'desc')
@@ -188,7 +188,7 @@ class LoyaltyController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->date_of_birth) {
+        if (! $user->date_of_birth) {
             return response()->json([
                 'success' => false,
                 'message' => 'Date of birth not set',
@@ -197,7 +197,7 @@ class LoyaltyController extends Controller
 
         $transaction = $this->loyaltyService->awardBirthdayBonus($user);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'Birthday bonus already claimed this year or not eligible',
@@ -265,7 +265,7 @@ class LoyaltyController extends Controller
                     ->active()
                     ->ordered()
                     ->get()
-                    ->map(fn($benefit) => [
+                    ->map(fn ($benefit) => [
                         'name' => $benefit->name,
                         'description' => $benefit->description,
                         'type' => $benefit->benefit_type,

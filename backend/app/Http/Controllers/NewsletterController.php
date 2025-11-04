@@ -27,7 +27,7 @@ class NewsletterController extends Controller
         }
 
         $token = Str::random(32);
-        
+
         $subscriber = NewsletterSubscriber::create([
             'email' => $request->email,
             'name' => $request->name,
@@ -51,7 +51,7 @@ class NewsletterController extends Controller
     {
         $subscriber = NewsletterSubscriber::where('token', $token)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return response()->json([
                 'error' => 'Invalid confirmation token.',
             ], 404);
@@ -90,7 +90,7 @@ class NewsletterController extends Controller
 
         $subscriber = NewsletterSubscriber::where('email', $request->email)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return response()->json([
                 'error' => 'Email not found in our system.',
             ], 404);
@@ -113,7 +113,7 @@ class NewsletterController extends Controller
     {
         $subscriber = NewsletterSubscriber::where('email', $email)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return response()->json([
                 'error' => 'Email not found.',
             ], 404);
@@ -136,7 +136,7 @@ class NewsletterController extends Controller
     {
         $subscriber = NewsletterSubscriber::where('email', $email)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return response()->json([
                 'error' => 'Email not found.',
             ], 404);
@@ -219,7 +219,7 @@ class NewsletterController extends Controller
                 );
                 $count++;
             } catch (\Exception $e) {
-                \Log::error('Failed to send newsletter to ' . $subscriber->email, [
+                \Log::error('Failed to send newsletter to '.$subscriber->email, [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -255,7 +255,7 @@ class NewsletterController extends Controller
     private function sendConfirmationEmail(NewsletterSubscriber $subscriber)
     {
         $confirmUrl = url("/newsletter/confirm/{$subscriber->token}");
-        
+
         Mail::to($subscriber->email)->send(
             new \App\Mail\NewsletterConfirmation($subscriber, $confirmUrl)
         );

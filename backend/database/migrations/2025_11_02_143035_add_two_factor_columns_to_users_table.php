@@ -12,11 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('two_factor_enabled')->default(false)->after('remember_token');
-            $table->text('two_factor_secret')->nullable()->after('two_factor_enabled');
-            $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
-            $table->string('two_factor_code', 6)->nullable()->after('two_factor_recovery_codes');
-            $table->timestamp('two_factor_code_expires_at')->nullable()->after('two_factor_code');
+            if (! Schema::hasColumn('users', 'two_factor_enabled')) {
+                $table->boolean('two_factor_enabled')->default(false)->after('remember_token');
+            }
+            if (! Schema::hasColumn('users', 'two_factor_secret')) {
+                $table->text('two_factor_secret')->nullable()->after('two_factor_enabled');
+            }
+            if (! Schema::hasColumn('users', 'two_factor_recovery_codes')) {
+                $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
+            }
+            if (! Schema::hasColumn('users', 'two_factor_code')) {
+                $table->string('two_factor_code', 6)->nullable()->after('two_factor_recovery_codes');
+            }
+            if (! Schema::hasColumn('users', 'two_factor_code_expires_at')) {
+                $table->timestamp('two_factor_code_expires_at')->nullable()->after('two_factor_code');
+            }
         });
     }
 
@@ -31,7 +41,7 @@ return new class extends Migration
                 'two_factor_secret',
                 'two_factor_recovery_codes',
                 'two_factor_code',
-                'two_factor_code_expires_at'
+                'two_factor_code_expires_at',
             ]);
         });
     }

@@ -23,7 +23,7 @@ class RateLimitMiddleware
         if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
             return response()->json([
                 'error' => 'Too many requests',
-                'retry_after' => $this->limiter->availableIn($key)
+                'retry_after' => $this->limiter->availableIn($key),
             ], 429);
         }
 
@@ -40,7 +40,7 @@ class RateLimitMiddleware
 
     protected function resolveRequestSignature($request)
     {
-        return sha1($request->ip() . '|' . $request->path());
+        return sha1($request->ip().'|'.$request->path());
     }
 
     protected function calculateRemainingAttempts($key, $maxAttempts)

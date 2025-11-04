@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\BankAccounts\Schemas;
 
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Grid;
 use Filament\Schemas\Schema;
 
 class BankAccountForm
@@ -37,7 +37,7 @@ class BankAccountForm
                                     ->required()
                                     ->maxLength(255)
                                     ->helperText('Company name or account holder name'),
-                                
+
                                 TextInput::make('account_holder_name')
                                     ->label('Account Holder Name')
                                     ->required()
@@ -81,7 +81,7 @@ class BankAccountForm
                                     ->maxLength(34)
                                     ->placeholder('RO49AAAA1B31007593840000')
                                     ->helperText('International Bank Account Number'),
-                                
+
                                 TextInput::make('bic_swift')
                                     ->label('BIC/SWIFT Code')
                                     ->required()
@@ -113,7 +113,7 @@ class BankAccountForm
                                     ->default(true)
                                     ->helperText('Can this account be used for transactions?')
                                     ->required(),
-                                
+
                                 Toggle::make('is_default')
                                     ->label('Set as Default')
                                     ->default(false)

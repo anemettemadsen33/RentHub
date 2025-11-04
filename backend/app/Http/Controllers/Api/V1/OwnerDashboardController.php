@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Property;
 use App\Models\Review;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class OwnerDashboardController extends Controller
 {
@@ -73,7 +73,7 @@ class OwnerDashboardController extends Controller
         })
             ->where('created_at', '>=', $startDate)
             ->select(
-                DB::raw($this->getDateGrouping($groupBy) . ' as period'),
+                DB::raw($this->getDateGrouping($groupBy).' as period'),
                 DB::raw('COUNT(*) as total_bookings'),
                 DB::raw('SUM(CASE WHEN status = "confirmed" THEN 1 ELSE 0 END) as confirmed'),
                 DB::raw('SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled'),
@@ -103,7 +103,7 @@ class OwnerDashboardController extends Controller
             ->where('status', 'completed')
             ->where('created_at', '>=', $startDate)
             ->select(
-                DB::raw($this->getDateGrouping($groupBy) . ' as period'),
+                DB::raw($this->getDateGrouping($groupBy).' as period'),
                 DB::raw('SUM(amount) as total_revenue'),
                 DB::raw('COUNT(*) as total_transactions'),
                 DB::raw('AVG(amount) as average_transaction')
@@ -175,6 +175,7 @@ class OwnerDashboardController extends Controller
                 ->sum(function ($booking) use ($startDate, $endDate) {
                     $checkIn = Carbon::parse($booking->check_in)->max($startDate);
                     $checkOut = Carbon::parse($booking->check_out)->min($endDate);
+
                     return $checkIn->diffInDays($checkOut) + 1;
                 });
 

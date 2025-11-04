@@ -59,7 +59,7 @@ class Payment extends Model
     public static function generatePaymentNumber(): string
     {
         $date = now()->format('Ym');
-        $lastPayment = static::whereRaw('payment_number LIKE ?', [$date . '%'])
+        $lastPayment = static::whereRaw('payment_number LIKE ?', [$date.'%'])
             ->orderBy('payment_number', 'desc')
             ->first();
 
@@ -70,7 +70,7 @@ class Payment extends Model
             $newNumber = '0001';
         }
 
-        return 'PAY' . $date . $newNumber;
+        return 'PAY'.$date.$newNumber;
     }
 
     // Mark as completed

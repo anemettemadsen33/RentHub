@@ -21,7 +21,7 @@ class MultiCurrencyController extends Controller
     public function index()
     {
         return response()->json([
-            'currencies' => $this->exchangeRateService->getSupportedCurrencies()
+            'currencies' => $this->exchangeRateService->getSupportedCurrencies(),
         ]);
     }
 
@@ -31,11 +31,11 @@ class MultiCurrencyController extends Controller
     public function rates(Request $request)
     {
         $base = $request->input('base', 'USD');
-        
+
         return response()->json([
             'base' => $base,
             'rates' => $this->exchangeRateService->getExchangeRates($base),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
     }
 
@@ -47,7 +47,7 @@ class MultiCurrencyController extends Controller
         $request->validate([
             'amount' => 'required|numeric',
             'from' => 'required|string|size:3',
-            'to' => 'required|string|size:3'
+            'to' => 'required|string|size:3',
         ]);
 
         $result = $this->exchangeRateService->convert(

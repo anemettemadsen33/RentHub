@@ -100,8 +100,8 @@ class MonitoringService
     protected function getMemoryUsage(): array
     {
         return [
-            'current' => round(memory_get_usage() / 1024 / 1024, 2) . ' MB',
-            'peak' => round(memory_get_peak_usage() / 1024 / 1024, 2) . ' MB',
+            'current' => round(memory_get_usage() / 1024 / 1024, 2).' MB',
+            'peak' => round(memory_get_peak_usage() / 1024 / 1024, 2).' MB',
         ];
     }
 
@@ -115,7 +115,8 @@ class MonitoringService
         }
 
         $load = sys_getloadavg();
-        return round($load[0], 2) . '%';
+
+        return round($load[0], 2).'%';
     }
 
     /**
@@ -151,7 +152,7 @@ class MonitoringService
             'queue' => $this->checkQueue(),
         ];
 
-        $healthy = array_reduce($checks, fn($carry, $check) => $carry && $check['status'], true);
+        $healthy = array_reduce($checks, fn ($carry, $check) => $carry && $check['status'], true);
 
         return [
             'healthy' => $healthy,
@@ -164,6 +165,7 @@ class MonitoringService
     {
         try {
             DB::select('SELECT 1');
+
             return ['status' => true, 'message' => 'Database connection OK'];
         } catch (\Exception $e) {
             return ['status' => false, 'message' => $e->getMessage()];
@@ -175,6 +177,7 @@ class MonitoringService
         try {
             Cache::put('health_check', true, 10);
             $result = Cache::get('health_check');
+
             return ['status' => $result === true, 'message' => 'Cache OK'];
         } catch (\Exception $e) {
             return ['status' => false, 'message' => $e->getMessage()];
@@ -203,6 +206,7 @@ class MonitoringService
     {
         try {
             $pendingJobs = Redis::llen('queues:default');
+
             return [
                 'status' => true,
                 'message' => 'Queue OK',
@@ -216,6 +220,7 @@ class MonitoringService
     protected function percentile(array $sorted, int $percentile): float
     {
         $index = ceil(count($sorted) * $percentile / 100) - 1;
+
         return $sorted[$index] ?? 0;
     }
 
@@ -223,6 +228,7 @@ class MonitoringService
     {
         try {
             $result = DB::select('SHOW STATUS LIKE "Slow_queries"');
+
             return $result[0]->Value ?? 0;
         } catch (\Exception $e) {
             return 0;
@@ -267,6 +273,6 @@ class MonitoringService
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 }

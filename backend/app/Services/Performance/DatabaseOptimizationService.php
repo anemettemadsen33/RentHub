@@ -2,9 +2,8 @@
 
 namespace App\Services\Performance;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseOptimizationService
 {
@@ -13,16 +12,16 @@ class DatabaseOptimizationService
      */
     public function analyzeQueries(): array
     {
-        $slowQueries = DB::select("
+        $slowQueries = DB::select('
             SELECT query_time, lock_time, rows_examined, rows_sent, sql_text
             FROM mysql.slow_log
             ORDER BY query_time DESC
             LIMIT 50
-        ");
+        ');
 
         return [
             'slow_queries' => $slowQueries,
-            'recommendations' => $this->generateRecommendations($slowQueries)
+            'recommendations' => $this->generateRecommendations($slowQueries),
         ];
     }
 
@@ -69,7 +68,7 @@ class DatabaseOptimizationService
                 \PDO::ATTR_PERSISTENT => true,
                 \PDO::ATTR_TIMEOUT => 5,
                 \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            ]
+            ],
         ];
     }
 
@@ -98,8 +97,8 @@ class DatabaseOptimizationService
     public function setupQueryCache(): void
     {
         DB::listen(function ($query) {
-            $cacheKey = 'query:' . md5($query->sql . serialize($query->bindings));
-            
+            $cacheKey = 'query:'.md5($query->sql.serialize($query->bindings));
+
             if ($this->isCacheable($query->sql)) {
                 Cache::remember($cacheKey, 300, function () use ($query) {
                     return DB::select($query->sql, $query->bindings);
@@ -118,8 +117,8 @@ class DatabaseOptimizationService
 
         DB::listen(function ($query) use (&$queries, &$patterns) {
             $pattern = preg_replace('/\d+/', '?', $query->sql);
-            
-            if (!isset($patterns[$pattern])) {
+
+            if (! isset($patterns[$pattern])) {
                 $patterns[$pattern] = 0;
             }
             $patterns[$pattern]++;
@@ -129,7 +128,7 @@ class DatabaseOptimizationService
                     'pattern' => $pattern,
                     'count' => $patterns[$pattern],
                     'potential_n_plus_one' => true,
-                    'suggestion' => 'Consider using eager loading'
+                    'suggestion' => 'Consider using eager loading',
                 ];
             }
         });
@@ -149,7 +148,7 @@ class DatabaseOptimizationService
                 $recommendations[] = [
                     'type' => 'high_row_scan',
                     'query' => substr($query->sql_text, 0, 100),
-                    'suggestion' => 'Add index or optimize WHERE clause'
+                    'suggestion' => 'Add index or optimize WHERE clause',
                 ];
             }
 
@@ -157,7 +156,7 @@ class DatabaseOptimizationService
                 $recommendations[] = [
                     'type' => 'high_lock_time',
                     'query' => substr($query->sql_text, 0, 100),
-                    'suggestion' => 'Consider table partitioning or query optimization'
+                    'suggestion' => 'Consider table partitioning or query optimization',
                 ];
             }
         }
@@ -173,11 +172,11 @@ class DatabaseOptimizationService
         $missing = [];
 
         // Check for foreign keys without indexes
-        $foreignKeys = DB::select("
+        $foreignKeys = DB::select('
             SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
             WHERE TABLE_NAME = ? AND REFERENCED_TABLE_NAME IS NOT NULL
-        ", [$table]);
+        ', [$table]);
 
         foreach ($foreignKeys as $fk) {
             $hasIndex = DB::select("
@@ -189,7 +188,7 @@ class DatabaseOptimizationService
                 $missing[] = [
                     'column' => $fk->COLUMN_NAME,
                     'type' => 'foreign_key',
-                    'suggestion' => "CREATE INDEX idx_{$fk->COLUMN_NAME} ON {$table}({$fk->COLUMN_NAME})"
+                    'suggestion' => "CREATE INDEX idx_{$fk->COLUMN_NAME} ON {$table}({$fk->COLUMN_NAME})",
                 ];
             }
         }
@@ -223,10 +222,10 @@ class DatabaseOptimizationService
     private function isCacheable(string $sql): bool
     {
         $sql = strtoupper($sql);
-        
+
         // Don't cache write operations
-        if (strpos($sql, 'INSERT') !== false || 
-            strpos($sql, 'UPDATE') !== false || 
+        if (strpos($sql, 'INSERT') !== false ||
+            strpos($sql, 'UPDATE') !== false ||
             strpos($sql, 'DELETE') !== false) {
             return false;
         }
@@ -262,6 +261,7 @@ class DatabaseOptimizationService
         foreach ($stats as $stat) {
             $result[$stat->Variable_name] = $stat->Value;
         }
+
         return $result;
     }
 
@@ -272,12 +272,13 @@ class DatabaseOptimizationService
         foreach ($stats as $stat) {
             $result[$stat->Variable_name] = $stat->Value;
         }
+
         return $result;
     }
 
     private function getTableStats(): array
     {
-        return DB::select("
+        return DB::select('
             SELECT 
                 TABLE_NAME,
                 TABLE_ROWS,
@@ -288,17 +289,17 @@ class DatabaseOptimizationService
             WHERE TABLE_SCHEMA = DATABASE()
             ORDER BY DATA_LENGTH DESC
             LIMIT 20
-        ");
+        ');
     }
 
     private function getSlowQueryCount(): int
     {
-        $result = DB::selectOne("
+        $result = DB::selectOne('
             SELECT COUNT(*) as count
             FROM mysql.slow_log
             WHERE start_time > DATE_SUB(NOW(), INTERVAL 1 HOUR)
-        ");
-        
+        ');
+
         return $result->count ?? 0;
     }
 }

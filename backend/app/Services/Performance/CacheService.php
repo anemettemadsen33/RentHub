@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redis;
 class CacheService
 {
     protected array $tags = [];
+
     protected int $ttl = 3600;
 
     /**
@@ -16,8 +17,8 @@ class CacheService
     public function remember(string $key, callable $callback, ?int $ttl = null, array $tags = [])
     {
         $ttl = $ttl ?? $this->ttl;
-        
-        if (!empty($tags)) {
+
+        if (! empty($tags)) {
             return Cache::tags($tags)->remember($key, $ttl, $callback);
         }
 
@@ -42,8 +43,8 @@ class CacheService
      */
     public function cacheSearch(array $params, callable $callback)
     {
-        $key = 'search:' . md5(json_encode($params));
-        
+        $key = 'search:'.md5(json_encode($params));
+
         return $this->remember(
             $key,
             $callback,
@@ -97,7 +98,7 @@ class CacheService
                     'user',
                     'amenities',
                     'images',
-                    'location'
+                    'location',
                 ])->find($propertyId);
             });
         }
@@ -108,8 +109,8 @@ class CacheService
      */
     public function cacheApiResponse(string $endpoint, array $params, callable $callback)
     {
-        $key = 'api:' . md5($endpoint . json_encode($params));
-        
+        $key = 'api:'.md5($endpoint.json_encode($params));
+
         return $this->remember($key, $callback, 300, ['api-responses']);
     }
 
@@ -147,6 +148,7 @@ class CacheService
     protected function getMemoryUsage(): string
     {
         $info = Redis::info('memory');
+
         return $info['used_memory_human'] ?? 'N/A';
     }
 }

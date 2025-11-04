@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('calculation_date');
             $table->json('breakdown')->nullable(); // Detailed calculation
             $table->timestamps();
-            
+
             $table->index(['user_id', 'calculation_date']);
             $table->index('tax_type');
         });

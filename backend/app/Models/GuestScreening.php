@@ -98,19 +98,25 @@ class GuestScreening extends Model
     public function calculateScreeningScore(): int
     {
         $score = 0;
-        
+
         // Identity verification (20 points)
-        if ($this->identity_verified) $score += 20;
-        
+        if ($this->identity_verified) {
+            $score += 20;
+        }
+
         // Phone verification (10 points)
-        if ($this->phone_verified) $score += 10;
-        
+        if ($this->phone_verified) {
+            $score += 10;
+        }
+
         // Email verification (10 points)
-        if ($this->email_verified) $score += 10;
-        
+        if ($this->email_verified) {
+            $score += 10;
+        }
+
         // Credit check (25 points)
         if ($this->credit_check_completed && $this->credit_rating) {
-            $score += match($this->credit_rating) {
+            $score += match ($this->credit_rating) {
                 'excellent' => 25,
                 'good' => 20,
                 'fair' => 15,
@@ -118,25 +124,25 @@ class GuestScreening extends Model
                 default => 0
             };
         }
-        
+
         // Background check (15 points)
         if ($this->background_check_completed && $this->background_check_passed) {
             $score += 15;
         }
-        
+
         // References (20 points)
         if ($this->references_verified > 0) {
             $score += min(20, $this->references_verified * 7);
         }
-        
+
         return min(100, $score);
     }
 
     public function determineRiskLevel(): string
     {
         $score = $this->screening_score ?? $this->calculateScreeningScore();
-        
-        return match(true) {
+
+        return match (true) {
             $score >= 80 => 'low',
             $score >= 60 => 'medium',
             $score >= 40 => 'high',
@@ -152,9 +158,9 @@ class GuestScreening extends Model
     public function scopeActive($query)
     {
         return $query->where('status', '!=', 'expired')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             });
     }
 

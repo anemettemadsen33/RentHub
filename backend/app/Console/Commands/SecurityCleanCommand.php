@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\Security\APIKeyService;
-use App\Services\Security\SecurityAuditService;
 use App\Services\Security\GDPRService;
+use App\Services\Security\SecurityAuditService;
+use Illuminate\Console\Command;
 
 class SecurityCleanCommand extends Command
 {
@@ -33,6 +33,7 @@ class SecurityCleanCommand extends Command
                 $count = $apiKeyService->cleanExpiredKeys();
                 $cleaned += $count;
                 $this->info("  Removed {$count} expired API keys");
+
                 return true;
             });
         }
@@ -42,6 +43,7 @@ class SecurityCleanCommand extends Command
                 $count = $auditService->cleanOldLogs();
                 $cleaned += $count;
                 $this->info("  Removed {$count} old audit logs");
+
                 return true;
             });
         }
@@ -51,12 +53,14 @@ class SecurityCleanCommand extends Command
                 $count = $gdprService->cleanOldData();
                 $cleaned += $count;
                 $this->info("  Removed {$count} old data records");
+
                 return true;
             });
         }
 
-        if (!$this->option('tokens') && !$this->option('logs') && !$this->option('data') && !$cleanAll) {
+        if (! $this->option('tokens') && ! $this->option('logs') && ! $this->option('data') && ! $cleanAll) {
             $this->warn('Please specify what to clean: --tokens, --logs, --data, or --all');
+
             return 1;
         }
 

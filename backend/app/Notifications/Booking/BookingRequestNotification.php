@@ -32,20 +32,20 @@ class BookingRequestNotification extends Notification implements ShouldQueue
         $checkIn = $this->booking->check_in_date->format('M d, Y');
         $checkOut = $this->booking->check_out_date->format('M d, Y');
         $nights = $this->booking->check_in_date->diffInDays($this->booking->check_out_date);
-        
+
         return (new MailMessage)
-            ->subject('🔔 New Booking Request - ' . $property->title)
-            ->greeting('Hello ' . $notifiable->name . ',')
+            ->subject('🔔 New Booking Request - '.$property->title)
+            ->greeting('Hello '.$notifiable->name.',')
             ->line('You have received a new booking request for your property.')
-            ->line('**Property:** ' . $property->title)
-            ->line('**Guest:** ' . $tenant->name)
-            ->line('**Check-in:** ' . $checkIn)
-            ->line('**Check-out:** ' . $checkOut)
-            ->line('**Duration:** ' . $nights . ' night' . ($nights > 1 ? 's' : ''))
-            ->line('**Number of Guests:** ' . $this->booking->guests)
-            ->line('**Total Amount:** $' . number_format($this->booking->total_price, 2))
-            ->line('**Booking ID:** #' . $this->booking->id)
-            ->action('Review & Respond', url('/admin/bookings/' . $this->booking->id))
+            ->line('**Property:** '.$property->title)
+            ->line('**Guest:** '.$tenant->name)
+            ->line('**Check-in:** '.$checkIn)
+            ->line('**Check-out:** '.$checkOut)
+            ->line('**Duration:** '.$nights.' night'.($nights > 1 ? 's' : ''))
+            ->line('**Number of Guests:** '.$this->booking->guests)
+            ->line('**Total Amount:** $'.number_format($this->booking->total_price, 2))
+            ->line('**Booking ID:** #'.$this->booking->id)
+            ->action('Review & Respond', url('/admin/bookings/'.$this->booking->id))
             ->line('Please review and respond to this booking request promptly.')
             ->line('Thank you for being a valued host on RentHub!');
     }
@@ -62,8 +62,8 @@ class BookingRequestNotification extends Notification implements ShouldQueue
             'check_out_date' => $this->booking->check_out_date->toDateString(),
             'guests' => $this->booking->guests,
             'total_price' => $this->booking->total_price,
-            'message' => 'New booking request from ' . $this->booking->user->name . ' for ' . $this->booking->property->title,
-            'action_url' => '/admin/bookings/' . $this->booking->id,
+            'message' => 'New booking request from '.$this->booking->user->name.' for '.$this->booking->property->title,
+            'action_url' => '/admin/bookings/'.$this->booking->id,
         ];
     }
 }

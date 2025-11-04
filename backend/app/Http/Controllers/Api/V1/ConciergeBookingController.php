@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\ConciergeBooking;
 use App\Models\ConciergeService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ConciergeBookingController extends Controller
 {
@@ -60,7 +60,7 @@ class ConciergeBookingController extends Controller
         $service = ConciergeService::findOrFail($request->concierge_service_id);
 
         // Check advance booking requirement
-        $serviceDateTime = Carbon::parse($request->service_date . ' ' . $request->service_time);
+        $serviceDateTime = Carbon::parse($request->service_date.' '.$request->service_time);
         $hoursDifference = now()->diffInHours($serviceDateTime);
 
         if ($hoursDifference < $service->advance_booking_hours) {
@@ -140,7 +140,7 @@ class ConciergeBookingController extends Controller
             ], 403);
         }
 
-        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+        if (! in_array($booking->status, ['pending', 'confirmed'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'This booking cannot be updated',
@@ -184,7 +184,7 @@ class ConciergeBookingController extends Controller
             ], 403);
         }
 
-        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+        if (! in_array($booking->status, ['pending', 'confirmed'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'This booking cannot be cancelled',

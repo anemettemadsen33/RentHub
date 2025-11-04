@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\ExternalCalendar;
 use App\Services\ICalService;
+use Illuminate\Console\Command;
 
 class SyncExternalCalendars extends Command
 {
@@ -39,10 +39,10 @@ class SyncExternalCalendars extends Command
         }
 
         // Only sync calendars that haven't been synced in the last hour (unless forced)
-        if (!$this->option('force')) {
+        if (! $this->option('force')) {
             $query->where(function ($q) {
                 $q->whereNull('last_synced_at')
-                  ->orWhere('last_synced_at', '<', now()->subHour());
+                    ->orWhere('last_synced_at', '<', now()->subHour());
             });
         }
 
@@ -50,6 +50,7 @@ class SyncExternalCalendars extends Command
 
         if ($calendars->isEmpty()) {
             $this->info('No calendars to sync.');
+
             return 0;
         }
 
@@ -97,7 +98,7 @@ class SyncExternalCalendars extends Command
         $this->newLine(2);
 
         // Summary
-        $this->info("Sync completed!");
+        $this->info('Sync completed!');
         $this->table(
             ['Metric', 'Count'],
             [

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\SecurityAuditService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SecurityAuditController extends Controller
 {
@@ -27,8 +27,10 @@ class SecurityAuditController extends Controller
      *     summary="Get security audit logs",
      *     tags={"Security"},
      *     security={{"sanctum":{}}},
+     *
      *     @OA\Parameter(name="start_date", in="query", description="Start date", schema={"type":"string", "format":"date"}),
      *     @OA\Parameter(name="end_date", in="query", description="End date", schema={"type":"string", "format":"date"}),
+     *
      *     @OA\Response(response=200, description="Audit logs retrieved")
      * )
      */
@@ -50,6 +52,7 @@ class SecurityAuditController extends Controller
      *     summary="Detect security anomalies",
      *     tags={"Security"},
      *     security={{"sanctum":{}}},
+     *
      *     @OA\Response(response=200, description="Anomalies detected")
      * )
      */
@@ -72,14 +75,18 @@ class SecurityAuditController extends Controller
      *     summary="Log security event",
      *     tags={"Security"},
      *     security={{"sanctum":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="event", type="string"),
      *             @OA\Property(property="data", type="object"),
      *             @OA\Property(property="severity", type="string", enum={"info","warning","critical"})
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Event logged")
      * )
      */
@@ -111,7 +118,9 @@ class SecurityAuditController extends Controller
      *     summary="Cleanup old audit logs",
      *     tags={"Security"},
      *     security={{"sanctum":{}}},
+     *
      *     @OA\Parameter(name="days", in="query", description="Days to keep", schema={"type":"integer"}),
+     *
      *     @OA\Response(response=200, description="Logs cleaned up")
      * )
      */

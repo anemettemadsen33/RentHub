@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyVerification;
 use App\Models\VerificationDocument;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PropertyVerificationController extends Controller
@@ -24,13 +23,13 @@ class PropertyVerificationController extends Controller
         if ($property->user_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         $verification = $property->verification ?? PropertyVerification::create([
             'property_id' => $property->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         return response()->json([
@@ -38,7 +37,7 @@ class PropertyVerificationController extends Controller
             'data' => [
                 'verification' => $verification,
                 'documents' => $verification->documents()->get(),
-            ]
+            ],
         ]);
     }
 
@@ -53,7 +52,7 @@ class PropertyVerificationController extends Controller
         if ($property->user_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -65,7 +64,7 @@ class PropertyVerificationController extends Controller
 
         $verification = $property->verification ?? PropertyVerification::create([
             'property_id' => $property->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         $documentPaths = [];
@@ -94,7 +93,7 @@ class PropertyVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Ownership documents submitted successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -109,7 +108,7 @@ class PropertyVerificationController extends Controller
         if ($property->user_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -125,7 +124,7 @@ class PropertyVerificationController extends Controller
 
         $verification = $property->verification ?? PropertyVerification::create([
             'property_id' => $property->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         if ($request->has('has_business_license')) {
@@ -173,7 +172,7 @@ class PropertyVerificationController extends Controller
             if ($request->hasFile('insurance_document')) {
                 $path = $request->file('insurance_document')->store('verifications/insurance', 'public');
                 $verification->insurance_document = $path;
-                
+
                 if (isset($validated['insurance_expiry_date'])) {
                     $verification->insurance_expiry_date = $validated['insurance_expiry_date'];
                 }
@@ -199,7 +198,7 @@ class PropertyVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Legal documents submitted successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -214,19 +213,19 @@ class PropertyVerificationController extends Controller
         if ($property->user_id !== $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         $verification = $property->verification ?? PropertyVerification::create([
             'property_id' => $property->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
-        if (!$verification->canScheduleInspection()) {
+        if (! $verification->canScheduleInspection()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Property inspection cannot be requested at this time'
+                'message' => 'Property inspection cannot be requested at this time',
             ], 400);
         }
 
@@ -236,7 +235,7 @@ class PropertyVerificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Property inspection requested successfully',
-            'data' => $verification
+            'data' => $verification,
         ]);
     }
 
@@ -246,14 +245,14 @@ class PropertyVerificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $verifications = PropertyVerification::where('user_id', $user->id)
             ->with(['property', 'documents'])
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $verifications
+            'data' => $verifications,
         ]);
     }
 }

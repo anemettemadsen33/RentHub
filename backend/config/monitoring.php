@@ -24,7 +24,7 @@ return [
         'enabled' => env('NEWRELIC_ENABLED', false),
         'license_key' => env('NEWRELIC_LICENSE_KEY'),
         'app_name' => env('NEWRELIC_APP_NAME', 'RentHub'),
-        
+
         'transaction_tracer' => [
             'enabled' => true,
             'threshold' => 'apdex_f',
@@ -53,7 +53,7 @@ return [
         'api_key' => env('DATADOG_API_KEY'),
         'app_key' => env('DATADOG_APP_KEY'),
         'host' => env('DATADOG_HOST', 'api.datadoghq.com'),
-        
+
         'apm' => [
             'enabled' => true,
             'service_name' => env('DATADOG_SERVICE_NAME', 'renthub'),
@@ -89,7 +89,7 @@ return [
         'enabled' => env('PROMETHEUS_ENABLED', false),
         'namespace' => env('PROMETHEUS_NAMESPACE', 'renthub'),
         'metrics_route' => env('PROMETHEUS_METRICS_ROUTE', '/metrics'),
-        
+
         'collectors' => [
             'default' => true,
             'requests' => true,
@@ -114,7 +114,7 @@ return [
         'dsn' => env('SENTRY_LARAVEL_DSN'),
         'environment' => env('SENTRY_ENVIRONMENT', env('APP_ENV', 'production')),
         'release' => env('SENTRY_RELEASE', env('APP_VERSION')),
-        
+
         'traces_sample_rate' => env('SENTRY_TRACES_SAMPLE_RATE', 0.1),
         'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE', 0.1),
 
@@ -144,7 +144,7 @@ return [
 
     'metrics' => [
         'enabled' => env('METRICS_ENABLED', true),
-        
+
         'collect' => [
             'requests' => true,
             'exceptions' => true,
@@ -171,7 +171,7 @@ return [
     'log_aggregation' => [
         'enabled' => env('LOG_AGGREGATION_ENABLED', false),
         'provider' => env('LOG_AGGREGATION_PROVIDER', 'elk'), // elk, splunk, cloudwatch
-        
+
         'elk' => [
             'elasticsearch' => [
                 'hosts' => env('ELASTICSEARCH_HOSTS', 'localhost:9200'),
@@ -228,7 +228,7 @@ return [
                 'enabled' => true,
                 'urls' => [
                     env('APP_URL'),
-                    env('APP_URL') . '/api/health',
+                    env('APP_URL').'/api/health',
                 ],
                 'interval' => 60, // seconds
                 'timeout' => 10,
@@ -248,7 +248,7 @@ return [
 
     'performance' => [
         'enabled' => env('PERFORMANCE_MONITORING_ENABLED', true),
-        
+
         'thresholds' => [
             'slow_query' => env('SLOW_QUERY_THRESHOLD', 1000), // milliseconds
             'slow_request' => env('SLOW_REQUEST_THRESHOLD', 2000), // milliseconds
@@ -270,7 +270,7 @@ return [
 
     'alerts' => [
         'enabled' => env('ALERTS_ENABLED', true),
-        
+
         'channels' => [
             'slack' => [
                 'enabled' => env('SLACK_ALERTS_ENABLED', false),

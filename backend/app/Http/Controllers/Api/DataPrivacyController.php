@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Security\AuditLogService;
 use App\Services\Security\CCPAService;
 use App\Services\Security\GDPRService;
-use App\Services\Security\AuditLogService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class DataPrivacyController extends Controller
@@ -115,8 +115,8 @@ class DataPrivacyController extends Controller
         ]);
 
         // Store the export file
-        $filename = "data-export-{$user->id}-" . now()->format('Y-m-d-His') . ".{$format}";
-        
+        $filename = "data-export-{$user->id}-".now()->format('Y-m-d-His').".{$format}";
+
         if ($format === 'json') {
             $content = json_encode($data, JSON_PRETTY_PRINT);
         } else {
@@ -213,11 +213,11 @@ class DataPrivacyController extends Controller
         $path = "exports/{$filename}";
 
         // Verify the file belongs to the user
-        if (!str_contains($filename, "data-export-{$user->id}-")) {
+        if (! str_contains($filename, "data-export-{$user->id}-")) {
             abort(403, 'Unauthorized access');
         }
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (! Storage::disk('private')->exists($path)) {
             abort(404, 'Export file not found or expired');
         }
 
@@ -230,30 +230,30 @@ class DataPrivacyController extends Controller
     protected function convertToCsv(array $data): string
     {
         $csv = '';
-        
+
         foreach ($data as $section => $records) {
-            $csv .= strtoupper($section) . "\n\n";
-            
-            if (is_array($records) && !empty($records)) {
+            $csv .= strtoupper($section)."\n\n";
+
+            if (is_array($records) && ! empty($records)) {
                 if (isset($records[0]) && is_array($records[0])) {
                     // Array of records
                     $headers = array_keys($records[0]);
-                    $csv .= implode(',', $headers) . "\n";
-                    
+                    $csv .= implode(',', $headers)."\n";
+
                     foreach ($records as $record) {
-                        $csv .= implode(',', array_values($record)) . "\n";
+                        $csv .= implode(',', array_values($record))."\n";
                     }
                 } else {
                     // Single record
                     foreach ($records as $key => $value) {
-                        $csv .= "{$key}," . (is_array($value) ? json_encode($value) : $value) . "\n";
+                        $csv .= "{$key},".(is_array($value) ? json_encode($value) : $value)."\n";
                     }
                 }
             }
-            
+
             $csv .= "\n";
         }
-        
+
         return $csv;
     }
 }

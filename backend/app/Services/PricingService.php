@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Property;
-use App\Models\PricingRule;
-use App\Models\PriceSuggestion;
 use App\Models\Booking;
+use App\Models\PriceSuggestion;
+use App\Models\Property;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
@@ -18,7 +17,7 @@ class PricingService
     public function calculatePriceForDate(Property $property, Carbon $date): float
     {
         $basePrice = $property->price_per_night;
-        
+
         // Get all applicable rules for this date, ordered by priority
         $rules = $property->pricingRules()
             ->active()
@@ -73,13 +72,13 @@ class PricingService
     {
         // Analyze market data
         $marketData = $this->analyzeMarket($property);
-        
+
         // Calculate demand score
         $demandScore = $this->calculateDemandScore($property, $startDate, $endDate);
-        
+
         // Get historical data
         $historicalData = $this->getHistoricalData($property, $startDate, $endDate);
-        
+
         // Calculate suggested price using algorithm
         $suggestedPrice = $this->calculateOptimalPrice(
             $property,
@@ -142,7 +141,7 @@ class PricingService
             });
 
         $averagePrice = $similarProperties->avg('price_per_night') ?? $property->price_per_night;
-        
+
         // Calculate area occupancy rate
         $areaOccupancy = $this->calculateAreaOccupancy($similarProperties);
 
@@ -196,7 +195,7 @@ class PricingService
                 $weekendDays++;
             }
         }
-        
+
         if ($weekendDays > 0) {
             $score += min($weekendDays * 2, 10);
             $factors[] = "Contains {$weekendDays} weekend days";
@@ -253,7 +252,7 @@ class PricingService
     {
         $basePrice = $property->price_per_night;
         $marketAverage = $marketData['average_price'] ?? $basePrice;
-        
+
         // Start with market average
         $suggested = $marketAverage;
 
@@ -359,7 +358,7 @@ class PricingService
     {
         $startDate = now()->subDays(30);
         $endDate = now();
-        
+
         return $this->calculateHistoricalOccupancy($property, $startDate, $endDate);
     }
 
@@ -369,7 +368,7 @@ class PricingService
     protected function calculateHistoricalOccupancy(Property $property, Carbon $startDate, Carbon $endDate): float
     {
         $totalDays = $startDate->diffInDays($endDate);
-        
+
         $bookedDays = Booking::where('property_id', $property->id)
             ->where('status', '!=', 'cancelled')
             ->where(function ($q) use ($startDate, $endDate) {
@@ -384,6 +383,7 @@ class PricingService
             ->sum(function ($booking) use ($startDate, $endDate) {
                 $bookingStart = max($booking->check_in, $startDate);
                 $bookingEnd = min($booking->check_out, $endDate);
+
                 return $bookingStart->diffInDays($bookingEnd);
             });
 
@@ -441,7 +441,7 @@ class PricingService
      */
     protected function isDateAvailable(Property $property, Carbon $date): bool
     {
-        return !Booking::where('property_id', $property->id)
+        return ! Booking::where('property_id', $property->id)
             ->where('status', '!=', 'cancelled')
             ->where('check_in', '<=', $date)
             ->where('check_out', '>', $date)

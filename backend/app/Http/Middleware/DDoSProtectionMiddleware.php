@@ -15,7 +15,7 @@ class DDoSProtectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!config('security.ddos_protection.enabled', true)) {
+        if (! config('security.ddos_protection.enabled', true)) {
             return $next($request);
         }
 
@@ -29,6 +29,7 @@ class DDoSProtectionMiddleware
         // Check blacklist
         if ($this->isBlacklisted($ip)) {
             Log::warning('Blocked request from blacklisted IP', ['ip' => $ip]);
+
             return response()->json(['error' => 'Access denied'], 403);
         }
 
@@ -46,7 +47,7 @@ class DDoSProtectionMiddleware
 
         if ($requestsPerSecond > $maxRequestsPerSecond) {
             $this->banIp($ip);
-            
+
             Log::warning('DDoS protection triggered - IP banned', [
                 'ip' => $ip,
                 'requests_per_second' => $requestsPerSecond,
@@ -70,6 +71,7 @@ class DDoSProtectionMiddleware
     protected function isWhitelisted(string $ip): bool
     {
         $whitelist = config('security.ddos_protection.whitelist_ips', []);
+
         return in_array($ip, $whitelist);
     }
 
@@ -79,6 +81,7 @@ class DDoSProtectionMiddleware
     protected function isBlacklisted(string $ip): bool
     {
         $blacklist = config('security.ddos_protection.blacklist_ips', []);
+
         return in_array($ip, $blacklist);
     }
 
@@ -87,7 +90,7 @@ class DDoSProtectionMiddleware
      */
     protected function isBanned(string $ip): bool
     {
-        return Cache::has('ddos_ban:' . $ip);
+        return Cache::has('ddos_ban:'.$ip);
     }
 
     /**
@@ -95,7 +98,8 @@ class DDoSProtectionMiddleware
      */
     protected function getBanTimeRemaining(string $ip): int
     {
-        $expiresAt = Cache::get('ddos_ban:' . $ip);
+        $expiresAt = Cache::get('ddos_ban:'.$ip);
+
         return max(0, $expiresAt - time());
     }
 
@@ -106,8 +110,8 @@ class DDoSProtectionMiddleware
     {
         $banDuration = config('security.ddos_protection.ban_duration_minutes', 60);
         $expiresAt = now()->addMinutes($banDuration)->timestamp;
-        
-        Cache::put('ddos_ban:' . $ip, $expiresAt, now()->addMinutes($banDuration));
+
+        Cache::put('ddos_ban:'.$ip, $expiresAt, now()->addMinutes($banDuration));
     }
 
     /**
@@ -115,7 +119,7 @@ class DDoSProtectionMiddleware
      */
     protected function trackRequest(string $ip): void
     {
-        $key = 'ddos_tracker:' . $ip . ':' . now()->format('Y-m-d-H-i-s');
+        $key = 'ddos_tracker:'.$ip.':'.now()->format('Y-m-d-H-i-s');
         $count = Cache::get($key, 0);
         Cache::put($key, $count + 1, now()->addSeconds(5));
     }
@@ -127,9 +131,9 @@ class DDoSProtectionMiddleware
     {
         $count = 0;
         $currentSecond = now()->format('Y-m-d-H-i-s');
-        
+
         for ($i = 0; $i < 1; $i++) {
-            $key = 'ddos_tracker:' . $ip . ':' . now()->subSeconds($i)->format('Y-m-d-H-i-s');
+            $key = 'ddos_tracker:'.$ip.':'.now()->subSeconds($i)->format('Y-m-d-H-i-s');
             $count += Cache::get($key, 0);
         }
 

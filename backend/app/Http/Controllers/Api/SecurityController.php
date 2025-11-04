@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\AuditLogService;
-use App\Services\Security\TwoFactorAuthService;
 use App\Services\Security\CCPAService;
 use App\Services\Security\GDPRService;
-use Illuminate\Http\Request;
+use App\Services\Security\TwoFactorAuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SecurityController extends Controller
 {
@@ -98,7 +98,7 @@ class SecurityController extends Controller
     {
         $recommendations = [];
 
-        if (!$this->twoFactorAuthService->isEnabled($user)) {
+        if (! $this->twoFactorAuthService->isEnabled($user)) {
             $recommendations[] = [
                 'type' => '2fa',
                 'priority' => 'high',
@@ -106,7 +106,7 @@ class SecurityController extends Controller
             ];
         }
 
-        if (!$user->password_changed_at || $user->password_changed_at->diffInDays() > 90) {
+        if (! $user->password_changed_at || $user->password_changed_at->diffInDays() > 90) {
             $recommendations[] = [
                 'type' => 'password',
                 'priority' => 'medium',
@@ -114,7 +114,7 @@ class SecurityController extends Controller
             ];
         }
 
-        if (!$user->email_verified_at) {
+        if (! $user->email_verified_at) {
             $recommendations[] = [
                 'type' => 'email',
                 'priority' => 'high',

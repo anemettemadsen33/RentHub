@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('key')->index(); // welcome_message, property_title, etc.
             $table->text('value');
             $table->timestamps();
-            
+
             // Unique: one translation per locale+group+key
             $table->unique(['locale', 'group', 'key']);
         });

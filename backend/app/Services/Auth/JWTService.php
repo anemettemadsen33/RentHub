@@ -2,19 +2,22 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
 use App\Models\RefreshToken;
+use App\Models\User;
+use Carbon\Carbon;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
-use Exception;
 
 class JWTService
 {
     protected string $secret;
+
     protected string $algorithm = 'HS256';
+
     protected int $accessTokenTtl = 900; // 15 minutes
+
     protected int $refreshTokenTtl = 2592000; // 30 days
 
     public function __construct()
@@ -30,7 +33,7 @@ class JWTService
     public function createAccessToken(User $user, array $claims = []): string
     {
         $now = Carbon::now();
-        
+
         $payload = array_merge([
             'iss' => config('app.url'), // Issuer
             'sub' => $user->id, // Subject (user ID)
@@ -54,7 +57,7 @@ class JWTService
     public function createRefreshToken(User $user, ?string $deviceId = null): string
     {
         $token = Str::random(64);
-        
+
         RefreshToken::create([
             'user_id' => $user->id,
             'token' => hash('sha256', $token),
@@ -86,7 +89,7 @@ class JWTService
     {
         try {
             $decoded = JWT::decode($token, new Key($this->secret, $this->algorithm));
-            
+
             // Verify token type
             if (($decoded->type ?? null) !== 'access') {
                 throw new Exception('Invalid token type');
@@ -94,7 +97,7 @@ class JWTService
 
             return $decoded;
         } catch (Exception $e) {
-            throw new Exception('Invalid or expired token: ' . $e->getMessage());
+            throw new Exception('Invalid or expired token: '.$e->getMessage());
         }
     }
 
@@ -104,13 +107,13 @@ class JWTService
     public function refreshAccessToken(string $refreshToken): array
     {
         $hashedToken = hash('sha256', $refreshToken);
-        
+
         $tokenRecord = RefreshToken::where('token', $hashedToken)
             ->where('expires_at', '>', now())
             ->where('revoked', false)
             ->first();
 
-        if (!$tokenRecord) {
+        if (! $tokenRecord) {
             throw new Exception('Invalid or expired refresh token');
         }
 
@@ -134,7 +137,7 @@ class JWTService
     public function revokeRefreshToken(string $refreshToken): bool
     {
         $hashedToken = hash('sha256', $refreshToken);
-        
+
         return RefreshToken::where('token', $hashedToken)
             ->update(['revoked' => true]) > 0;
     }
@@ -154,7 +157,7 @@ class JWTService
     public function revokeOtherTokens(int $userId, string $currentToken): int
     {
         $hashedToken = hash('sha256', $currentToken);
-        
+
         return RefreshToken::where('user_id', $userId)
             ->where('token', '!=', $hashedToken)
             ->update(['revoked' => true]);
@@ -177,6 +180,7 @@ class JWTService
     {
         try {
             $decoded = $this->validateAccessToken($token);
+
             return User::find($decoded->sub);
         } catch (Exception $e) {
             return null;
@@ -189,7 +193,7 @@ class JWTService
     public function createPasswordResetToken(User $user): string
     {
         $now = Carbon::now();
-        
+
         $payload = [
             'iss' => config('app.url'),
             'sub' => $user->id,
@@ -209,7 +213,7 @@ class JWTService
     {
         try {
             $decoded = JWT::decode($token, new Key($this->secret, $this->algorithm));
-            
+
             if (($decoded->type ?? null) !== 'password_reset') {
                 throw new Exception('Invalid token type');
             }

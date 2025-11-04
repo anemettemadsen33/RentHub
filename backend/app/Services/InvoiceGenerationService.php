@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\BankAccount;
 use App\Models\Booking;
 use App\Models\Invoice;
-use App\Models\BankAccount;
 use Carbon\Carbon;
 
 class InvoiceGenerationService
@@ -13,8 +13,7 @@ class InvoiceGenerationService
         private BankAccountService $bankAccountService,
         private InvoicePdfService $pdfService,
         private InvoiceEmailService $emailService
-    ) {
-    }
+    ) {}
 
     /**
      * Create invoice from booking
@@ -27,14 +26,14 @@ class InvoiceGenerationService
         // Get appropriate bank account
         $bankAccount = $this->selectBankAccount($booking);
 
-        if (!$bankAccount) {
+        if (! $bankAccount) {
             throw new \Exception('No valid bank account found for invoice generation');
         }
 
         // Validate bank account
-        if (!$this->bankAccountService->isValidForInvoicing($bankAccount)) {
+        if (! $this->bankAccountService->isValidForInvoicing($bankAccount)) {
             $errors = $this->bankAccountService->validateForInvoicing($bankAccount);
-            throw new \Exception('Bank account validation failed: ' . implode(', ', $errors));
+            throw new \Exception('Bank account validation failed: '.implode(', ', $errors));
         }
 
         // Create invoice
@@ -47,7 +46,7 @@ class InvoiceGenerationService
             'invoice_date' => Carbon::now(),
             'due_date' => Carbon::now()->addDays(7), // 7 days payment term
             'status' => 'sent',
-            
+
             // Amounts
             'subtotal' => $booking->subtotal,
             'cleaning_fee' => $booking->cleaning_fee ?? 0,
@@ -55,17 +54,17 @@ class InvoiceGenerationService
             'taxes' => $booking->taxes ?? 0,
             'total_amount' => $booking->total_amount,
             'currency' => $booking->property->currency ?? 'EUR',
-            
+
             // Customer information (cached)
             'customer_name' => $booking->guest_name ?? $booking->user->name,
             'customer_email' => $booking->guest_email ?? $booking->user->email,
             'customer_phone' => $booking->guest_phone ?? $booking->user->phone,
             'customer_address' => $booking->user->address ?? null,
-            
+
             // Property information (cached)
             'property_title' => $booking->property->title,
             'property_address' => $booking->property->full_address ?? $booking->property->address,
-            
+
             // Notes
             'notes' => "Booking reference: {$booking->id}. Check-in: {$booking->check_in->format('d M Y')}. Check-out: {$booking->check_out->format('d M Y')}.",
         ]);
@@ -112,7 +111,7 @@ class InvoiceGenerationService
         // First priority: Property owner's default account
         if ($booking->property && $booking->property->user_id) {
             $account = $this->bankAccountService->getForProperty($booking->property_id);
-            
+
             if ($account && $this->bankAccountService->isValidForInvoicing($account)) {
                 return $account;
             }
@@ -120,14 +119,14 @@ class InvoiceGenerationService
 
         // Second priority: Company default account
         $account = $this->bankAccountService->getCompanyDefault();
-        
+
         if ($account && $this->bankAccountService->isValidForInvoicing($account)) {
             return $account;
         }
 
         // Last resort: Any active company account
         $account = $this->bankAccountService->getAnyCompanyAccount();
-        
+
         if ($account && $this->bankAccountService->isValidForInvoicing($account)) {
             return $account;
         }
@@ -162,12 +161,12 @@ class InvoiceGenerationService
         }
 
         // Only generate for confirmed or paid bookings
-        if (!in_array($booking->status, ['confirmed', 'paid', 'checked_in', 'completed'])) {
+        if (! in_array($booking->status, ['confirmed', 'paid', 'checked_in', 'completed'])) {
             return false;
         }
 
         // Need valid property and user
-        if (!$booking->property_id || !$booking->user_id) {
+        if (! $booking->property_id || ! $booking->user_id) {
             return false;
         }
 

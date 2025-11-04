@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\LoyaltyService;
-use App\Models\LoyaltyTier;
 use App\Models\Booking;
+use App\Models\LoyaltyTier;
+use App\Services\LoyaltyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,7 +39,7 @@ class LoyaltyController extends Controller
     public function getPointsHistory(Request $request)
     {
         $user = $request->user();
-        
+
         $perPage = $request->input('per_page', 15);
         $type = $request->input('type'); // earned, redeemed, expired, bonus
 
@@ -83,7 +83,7 @@ class LoyaltyController extends Controller
 
         try {
             $booking = $bookingId ? Booking::findOrFail($bookingId) : null;
-            
+
             // Check if booking belongs to user
             if ($booking && $booking->user_id !== $user->id) {
                 return response()->json([
@@ -96,9 +96,10 @@ class LoyaltyController extends Controller
             if ($booking) {
                 $maxDiscount = $booking->total_amount * 0.5;
                 $requestedDiscount = $this->loyaltyService->calculateDiscountFromPoints($points);
-                
+
                 if ($requestedDiscount > $maxDiscount) {
                     $maxPoints = (int) floor($maxDiscount * 100);
+
                     return response()->json([
                         'success' => false,
                         'message' => "Maximum discount for this booking is \${$maxDiscount}. You can redeem up to {$maxPoints} points.",
@@ -152,7 +153,7 @@ class LoyaltyController extends Controller
             ->with('loyaltyBenefits')
             ->first();
 
-        if (!$tier) {
+        if (! $tier) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tier not found',

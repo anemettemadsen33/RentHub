@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -34,7 +34,7 @@ class Booking extends Model
         'paid_at',
         'confirmed_at',
         'cancelled_at',
-        'google_event_id'
+        'google_event_id',
     ];
 
     protected $casts = [
@@ -110,27 +110,27 @@ class Booking extends Model
 
     public function getCanCancelAttribute()
     {
-        return $this->status === 'pending' || 
+        return $this->status === 'pending' ||
                ($this->status === 'confirmed' && $this->getDaysUntilCheckInAttribute() > 1);
     }
 
     public function getCanCheckInAttribute()
     {
-        return $this->status === 'confirmed' && 
-               Carbon::now()->isSameDay($this->check_in) || 
+        return $this->status === 'confirmed' &&
+               Carbon::now()->isSameDay($this->check_in) ||
                Carbon::now()->isAfter($this->check_in);
     }
 
     public function getCanCheckOutAttribute()
     {
-        return $this->status === 'checked_in' && 
-               Carbon::now()->isSameDay($this->check_out) || 
+        return $this->status === 'checked_in' &&
+               Carbon::now()->isSameDay($this->check_out) ||
                Carbon::now()->isAfter($this->check_out);
     }
 
     public function getCanReviewAttribute()
     {
-        return $this->status === 'completed' && !$this->review;
+        return $this->status === 'completed' && ! $this->review;
     }
 
     // Scopes
@@ -157,20 +157,20 @@ class Booking extends Model
     public function scopeUpcoming($query)
     {
         return $query->where('check_in', '>', Carbon::now())
-                    ->whereIn('status', ['confirmed']);
+            ->whereIn('status', ['confirmed']);
     }
 
     public function scopeCurrent($query)
     {
         return $query->where('check_in', '<=', Carbon::now())
-                    ->where('check_out', '>', Carbon::now())
-                    ->where('status', 'checked_in');
+            ->where('check_out', '>', Carbon::now())
+            ->where('status', 'checked_in');
     }
 
     public function scopePast($query)
     {
         return $query->where('check_out', '<', Carbon::now())
-                    ->whereIn('status', ['checked_out', 'completed']);
+            ->whereIn('status', ['checked_out', 'completed']);
     }
 
     // Methods

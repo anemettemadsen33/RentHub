@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 
 class CustomRateLimiter
@@ -16,7 +15,7 @@ class CustomRateLimiter
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             return response()->json([
                 'error' => 'Too many requests',
-                'retry_after' => RateLimiter::availableIn($key)
+                'retry_after' => RateLimiter::availableIn($key),
             ], 429);
         }
 
@@ -28,7 +27,7 @@ class CustomRateLimiter
     protected function resolveRequestSignature(Request $request): string
     {
         if ($user = $request->user()) {
-            return sha1('user_' . $user->id);
+            return sha1('user_'.$user->id);
         }
 
         return sha1($request->ip());

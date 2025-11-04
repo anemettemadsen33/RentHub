@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\Security\OAuth2Controller;
 use App\Http\Controllers\API\Security\APIKeyController;
 use App\Http\Controllers\API\Security\GDPRController;
+use App\Http\Controllers\API\Security\OAuth2Controller;
 use App\Http\Controllers\API\Security\SecurityAuditController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ Route::prefix('gdpr')->middleware('auth:sanctum')->group(function () {
     Route::post('/export', [GDPRController::class, 'exportData']);
     Route::post('/delete', [GDPRController::class, 'requestDeletion']);
     Route::post('/cancel-deletion', [GDPRController::class, 'cancelDeletion']);
-    
+
     Route::get('/consents', [GDPRController::class, 'getConsents']);
     Route::post('/consents', [GDPRController::class, 'grantConsent']);
     Route::delete('/consents', [GDPRController::class, 'revokeConsent']);

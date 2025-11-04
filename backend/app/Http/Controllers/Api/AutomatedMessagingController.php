@@ -197,7 +197,7 @@ class AutomatedMessagingController extends Controller
 
         $cancelled = $this->messagingService->cancelScheduledMessage($message);
 
-        if (!$cancelled) {
+        if (! $cancelled) {
             return response()->json([
                 'success' => false,
                 'message' => 'Message cannot be cancelled (already sent or failed)',

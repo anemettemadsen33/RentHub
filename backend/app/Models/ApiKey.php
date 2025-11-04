@@ -58,6 +58,6 @@ class ApiKey extends Model
      */
     public function isValid(): bool
     {
-        return $this->active && !$this->is_expired;
+        return $this->active && ! $this->is_expired;
     }
 }

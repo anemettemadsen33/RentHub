@@ -11,8 +11,7 @@ class BlockedDateObserver
 {
     public function __construct(
         private GoogleCalendarService $googleCalendarService
-    ) {
-    }
+    ) {}
 
     /**
      * Handle the BlockedDate "created" event.
@@ -67,7 +66,7 @@ class BlockedDateObserver
      */
     private function removeFromGoogleCalendar(BlockedDate $blockedDate): void
     {
-        if (!$blockedDate->google_event_id) {
+        if (! $blockedDate->google_event_id) {
             return;
         }
 
@@ -78,7 +77,7 @@ class BlockedDateObserver
                 ->get();
 
             foreach ($tokens as $token) {
-                $service = new \Google\Client();
+                $service = new \Google\Client;
                 $service->setAccessToken($token->access_token);
                 $calendarService = new \Google\Service\Calendar($service);
                 $calendarService->events->delete($token->calendar_id, $blockedDate->google_event_id);

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServiceProvider;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ServiceProviderController extends Controller
@@ -48,10 +48,10 @@ class ServiceProviderController extends Controller
         // Search
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%")
-                  ->orWhere('city', 'like', "%{$search}%");
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%");
             });
         }
 
@@ -107,10 +107,10 @@ class ServiceProviderController extends Controller
     public function show(ServiceProvider $serviceProvider): JsonResponse
     {
         $serviceProvider->load([
-            'cleaningServices' => function($query) {
+            'cleaningServices' => function ($query) {
                 $query->latest()->limit(10);
             },
-            'maintenanceRequests' => function($query) {
+            'maintenanceRequests' => function ($query) {
                 $query->latest()->limit(10);
             },
         ]);
@@ -127,7 +127,7 @@ class ServiceProviderController extends Controller
             'name' => 'sometimes|string|max:255',
             'company_name' => 'nullable|string|max:255',
             'type' => 'sometimes|in:cleaning,maintenance,both',
-            'email' => 'sometimes|email|unique:service_providers,email,' . $serviceProvider->id,
+            'email' => 'sometimes|email|unique:service_providers,email,'.$serviceProvider->id,
             'phone' => 'sometimes|string|max:20',
             'address' => 'sometimes|string',
             'city' => 'sometimes|string|max:100',
@@ -217,8 +217,8 @@ class ServiceProviderController extends Controller
             'total_jobs' => $serviceProvider->total_jobs,
             'completed_jobs' => $serviceProvider->completed_jobs,
             'cancelled_jobs' => $serviceProvider->cancelled_jobs,
-            'completion_rate' => $serviceProvider->total_jobs > 0 
-                ? round(($serviceProvider->completed_jobs / $serviceProvider->total_jobs) * 100, 2) 
+            'completion_rate' => $serviceProvider->total_jobs > 0
+                ? round(($serviceProvider->completed_jobs / $serviceProvider->total_jobs) * 100, 2)
                 : 0,
             'average_rating' => $serviceProvider->average_rating,
             'response_time_hours' => $serviceProvider->response_time_hours,

@@ -15,7 +15,7 @@ class Amenity extends Model
         'icon',
         'category',
         'is_popular',
-        'sort_order'
+        'sort_order',
     ];
 
     protected $casts = [

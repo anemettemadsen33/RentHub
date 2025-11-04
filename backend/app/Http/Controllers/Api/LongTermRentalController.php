@@ -5,12 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\LongTermRental;
 use App\Models\Property;
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 
 class LongTermRentalController extends Controller
 {
@@ -82,10 +79,10 @@ class LongTermRentalController extends Controller
         }
 
         $property = Property::findOrFail($request->property_id);
-        
+
         $startDate = Carbon::parse($request->start_date);
         $endDate = $startDate->copy()->addMonths($request->duration_months);
-        
+
         $totalRent = $request->monthly_rent * $request->duration_months;
 
         $rental = LongTermRental::create([
@@ -119,7 +116,7 @@ class LongTermRentalController extends Controller
 
         return response()->json([
             'message' => 'Long-term rental created successfully',
-            'rental' => $rental
+            'rental' => $rental,
         ], 201);
     }
 
@@ -134,7 +131,7 @@ class LongTermRentalController extends Controller
             },
             'maintenanceRequests' => function ($query) {
                 $query->latest();
-            }
+            },
         ])->findOrFail($id);
 
         return response()->json($rental);
@@ -180,7 +177,7 @@ class LongTermRentalController extends Controller
 
         return response()->json([
             'message' => 'Long-term rental updated successfully',
-            'rental' => $rental
+            'rental' => $rental,
         ]);
     }
 
@@ -201,7 +198,7 @@ class LongTermRentalController extends Controller
 
         return response()->json([
             'message' => 'Rental activated successfully',
-            'rental' => $rental->load(['property', 'tenant', 'owner', 'rentPayments'])
+            'rental' => $rental->load(['property', 'tenant', 'owner', 'rentPayments']),
         ]);
     }
 
@@ -209,9 +206,9 @@ class LongTermRentalController extends Controller
     {
         $rental = LongTermRental::findOrFail($id);
 
-        if (!$rental->canRequestRenewal()) {
+        if (! $rental->canRequestRenewal()) {
             return response()->json([
-                'error' => 'Renewal cannot be requested at this time'
+                'error' => 'Renewal cannot be requested at this time',
             ], 422);
         }
 
@@ -231,7 +228,7 @@ class LongTermRentalController extends Controller
 
         return response()->json([
             'message' => 'Renewal request submitted successfully',
-            'rental' => $rental
+            'rental' => $rental,
         ]);
     }
 
@@ -255,7 +252,7 @@ class LongTermRentalController extends Controller
 
         return response()->json([
             'message' => 'Rental cancelled successfully',
-            'rental' => $rental
+            'rental' => $rental,
         ]);
     }
 
@@ -290,14 +287,14 @@ class LongTermRentalController extends Controller
 
         if ($rental->status === 'active') {
             return response()->json([
-                'error' => 'Cannot delete active rental. Please cancel it first.'
+                'error' => 'Cannot delete active rental. Please cancel it first.',
             ], 422);
         }
 
         $rental->delete();
 
         return response()->json([
-            'message' => 'Long-term rental deleted successfully'
+            'message' => 'Long-term rental deleted successfully',
         ]);
     }
 }

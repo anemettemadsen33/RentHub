@@ -29,11 +29,11 @@ class NewListingsAlertNotification extends Notification implements ShouldQueue
         $searchName = $this->savedSearch->name;
 
         $mail = (new MailMessage)
-            ->subject("🔔 {$count} New " . str($count)->plural('Property', 'Properties') . " Match Your Search: {$searchName}")
+            ->subject("🔔 {$count} New ".str($count)->plural('Property', 'Properties')." Match Your Search: {$searchName}")
             ->greeting("Hello {$notifiable->name}!")
-            ->line("Great news! We found {$count} new " . str($count)->plural('property', 'properties') . " that match your saved search:")
+            ->line("Great news! We found {$count} new ".str($count)->plural('property', 'properties').' that match your saved search:')
             ->line("**{$searchName}**")
-            ->line("");
+            ->line('');
 
         // Add up to 5 properties to email
         foreach ($this->newProperties->take(5) as $property) {
@@ -41,14 +41,14 @@ class NewListingsAlertNotification extends Notification implements ShouldQueue
                 ->line("📍 {$property->address}")
                 ->line("💰 €{$property->price_per_night}/night")
                 ->line("🛏️ {$property->bedrooms} bedrooms • 🛁 {$property->bathrooms} bathrooms")
-                ->line("");
+                ->line('');
         }
 
         if ($count > 5) {
-            $mail->line("...and " . ($count - 5) . " more!");
+            $mail->line('...and '.($count - 5).' more!');
         }
 
-        $mail->action('View All Results', url('/saved-searches/' . $this->savedSearch->id . '/execute'))
+        $mail->action('View All Results', url('/saved-searches/'.$this->savedSearch->id.'/execute'))
             ->line('To stop receiving alerts for this search, you can disable notifications in your saved searches settings.');
 
         return $mail;

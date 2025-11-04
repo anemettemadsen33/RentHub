@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 
 class RoleController extends Controller
 {
@@ -23,7 +23,7 @@ class RoleController extends Controller
                     'browse_properties',
                     'view_property_details',
                     'search_properties',
-                ]
+                ],
             ],
             [
                 'value' => 'tenant',
@@ -37,7 +37,7 @@ class RoleController extends Controller
                     'manage_own_bookings',
                     'write_reviews',
                     'send_messages',
-                ]
+                ],
             ],
             [
                 'value' => 'owner',
@@ -52,7 +52,7 @@ class RoleController extends Controller
                     'view_analytics',
                     'send_messages',
                     'respond_to_reviews',
-                ]
+                ],
             ],
             [
                 'value' => 'admin',
@@ -68,13 +68,13 @@ class RoleController extends Controller
                     'view_all_analytics',
                     'delete_reviews',
                     'ban_users',
-                ]
+                ],
             ],
         ];
 
         return response()->json([
             'success' => true,
-            'data' => $roles
+            'data' => $roles,
         ]);
     }
 
@@ -84,7 +84,7 @@ class RoleController extends Controller
     public function getMyRole(Request $request)
     {
         $user = $request->user();
-        
+
         $roleData = $this->getRoleData($user->role);
 
         return response()->json([
@@ -92,7 +92,7 @@ class RoleController extends Controller
             'data' => [
                 'user' => $user,
                 'role' => $roleData,
-            ]
+            ],
         ]);
     }
 
@@ -105,7 +105,7 @@ class RoleController extends Controller
         if ($request->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized. Admin access required.'
+                'message' => 'Unauthorized. Admin access required.',
             ], 403);
         }
 
@@ -116,7 +116,7 @@ class RoleController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -126,7 +126,7 @@ class RoleController extends Controller
         if ($user->id === $request->user()->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'You cannot change your own role'
+                'message' => 'You cannot change your own role',
             ], 400);
         }
 
@@ -136,7 +136,7 @@ class RoleController extends Controller
         return response()->json([
             'success' => true,
             'message' => "User role changed from {$oldRole} to {$request->role}",
-            'data' => $user
+            'data' => $user,
         ]);
     }
 
@@ -152,14 +152,14 @@ class RoleController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
         $roleData = $this->getRoleData($user->role);
-        
-        $hasPermission = in_array($request->permission, $roleData['permissions']) 
+
+        $hasPermission = in_array($request->permission, $roleData['permissions'])
                         || in_array('full_access', $roleData['permissions']);
 
         return response()->json([
@@ -168,7 +168,7 @@ class RoleController extends Controller
                 'has_permission' => $hasPermission,
                 'permission' => $request->permission,
                 'user_role' => $user->role,
-            ]
+            ],
         ]);
     }
 
@@ -181,7 +181,7 @@ class RoleController extends Controller
         if ($request->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized. Admin access required.'
+                'message' => 'Unauthorized. Admin access required.',
             ], 403);
         }
 
@@ -197,7 +197,7 @@ class RoleController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $users
+            'data' => $users,
         ]);
     }
 
@@ -215,7 +215,7 @@ class RoleController extends Controller
                     'browse_properties',
                     'view_property_details',
                     'search_properties',
-                ]
+                ],
             ],
             'tenant' => [
                 'value' => 'tenant',
@@ -229,7 +229,7 @@ class RoleController extends Controller
                     'manage_own_bookings',
                     'write_reviews',
                     'send_messages',
-                ]
+                ],
             ],
             'owner' => [
                 'value' => 'owner',
@@ -244,7 +244,7 @@ class RoleController extends Controller
                     'view_analytics',
                     'send_messages',
                     'respond_to_reviews',
-                ]
+                ],
             ],
             'admin' => [
                 'value' => 'admin',
@@ -260,7 +260,7 @@ class RoleController extends Controller
                     'view_all_analytics',
                     'delete_reviews',
                     'ban_users',
-                ]
+                ],
             ],
         ];
 

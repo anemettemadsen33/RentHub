@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FileUploadSecurityService
@@ -19,7 +18,7 @@ class FileUploadSecurityService
     ];
 
     protected array $allowedExtensions = [
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx'
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx',
     ];
 
     protected int $maxFileSize = 10485760; // 10MB
@@ -35,13 +34,13 @@ class FileUploadSecurityService
         }
 
         // Check MIME type
-        if (!in_array($file->getMimeType(), $this->allowedMimeTypes)) {
+        if (! in_array($file->getMimeType(), $this->allowedMimeTypes)) {
             throw new \Exception('Invalid file type');
         }
 
         // Check extension
         $extension = strtolower($file->getClientOriginalExtension());
-        if (!in_array($extension, $this->allowedExtensions)) {
+        if (! in_array($extension, $this->allowedExtensions)) {
             throw new \Exception('Invalid file extension');
         }
 
@@ -68,7 +67,8 @@ class FileUploadSecurityService
     protected function generateSecureFilename(UploadedFile $file): string
     {
         $extension = $file->getClientOriginalExtension();
-        return Str::random(40) . '.' . $extension;
+
+        return Str::random(40).'.'.$extension;
     }
 
     /**
@@ -77,7 +77,7 @@ class FileUploadSecurityService
     protected function containsMaliciousContent(UploadedFile $file): bool
     {
         $content = file_get_contents($file->getRealPath());
-        
+
         $suspiciousPatterns = [
             '/<script/i',
             '/javascript:/i',
@@ -106,9 +106,9 @@ class FileUploadSecurityService
     public function storeSecurely(UploadedFile $file, string $directory = 'uploads'): string
     {
         $validation = $this->validateAndSecure($file);
-        
+
         $path = $file->storeAs(
-            $directory . '/' . date('Y/m'),
+            $directory.'/'.date('Y/m'),
             $validation['secure_name'],
             'private'
         );

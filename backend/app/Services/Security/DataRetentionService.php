@@ -3,7 +3,6 @@
 namespace App\Services\Security;
 
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class DataRetentionService
 {
@@ -45,9 +44,9 @@ class DataRetentionService
         // Expired refresh tokens
         $results['refresh_tokens'] = DB::table('refresh_tokens')
             ->where('expires_at', '<', now()->subDays($this->retentionPolicies['refresh_tokens']))
-            ->orWhere(function($query) {
+            ->orWhere(function ($query) {
                 $query->where('revoked', true)
-                      ->where('updated_at', '<', now()->subDays(30));
+                    ->where('updated_at', '<', now()->subDays(30));
             })
             ->delete();
 
@@ -84,7 +83,7 @@ class DataRetentionService
      */
     protected function cleanupTable(string $table, int $days): int
     {
-        if (!$this->tableExists($table)) {
+        if (! $this->tableExists($table)) {
             return 0;
         }
 
@@ -107,7 +106,7 @@ class DataRetentionService
     protected function cleanupTemporaryFiles(): int
     {
         $tempPath = storage_path('app/temp');
-        if (!file_exists($tempPath)) {
+        if (! file_exists($tempPath)) {
             return 0;
         }
 
@@ -116,9 +115,11 @@ class DataRetentionService
 
         $files = scandir($tempPath);
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') continue;
-            
-            $filePath = $tempPath . '/' . $file;
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            $filePath = $tempPath.'/'.$file;
             if (is_file($filePath) && filemtime($filePath) < $cutoff) {
                 unlink($filePath);
                 $deleted++;
@@ -149,10 +150,10 @@ class DataRetentionService
      */
     public function archiveData(string $table, int $days): string
     {
-        $archiveTable = $table . '_archive';
-        
+        $archiveTable = $table.'_archive';
+
         // Create archive table if it doesn't exist
-        if (!$this->tableExists($archiveTable)) {
+        if (! $this->tableExists($archiveTable)) {
             DB::statement("CREATE TABLE {$archiveTable} LIKE {$table}");
         }
 
@@ -179,7 +180,9 @@ class DataRetentionService
         $stats = [];
 
         foreach ($this->retentionPolicies as $type => $days) {
-            if (!$this->tableExists($type)) continue;
+            if (! $this->tableExists($type)) {
+                continue;
+            }
 
             $total = DB::table($type)->count();
             $expired = DB::table($type)
@@ -205,7 +208,9 @@ class DataRetentionService
         $estimates = [];
 
         foreach ($this->retentionPolicies as $type => $days) {
-            if (!$this->tableExists($type)) continue;
+            if (! $this->tableExists($type)) {
+                continue;
+            }
 
             $expiredCount = DB::table($type)
                 ->where('created_at', '<', now()->subDays($days))

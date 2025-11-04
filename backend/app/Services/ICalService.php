@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Property;
 use App\Models\ExternalCalendar;
+use App\Models\Property;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -31,7 +31,7 @@ class ICalService
         // Add blocked dates as all-day events
         foreach ($blockedDates as $date) {
             $ical .= $this->createEvent(
-                'blocked_' . $date,
+                'blocked_'.$date,
                 'Blocked',
                 $date,
                 Carbon::parse($date)->addDay()->format('Y-m-d'),
@@ -42,8 +42,8 @@ class ICalService
         // Add bookings
         foreach ($bookings as $booking) {
             $ical .= $this->createEvent(
-                'booking_' . $booking->id,
-                'Booked - ' . $booking->guest_name,
+                'booking_'.$booking->id,
+                'Booked - '.$booking->guest_name,
                 $booking->check_in,
                 $booking->check_out,
                 "Guest: {$booking->guest_name}\nStatus: {$booking->status}"
@@ -71,7 +71,7 @@ class ICalService
         $event .= "DTEND;VALUE=DATE:{$end}\r\n";
         $event .= "SUMMARY:{$summary}\r\n";
         if ($description) {
-            $event .= "DESCRIPTION:" . $this->escapeString($description) . "\r\n";
+            $event .= 'DESCRIPTION:'.$this->escapeString($description)."\r\n";
         }
         $event .= "STATUS:CONFIRMED\r\n";
         $event .= "TRANSP:OPAQUE\r\n";
@@ -86,6 +86,7 @@ class ICalService
     private function escapeString(string $text): string
     {
         $text = str_replace(['\\', ',', ';', "\n"], ['\\\\', '\\,', '\\;', '\\n'], $text);
+
         return $text;
     }
 
@@ -97,11 +98,12 @@ class ICalService
         try {
             $response = Http::timeout(30)->get($url);
 
-            if (!$response->successful()) {
-                throw new \Exception("Failed to fetch iCal feed: " . $response->status());
+            if (! $response->successful()) {
+                throw new \Exception('Failed to fetch iCal feed: '.$response->status());
             }
 
             $icalData = $response->body();
+
             return $this->parseICalData($icalData);
         } catch (\Exception $e) {
             Log::error('iCal import failed', [
@@ -164,9 +166,11 @@ class ICalService
                 return Carbon::createFromFormat('Ymd', $dateStr)->format('Y-m-d');
             } catch (\Exception $e) {
                 Log::warning('Failed to parse iCal date', ['line' => $line]);
+
                 return null;
             }
         }
+
         return null;
     }
 
@@ -178,7 +182,7 @@ class ICalService
         $blockedDates = [];
 
         foreach ($events as $event) {
-            if (!$event['start'] || !$event['end']) {
+            if (! $event['start'] || ! $event['end']) {
                 continue;
             }
 

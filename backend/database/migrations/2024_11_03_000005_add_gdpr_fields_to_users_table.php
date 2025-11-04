@@ -15,11 +15,11 @@ return new class extends Migration
             $table->boolean('marketing_consent')->default(false);
             $table->boolean('data_processing_consent')->default(false);
             $table->timestamp('consent_updated_at')->nullable();
-            
+
             // Account deletion tracking
             $table->timestamp('deletion_requested_at')->nullable();
             $table->text('deletion_reason')->nullable();
-            
+
             // Activity tracking
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
