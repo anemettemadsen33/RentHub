@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/layout/Header'
 import { 
-  Home, 
   Search, 
   Shield, 
   Star, 
@@ -59,50 +58,61 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b">
-        <div className="container relative mx-auto px-4 py-16 md:py-24 lg:py-32">
-          <div className="flex flex-col items-center text-center space-y-6 max-w-5xl mx-auto">
-            <Badge variant="outline" className="px-3 py-1">
-              <Sparkles className="w-3 h-3 mr-1" />
+      {/* Hero Section - Modern with gradient background */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 via-muted/30 to-background">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,transparent,black)] dark:bg-grid-slate-700/25" />
+        
+        <div className="container relative mx-auto px-4 py-24 md:py-32 lg:py-40">
+          <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
+            {/* Badge */}
+            <Badge variant="secondary" className="px-4 py-1.5 text-sm shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
               Trusted by 50,000+ users
             </Badge>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+            {/* Heading with gradient */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight">
               Find Your Perfect
               <br />
-              <span className="text-primary">
+              <span className="bg-gradient-to-r from-primary via-blue-600 to-violet-600 bg-clip-text text-transparent">
                 Rental Home
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            {/* Subheading */}
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl">
               Discover verified properties, connect with trusted landlords, and find your ideal rental in minutes.
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link href="/properties">
-                <Button size="lg" className="min-w-[200px]">
+                <Button size="lg" className="h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
                   Browse Properties
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/auth/register">
-                <Button size="lg" variant="outline" className="min-w-[200px]">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-base border-2">
                   Get Started Free
                 </Button>
               </Link>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 w-full border-t mt-12">
+            
+            {/* Stats - Improved with gradient text */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 pt-16 w-full">
               {stats.map((stat, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="text-3xl md:text-4xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div key={index} className="space-y-2">
+                  <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-br from-primary to-violet-600 bg-clip-text text-transparent">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -110,73 +120,83 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-24">
+      {/* Features Section - Enhanced cards with better shadows */}
+      <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center space-y-3 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
+          {/* Section Header */}
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
               Why Choose RentHub?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Everything you need to find and rent your perfect property
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="relative hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                    <feature.icon className="w-5 h-5 text-primary" />
+          {/* Feature Cards - Enhanced with better visual hierarchy */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon
+              return (
+                <Card key={index} className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
+                  <div className="space-y-4">
+                    {/* Icon with gradient background */}
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    
+                    {/* Title and Description */}
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-semibold">{feature.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+                </Card>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="border-t py-16 md:py-24">
+      {/* CTA Section - Enhanced with gradient border */}
+      <section className="py-24 md:py-32 bg-muted/50">
         <div className="container mx-auto px-4">
-          <Card className="border-2">
-            <CardContent className="p-8 md:p-12 text-center space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold">
+          <Card className="border-2 shadow-xl overflow-hidden">
+            <div className="p-12 md:p-16 text-center space-y-6 bg-gradient-to-br from-background via-muted/30 to-background">
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
                 Ready to Find Your New Home?
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 Join thousands of satisfied tenants who found their perfect rental on RentHub
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                 <Link href="/auth/register">
-                  <Button size="lg" className="min-w-[200px]">
-                    <CheckCircle className="mr-2 h-4 w-4" />
+                  <Button size="lg" className="h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
+                    <CheckCircle className="mr-2 h-5 w-5" />
                     Sign Up Now
                   </Button>
                 </Link>
                 <Link href="/properties">
-                  <Button size="lg" variant="outline" className="min-w-[200px]">
+                  <Button size="lg" variant="outline" className="h-12 px-8 text-base border-2">
                     View Properties
                   </Button>
                 </Link>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-2">
-              <Building2 className="h-5 w-5" />
-              <span className="font-semibold">RentHub</span>
+      {/* Footer - Clean and simple */}
+      <footer className="border-t bg-muted/30">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-lg">RentHub</span>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2024 RentHub. All rights reserved.
