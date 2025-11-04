@@ -1,0 +1,242 @@
+# RentHub
+
+A comprehensive property rental management platform built with Laravel (backend) and Next.js (frontend).
+
+## Overview
+
+RentHub is a full-stack property rental platform that enables property owners to list their properties and renters to find and book accommodations. The platform includes advanced features like payment processing, messaging, multi-language support, and comprehensive property management tools.
+
+## Technology Stack
+
+### Backend
+- **Framework**: Laravel 11.31
+- **Language**: PHP 8.2+
+- **Authentication**: Laravel Sanctum, Laravel Socialite
+- **Database**: MySQL/PostgreSQL (with SQLite for development)
+- **Admin Panel**: Filament 4.0
+- **PDF Generation**: DomPDF
+- **Excel Export**: Maatwebsite Excel
+
+### Frontend
+- **Framework**: Next.js (React)
+- **Language**: TypeScript/JavaScript
+- **Styling**: Tailwind CSS
+- **API Communication**: REST API
+
+### Infrastructure
+- **Containerization**: Docker, Docker Compose
+- **Orchestration**: Kubernetes (k8s configurations included)
+- **Infrastructure as Code**: Terraform
+- **CI/CD**: GitHub Actions
+
+## Features
+
+### Core Features
+- User authentication and authorization
+- Property listing and management
+- Search and filtering
+- Booking system
+- Payment processing
+- Messaging system between owners and renters
+- Reviews and ratings
+- Property verification
+- Multi-language support (English, Romanian, Spanish, French, German)
+- Multi-currency support (USD, EUR, GBP, RON)
+
+### Advanced Features
+- Social authentication (Google, Facebook, GitHub)
+- Smart pricing system
+- Progressive Web App (PWA) with offline support
+- Performance monitoring
+- Advanced security headers and rate limiting
+
+## Prerequisites
+
+- PHP 8.2 or higher
+- Composer
+- Node.js 18+ and npm
+- MySQL/PostgreSQL (or SQLite for development)
+- Docker and Docker Compose (for containerized deployment)
+
+## Installation
+
+### Local Development Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/anemettemadsen33/RentHub.git
+   cd RentHub
+   ```
+
+2. **Install dependencies**
+   ```bash
+   make install
+   ```
+
+3. **Setup the project**
+   ```bash
+   make setup
+   ```
+   This will:
+   - Copy environment files
+   - Generate application key
+   - Create database
+   - Run migrations
+
+4. **Start the development servers**
+   
+   Backend (in one terminal):
+   ```bash
+   make backend
+   ```
+   
+   Frontend (in another terminal):
+   ```bash
+   make frontend
+   ```
+
+### Docker Deployment
+
+1. **Build containers**
+   ```bash
+   make docker-build
+   ```
+
+2. **Start services**
+   ```bash
+   make docker-up
+   ```
+   
+   Or for development:
+   ```bash
+   make docker-dev
+   ```
+
+3. **Stop services**
+   ```bash
+   make docker-down
+   ```
+
+## Available Commands
+
+Run `make help` to see all available commands:
+
+### Development
+- `make install` - Install all dependencies
+- `make setup` - Setup the project
+- `make backend` - Start backend server
+- `make frontend` - Start frontend dev server
+- `make test` - Run all tests
+- `make clean` - Clean caches and temp files
+
+### Database
+- `make migrate` - Run database migrations
+- `make fresh` - Fresh database with migrations
+- `make seed` - Seed the database
+
+### Code Quality
+- `make lint-backend` - Lint backend code
+- `make lint-frontend` - Lint frontend code
+- `make build-frontend` - Build frontend for production
+
+### Docker
+- `make docker-build` - Build all Docker containers
+- `make docker-up` - Start all Docker services
+- `make docker-dev` - Start development environment
+- `make docker-down` - Stop all Docker services
+
+## Project Structure
+
+```
+RentHub/
+├── backend/           # Laravel backend application
+│   ├── app/          # Application code
+│   ├── config/       # Configuration files
+│   ├── database/     # Migrations, seeders, factories
+│   ├── routes/       # API and web routes
+│   └── tests/        # Backend tests
+├── frontend/         # Next.js frontend application
+│   ├── src/         # Source code
+│   ├── public/      # Static assets
+│   └── e2e/         # End-to-end tests
+├── docker/          # Docker configuration files
+├── k8s/             # Kubernetes deployment configs
+├── terraform/       # Infrastructure as code
+├── scripts/         # Deployment and utility scripts
+└── docs/            # Documentation
+    └── api/         # API documentation and Postman collections
+```
+
+## Environment Configuration
+
+### Backend (.env)
+Copy `backend/.env.example` to `backend/.env` and configure:
+- Database credentials
+- Application URL
+- Mail configuration
+- Payment gateway credentials
+- Social authentication credentials
+
+### Frontend (.env.local)
+Copy `frontend/.env.example` to `frontend/.env.local` and configure:
+- API URL
+- Public keys for services
+
+## API Documentation
+
+API documentation and Postman collections are available in the `docs/api/` directory:
+- `SECURITY_POSTMAN_COLLECTION.json` - Security-related API endpoints
+- `SECURITY_POSTMAN_TESTS.json` - Security test suite
+
+## Testing
+
+### Backend Tests
+```bash
+cd backend && php artisan test
+```
+
+### Frontend Build Test
+```bash
+cd frontend && npm run build
+```
+
+### Run All Tests
+```bash
+make test
+```
+
+## Deployment
+
+### Production Checklist
+1. Run deployment checks:
+   ```bash
+   make deploy-check
+   ```
+
+2. Configure production environment variables
+
+3. Deploy using Docker Compose:
+   ```bash
+   docker-compose -f docker-compose.production.yml up -d
+   ```
+
+4. Or deploy to Kubernetes:
+   ```bash
+   kubectl apply -f k8s/
+   ```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support and questions, please open an issue in the GitHub repository.
