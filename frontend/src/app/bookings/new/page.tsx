@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { propertiesApi, Property } from '@/lib/api/properties';
 import { bookingsApi, BookingFormData, BookingCalculation } from '@/lib/api/bookings';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
-export default function NewBookingPage() {
+function NewBookingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -396,5 +396,20 @@ export default function NewBookingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewBookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    }>
+      <NewBookingContent />
+    </Suspense>
   );
 }
