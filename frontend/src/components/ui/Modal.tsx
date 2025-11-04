@@ -35,18 +35,18 @@ export const Modal = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
-      <div className={`bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden`}>
+      <div className={`bg-card text-card-foreground rounded-lg shadow-xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden border border-border`}>
         {title && (
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-xl font-semibold">{title}</h2>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="p-1 hover:bg-gray-100"
+              className="p-1"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -76,7 +76,7 @@ interface ModalFooterProps {
 }
 
 export const ModalFooter = ({ children }: ModalFooterProps) => (
-  <div className="flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200">
+  <div className="flex justify-end space-x-2 mt-6 pt-4 border-t border-border">
     {children}
   </div>
 )
