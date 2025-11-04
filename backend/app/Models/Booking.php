@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
 
 class Booking extends Model
@@ -32,7 +33,8 @@ class Booking extends Model
         'payment_transaction_id',
         'paid_at',
         'confirmed_at',
-        'cancelled_at'
+        'cancelled_at',
+        'google_event_id'
     ];
 
     protected $casts = [
@@ -68,6 +70,26 @@ class Booking extends Model
     public function review(): HasOne
     {
         return $this->hasOne(Review::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class);
+    }
+
+    public function insurances(): HasMany
+    {
+        return $this->hasMany(BookingInsurance::class);
     }
 
     // Accessors

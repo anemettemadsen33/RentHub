@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Property;
+use App\Services\InvoiceGenerationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,10 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
+    public function __construct(
+        private InvoiceGenerationService $invoiceService
+    ) {
+    }
     /**
      * Display a listing of the resource.
      */
@@ -285,6 +290,78 @@ class BookingController extends Controller
                 'available' => $conflictingBookings->isEmpty(),
                 'conflicting_bookings' => $conflictingBookings
             ]
+        ]);
+    }
+
+    /**
+     * Generate invoice for booking manually
+     */
+    public function generateInvoice(Request $request, string $id)
+    {
+        $booking = Booking::with(['property', 'user'])->findOrFail($id);
+        
+        // Check permissions
+        $user = Auth::user();
+        $isAdmin = $user->role === 'admin';
+        $isOwner = $user->role === 'owner' && $booking->property && $booking->property->user_id === $user->id;
+        
+        if (!$isAdmin && !$isOwner) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. Only admin or property owner can generate invoices.'
+            ], 403);
+        }
+
+        // Check if invoice already exists
+        if ($booking->invoices()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invoice already exists for this booking.',
+                'invoice' => $booking->invoices()->first()
+            ], 400);
+        }
+
+        try {
+            $sendEmail = $request->boolean('send_email', true);
+            $invoice = $this->invoiceService->createFromBooking($booking, $sendEmail);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoice generated successfully' . ($sendEmail ? ' and sent to customer' : ''),
+                'data' => $invoice->load(['bankAccount', 'booking'])
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate invoice: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get booking invoices
+     */
+    public function getInvoices(string $id)
+    {
+        $booking = Booking::findOrFail($id);
+        
+        // Check permissions
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $booking->user_id !== $user->id) {
+            if ($user->role !== 'owner' || !$booking->property || $booking->property->user_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+        }
+
+        $invoices = $booking->invoices()->with('bankAccount')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $invoices
         ]);
     }
 }

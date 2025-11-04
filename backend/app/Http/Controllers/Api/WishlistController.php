@@ -1,0 +1,270 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Wishlist;
+use App\Models\WishlistItem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class WishlistController extends Controller
+{
+    public function index(Request $request)
+    {
+        $wishlists = $request->user()
+            ->wishlists()
+            ->withCount('items')
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $wishlists
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_public' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $wishlist = $request->user()->wishlists()->create($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Wishlist created successfully',
+            'data' => $wishlist
+        ], 201);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $wishlist = $request->user()
+            ->wishlists()
+            ->with(['items.property.user', 'items.property.amenities'])
+            ->withCount('items')
+            ->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $wishlist
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $wishlist = $request->user()->wishlists()->findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|max:255',
+            'description' => 'nullable|string',
+            'is_public' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $wishlist->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Wishlist updated successfully',
+            'data' => $wishlist
+        ]);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $wishlist = $request->user()->wishlists()->findOrFail($id);
+        $wishlist->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Wishlist deleted successfully'
+        ]);
+    }
+
+    public function addProperty(Request $request, $id)
+    {
+        $wishlist = $request->user()->wishlists()->findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'property_id' => 'required|exists:properties,id',
+            'notes' => 'nullable|string',
+            'price_alert' => 'nullable|numeric|min:0',
+            'notify_availability' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $existingItem = $wishlist->items()
+            ->where('property_id', $request->property_id)
+            ->first();
+
+        if ($existingItem) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Property already in wishlist'
+            ], 409);
+        }
+
+        $item = $wishlist->items()->create($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Property added to wishlist',
+            'data' => $item->load('property')
+        ], 201);
+    }
+
+    public function removeProperty(Request $request, $wishlistId, $itemId)
+    {
+        $wishlist = $request->user()->wishlists()->findOrFail($wishlistId);
+        $item = $wishlist->items()->findOrFail($itemId);
+        $item->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Property removed from wishlist'
+        ]);
+    }
+
+    public function updateItem(Request $request, $wishlistId, $itemId)
+    {
+        $wishlist = $request->user()->wishlists()->findOrFail($wishlistId);
+        $item = $wishlist->items()->findOrFail($itemId);
+
+        $validator = Validator::make($request->all(), [
+            'notes' => 'nullable|string',
+            'price_alert' => 'nullable|numeric|min:0',
+            'notify_availability' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $item->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Wishlist item updated successfully',
+            'data' => $item->load('property')
+        ]);
+    }
+
+    public function getShared($token)
+    {
+        $wishlist = Wishlist::where('share_token', $token)
+            ->where('is_public', true)
+            ->with(['items.property.user', 'items.property.amenities', 'user'])
+            ->withCount('items')
+            ->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => $wishlist
+        ]);
+    }
+
+    public function toggleProperty(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'property_id' => 'required|exists:properties,id',
+            'wishlist_id' => 'nullable|exists:wishlists,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $wishlistId = $request->wishlist_id;
+
+        if (!$wishlistId) {
+            $defaultWishlist = $request->user()
+                ->wishlists()
+                ->where('name', 'My Favorites')
+                ->first();
+
+            if (!$defaultWishlist) {
+                $defaultWishlist = $request->user()->wishlists()->create([
+                    'name' => 'My Favorites',
+                    'is_public' => false,
+                ]);
+            }
+
+            $wishlistId = $defaultWishlist->id;
+        }
+
+        $wishlist = $request->user()->wishlists()->findOrFail($wishlistId);
+
+        $item = $wishlist->items()
+            ->where('property_id', $request->property_id)
+            ->first();
+
+        if ($item) {
+            $item->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Property removed from wishlist',
+                'action' => 'removed'
+            ]);
+        } else {
+            $item = $wishlist->items()->create([
+                'property_id' => $request->property_id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Property added to wishlist',
+                'action' => 'added',
+                'data' => $item->load('property')
+            ], 201);
+        }
+    }
+
+    public function checkProperty(Request $request, $propertyId)
+    {
+        $inWishlist = $request->user()
+            ->wishlists()
+            ->whereHas('items', function ($query) use ($propertyId) {
+                $query->where('property_id', $propertyId);
+            })
+            ->with(['items' => function ($query) use ($propertyId) {
+                $query->where('property_id', $propertyId);
+            }])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'in_wishlist' => $inWishlist->isNotEmpty(),
+            'wishlists' => $inWishlist
+        ]);
+    }
+}

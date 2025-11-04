@@ -1,0 +1,18 @@
+{
+  "common": {
+    "search": "Search",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "bookings": "Bookings"
+  },
+  "property": {
+    "price": "Price",
+    "bedrooms": "Bedrooms",
+    "bookNow": "Book Now"
+  }
+}

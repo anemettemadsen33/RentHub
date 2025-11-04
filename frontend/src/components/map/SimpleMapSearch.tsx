@@ -1,0 +1,258 @@
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { apiClient } from '@/lib/api';
+
+interface MapSearchProps {
+  initialCenter?: { lat: number; lng: number };
+  initialZoom?: number;
+  filters?: {
+    type?: string;
+    min_price?: number;
+    max_price?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    guests?: number;
+    amenities?: number[];
+  };
+  onPropertyClick?: (propertyId: number) => void;
+  className?: string;
+}
+
+export default function SimpleMapSearch({
+  initialCenter = { lat: 45.9432, lng: 24.9668 }, // Romania center
+  initialZoom = 7,
+  filters = {},
+  onPropertyClick,
+  className = 'h-[600px] w-full',
+}: MapSearchProps) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<any>(null);
+  const [markers, setMarkers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load Leaflet dynamically
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const loadLeaflet = async () => {
+      // @ts-ignore
+      if (!window.L) {
+        const L = (await import('leaflet')).default;
+        // @ts-ignore
+        window.L = L;
+
+        // Fix default icon
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+      }
+
+      // @ts-ignore
+      const L = window.L;
+      
+      if (mapRef.current && !map) {
+        const newMap = L.map(mapRef.current).setView(
+          [initialCenter.lat, initialCenter.lng],
+          initialZoom
+        );
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 19,
+        }).addTo(newMap);
+
+        // Add event listeners
+        newMap.on('moveend', () => handleMapMove(newMap));
+        newMap.on('zoomend', () => handleMapMove(newMap));
+
+        setMap(newMap);
+        
+        // Initial load
+        handleMapMove(newMap);
+      }
+    };
+
+    loadLeaflet();
+
+    return () => {
+      if (map) {
+        map.remove();
+      }
+    };
+  }, []);
+
+  const handleMapMove = async (mapInstance: any) => {
+    const bounds = mapInstance.getBounds();
+    const zoom = mapInstance.getZoom();
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      const response = await apiClient.post('/map/search-bounds', {
+        sw_lat: sw.lat,
+        sw_lng: sw.lng,
+        ne_lat: ne.lat,
+        ne_lng: ne.lng,
+        zoom,
+        ...filters,
+      });
+
+      if (response.data.success) {
+        updateMarkers(mapInstance, response.data.data.markers);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load properties');
+      console.error('Map search error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateMarkers = (mapInstance: any, newMarkers: any[]) => {
+    // @ts-ignore
+    const L = window.L;
+
+    // Clear existing markers
+    markers.forEach((marker) => marker.remove());
+
+    // Add new markers
+    const markerInstances = newMarkers.map((markerData) => {
+      let icon;
+      
+      if (markerData.type === 'property') {
+        icon = L.divIcon({
+          className: 'custom-price-marker',
+          html: `
+            <div style="
+              background: white;
+              border: 2px solid #2563eb;
+              border-radius: 20px;
+              padding: 4px 12px;
+              font-weight: bold;
+              font-size: 14px;
+              color: #2563eb;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+              white-space: nowrap;
+              cursor: pointer;
+            ">
+              €${markerData.price}
+            </div>
+          `,
+          iconSize: [60, 30],
+          iconAnchor: [30, 15],
+        });
+      } else {
+        icon = L.divIcon({
+          className: 'custom-cluster-marker',
+          html: `
+            <div style="
+              background: #2563eb;
+              border: 3px solid white;
+              border-radius: 50%;
+              width: 50px;
+              height: 50px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              color: white;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+              cursor: pointer;
+            ">
+              <div style="font-size: 16px;">${markerData.count}</div>
+              <div style="font-size: 10px;">€${markerData.min_price}+</div>
+            </div>
+          `,
+          iconSize: [50, 50],
+          iconAnchor: [25, 25],
+        });
+      }
+
+      const marker = L.marker([markerData.latitude, markerData.longitude], { icon })
+        .addTo(mapInstance);
+
+      if (markerData.type === 'property') {
+        const popupContent = `
+          <div class="p-3 min-w-[220px]">
+            ${markerData.image ? `<img src="${markerData.image}" alt="${markerData.title}" class="w-full h-32 object-cover rounded mb-2" />` : ''}
+            <h4 class="font-bold text-base mb-1">${markerData.title}</h4>
+            <p class="text-lg font-bold text-blue-600 mb-2">€${markerData.price}/night</p>
+            <button 
+              onclick="window.handlePropertyClick(${markerData.id})" 
+              class="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+            >
+              View Details
+            </button>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+      } else {
+        const popupContent = `
+          <div class="p-2">
+            <p class="font-bold">${markerData.count} properties</p>
+            <p class="text-sm">Starting from €${markerData.min_price}/night</p>
+            <p class="text-xs text-gray-600 mt-1">Zoom in to see individual properties</p>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+      }
+
+      return marker;
+    });
+
+    setMarkers(markerInstances);
+  };
+
+  // Global handler for property clicks
+  useEffect(() => {
+    // @ts-ignore
+    window.handlePropertyClick = (propertyId: number) => {
+      if (onPropertyClick) {
+        onPropertyClick(propertyId);
+      }
+    };
+
+    return () => {
+      // @ts-ignore
+      delete window.handlePropertyClick;
+    };
+  }, [onPropertyClick]);
+
+  return (
+    <div className={`relative ${className}`}>
+      {loading && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <p className="text-sm font-medium">Loading properties...</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg shadow-lg">
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossOrigin=""
+      />
+
+      <div ref={mapRef} className="h-full w-full rounded-lg overflow-hidden shadow-lg z-0" />
+    </div>
+  );
+}

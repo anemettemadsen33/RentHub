@@ -1,0 +1,1692 @@
+{
+  "Results": [
+    {
+      "Status": "PASS",
+      "TestName": "User Model",
+      "Message": "File exists: backend/app/Models/User.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:39:36"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Auth Controller",
+      "Message": "File not found: backend/app/Http/Controllers/Auth/AuthController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:39:36"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Laravel Sanctum",
+      "Message": "Package laravel/sanctum installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:39:36"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Google OAuth",
+      "Message": "Package socialiteproviders/google installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:39:36"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Facebook OAuth",
+      "Message": "Package socialiteproviders/facebook installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:39:36"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Users table",
+      "Message": "Table 'users' exists",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:17"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "API tokens table",
+      "Message": "Table 'personal_access_tokens' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:18"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "2FA Middleware",
+      "Message": "File not found: backend/app/Http/Middleware/TwoFactorAuth.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:18"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "2FA table",
+      "Message": "Table 'two_factor_authentication' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:19"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Phone verification service",
+      "Message": "File not found: backend/app/Services/TwilioService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:19"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Spatie Permission",
+      "Message": "Package spatie/laravel-permission installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:19"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Roles table",
+      "Message": "Table 'roles' exists",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:20"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Permissions table",
+      "Message": "Table 'permissions' exists",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:21"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Role permissions pivot",
+      "Message": "Table 'role_has_permissions' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:22"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Model roles pivot",
+      "Message": "Table 'model_has_roles' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:23"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Property Model",
+      "Message": "File exists: backend/app/Models/Property.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:23"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property Image Model",
+      "Message": "File not found: backend/app/Models/PropertyImage.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:23"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Amenity Model",
+      "Message": "File exists: backend/app/Models/Amenity.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:23"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Property API Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/PropertyController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:23"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Properties table",
+      "Message": "Table 'properties' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:24"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property images table",
+      "Message": "Table 'property_images' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:25"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Amenities table",
+      "Message": "Table 'amenities' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property amenities pivot",
+      "Message": "Table 'property_amenity' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Image processing",
+      "Message": "Package intervention/image not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Image optimization service",
+      "Message": "File not found: backend/app/Services/ImageOptimizationService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Google Maps service",
+      "Message": "File not found: backend/app/Services/GoogleMapsService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Google Maps API key",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Search Controller",
+      "Message": "File not found: backend/app/Http/Controllers/API/SearchController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Search Service",
+      "Message": "File exists: backend/app/Services/SearchService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Elasticsearch",
+      "Message": "Package elasticsearch/elasticsearch not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Properties list page",
+      "Message": "File not found: frontend/app/properties/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property details page",
+      "Message": "File not found: frontend/app/properties/[id]/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property card component",
+      "Message": "File not found: frontend/components/PropertyCard.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property filter component",
+      "Message": "File not found: frontend/components/PropertyFilter.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Booking Model",
+      "Message": "File exists: backend/app/Models/Booking.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Booking Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/BookingController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:26"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Bookings table",
+      "Message": "Table 'bookings' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:27"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Booking Service",
+      "Message": "File not found: backend/app/Services/BookingService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:27"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Booking State Machine",
+      "Message": "File not found: backend/app/StateMachines/BookingStateMachine.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:27"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Calendar Service",
+      "Message": "File not found: backend/app/Services/CalendarService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:27"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Calendar blocks table",
+      "Message": "Table 'calendar_blocks' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:28"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Stripe SDK",
+      "Message": "Package stripe/stripe-php not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:28"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Payment Service",
+      "Message": "File not found: backend/app/Services/PaymentService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:28"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Payment Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/PaymentController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:28"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Payments table",
+      "Message": "Table 'payments' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:29"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Refunds table",
+      "Message": "Table 'refunds' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:30"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Payouts table",
+      "Message": "Table 'payouts' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:31"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Stripe API key",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:31"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Stripe secret key",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:31"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Invoice Service",
+      "Message": "File not found: backend/app/Services/InvoiceService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:31"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "PDF generation",
+      "Message": "Package barryvdh/laravel-dompdf installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:31"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Invoices table",
+      "Message": "Table 'invoices' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:32"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Review Model",
+      "Message": "File exists: backend/app/Models/Review.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:32"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Review Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/ReviewController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:32"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Reviews table",
+      "Message": "Table 'reviews' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:33"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Review images table",
+      "Message": "Table 'review_images' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:34"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Review Service",
+      "Message": "File not found: backend/app/Services/ReviewService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:34"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Booking confirmed notification",
+      "Message": "File not found: backend/app/Notifications/BookingConfirmed.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:34"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Payment received notification",
+      "Message": "File not found: backend/app/Notifications/PaymentReceived.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:34"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Notifications table",
+      "Message": "Table 'notifications' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Reverb config",
+      "Message": "File not found: backend/config/reverb.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Laravel Reverb",
+      "Message": "Package laravel/reverb not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Twilio SDK",
+      "Message": "Package twilio/sdk installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Twilio Service",
+      "Message": "File not found: backend/app/Services/TwilioService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Laravel Horizon",
+      "Message": "Package laravel/horizon not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Horizon config",
+      "Message": "File not found: backend/config/horizon.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Message Model",
+      "Message": "File exists: backend/app/Models/Message.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Message Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/MessageController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:35"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Messages table",
+      "Message": "Table 'messages' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:36"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Message attachments table",
+      "Message": "Table 'message_attachments' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:37"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Message sent event",
+      "Message": "File not found: backend/app/Events/MessageSent.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:37"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Broadcast message listener",
+      "Message": "File not found: backend/app/Listeners/BroadcastMessage.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:37"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Wishlist Model",
+      "Message": "File exists: backend/app/Models/Wishlist.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:37"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Wishlists table",
+      "Message": "Table 'wishlists' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:38"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Wishlist items table",
+      "Message": "Table 'wishlist_items' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:39"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Wishlist Controller",
+      "Message": "File exists: backend/app/Http/Controllers/API/WishlistController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:39"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "iCal Service",
+      "Message": "File exists: backend/app/Services/ICalService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:39"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Google Calendar Service",
+      "Message": "File exists: backend/app/Services/GoogleCalendarService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:39"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Calendar syncs table",
+      "Message": "Table 'calendar_syncs' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:40"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Calendar blocks table",
+      "Message": "Table 'calendar_blocks' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:41"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Calendar sync job",
+      "Message": "File not found: backend/app/Jobs/SyncExternalCalendar.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:41"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Map search service",
+      "Message": "File not found: backend/app/Services/MapSearchService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:41"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Saved search model",
+      "Message": "File exists: backend/app/Models/SavedSearch.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:41"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Saved searches table",
+      "Message": "Table 'saved_searches' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:42"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Saved search alert job",
+      "Message": "File not found: backend/app/Jobs/SendSavedSearchAlert.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:42"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Verification Model",
+      "Message": "File not found: backend/app/Models/Verification.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:42"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Verifications table",
+      "Message": "Table 'verifications' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:43"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Verification documents table",
+      "Message": "Table 'verification_documents' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Verification Service",
+      "Message": "File not found: backend/app/Services/VerificationService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Dashboard Controller",
+      "Message": "File not found: backend/app/Http/Controllers/API/DashboardController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Analytics Service",
+      "Message": "File not found: backend/app/Services/AnalyticsService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Owner dashboard",
+      "Message": "File not found: frontend/app/dashboard/owner/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Tenant dashboard",
+      "Message": "File not found: frontend/app/dashboard/tenant/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:44"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Chart.js",
+      "Message": "Package chart.js not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "React Chart.js",
+      "Message": "Package react-chartjs-2 not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Next i18next",
+      "Message": "Package next-i18next not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Locales directory",
+      "Message": "Directory not found: frontend/locales",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "English translations",
+      "Message": "File not found: frontend/locales/en/common.json",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Romanian translations",
+      "Message": "File not found: frontend/locales/ro/common.json",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "i18next config",
+      "Message": "File not found: frontend/next-i18next.config.js",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Laravel translatable",
+      "Message": "Package spatie/laravel-translatable not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Currency Service",
+      "Message": "File not found: backend/app/Services/CurrencyService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:45"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Currencies table",
+      "Message": "Table 'currencies' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:46"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Exchange rates table",
+      "Message": "Table 'exchange_rates' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:47"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Exchange rate update job",
+      "Message": "File not found: backend/app/Jobs/UpdateExchangeRates.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:47"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Smart Pricing Service",
+      "Message": "File not found: backend/app/Services/SmartPricingService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:47"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Pricing Rule Model",
+      "Message": "File exists: backend/app/Models/PricingRule.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:47"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Pricing rules table",
+      "Message": "Table 'pricing_rules' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:48"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Price history table",
+      "Message": "Table 'price_history' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:49"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Price prediction model",
+      "Message": "File not found: backend/app/AI/PricePredictionModel.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:49"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Instant booking settings table",
+      "Message": "Table 'instant_booking_settings' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:50"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Instant booking service",
+      "Message": "File not found: backend/app/Services/InstantBookingService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:50"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Lease Model",
+      "Message": "File not found: backend/app/Models/Lease.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:50"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Leases table",
+      "Message": "Table 'leases' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:51"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Lease Service",
+      "Message": "File not found: backend/app/Services/LeaseService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:51"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Maintenance Request Model",
+      "Message": "File exists: backend/app/Models/MaintenanceRequest.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:51"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Maintenance requests table",
+      "Message": "Table 'maintenance_requests' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:52"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Comparison Controller",
+      "Message": "File not found: backend/app/Http/Controllers/API/ComparisonController.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:52"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Compare page",
+      "Message": "File not found: frontend/app/compare/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:52"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Property comparison component",
+      "Message": "File not found: frontend/components/PropertyComparison.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:52"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Insurance Service",
+      "Message": "File not found: backend/app/Services/InsuranceService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:52"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Insurance policies table",
+      "Message": "Table 'insurance_policies' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:53"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Insurance Policy Model",
+      "Message": "File not found: backend/app/Models/InsurancePolicy.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:53"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Smart Lock Service",
+      "Message": "File not found: backend/app/Services/SmartLockService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:53"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Smart locks table",
+      "Message": "Table 'smart_locks' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:54"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Access codes table",
+      "Message": "Table 'access_codes' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:55"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Smart Lock Model",
+      "Message": "File exists: backend/app/Models/SmartLock.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:55"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Cleaning Schedule Model",
+      "Message": "File exists: backend/app/Models/CleaningSchedule.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:55"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Cleaning schedules table",
+      "Message": "Table 'cleaning_schedules' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:56"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Cleaning Service",
+      "Message": "File not found: backend/app/Services/CleaningService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:56"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Maintenance requests table",
+      "Message": "Table 'maintenance_requests' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:57"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Guest Screening Service",
+      "Message": "File not found: backend/app/Services/GuestScreeningService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:57"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Guest screenings table",
+      "Message": "Table 'guest_screenings' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Guest Screening Model",
+      "Message": "File exists: backend/app/Models/GuestScreening.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Recommendation Engine",
+      "Message": "File not found: backend/app/AI/RecommendationEngine.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Fraud Detection",
+      "Message": "File not found: backend/app/AI/FraudDetection.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Price Optimization",
+      "Message": "File not found: backend/app/AI/PriceOptimization.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "TensorFlow.js",
+      "Message": "Package @tensorflow/tfjs not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "IoT Service",
+      "Message": "File not found: backend/app/Services/IoTService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:58"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "IoT devices table",
+      "Message": "Table 'iot_devices' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:59"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "IoT Device Model",
+      "Message": "File exists: backend/app/Models/IoTDevice.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:40:59"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Concierge Service Model",
+      "Message": "File exists: backend/app/Models/ConciergeService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:00"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Concierge services table",
+      "Message": "Table 'concierge_services' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:00"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Concierge bookings table",
+      "Message": "Table 'concierge_bookings' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:01"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Loyalty Point Model",
+      "Message": "File not found: backend/app/Models/LoyaltyPoint.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:01"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Loyalty points table",
+      "Message": "Table 'loyalty_points' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:02"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Loyalty tiers table",
+      "Message": "Table 'loyalty_tiers' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:03"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Loyalty rewards table",
+      "Message": "Table 'loyalty_rewards' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:04"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Loyalty Service",
+      "Message": "File exists: backend/app/Services/LoyaltyService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:04"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Referral Model",
+      "Message": "File exists: backend/app/Models/Referral.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:04"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Referrals table",
+      "Message": "Table 'referrals' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:05"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Referral Service",
+      "Message": "File exists: backend/app/Services/ReferralService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:05"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Message Template Model",
+      "Message": "File exists: backend/app/Models/MessageTemplate.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:05"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Message templates table",
+      "Message": "Table 'message_templates' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Auto Responder Service",
+      "Message": "File not found: backend/app/Services/AutoResponderService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Reporting Service",
+      "Message": "File not found: backend/app/Services/ReportingService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Bookings Export",
+      "Message": "File not found: backend/app/Exports/BookingsExport.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Laravel Excel",
+      "Message": "Package maatwebsite/excel installed",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Channel Manager Service",
+      "Message": "File not found: backend/app/Services/ChannelManagerService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Airbnb Service",
+      "Message": "File not found: backend/app/Services/AirbnbService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "QuickBooks Service",
+      "Message": "File not found: backend/app/Services/QuickBooksService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Xero Service",
+      "Message": "File not found: backend/app/Services/XeroService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Redis client",
+      "Message": "Package predis/predis not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Cache config",
+      "Message": "File exists: backend/config/cache.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Sharp image processing",
+      "Message": "Package sharp not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "PWA support",
+      "Message": "Package next-pwa not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Sitemap generator",
+      "Message": "File not found: frontend/app/sitemap.xml/route.ts",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Robots.txt",
+      "Message": "File not found: frontend/app/robots.txt/route.ts",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "SEO component",
+      "Message": "File not found: frontend/components/SEO.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Next SEO",
+      "Message": "Package next-seo not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Kubernetes directory",
+      "Message": "Directory exists: k8s",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "K8s deployment",
+      "Message": "File not found: k8s/deployment.yaml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "K8s service",
+      "Message": "File not found: k8s/service.yaml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "K8s ingress",
+      "Message": "File exists: k8s/ingress.yaml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Docker Compose",
+      "Message": "File exists: docker-compose.yml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Backend Dockerfile",
+      "Message": "File exists: backend/Dockerfile",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Frontend Dockerfile",
+      "Message": "File exists: frontend/Dockerfile",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Database backup script",
+      "Message": "File not found: scripts/backup-database.sh",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Database restore script",
+      "Message": "File not found: scripts/restore-database.sh",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Files backup script",
+      "Message": "File not found: scripts/backup-files.sh",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "API v1 routes",
+      "Message": "File not found: backend/routes/api-v1.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "API v2 routes",
+      "Message": "File not found: backend/routes/api-v2.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "GraphQL directory",
+      "Message": "Directory not found: backend/graphql",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "GraphQL schema",
+      "Message": "File not found: backend/graphql/schema.graphql",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Lighthouse GraphQL",
+      "Message": "Package nuwave/lighthouse not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "WebSockets config",
+      "Message": "File not found: backend/config/reverb.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Unit tests directory",
+      "Message": "Directory exists: backend/tests/Unit",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Feature tests directory",
+      "Message": "Directory exists: backend/tests/Feature",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "PWA manifest",
+      "Message": "File exists: frontend/public/manifest.json",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Service worker",
+      "Message": "File not found: frontend/public/sw.js",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "React Testing Library",
+      "Message": "Package @testing-library/react not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Playwright",
+      "Message": "Package @playwright/test not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Jest",
+      "Message": "Package jest not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Frontend tests directory",
+      "Message": "Directory not found: frontend/__tests__",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Backend Dockerfile",
+      "Message": "File not found: docker/backend.Dockerfile",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Frontend Dockerfile",
+      "Message": "File not found: docker/frontend.Dockerfile",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "GitHub Actions directory",
+      "Message": "Directory exists: .github/workflows",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Backend CI workflow",
+      "Message": "File not found: .github/workflows/backend-ci.yml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Frontend CI workflow",
+      "Message": "File not found: .github/workflows/frontend-ci.yml",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Terraform directory",
+      "Message": "Directory exists: terraform",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Terraform main",
+      "Message": "File exists: terraform/main.tf",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Laravel Passport",
+      "Message": "Package laravel/passport not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Role middleware",
+      "Message": "File not found: backend/app/Http/Middleware/RoleMiddleware.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "JWT Service",
+      "Message": "File exists: backend/app/Services/JWTService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Database config",
+      "Message": "File exists: backend/config/database.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Database encryption",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Encryption Service",
+      "Message": "File exists: backend/app/Services/EncryptionService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "GDPR Service",
+      "Message": "File exists: backend/app/Services/GDPRService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Security headers middleware",
+      "Message": "File exists: backend/app/Http/Middleware/SecurityHeaders.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Rate limiter middleware",
+      "Message": "File not found: backend/app/Http/Middleware/RateLimiter.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Validation Service",
+      "Message": "File not found: backend/app/Services/ValidationService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Audit Log Model",
+      "Message": "File exists: backend/app/Models/AuditLog.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:06"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Audit logs table",
+      "Message": "Table 'audit_logs' exists",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Activity log",
+      "Message": "Package spatie/laravel-activitylog not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Database indexes",
+      "Message": "File not found: backend/database/migrations/*create_indexes*.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Connection pooling",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Redis configuration",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Cache configuration",
+      "Message": "File exists: backend/config/cache.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Cache Service",
+      "Message": "File exists: backend/app/Services/CacheService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Image optimization",
+      "Message": "Package sharp not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Next.js config",
+      "Message": "File exists: frontend/next.config.js",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "Tailwind config",
+      "Message": "File exists: frontend/tailwind.config.js",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Global styles",
+      "Message": "File not found: frontend/styles/globals.css",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "PASS",
+      "TestName": "UI components directory",
+      "Message": "Directory exists: frontend/components/ui",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Loading spinner",
+      "Message": "File not found: frontend/components/LoadingSpinner.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Error boundary",
+      "Message": "File not found: frontend/components/ErrorBoundary.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Empty state",
+      "Message": "File not found: frontend/components/EmptyState.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Toast component",
+      "Message": "File not found: frontend/components/Toast.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Skip link",
+      "Message": "File not found: frontend/components/SkipToContent.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Accessibility testing",
+      "Message": "Package @axe-core/react not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Blog Post Model",
+      "Message": "File not found: backend/app/Models/BlogPost.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:07"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Blog posts table",
+      "Message": "Table 'blog_posts' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:08"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Blog page",
+      "Message": "File not found: frontend/app/blog/page.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:08"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Mailchimp Service",
+      "Message": "File not found: backend/app/Services/MailchimpService.php",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:08"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Newsletter subscriptions table",
+      "Message": "Table 'newsletter_subscriptions' not found",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Share buttons",
+      "Message": "File not found: frontend/components/ShareButtons.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Social meta tags",
+      "Message": "File not found: frontend/components/SocialMeta.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Google Analytics",
+      "Message": "File not found: frontend/components/GoogleAnalytics.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "Facebook Pixel",
+      "Message": "File not found: frontend/components/FacebookPixel.tsx",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    },
+    {
+      "Status": "FAIL",
+      "TestName": "GA tracking ID",
+      "Message": "Environment variable not set",
+      "Category": "",
+      "Timestamp": "2025-11-03 15:41:09"
+    }
+  ],
+  "Timestamp": "2025-11-03 15:41:09",
+  "Summary": {
+    "SkippedTests": 0,
+    "FailedTests": 178,
+    "PassRate": 25.83,
+    "PassedTests": 62,
+    "TotalTests": 240
+  }
+}

@@ -187,10 +187,11 @@ Auto-deploys on push to main branch.
 | Property Search | ✅ | ✅ | N/A | Complete |
 | Booking System | ✅ | ✅ | ✅ | Complete |
 | Reviews | ✅ | ✅ | ✅ | Complete |
+| Payments & Invoices | ✅ | ⏳ | ✅ | Backend Complete |
+| Notifications | ✅ | ⏳ | ✅ | Backend Complete |
+| **Messaging System** | ✅ | ⏳ | ✅ | **Backend Complete** |
 | Amenities | ✅ | ⏳ | ✅ | Partial |
 | Image Uploads | ✅ | ⏳ | ✅ | Partial |
-| Email Notifications | ⏳ | N/A | N/A | Pending |
-| Payment Integration | ⏳ | ⏳ | ⏳ | Pending |
 
 ### Additional Features
 - [ ] User profiles

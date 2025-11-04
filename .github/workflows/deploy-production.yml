@@ -1,0 +1,266 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      deployment_strategy:
+        description: 'Deployment strategy'
+        required: true
+        type: choice
+        options:
+          - rolling
+          - blue-green
+          - canary
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+  KUBE_NAMESPACE: renthub
+
+jobs:
+  deploy-rolling:
+    name: Rolling Deployment
+    runs-on: ubuntu-latest
+    if: github.event.inputs.deployment_strategy == 'rolling' || github.event.inputs.deployment_strategy == ''
+    environment:
+      name: production
+      url: https://renthub.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Configure kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > $HOME/.kube/config
+        kubectl config use-context production
+    
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Update image tags
+      run: |
+        cd k8s/overlays/production
+        kustomize edit set image \
+          renthub/backend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/backend:${{ steps.version.outputs.VERSION }} \
+          renthub/frontend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/frontend:${{ steps.version.outputs.VERSION }}
+    
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -k k8s/overlays/production/
+    
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/backend -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+        kubectl rollout status deployment/frontend -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+        kubectl rollout status deployment/queue-worker -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+    
+    - name: Run database migrations
+      run: |
+        kubectl exec -n ${{ env.KUBE_NAMESPACE }} deployment/backend -- php artisan migrate --force
+    
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n ${{ env.KUBE_NAMESPACE }}
+        kubectl get svc -n ${{ env.KUBE_NAMESPACE }}
+        kubectl get hpa -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Run health checks
+      run: |
+        sleep 60
+        curl -f https://renthub.com/health || exit 1
+        curl -f https://api.renthub.com/health || exit 1
+    
+    - name: Create deployment record
+      run: |
+        kubectl annotate deployment/backend \
+          kubernetes.io/change-cause="Deployed version ${{ steps.version.outputs.VERSION }} via GitHub Actions" \
+          -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Notify success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: 'Production deployment ${{ steps.version.outputs.VERSION }} successful! :rocket:'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Rollback on failure
+      if: failure()
+      run: |
+        kubectl rollout undo deployment/backend -n ${{ env.KUBE_NAMESPACE }}
+        kubectl rollout undo deployment/frontend -n ${{ env.KUBE_NAMESPACE }}
+        kubectl rollout undo deployment/queue-worker -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Notify failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: 'Production deployment ${{ steps.version.outputs.VERSION }} failed and rolled back! :x:'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy-blue-green:
+    name: Blue-Green Deployment
+    runs-on: ubuntu-latest
+    if: github.event.inputs.deployment_strategy == 'blue-green'
+    environment:
+      name: production
+      url: https://renthub.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Configure kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > $HOME/.kube/config
+        kubectl config use-context production
+    
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Determine current environment
+      id: current
+      run: |
+        CURRENT=$(kubectl get svc backend-service -n ${{ env.KUBE_NAMESPACE }} -o jsonpath='{.spec.selector.version}')
+        if [ "$CURRENT" == "blue" ]; then
+          echo "current=blue" >> $GITHUB_OUTPUT
+          echo "target=green" >> $GITHUB_OUTPUT
+        else
+          echo "current=green" >> $GITHUB_OUTPUT
+          echo "target=blue" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Deploy to target environment
+      run: |
+        kubectl set image deployment/backend-${{ steps.current.outputs.target }} \
+          backend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/backend:${{ steps.version.outputs.VERSION }} \
+          -n ${{ env.KUBE_NAMESPACE }}
+        
+        kubectl set image deployment/frontend-${{ steps.current.outputs.target }} \
+          frontend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/frontend:${{ steps.version.outputs.VERSION }} \
+          -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/backend-${{ steps.current.outputs.target }} -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+        kubectl rollout status deployment/frontend-${{ steps.current.outputs.target }} -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+    
+    - name: Run smoke tests on target
+      run: |
+        sleep 30
+        # Test internal service
+        kubectl run test-pod --image=curlimages/curl --rm -i --restart=Never -n ${{ env.KUBE_NAMESPACE }} -- \
+          curl -f http://backend-service-${{ steps.current.outputs.target }}:9000/health
+    
+    - name: Switch traffic to target
+      run: |
+        kubectl patch svc backend-service -n ${{ env.KUBE_NAMESPACE }} \
+          -p '{"spec":{"selector":{"version":"${{ steps.current.outputs.target }}"}}}'
+        
+        kubectl patch svc frontend-service -n ${{ env.KUBE_NAMESPACE }} \
+          -p '{"spec":{"selector":{"version":"${{ steps.current.outputs.target }}"}}}'
+    
+    - name: Verify production traffic
+      run: |
+        sleep 30
+        curl -f https://renthub.com/health || exit 1
+        curl -f https://api.renthub.com/health || exit 1
+    
+    - name: Notify success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: 'Blue-Green deployment to ${{ steps.current.outputs.target }} successful! :rocket:'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy-canary:
+    name: Canary Deployment
+    runs-on: ubuntu-latest
+    if: github.event.inputs.deployment_strategy == 'canary'
+    environment:
+      name: production
+      url: https://renthub.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+    
+    - name: Configure kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > $HOME/.kube/config
+    
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Deploy canary (10% traffic)
+      run: |
+        kubectl apply -f k8s/canary/backend-canary.yaml
+        kubectl set image deployment/backend-canary \
+          backend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/backend:${{ steps.version.outputs.VERSION }} \
+          -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Wait and monitor canary
+      run: |
+        kubectl rollout status deployment/backend-canary -n ${{ env.KUBE_NAMESPACE }} --timeout=5m
+        sleep 300  # Monitor for 5 minutes
+    
+    - name: Check canary metrics
+      run: |
+        # Check error rate, latency, etc.
+        ERROR_RATE=$(kubectl exec -n ${{ env.KUBE_NAMESPACE }} deployment/backend-canary -- \
+          php artisan metrics:error-rate)
+        
+        if [ "$ERROR_RATE" -gt "1" ]; then
+          echo "Canary error rate too high: $ERROR_RATE%"
+          exit 1
+        fi
+    
+    - name: Promote canary to 50%
+      run: |
+        kubectl scale deployment/backend-canary --replicas=2 -n ${{ env.KUBE_NAMESPACE }}
+        sleep 300
+    
+    - name: Full rollout
+      run: |
+        kubectl set image deployment/backend \
+          backend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/backend:${{ steps.version.outputs.VERSION }} \
+          -n ${{ env.KUBE_NAMESPACE }}
+        
+        kubectl rollout status deployment/backend -n ${{ env.KUBE_NAMESPACE }} --timeout=10m
+    
+    - name: Clean up canary
+      run: |
+        kubectl delete deployment/backend-canary -n ${{ env.KUBE_NAMESPACE }}
+    
+    - name: Notify success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: 'Canary deployment promoted successfully! :rocket:'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}

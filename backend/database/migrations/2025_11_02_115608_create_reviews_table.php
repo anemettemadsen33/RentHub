@@ -29,6 +29,12 @@ return new class extends Migration
             $table->integer('location_rating')->nullable(); // 1-5
             $table->integer('value_rating')->nullable(); // 1-5
             
+            // Photos
+            $table->json('photos')->nullable(); // Array of photo URLs
+            
+            // Helpful votes
+            $table->integer('helpful_count')->default(0);
+            
             // Moderation
             $table->boolean('is_approved')->default(true);
             $table->text('admin_notes')->nullable();

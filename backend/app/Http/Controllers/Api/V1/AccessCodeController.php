@@ -1,0 +1,226 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use App\Models\AccessCode;
+use App\Models\SmartLock;
+use App\Services\SmartLock\SmartLockService;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
+
+class AccessCodeController extends Controller
+{
+    public function __construct(
+        protected SmartLockService $smartLockService
+    ) {}
+
+    /**
+     * Get all access codes for a smart lock
+     */
+    public function index(Request $request, int $propertyId, int $lockId): JsonResponse
+    {
+        $lock = SmartLock::where('property_id', $propertyId)
+            ->with('property')
+            ->findOrFail($lockId);
+        
+        Gate::authorize('view', $lock->property);
+
+        $query = $lock->accessCodes()->with(['booking', 'user']);
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $codes = $query->orderBy('valid_from', 'desc')
+            ->paginate($request->per_page ?? 20);
+
+        // Mask codes for security
+        $codes->getCollection()->transform(function ($code) {
+            $code->makeVisible('code'); // Show full code to owners
+            return $code;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $codes,
+        ]);
+    }
+
+    /**
+     * Create manual access code
+     */
+    public function store(Request $request, int $propertyId, int $lockId): JsonResponse
+    {
+        $lock = SmartLock::where('property_id', $propertyId)
+            ->with('property')
+            ->findOrFail($lockId);
+        
+        Gate::authorize('update', $lock->property);
+
+        $validated = $request->validate([
+            'type' => 'required|in:temporary,permanent,one_time',
+            'valid_from' => 'required|date',
+            'valid_until' => 'nullable|date|after:valid_from',
+            'max_uses' => 'nullable|integer|min:1',
+            'notes' => 'nullable|string',
+            'code' => 'nullable|string|size:6', // Allow custom code
+        ]);
+
+        // Generate code if not provided
+        if (empty($validated['code'])) {
+            $validated['code'] = AccessCode::generateUniqueCode(6);
+        }
+
+        $validated['smart_lock_id'] = $lockId;
+        $validated['status'] = 'pending';
+
+        $accessCode = AccessCode::create($validated);
+
+        // Try to create on provider
+        try {
+            $provider = $this->smartLockService->getProvider($lock->provider);
+            
+            if ($provider) {
+                $result = $provider->createAccessCode($lock, $accessCode);
+                
+                $accessCode->update([
+                    'external_code_id' => $result['code_id'] ?? null,
+                    'status' => 'active',
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Keep in pending for manual sync
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Access code created successfully',
+            'data' => $accessCode->makeVisible('code'),
+        ], 201);
+    }
+
+    /**
+     * Get access code details
+     */
+    public function show(int $propertyId, int $lockId, int $codeId): JsonResponse
+    {
+        $lock = SmartLock::where('property_id', $propertyId)
+            ->with('property')
+            ->findOrFail($lockId);
+        
+        Gate::authorize('view', $lock->property);
+
+        $code = AccessCode::where('smart_lock_id', $lockId)
+            ->with(['booking', 'user', 'activities'])
+            ->findOrFail($codeId);
+
+        // Show full code to property owner
+        $code->makeVisible('code');
+
+        return response()->json([
+            'success' => true,
+            'data' => $code,
+        ]);
+    }
+
+    /**
+     * Update access code
+     */
+    public function update(Request $request, int $propertyId, int $lockId, int $codeId): JsonResponse
+    {
+        $lock = SmartLock::where('property_id', $propertyId)
+            ->with('property')
+            ->findOrFail($lockId);
+        
+        Gate::authorize('update', $lock->property);
+
+        $code = AccessCode::where('smart_lock_id', $lockId)->findOrFail($codeId);
+
+        $validated = $request->validate([
+            'valid_from' => 'date',
+            'valid_until' => 'nullable|date|after:valid_from',
+            'max_uses' => 'nullable|integer|min:1',
+            'notes' => 'nullable|string',
+            'status' => 'string|in:pending,active,expired,revoked',
+        ]);
+
+        $code->update($validated);
+
+        // Sync with provider if credentials exist
+        if ($lock->credentials) {
+            try {
+                $provider = $this->smartLockService->getProvider($lock->provider);
+                
+                if ($provider && $code->external_code_id) {
+                    $provider->updateAccessCode($lock, $code);
+                }
+            } catch (\Exception $e) {
+                // Log but don't fail
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Access code updated successfully',
+            'data' => $code->makeVisible('code'),
+        ]);
+    }
+
+    /**
+     * Revoke access code
+     */
+    public function destroy(int $propertyId, int $lockId, int $codeId): JsonResponse
+    {
+        $lock = SmartLock::where('property_id', $propertyId)
+            ->with('property')
+            ->findOrFail($lockId);
+        
+        Gate::authorize('update', $lock->property);
+
+        $code = AccessCode::where('smart_lock_id', $lockId)->findOrFail($codeId);
+
+        $success = $this->smartLockService->revokeAccessCode($code);
+
+        return response()->json([
+            'success' => $success,
+            'message' => $success ? 'Access code revoked successfully' : 'Failed to revoke code',
+        ], $success ? 200 : 500);
+    }
+
+    /**
+     * Get access code for authenticated user (guest view)
+     */
+    public function myCode(Request $request, int $bookingId): JsonResponse
+    {
+        $user = $request->user();
+
+        $code = AccessCode::where('booking_id', $bookingId)
+            ->where('user_id', $user->id)
+            ->where('status', 'active')
+            ->with(['smartLock', 'booking.property'])
+            ->firstOrFail();
+
+        // Verify code is valid
+        if (!$code->isValid()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access code is not valid at this time',
+            ], 403);
+        }
+
+        // Show full code to guest
+        $code->makeVisible('code');
+
+        return response()->json([
+            'success' => true,
+            'data' => $code,
+        ]);
+    }
+}

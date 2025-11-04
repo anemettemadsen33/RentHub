@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renthub-backend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: renthub-backend
+  template:
+    metadata:
+      labels:
+        app: renthub-backend
+    spec:
+      containers:
+      - name: backend
+        image: renthub/backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_ENV
+          value: "production"
+        - name: DB_HOST
+          value: "mysql-service"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: renthub-backend-service
+  namespace: production
+spec:
+  selector:
+    app: renthub-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: LoadBalancer

@@ -1,0 +1,1071 @@
+{
+  "summary": {
+    "total": 151,
+    "passRate": 35.76,
+    "passed": 54,
+    "warnings": 0,
+    "skipped": 0,
+    "duration": "00:00:46.4788500",
+    "failed": 97
+  },
+  "timestamp": "2025-11-03 15:15:58",
+  "results": [
+    {
+      "Category": "Dependencies",
+      "TestName": "Laravel Sanctum installed",
+      "Status": "PASS",
+      "Details": "Package: laravel/sanctum",
+      "Timestamp": "2025-11-03T15:15:12.3111161-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\AuthController.php",
+      "Timestamp": "2025-11-03T15:15:12.3245463-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "User Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\User.php",
+      "Timestamp": "2025-11-03T15:15:12.3294806-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth Middleware exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Middleware\\Authenticate.php",
+      "Timestamp": "2025-11-03T15:15:12.3324146-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Users table exists",
+      "Status": "PASS",
+      "Details": "Table 'users' exists",
+      "Timestamp": "2025-11-03T15:15:18.0013682-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Personal access tokens table exists",
+      "Status": "FAIL",
+      "Details": "Table 'personal_access_tokens' missing",
+      "Timestamp": "2025-11-03T15:15:18.9009724-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9037329-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9052927-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9069175-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9092944-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9113919-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Auth routes defined (checking file)",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\routes\\api.php",
+      "Timestamp": "2025-11-03T15:15:18.9166125-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Property.php",
+      "Timestamp": "2025-11-03T15:15:18.9208259-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\PropertyController.php",
+      "Timestamp": "2025-11-03T15:15:18.9225069-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Filament Resource exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Filament\\Resources\\PropertyResource.php",
+      "Timestamp": "2025-11-03T15:15:18.9242991-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Properties table exists",
+      "Status": "FAIL",
+      "Details": "Table 'properties' missing",
+      "Timestamp": "2025-11-03T15:15:19.8307779-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Property images table exists",
+      "Status": "FAIL",
+      "Details": "Table 'property_images' missing",
+      "Timestamp": "2025-11-03T15:15:20.7270428-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Amenities table exists",
+      "Status": "FAIL",
+      "Details": "Table 'amenities' missing",
+      "Timestamp": "2025-11-03T15:15:21.6060896-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Property-Amenity pivot table exists",
+      "Status": "FAIL",
+      "Details": "Table 'property_amenity' missing",
+      "Timestamp": "2025-11-03T15:15:22.5350653-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property images storage directory",
+      "Status": "FAIL",
+      "Details": "Directory not found: C:\\laragon\\www\\RentHub\\backend\\storage\\app\\public\\properties",
+      "Timestamp": "2025-11-03T15:15:22.5402095-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Search Controller exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\SearchController.php",
+      "Timestamp": "2025-11-03T15:15:22.5454064-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property filtering in controller",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\PropertyController.php",
+      "Timestamp": "2025-11-03T15:15:22.5468369-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Card component",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\PropertyCard.tsx",
+      "Timestamp": "2025-11-03T15:15:22.5512693-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Grid component",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\PropertyGrid.tsx",
+      "Timestamp": "2025-11-03T15:15:22.5527251-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Search Bar component",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\SearchBar.tsx",
+      "Timestamp": "2025-11-03T15:15:22.55401-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Booking Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Booking.php",
+      "Timestamp": "2025-11-03T15:15:22.5569068-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Booking Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\BookingController.php",
+      "Timestamp": "2025-11-03T15:15:22.5597426-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Bookings table exists",
+      "Status": "FAIL",
+      "Details": "Table 'bookings' missing",
+      "Timestamp": "2025-11-03T15:15:23.4708403-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Availability Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\AvailabilityService.php",
+      "Timestamp": "2025-11-03T15:15:23.4760896-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Booking statuses (checking table)",
+      "Status": "FAIL",
+      "Details": "Table 'bookings' missing",
+      "Timestamp": "2025-11-03T15:15:24.3477684-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Payment Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Payment.php",
+      "Timestamp": "2025-11-03T15:15:24.3685242-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Payment Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\PaymentController.php",
+      "Timestamp": "2025-11-03T15:15:24.3698354-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Payments table exists",
+      "Status": "FAIL",
+      "Details": "Table 'payments' missing",
+      "Timestamp": "2025-11-03T15:15:25.2437066-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Payouts table exists",
+      "Status": "FAIL",
+      "Details": "Table 'payouts' missing",
+      "Timestamp": "2025-11-03T15:15:26.121611-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Invoice Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\InvoiceService.php",
+      "Timestamp": "2025-11-03T15:15:26.12494-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Review Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Review.php",
+      "Timestamp": "2025-11-03T15:15:26.1278303-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Review Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\ReviewController.php",
+      "Timestamp": "2025-11-03T15:15:26.1291072-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Reviews table exists",
+      "Status": "FAIL",
+      "Details": "Table 'reviews' missing",
+      "Timestamp": "2025-11-03T15:15:26.9965521-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Review Policy exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Policies\\ReviewPolicy.php",
+      "Timestamp": "2025-11-03T15:15:26.9997164-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Notification Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\NotificationService.php",
+      "Timestamp": "2025-11-03T15:15:27.0024627-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Notifications table exists",
+      "Status": "FAIL",
+      "Details": "Table 'notifications' missing",
+      "Timestamp": "2025-11-03T15:15:27.8793953-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Email configuration in .env.example",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\.env.example",
+      "Timestamp": "2025-11-03T15:15:27.8828018-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Email templates directory",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\backend\\resources\\views\\emails",
+      "Timestamp": "2025-11-03T15:15:27.8883394-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Message Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Message.php",
+      "Timestamp": "2025-11-03T15:15:27.8912306-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Message Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\MessageController.php",
+      "Timestamp": "2025-11-03T15:15:27.8926361-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Messages table exists",
+      "Status": "FAIL",
+      "Details": "Table 'messages' missing",
+      "Timestamp": "2025-11-03T15:15:28.7814193-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Conversations table exists",
+      "Status": "FAIL",
+      "Details": "Table 'conversations' missing",
+      "Timestamp": "2025-11-03T15:15:29.6881933-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Pusher package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: pusher/pusher-php-server",
+      "Timestamp": "2025-11-03T15:15:29.6975579-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Wishlist Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Wishlist.php",
+      "Timestamp": "2025-11-03T15:15:29.7014841-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Wishlists table exists",
+      "Status": "FAIL",
+      "Details": "Table 'wishlists' missing",
+      "Timestamp": "2025-11-03T15:15:30.5642654-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Wishlist items table exists",
+      "Status": "FAIL",
+      "Details": "Table 'wishlist_items' missing",
+      "Timestamp": "2025-11-03T15:15:31.5108448-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Calendar Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\CalendarService.php",
+      "Timestamp": "2025-11-03T15:15:31.5167975-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Property availability table exists",
+      "Status": "FAIL",
+      "Details": "Table 'property_availability' missing",
+      "Timestamp": "2025-11-03T15:15:32.3947394-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Blocked dates table exists",
+      "Status": "FAIL",
+      "Details": "Table 'blocked_dates' missing",
+      "Timestamp": "2025-11-03T15:15:33.2910229-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Google API Client installed",
+      "Status": "PASS",
+      "Details": "Package: google/apiclient",
+      "Timestamp": "2025-11-03T15:15:33.2993562-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Map Search Controller exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\MapSearchController.php",
+      "Timestamp": "2025-11-03T15:15:33.3068505-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Saved searches table exists",
+      "Status": "FAIL",
+      "Details": "Table 'saved_searches' missing",
+      "Timestamp": "2025-11-03T15:15:34.1743092-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Search Service exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\SearchService.php",
+      "Timestamp": "2025-11-03T15:15:34.1784858-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Verification Model exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Verification.php",
+      "Timestamp": "2025-11-03T15:15:34.1820693-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Verifications table exists",
+      "Status": "FAIL",
+      "Details": "Table 'verifications' missing",
+      "Timestamp": "2025-11-03T15:15:35.1025679-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Verification documents table exists",
+      "Status": "FAIL",
+      "Details": "Table 'verification_documents' missing",
+      "Timestamp": "2025-11-03T15:15:35.9676861-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Analytics Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\AnalyticsService.php",
+      "Timestamp": "2025-11-03T15:15:35.9744725-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Owner Dashboard Controller",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\OwnerDashboardController.php",
+      "Timestamp": "2025-11-03T15:15:35.9762186-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Tenant Dashboard Controller",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\TenantDashboardController.php",
+      "Timestamp": "2025-11-03T15:15:35.9774463-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Reporting Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\ReportingService.php",
+      "Timestamp": "2025-11-03T15:15:35.9786346-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Language files directory",
+      "Status": "FAIL",
+      "Details": "Directory not found: C:\\laragon\\www\\RentHub\\backend\\lang",
+      "Timestamp": "2025-11-03T15:15:35.9814063-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Frontend locales directory",
+      "Status": "FAIL",
+      "Details": "Directory not found: C:\\laragon\\www\\RentHub\\frontend\\public\\locales",
+      "Timestamp": "2025-11-03T15:15:35.9850862-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Next.js i18n package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: next-i18next",
+      "Timestamp": "2025-11-03T15:15:36.0002973-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Locale Middleware exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Middleware\\SetLocale.php",
+      "Timestamp": "2025-11-03T15:15:36.0016046-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Currency Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\CurrencyService.php",
+      "Timestamp": "2025-11-03T15:15:36.0057151-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Currencies table exists",
+      "Status": "FAIL",
+      "Details": "Table 'currencies' missing",
+      "Timestamp": "2025-11-03T15:15:36.8885361-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Exchange rates table exists",
+      "Status": "FAIL",
+      "Details": "Table 'exchange_rates' missing",
+      "Timestamp": "2025-11-03T15:15:37.8202614-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Money PHP package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: moneyphp/money",
+      "Timestamp": "2025-11-03T15:15:37.8269598-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Pricing Service exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\PricingService.php",
+      "Timestamp": "2025-11-03T15:15:37.8298858-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Pricing rules table exists",
+      "Status": "FAIL",
+      "Details": "Table 'pricing_rules' missing",
+      "Timestamp": "2025-11-03T15:15:38.6988907-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Seasonal prices table exists",
+      "Status": "FAIL",
+      "Details": "Table 'seasonal_prices' missing",
+      "Timestamp": "2025-11-03T15:15:39.5780257-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Lease Model exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Lease.php",
+      "Timestamp": "2025-11-03T15:15:39.582271-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Leases table exists",
+      "Status": "FAIL",
+      "Details": "Table 'leases' missing",
+      "Timestamp": "2025-11-03T15:15:40.4581901-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Maintenance requests table exists",
+      "Status": "FAIL",
+      "Details": "Table 'maintenance_requests' missing",
+      "Timestamp": "2025-11-03T15:15:41.3237978-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Comparison Controller",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Controllers\\Api\\PropertyComparisonController.php",
+      "Timestamp": "2025-11-03T15:15:41.3292063-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Property Comparison Component",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\PropertyComparison.tsx",
+      "Timestamp": "2025-11-03T15:15:41.3305785-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Insurance Model exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Insurance.php",
+      "Timestamp": "2025-11-03T15:15:41.3346228-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Insurances table exists",
+      "Status": "FAIL",
+      "Details": "Table 'insurances' missing",
+      "Timestamp": "2025-11-03T15:15:42.1962688-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Smart Lock Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\SmartLockService.php",
+      "Timestamp": "2025-11-03T15:15:42.2029096-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Smart locks table exists",
+      "Status": "FAIL",
+      "Details": "Table 'smart_locks' missing",
+      "Timestamp": "2025-11-03T15:15:43.1154008-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Access codes table exists",
+      "Status": "FAIL",
+      "Details": "Table 'access_codes' missing",
+      "Timestamp": "2025-11-03T15:15:44.0453228-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Cleaning Service Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\CleaningService.php",
+      "Timestamp": "2025-11-03T15:15:44.0492921-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Cleaning services table exists",
+      "Status": "FAIL",
+      "Details": "Table 'cleaning_services' missing",
+      "Timestamp": "2025-11-03T15:15:44.9304303-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Maintenance requests table exists",
+      "Status": "FAIL",
+      "Details": "Table 'maintenance_requests' missing",
+      "Timestamp": "2025-11-03T15:15:45.845714-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Guest Screening Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\GuestScreeningService.php",
+      "Timestamp": "2025-11-03T15:15:45.8500999-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Guest screenings table exists",
+      "Status": "FAIL",
+      "Details": "Table 'guest_screenings' missing",
+      "Timestamp": "2025-11-03T15:15:46.8527583-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Background checks table exists",
+      "Status": "FAIL",
+      "Details": "Table 'background_checks' missing",
+      "Timestamp": "2025-11-03T15:15:47.7696297-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Recommendation Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\RecommendationService.php",
+      "Timestamp": "2025-11-03T15:15:47.7742053-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "ML models directory",
+      "Status": "FAIL",
+      "Details": "Directory not found: C:\\laragon\\www\\RentHub\\backend\\ml-models",
+      "Timestamp": "2025-11-03T15:15:47.7758647-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Loyalty Program Model exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\LoyaltyProgram.php",
+      "Timestamp": "2025-11-03T15:15:47.7804964-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Loyalty points table exists",
+      "Status": "FAIL",
+      "Details": "Table 'loyalty_points' missing",
+      "Timestamp": "2025-11-03T15:15:48.6555259-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Loyalty tiers table exists",
+      "Status": "FAIL",
+      "Details": "Table 'loyalty_tiers' missing",
+      "Timestamp": "2025-11-03T15:15:49.5404876-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Referral Model exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Models\\Referral.php",
+      "Timestamp": "2025-11-03T15:15:49.5451245-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Referrals table exists",
+      "Status": "FAIL",
+      "Details": "Table 'referrals' missing",
+      "Timestamp": "2025-11-03T15:15:50.4224588-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Message templates table exists",
+      "Status": "FAIL",
+      "Details": "Table 'message_templates' missing",
+      "Timestamp": "2025-11-03T15:15:51.3333415-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Automated Messaging Service",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\AutomatedMessagingService.php",
+      "Timestamp": "2025-11-03T15:15:51.3386374-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Advanced Reporting Service",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\AdvancedReportingService.php",
+      "Timestamp": "2025-11-03T15:15:51.3451941-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Laravel Excel package installed",
+      "Status": "PASS",
+      "Details": "Package: maatwebsite/excel",
+      "Timestamp": "2025-11-03T15:15:51.3520061-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Channel Manager Service exists",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\ChannelManagerService.php",
+      "Timestamp": "2025-11-03T15:15:51.3550263-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Channel connections table exists",
+      "Status": "FAIL",
+      "Details": "Table 'channel_connections' missing",
+      "Timestamp": "2025-11-03T15:15:52.2540717-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Laravel Passport for OAuth2",
+      "Status": "FAIL",
+      "Details": "Package not found: laravel/passport",
+      "Timestamp": "2025-11-03T15:15:52.2635989-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "JWT Authentication",
+      "Status": "FAIL",
+      "Details": "Package not found: tymon/jwt-auth",
+      "Timestamp": "2025-11-03T15:15:52.2720852-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Permission package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: spatie/laravel-permission",
+      "Timestamp": "2025-11-03T15:15:52.2781402-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Roles table exists",
+      "Status": "PASS",
+      "Details": "Table 'roles' exists",
+      "Timestamp": "2025-11-03T15:15:53.1583377-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Permissions table exists",
+      "Status": "PASS",
+      "Details": "Table 'permissions' exists",
+      "Timestamp": "2025-11-03T15:15:54.0688683-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Encryption configuration",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\config\\app.php",
+      "Timestamp": "2025-11-03T15:15:54.0747142-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "GDPR Service exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\GdprService.php",
+      "Timestamp": "2025-11-03T15:15:54.0763577-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Data Anonymization Service",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Services\\DataAnonymizationService.php",
+      "Timestamp": "2025-11-03T15:15:54.0776717-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "CSRF Middleware",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Middleware\\VerifyCsrfToken.php",
+      "Timestamp": "2025-11-03T15:15:54.0802922-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Rate Limiting Middleware",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Middleware\\ThrottleRequests.php",
+      "Timestamp": "2025-11-03T15:15:54.0819771-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Request validation classes",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Requests",
+      "Timestamp": "2025-11-03T15:15:54.0862108-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Security Headers Middleware",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\app\\Http\\Middleware\\SecurityHeaders.php",
+      "Timestamp": "2025-11-03T15:15:54.0875285-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Audit logs table exists",
+      "Status": "PASS",
+      "Details": "Table 'audit_logs' exists",
+      "Timestamp": "2025-11-03T15:15:54.973385-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Activity log package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: spatie/laravel-activitylog",
+      "Timestamp": "2025-11-03T15:15:54.9811031-08:00"
+    },
+    {
+      "Category": "Laravel",
+      "TestName": "Database connection test",
+      "Status": "PASS",
+      "Details": "",
+      "Timestamp": "2025-11-03T15:15:55.8576996-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Cache configuration",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\config\\cache.php",
+      "Timestamp": "2025-11-03T15:15:55.8601185-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Redis package installed",
+      "Status": "FAIL",
+      "Details": "Package not found: predis/predis",
+      "Timestamp": "2025-11-03T15:15:55.8652699-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Cache configuration exists",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\config\\cache.php",
+      "Timestamp": "2025-11-03T15:15:55.8680938-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Cache driver configuration",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\.env.example",
+      "Timestamp": "2025-11-03T15:15:55.8693325-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Image manipulation package",
+      "Status": "FAIL",
+      "Details": "Package not found: intervention/image",
+      "Timestamp": "2025-11-03T15:15:55.8790954-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Next.js configuration",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\frontend\\next.config.js",
+      "Timestamp": "2025-11-03T15:15:55.8813893-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Docker Compose file",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\docker-compose.yml",
+      "Timestamp": "2025-11-03T15:15:55.8840791-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Backend Dockerfile",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\backend\\Dockerfile",
+      "Timestamp": "2025-11-03T15:15:55.8856156-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Frontend Dockerfile",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\frontend\\Dockerfile",
+      "Timestamp": "2025-11-03T15:15:55.887227-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "GitHub Actions directory",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\.github\\workflows",
+      "Timestamp": "2025-11-03T15:15:55.8907205-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Backend tests workflow",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\.github\\workflows\\backend-tests.yml",
+      "Timestamp": "2025-11-03T15:15:55.8923489-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Frontend tests workflow",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\.github\\workflows\\frontend-tests.yml",
+      "Timestamp": "2025-11-03T15:15:55.893637-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Kubernetes directory",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\k8s",
+      "Timestamp": "2025-11-03T15:15:55.8980256-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "K8s deployment file",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\k8s\\deployment.yml",
+      "Timestamp": "2025-11-03T15:15:55.8995189-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Terraform directory",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\terraform",
+      "Timestamp": "2025-11-03T15:15:55.9026024-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Terraform main file",
+      "Status": "PASS",
+      "Details": "File found: C:\\laragon\\www\\RentHub\\terraform\\main.tf",
+      "Timestamp": "2025-11-03T15:15:55.9042579-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Design tokens file",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\styles\\tokens.css",
+      "Timestamp": "2025-11-03T15:15:55.9067885-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Components directory",
+      "Status": "PASS",
+      "Details": "Directory found: C:\\laragon\\www\\RentHub\\frontend\\src\\components",
+      "Timestamp": "2025-11-03T15:15:55.9088578-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Axe accessibility testing",
+      "Status": "FAIL",
+      "Details": "Package not found: @axe-core/react",
+      "Timestamp": "2025-11-03T15:15:55.9149907-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Accessible components",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\AccessibleButton.tsx",
+      "Timestamp": "2025-11-03T15:15:55.9163107-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Responsive styles",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\styles\\responsive.css",
+      "Timestamp": "2025-11-03T15:15:55.9212503-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Mobile components",
+      "Status": "FAIL",
+      "Details": "Directory not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\mobile",
+      "Timestamp": "2025-11-03T15:15:55.9225322-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Sitemap configuration",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\next-sitemap.config.js",
+      "Timestamp": "2025-11-03T15:15:55.9249854-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "SEO component",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\SEO.tsx",
+      "Timestamp": "2025-11-03T15:15:55.9261532-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Blog posts table",
+      "Status": "FAIL",
+      "Details": "Table 'posts' missing",
+      "Timestamp": "2025-11-03T15:15:56.8260371-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Newsletter subscriptions table",
+      "Status": "FAIL",
+      "Details": "Table 'newsletter_subscriptions' missing",
+      "Timestamp": "2025-11-03T15:15:57.7166372-08:00"
+    },
+    {
+      "Category": "Database",
+      "TestName": "Email campaigns table",
+      "Status": "FAIL",
+      "Details": "Table 'email_campaigns' missing",
+      "Timestamp": "2025-11-03T15:15:58.6045588-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Socialite package installed",
+      "Status": "PASS",
+      "Details": "Package: laravel/socialite",
+      "Timestamp": "2025-11-03T15:15:58.6147668-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Open Graph component",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\components\\OpenGraph.tsx",
+      "Timestamp": "2025-11-03T15:15:58.6168097-08:00"
+    },
+    {
+      "Category": "General",
+      "TestName": "Analytics library",
+      "Status": "FAIL",
+      "Details": "File not found: C:\\laragon\\www\\RentHub\\frontend\\src\\lib\\analytics.ts",
+      "Timestamp": "2025-11-03T15:15:58.6195897-08:00"
+    },
+    {
+      "Category": "Dependencies",
+      "TestName": "Third-party integrations",
+      "Status": "FAIL",
+      "Details": "Package not found: @next/third-parties",
+      "Timestamp": "2025-11-03T15:15:58.6251327-08:00"
+    }
+  ]
+}

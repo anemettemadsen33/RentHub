@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  renthub-overview.json: |
+    {
+      "dashboard": {
+        "title": "RentHub Overview",
+        "tags": ["renthub"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "title": "Request Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{namespace=\"renthub\"}[5m])) by (service)"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{namespace=\"renthub\",status=~\"5..\"}[5m])) by (service)"
+              }
+            ]
+          },
+          {
+            "title": "Response Time (p95)",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"renthub\"}[5m])) by (le, service))"
+              }
+            ]
+          },
+          {
+            "title": "Pod CPU Usage",
+            "targets": [
+              {
+                "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"renthub\"}[5m])) by (pod)"
+              }
+            ]
+          },
+          {
+            "title": "Pod Memory Usage",
+            "targets": [
+              {
+                "expr": "sum(container_memory_usage_bytes{namespace=\"renthub\"}) by (pod)"
+              }
+            ]
+          },
+          {
+            "title": "Active Pods",
+            "targets": [
+              {
+                "expr": "count(kube_pod_status_phase{namespace=\"renthub\",phase=\"Running\"})"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  
+  renthub-backend.json: |
+    {
+      "dashboard": {
+        "title": "RentHub Backend Metrics",
+        "tags": ["renthub", "backend"],
+        "panels": [
+          {
+            "title": "API Request Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=\"backend\"}[5m])) by (endpoint)"
+              }
+            ]
+          },
+          {
+            "title": "API Error Rate by Endpoint",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=\"backend\",status=~\"5..\"}[5m])) by (endpoint)"
+              }
+            ]
+          },
+          {
+            "title": "Database Query Time",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(db_query_duration_seconds_bucket[5m])) by (le))"
+              }
+            ]
+          },
+          {
+            "title": "Queue Jobs Processed",
+            "targets": [
+              {
+                "expr": "sum(rate(queue_jobs_processed_total[5m]))"
+              }
+            ]
+          },
+          {
+            "title": "Cache Hit Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(cache_hits_total[5m])) / (sum(rate(cache_hits_total[5m])) + sum(rate(cache_misses_total[5m]))) * 100"
+              }
+            ]
+          }
+        ]
+      }
+    }

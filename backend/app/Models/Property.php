@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Property extends Model
@@ -14,10 +15,15 @@ class Property extends Model
         'title',
         'description', 
         'type',
+        'furnishing_status',
         'bedrooms',
         'bathrooms',
         'guests',
+        'min_nights',
+        'max_nights',
         'price_per_night',
+        'price_per_week',
+        'price_per_month',
         'cleaning_fee',
         'security_deposit',
         'street_address',
@@ -28,11 +34,19 @@ class Property extends Model
         'latitude',
         'longitude',
         'area_sqm',
+        'square_footage',
         'built_year',
+        'floor_number',
+        'parking_available',
+        'parking_spaces',
         'is_active',
         'is_featured',
+        'status',
         'available_from',
         'available_until',
+        'blocked_dates',
+        'custom_pricing',
+        'rules',
         'images',
         'main_image',
         'user_id'
@@ -40,13 +54,19 @@ class Property extends Model
 
     protected $casts = [
         'images' => 'array',
+        'rules' => 'array',
+        'blocked_dates' => 'array',
+        'custom_pricing' => 'array',
         'price_per_night' => 'decimal:2',
+        'price_per_week' => 'decimal:2',
+        'price_per_month' => 'decimal:2',
         'cleaning_fee' => 'decimal:2',
         'security_deposit' => 'decimal:2',
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'parking_available' => 'boolean',
         'available_from' => 'datetime',
         'available_until' => 'datetime',
     ];
@@ -75,6 +95,58 @@ class Property extends Model
     public function amenities(): BelongsToMany
     {
         return $this->belongsToMany(Amenity::class);
+    }
+
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
+    public function wishlists(): BelongsToMany
+    {
+        return $this->belongsToMany(Wishlist::class, 'wishlist_items')
+            ->withTimestamps()
+            ->withPivot(['notes', 'price_alert', 'notify_availability']);
+    }
+
+    public function externalCalendars(): HasMany
+    {
+        return $this->hasMany(ExternalCalendar::class);
+    }
+
+    public function verification(): HasOne
+    {
+        return $this->hasOne(PropertyVerification::class);
+    }
+
+    public function pricingRules(): HasMany
+    {
+        return $this->hasMany(PricingRule::class);
+    }
+
+    public function priceSuggestions(): HasMany
+    {
+        return $this->hasMany(PriceSuggestion::class);
+    }
+
+    public function smartLocks(): HasMany
+    {
+        return $this->hasMany(SmartLock::class);
+    }
+
+    public function activeSmartLocks(): HasMany
+    {
+        return $this->hasMany(SmartLock::class)->where('status', 'active');
+    }
+
+    public function iotDevices(): HasMany
+    {
+        return $this->hasMany(IoTDevice::class);
+    }
+
+    public function activeIotDevices(): HasMany
+    {
+        return $this->hasMany(IoTDevice::class)->where('is_active', true);
     }
 
     // Accessors & Mutators
@@ -153,5 +225,113 @@ class Property extends Model
         }
         
         return $query;
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'draft');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+
+    // Helper methods
+    public function isPublished(): bool
+    {
+        return $this->status === 'published';
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->status === 'inactive';
+    }
+
+    public function publish(): bool
+    {
+        return $this->update(['status' => 'published', 'is_active' => true]);
+    }
+
+    public function unpublish(): bool
+    {
+        return $this->update(['status' => 'inactive', 'is_active' => false]);
+    }
+
+    public function setToDraft(): bool
+    {
+        return $this->update(['status' => 'draft', 'is_active' => false]);
+    }
+
+    public function isDateBlocked($date): bool
+    {
+        if (!$this->blocked_dates) {
+            return false;
+        }
+
+        return in_array($date, $this->blocked_dates);
+    }
+
+    public function blockDate($date): bool
+    {
+        $blockedDates = $this->blocked_dates ?? [];
+        
+        if (!in_array($date, $blockedDates)) {
+            $blockedDates[] = $date;
+            return $this->update(['blocked_dates' => $blockedDates]);
+        }
+
+        return false;
+    }
+
+    public function unblockDate($date): bool
+    {
+        $blockedDates = $this->blocked_dates ?? [];
+        
+        if (($key = array_search($date, $blockedDates)) !== false) {
+            unset($blockedDates[$key]);
+            return $this->update(['blocked_dates' => array_values($blockedDates)]);
+        }
+
+        return false;
+    }
+
+    public function getPriceForDate($date)
+    {
+        if ($this->custom_pricing && isset($this->custom_pricing[$date])) {
+            return $this->custom_pricing[$date];
+        }
+
+        return $this->price_per_night;
+    }
+
+    public function setCustomPrice($date, $price): bool
+    {
+        $customPricing = $this->custom_pricing ?? [];
+        $customPricing[$date] = $price;
+        
+        return $this->update(['custom_pricing' => $customPricing]);
+    }
+
+    public function removeCustomPrice($date): bool
+    {
+        $customPricing = $this->custom_pricing ?? [];
+        
+        if (isset($customPricing[$date])) {
+            unset($customPricing[$date]);
+            return $this->update(['custom_pricing' => $customPricing]);
+        }
+
+        return false;
     }
 }

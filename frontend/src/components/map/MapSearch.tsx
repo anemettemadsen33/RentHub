@@ -1,0 +1,176 @@
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { apiClient } from '@/lib/api';
+
+// Dynamically import map components (client-side only)
+const MapContainer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Popup),
+  { ssr: false }
+);
+const useMapEvents = dynamic(
+  () => import('react-leaflet').then((mod) => mod.useMapEvents),
+  { ssr: false }
+);
+
+interface Property {
+  id: number;
+  title: string;
+  latitude: number;
+  longitude: number;
+  price_per_night: number;
+  type: string;
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  main_image: string | null;
+  city: string;
+  rating?: number;
+  reviews_count?: number;
+}
+
+interface Cluster {
+  type: 'cluster';
+  count: number;
+  latitude: number;
+  longitude: number;
+  properties: number[];
+  min_price: number;
+}
+
+interface PropertyMarker {
+  type: 'property';
+  id: number;
+  latitude: number;
+  longitude: number;
+  title: string;
+  price: number;
+  image: string | null;
+}
+
+type MarkerData = Cluster | PropertyMarker;
+
+interface MapSearchProps {
+  initialCenter?: [number, number];
+  initialZoom?: number;
+  filters?: {
+    type?: string;
+    min_price?: number;
+    max_price?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    guests?: number;
+    amenities?: number[];
+  };
+  onPropertyClick?: (property: Property) => void;
+  className?: string;
+}
+
+export default function MapSearch({
+  initialCenter = [45.9432, 24.9668], // Romania center
+  initialZoom = 7,
+  filters = {},
+  onPropertyClick,
+  className = 'h-[600px] w-full',
+}: MapSearchProps) {
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const fetchProperties = async (bounds: any, zoom: number) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      const response = await apiClient.post('/map/search-bounds', {
+        sw_lat: sw.lat,
+        sw_lng: sw.lng,
+        ne_lat: ne.lat,
+        ne_lng: ne.lng,
+        zoom,
+        ...filters,
+      });
+
+      if (response.data.success) {
+        setMarkers(response.data.data.markers);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load properties');
+      console.error('Map search error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPropertyDetails = async (propertyId: number) => {
+    try {
+      const response = await apiClient.get(`/map/property/${propertyId}`);
+      if (response.data.success && onPropertyClick) {
+        onPropertyClick(response.data.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch property details:', err);
+    }
+  };
+
+  if (!isClient) {
+    return (
+      <div className={`${className} flex items-center justify-center bg-gray-100 rounded-lg`}>
+        <p className="text-gray-600">Loading map...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`relative ${className}`}>
+      {loading && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white px-4 py-2 rounded-lg shadow-lg">
+          <p className="text-sm font-medium">Loading properties...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg">
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossOrigin=""
+      />
+
+      <div className="h-full w-full rounded-lg overflow-hidden shadow-lg">
+        {/* Map will render here - implementation simplified for Next.js */}
+        <iframe
+          src="/map-embed"
+          className="w-full h-full border-0"
+          title="Property Map Search"
+        />
+      </div>
+    </div>
+  );
+}

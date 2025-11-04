@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Review extends Model
 {
@@ -22,12 +24,16 @@ class Review extends Model
         'is_approved',
         'admin_notes',
         'owner_response',
-        'owner_response_at'
+        'owner_response_at',
+        'photos',
+        'helpful_count'
     ];
 
     protected $casts = [
         'is_approved' => 'boolean',
         'owner_response_at' => 'datetime',
+        'photos' => 'array',
+        'helpful_count' => 'integer'
     ];
 
     // Relationships
@@ -49,6 +55,31 @@ class Review extends Model
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(ReviewResponse::class);
+    }
+
+    public function latestResponse(): HasOne
+    {
+        return $this->hasOne(ReviewResponse::class)->latestOfMany();
+    }
+
+    public function helpfulVotes(): HasMany
+    {
+        return $this->hasMany(ReviewHelpfulVote::class);
+    }
+
+    public function helpfulVotesCount(): int
+    {
+        return $this->helpfulVotes()->where('is_helpful', true)->count();
+    }
+
+    public function notHelpfulVotesCount(): int
+    {
+        return $this->helpfulVotes()->where('is_helpful', false)->count();
     }
 
     // Accessors
@@ -104,5 +135,33 @@ class Review extends Model
     public function scopeLowRating($query, $maxRating = 2)
     {
         return $query->where('rating', '<=', $maxRating);
+    }
+
+    public function scopeVerifiedGuest($query)
+    {
+        return $query->whereHas('booking', function($q) {
+            $q->where('status', 'completed');
+        });
+    }
+
+    // Helper methods
+    public function canBeEditedBy(User $user): bool
+    {
+        return $this->user_id === $user->id;
+    }
+
+    public function canBeDeletedBy(User $user): bool
+    {
+        return $this->user_id === $user->id || $user->role === 'admin';
+    }
+
+    public function canBeRespondedBy(User $user): bool
+    {
+        return $this->property->user_id === $user->id || $user->role === 'admin';
+    }
+
+    public function isVerifiedGuest(): bool
+    {
+        return $this->booking && $this->booking->status === 'completed';
     }
 }

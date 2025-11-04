@@ -1,0 +1,43 @@
+# Backend
+backend/.env
+backend/.git
+backend/.github
+backend/node_modules
+backend/vendor
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/.phpunit.result.cache
+backend/tests
+
+# Frontend
+frontend/.git
+frontend/.next
+frontend/node_modules
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/coverage
+frontend/.storybook
+
+# Docker
+.docker
+*.log
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+LICENSE

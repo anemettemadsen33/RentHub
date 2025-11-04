@@ -1,0 +1,38 @@
+# Project Configuration
+project_name = "renthub"
+environment  = "production"
+aws_region   = "us-east-1"
+
+# Network Configuration
+vpc_cidr             = "10.0.0.0/16"
+availability_zones   = ["us-east-1a", "us-east-1b", "us-east-1c"]
+private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+public_subnet_cidrs  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+
+# EKS Configuration
+kubernetes_version      = "1.28"
+node_instance_types     = ["t3.xlarge"]
+spot_instance_types     = ["t3.xlarge", "t3a.xlarge", "t2.xlarge"]
+node_group_min_size     = 3
+node_group_max_size     = 20
+node_group_desired_size = 5
+
+# Database Configuration
+db_instance_class       = "db.r6g.xlarge"
+db_allocated_storage    = 200
+db_max_allocated_storage = 1000
+db_name                 = "renthub_production"
+db_username             = "renthub_admin"
+
+# Redis Configuration
+redis_node_type = "cache.r6g.large"
+
+# Domain Configuration
+domain_name     = "renthub.com"
+allowed_origins = ["https://renthub.com", "https://www.renthub.com"]
+
+# CloudFront Configuration
+cloudfront_price_class = "PriceClass_All"
+
+# Logging Configuration
+log_retention_days = 90

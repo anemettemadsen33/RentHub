@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Reviews;
 use App\Filament\Resources\Reviews\Pages\CreateReview;
 use App\Filament\Resources\Reviews\Pages\EditReview;
 use App\Filament\Resources\Reviews\Pages\ListReviews;
+use App\Filament\Resources\Reviews\Pages\ViewReview;
 use App\Filament\Resources\Reviews\Schemas\ReviewForm;
+use App\Filament\Resources\Reviews\Schemas\ReviewInfolist;
 use App\Filament\Resources\Reviews\Tables\ReviewsTable;
 use App\Models\Review;
 use BackedEnum;
@@ -20,11 +22,16 @@ class ReviewResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'model';
+    protected static ?string $recordTitleAttribute = 'comment';
 
     public static function form(Schema $schema): Schema
     {
         return ReviewForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return ReviewInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -44,6 +51,7 @@ class ReviewResource extends Resource
         return [
             'index' => ListReviews::route('/'),
             'create' => CreateReview::route('/create'),
+            'view' => ViewReview::route('/{record}'),
             'edit' => EditReview::route('/{record}/edit'),
         ];
     }

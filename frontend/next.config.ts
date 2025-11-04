@@ -14,6 +14,17 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Redirects for trailing slashes (SEO best practice)
+  async redirects() {
+    return [
+      {
+        source: '/:path+/',
+        destination: '/:path+',
+        permanent: true,
+      },
+    ];
+  },
+
   // Image optimization
   images: {
     remotePatterns: [
@@ -26,11 +37,21 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
   },
 
   // Environment variables to expose to the browser
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  },
+
+  // Compression for better performance
+  compress: true,
+
+  // Generate static pages at build time for better SEO
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@headlessui/react'],
   },
 };
 

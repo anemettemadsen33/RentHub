@@ -1,0 +1,195 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: renthub-alerts
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+spec:
+  groups:
+  - name: renthub.rules
+    interval: 30s
+    rules:
+    # Backend alerts
+    - alert: BackendHighErrorRate
+      expr: |
+        (sum(rate(http_requests_total{job="backend",status=~"5.."}[5m])) by (instance)
+        /
+        sum(rate(http_requests_total{job="backend"}[5m])) by (instance)) > 0.05
+      for: 5m
+      labels:
+        severity: critical
+        component: backend
+      annotations:
+        summary: "High error rate on {{ $labels.instance }}"
+        description: "Backend instance {{ $labels.instance }} has error rate above 5% (current: {{ $value | humanizePercentage }})"
+    
+    - alert: BackendHighLatency
+      expr: |
+        histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="backend"}[5m])) by (le, instance)) > 1
+      for: 5m
+      labels:
+        severity: warning
+        component: backend
+      annotations:
+        summary: "High latency on {{ $labels.instance }}"
+        description: "Backend p95 latency is above 1s (current: {{ $value }}s)"
+    
+    - alert: BackendDown
+      expr: up{job="backend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        component: backend
+      annotations:
+        summary: "Backend instance down"
+        description: "Backend instance {{ $labels.instance }} is down"
+    
+    # Frontend alerts
+    - alert: FrontendHighErrorRate
+      expr: |
+        (sum(rate(http_requests_total{job="frontend",status=~"5.."}[5m])) by (instance)
+        /
+        sum(rate(http_requests_total{job="frontend"}[5m])) by (instance)) > 0.05
+      for: 5m
+      labels:
+        severity: critical
+        component: frontend
+      annotations:
+        summary: "High error rate on {{ $labels.instance }}"
+        description: "Frontend instance {{ $labels.instance }} has error rate above 5%"
+    
+    - alert: FrontendDown
+      expr: up{job="frontend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        component: frontend
+      annotations:
+        summary: "Frontend instance down"
+        description: "Frontend instance {{ $labels.instance }} is down"
+    
+    # Database alerts
+    - alert: PostgreSQLDown
+      expr: up{job="postgres"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        component: database
+      annotations:
+        summary: "PostgreSQL is down"
+        description: "PostgreSQL instance {{ $labels.instance }} is down"
+    
+    - alert: PostgreSQLHighConnections
+      expr: |
+        sum(pg_stat_database_numbackends) by (instance) / pg_settings_max_connections * 100 > 80
+      for: 5m
+      labels:
+        severity: warning
+        component: database
+      annotations:
+        summary: "PostgreSQL high connections"
+        description: "PostgreSQL connections usage is above 80% (current: {{ $value }}%)"
+    
+    - alert: PostgreSQLSlowQueries
+      expr: |
+        rate(pg_stat_statements_mean_exec_time[5m]) > 1000
+      for: 5m
+      labels:
+        severity: warning
+        component: database
+      annotations:
+        summary: "PostgreSQL slow queries detected"
+        description: "Average query execution time is above 1s"
+    
+    # Redis alerts
+    - alert: RedisDown
+      expr: up{job="redis"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        component: cache
+      annotations:
+        summary: "Redis is down"
+        description: "Redis instance {{ $labels.instance }} is down"
+    
+    - alert: RedisHighMemory
+      expr: |
+        redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+      for: 5m
+      labels:
+        severity: warning
+        component: cache
+      annotations:
+        summary: "Redis high memory usage"
+        description: "Redis memory usage is above 90% (current: {{ $value }}%)"
+    
+    # Pod alerts
+    - alert: PodCrashLooping
+      expr: |
+        rate(kube_pod_container_status_restarts_total{namespace="renthub"}[15m]) > 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Pod {{ $labels.pod }} is crash looping"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting frequently"
+    
+    - alert: PodNotReady
+      expr: |
+        kube_pod_status_phase{namespace="renthub",phase!~"Running|Succeeded"} == 1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod {{ $labels.pod }} not ready"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is not in Running state"
+    
+    # HPA alerts
+    - alert: HPAMaxedOut
+      expr: |
+        kube_horizontalpodautoscaler_status_current_replicas{namespace="renthub"}
+        >=
+        kube_horizontalpodautoscaler_spec_max_replicas{namespace="renthub"}
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "HPA {{ $labels.horizontalpodautoscaler }} maxed out"
+        description: "HPA {{ $labels.horizontalpodautoscaler }} has been at max replicas for 10 minutes"
+    
+    # Resource alerts
+    - alert: HighCPUUsage
+      expr: |
+        (sum(rate(container_cpu_usage_seconds_total{namespace="renthub"}[5m])) by (pod)
+        /
+        sum(container_spec_cpu_quota{namespace="renthub"} / container_spec_cpu_period{namespace="renthub"}) by (pod)) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage on {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} CPU usage is above 80%"
+    
+    - alert: HighMemoryUsage
+      expr: |
+        (sum(container_memory_usage_bytes{namespace="renthub"}) by (pod)
+        /
+        sum(container_spec_memory_limit_bytes{namespace="renthub"}) by (pod)) * 100 > 90
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage on {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} memory usage is above 90%"
+    
+    # Disk alerts
+    - alert: PVCAlmostFull
+      expr: |
+        (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 85
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "PVC {{ $labels.persistentvolumeclaim }} almost full"
+        description: "PVC {{ $labels.persistentvolumeclaim }} is {{ $value }}% full"

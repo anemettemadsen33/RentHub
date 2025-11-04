@@ -1,0 +1,246 @@
+name: Blue-Green Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: renthub-cluster
+  ECS_SERVICE: renthub-service
+  CONTAINER_NAME: renthub-app
+
+jobs:
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Generate Image Tag
+        id: image-tag
+        run: echo "tag=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+      
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: renthub
+          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend/
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+  deploy-green:
+    name: Deploy to Green Environment
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Update Green Task Definition
+        run: |
+          TASK_DEFINITION=$(aws ecs describe-task-definition \
+            --task-definition renthub-green \
+            --query taskDefinition)
+          
+          NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "${{ secrets.ECR_REGISTRY }}/renthub:${{ needs.build.outputs.image-tag }}" \
+            '.containerDefinitions[0].image = $IMAGE')
+          
+          echo $NEW_TASK_DEF | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
+            > green-task-def.json
+      
+      - name: Register Green Task Definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://green-task-def.json
+      
+      - name: Deploy to Green Service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service renthub-green \
+            --task-definition renthub-green \
+            --force-new-deployment
+      
+      - name: Wait for Green Deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services renthub-green
+
+  health-check:
+    name: Health Check Green Environment
+    needs: deploy-green
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Service Stabilization
+        run: sleep 60
+      
+      - name: Health Check
+        run: |
+          for i in {1..10}; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' https://green.renthub.com/health)
+            if [ $STATUS -eq 200 ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          echo "Health check failed"
+          exit 1
+      
+      - name: Run Smoke Tests
+        run: |
+          curl -f https://green.renthub.com/api/health || exit 1
+          curl -f https://green.renthub.com/api/v1/properties?limit=1 || exit 1
+      
+      - name: Performance Test
+        run: |
+          # Add k6 or Apache Bench tests
+          echo "Running performance tests..."
+
+  switch-traffic:
+    name: Switch Traffic to Green
+    needs: health-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Update Load Balancer Target Groups
+        run: |
+          # Get current blue target group
+          BLUE_TG_ARN=$(aws elbv2 describe-target-groups \
+            --names renthub-blue \
+            --query 'TargetGroups[0].TargetGroupArn' \
+            --output text)
+          
+          # Get green target group
+          GREEN_TG_ARN=$(aws elbv2 describe-target-groups \
+            --names renthub-green \
+            --query 'TargetGroups[0].TargetGroupArn' \
+            --output text)
+          
+          # Get listener
+          LISTENER_ARN=$(aws elbv2 describe-listeners \
+            --load-balancer-arn ${{ secrets.ALB_ARN }} \
+            --query 'Listeners[0].ListenerArn' \
+            --output text)
+          
+          # Switch traffic to green
+          aws elbv2 modify-listener \
+            --listener-arn $LISTENER_ARN \
+            --default-actions Type=forward,TargetGroupArn=$GREEN_TG_ARN
+      
+      - name: Monitor Metrics
+        run: |
+          echo "Monitoring application metrics..."
+          sleep 300 # Monitor for 5 minutes
+      
+      - name: Verify Traffic Switch
+        run: |
+          for i in {1..5}; do
+            curl -f https://renthub.com/health || exit 1
+            sleep 5
+          done
+
+  cleanup-blue:
+    name: Cleanup Blue Environment
+    needs: switch-traffic
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Scale Down Blue Environment
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service renthub-blue \
+            --desired-count 1
+      
+      - name: Tag as Previous Version
+        run: |
+          aws ecs tag-resource \
+            --resource-arn $(aws ecs describe-services \
+              --cluster ${{ env.ECS_CLUSTER }} \
+              --services renthub-blue \
+              --query 'services[0].serviceArn' \
+              --output text) \
+            --tags key=Environment,value=previous
+
+  rollback:
+    name: Rollback to Blue
+    needs: [deploy-green, health-check, switch-traffic]
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Rollback to Blue Environment
+        run: |
+          BLUE_TG_ARN=$(aws elbv2 describe-target-groups \
+            --names renthub-blue \
+            --query 'TargetGroups[0].TargetGroupArn' \
+            --output text)
+          
+          LISTENER_ARN=$(aws elbv2 describe-listeners \
+            --load-balancer-arn ${{ secrets.ALB_ARN }} \
+            --query 'Listeners[0].ListenerArn' \
+            --output text)
+          
+          aws elbv2 modify-listener \
+            --listener-arn $LISTENER_ARN \
+            --default-actions Type=forward,TargetGroupArn=$BLUE_TG_ARN
+      
+      - name: Notify Team
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Deployment failed! Rolled back to blue environment.'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}

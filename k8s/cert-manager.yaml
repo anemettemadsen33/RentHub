@@ -1,0 +1,52 @@
+# Install cert-manager first:
+# kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
+
+# ClusterIssuer for Let's Encrypt Production
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # Production Let's Encrypt server
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@renthub.com # Change this to your email
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+# ClusterIssuer for Let's Encrypt Staging (for testing)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # Staging Let's Encrypt server
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: admin@renthub.com # Change this to your email
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+# Certificate resource (automatically managed by cert-manager)
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: renthub-tls
+  namespace: renthub
+spec:
+  secretName: renthub-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - renthub.com
+  - www.renthub.com
+  - api.renthub.com
