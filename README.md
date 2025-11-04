@@ -207,6 +207,17 @@ make test
 
 ## Deployment
 
+### Laravel Forge Deployment (Recommended for Backend)
+
+The backend can be easily deployed to Laravel Forge. See detailed instructions:
+- **Quick Setup**: [FORGE_CONFIG.md](FORGE_CONFIG.md)
+- **Complete Guide**: [FORGE_DEPLOYMENT.md](FORGE_DEPLOYMENT.md)
+
+**Key Points**:
+- Set Web Directory to `/backend/public`
+- Use the provided `forge-deploy.sh` script
+- Repository has a monorepo structure with backend in `backend/` directory
+
 ### Production Checklist
 1. Run deployment checks:
    ```bash
