@@ -2,10 +2,12 @@
 
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { Menu, X, User, LogOut, Heart, Calendar, Home } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
 
 interface LayoutProps {
   children: ReactNode
@@ -23,24 +25,26 @@ export const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-background shadow-sm border-b border-border">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80">
         <nav className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <Home className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">RentHub</span>
+              <Home className="h-6 w-6 text-primary" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                RentHub
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/properties" className="text-foreground/80 hover:text-foreground transition-colors">
+            <div className="hidden md:flex items-center space-x-6">
+              <Link href="/properties" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
                 Proprietăți
               </Link>
-              <Link href="/about" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
                 Despre noi
               </Link>
-              <Link href="/contact" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/contact" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
                 Contact
               </Link>
             </div>
@@ -82,102 +86,90 @@ export const Layout = ({ children }: LayoutProps) => {
               )}
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6 text-foreground" />
-              ) : (
-                <Menu className="h-6 w-6 text-foreground" />
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden py-4 border-t">
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-foreground">Theme</span>
-                  <ThemeToggle />
-                </div>
-                <Link 
-                  href="/properties" 
-                  className="text-foreground/80 hover:text-foreground transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Proprietăți
-                </Link>
-                <Link 
-                  href="/about" 
-                  className="text-foreground/80 hover:text-foreground transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Despre noi
-                </Link>
-                <Link 
-                  href="/contact" 
-                  className="text-foreground/80 hover:text-foreground transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Contact
-                </Link>
-                
-                {user ? (
-                  <>
-                    <hr className="border-border" />
-                    <Link 
-                      href="/dashboard"
-                      className="text-foreground/80 hover:text-foreground transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Dashboard
-                    </Link>
-                    <Link 
-                      href="/favorites"
-                      className="text-foreground/80 hover:text-foreground transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Favorite
-                    </Link>
-                    <Link 
-                      href="/bookings"
-                      className="text-foreground/80 hover:text-foreground transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Rezervările mele
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="text-left text-foreground/80 hover:text-foreground transition-colors"
-                    >
-                      Deconectare
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <hr className="border-border" />
-                    <Link 
-                      href="/auth/login"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <Button variant="ghost" className="w-full justify-start">
-                        Conectare
+            {/* Mobile menu */}
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <div className="flex flex-col space-y-4 mt-8">
+                  <Link 
+                    href="/properties" 
+                    className="text-lg font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Proprietăți
+                  </Link>
+                  <Link 
+                    href="/about" 
+                    className="text-lg font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Despre noi
+                  </Link>
+                  <Link 
+                    href="/contact" 
+                    className="text-lg font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Contact
+                  </Link>
+                  
+                  {user ? (
+                    <>
+                      <Separator />
+                      <Link 
+                        href="/dashboard"
+                        className="text-lg font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                      <Link 
+                        href="/favorites"
+                        className="text-lg font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Favorite
+                      </Link>
+                      <Link 
+                        href="/bookings"
+                        className="text-lg font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Rezervările mele
+                      </Link>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Deconectare
                       </Button>
-                    </Link>
-                    <Link 
-                      href="/auth/register"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <Button className="w-full">Înregistrare</Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+                    </>
+                  ) : (
+                    <div className="pt-4 border-t flex flex-col space-y-2">
+                      <Link 
+                        href="/auth/login"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Button variant="outline" className="w-full">Conectare</Button>
+                      </Link>
+                      <Link 
+                        href="/auth/register"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Button className="w-full">Înregistrare</Button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </nav>
       </header>
 
@@ -187,16 +179,18 @@ export const Layout = ({ children }: LayoutProps) => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-secondary text-secondary-foreground">
+      <footer className="border-t bg-muted/50">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Home className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">RentHub</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                  RentHub
+                </span>
               </div>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Platforma ta de încredere pentru găsirea și închirierea proprietăților în România.
               </p>
             </div>
@@ -205,16 +199,16 @@ export const Layout = ({ children }: LayoutProps) => {
             <div>
               <h3 className="font-semibold mb-4">Link-uri rapide</h3>
               <div className="space-y-2 text-sm">
-                <Link href="/properties" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/properties" className="block text-muted-foreground hover:text-primary transition-colors">
                   Proprietăți
                 </Link>
-                <Link href="/about" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/about" className="block text-muted-foreground hover:text-primary transition-colors">
                   Despre noi
                 </Link>
-                <Link href="/contact" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/contact" className="block text-muted-foreground hover:text-primary transition-colors">
                   Contact
                 </Link>
-                <Link href="/faq" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors">
                   Întrebări frecvente
                 </Link>
               </div>
@@ -224,13 +218,13 @@ export const Layout = ({ children }: LayoutProps) => {
             <div>
               <h3 className="font-semibold mb-4">Suport</h3>
               <div className="space-y-2 text-sm">
-                <Link href="/help" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/help" className="block text-muted-foreground hover:text-primary transition-colors">
                   Centru de ajutor
                 </Link>
-                <Link href="/terms" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/terms" className="block text-muted-foreground hover:text-primary transition-colors">
                   Termeni și condiții
                 </Link>
-                <Link href="/privacy" className="block text-muted-foreground hover:text-secondary-foreground transition-colors">
+                <Link href="/privacy" className="block text-muted-foreground hover:text-primary transition-colors">
                   Politica de confidențialitate
                 </Link>
               </div>
@@ -247,7 +241,7 @@ export const Layout = ({ children }: LayoutProps) => {
             </div>
           </div>
 
-          <hr className="border-border my-8" />
+          <Separator className="my-8" />
           
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-muted-foreground text-sm">
