@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+interface DashboardStats {
+  total_revenue?: number;
+  active_bookings?: number;
+  [key: string]: any;
+}
+
 export default function OwnerDashboard() {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

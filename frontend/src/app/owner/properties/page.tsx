@@ -175,7 +175,7 @@ export default function OwnerPropertiesPage() {
                 <div className="relative h-48 bg-gray-200">
                   {property.main_image || property.images?.[0] ? (
                     <img
-                      src={property.main_image || property.images[0]}
+                      src={property.main_image || property.images?.[0] || ''}
                       alt={property.title}
                       className="w-full h-full object-cover"
                     />

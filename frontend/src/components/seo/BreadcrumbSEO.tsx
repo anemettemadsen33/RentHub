@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ChevronRightIcon } from '@heroicons/react/20/solid';
+import { ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { getBreadcrumbSchema } from '@/lib/schema';
 import JsonLd from './JsonLd';
 

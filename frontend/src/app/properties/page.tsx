@@ -64,7 +64,7 @@ export default function PropertiesPage() {
     const newFilters = {
       ...filters,
       sort_by: sortBy as any,
-      sort_order: sortBy === filters.sort_by && filters.sort_order === 'desc' ? 'asc' : 'desc',
+      sort_order: (sortBy === filters.sort_by && filters.sort_order === 'desc' ? 'asc' : 'desc') as 'asc' | 'desc',
     };
     setFilters(newFilters);
   };

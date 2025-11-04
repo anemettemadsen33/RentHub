@@ -39,7 +39,7 @@ export default function ProfileWizardPage() {
   const fetchCompletionStatus = async () => {
     try {
       const response = await authApi.getProfileCompletionStatus();
-      if (response.success) {
+      if (response.data) {
         setCompletionStatus(response.data);
       }
     } catch (err) {
