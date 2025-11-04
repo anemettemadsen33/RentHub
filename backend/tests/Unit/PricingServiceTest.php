@@ -146,7 +146,7 @@ class PricingServiceTest extends TestCase
         $price = $this->pricingService->calculatePriceForDate($this->property, $date);
 
         $this->assertIsFloat($price);
-        $this->assertEquals(2, strlen(substr(strrchr($price, "."), 1)));
+        $this->assertEquals(round($price, 2), $price);
     }
 
     public function test_ignores_inactive_pricing_rules()

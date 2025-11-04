@@ -118,8 +118,15 @@ class BookingTest extends TestCase
 
     public function test_total_price_calculation()
     {
+        // Create property with explicit price for clarity
+        $property = Property::factory()->create([
+            'owner_id' => $this->owner->id,
+            'price' => 100,
+            'status' => 'published',
+        ]);
+
         $bookingData = [
-            'property_id' => $this->property->id,
+            'property_id' => $property->id,
             'check_in' => Carbon::now()->addDays(7)->format('Y-m-d'),
             'check_out' => Carbon::now()->addDays(10)->format('Y-m-d'),
             'guests' => 2,
