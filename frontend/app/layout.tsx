@@ -4,6 +4,11 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 export const metadata = {
   title: 'RentHub - Your Perfect Property Rental Platform',
   description: 'Find and rent your perfect property with RentHub',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
 }
 
 export default function RootLayout({
