@@ -26,7 +26,7 @@ export function getOrganizationSchema(): WithContext<Organization> {
   };
 }
 
-export function getWebsiteSchema(): WithContext<WebSite> {
+export function getWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -39,8 +39,8 @@ export function getWebsiteSchema(): WithContext<WebSite> {
         urlTemplate: `${SITE_URL}/properties?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
-    } as unknown as { '@type': string; target: unknown; 'query-input': string },
-  };
+    },
+  } as WithContext<WebSite>;
 }
 
 export function getPropertySchema(property: {
@@ -73,14 +73,14 @@ export function getPropertySchema(property: {
     reviewCount,
   } = property;
 
-  const schema: WithContext<Product> = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+  const schema = {
+    '@context': 'https://schema.org' as const,
+    '@type': 'Product' as const,
     name: title,
     description,
     image: images.map((img) => (img.startsWith('http') ? img : `${SITE_URL}${img}`)),
     offers: {
-      '@type': 'Offer',
+      '@type': 'Offer' as const,
       price: String(price),
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
@@ -88,23 +88,23 @@ export function getPropertySchema(property: {
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     },
     brand: {
-      '@type': 'Brand',
+      '@type': 'Brand' as const,
       name: 'RentHub',
     },
     category: 'Real Estate Rental',
   };
 
   if (rating && reviewCount) {
-    schema.aggregateRating = {
+    (schema as Record<string, unknown>).aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: String(rating),
       reviewCount: String(reviewCount),
       bestRating: '5',
       worstRating: '1',
-    } as unknown as { '@type': string; ratingValue: string; reviewCount: string; bestRating: string; worstRating: string };
+    };
   }
 
-  return schema;
+  return schema as WithContext<Product>;
 }
 
 export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>): WithContext<BreadcrumbList> {
