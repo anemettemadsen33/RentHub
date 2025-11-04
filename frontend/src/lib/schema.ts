@@ -43,6 +43,34 @@ export function getWebsiteSchema() {
   } as WithContext<WebSite>;
 }
 
+type PropertySchemaBase = {
+  '@context': 'https://schema.org';
+  '@type': 'Product';
+  name: string;
+  description: string;
+  image: string[];
+  offers: {
+    '@type': 'Offer';
+    price: string;
+    priceCurrency: string;
+    availability: string;
+    url: string;
+    priceValidUntil: string;
+  };
+  brand: {
+    '@type': 'Brand';
+    name: string;
+  };
+  category: string;
+  aggregateRating?: {
+    '@type': 'AggregateRating';
+    ratingValue: string;
+    reviewCount: string;
+    bestRating: string;
+    worstRating: string;
+  };
+};
+
 export function getPropertySchema(property: {
   id: number;
   title: string;
@@ -62,7 +90,7 @@ export function getPropertySchema(property: {
   amenities?: string[];
   rating?: number;
   reviewCount?: number;
-}) {
+}): PropertySchemaBase {
   const {
     id,
     title,
@@ -73,14 +101,14 @@ export function getPropertySchema(property: {
     reviewCount,
   } = property;
 
-  const schema = {
-    '@context': 'https://schema.org' as const,
-    '@type': 'Product' as const,
+  const schema: PropertySchemaBase = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
     name: title,
     description,
     image: images.map((img) => (img.startsWith('http') ? img : `${SITE_URL}${img}`)),
     offers: {
-      '@type': 'Offer' as const,
+      '@type': 'Offer',
       price: String(price),
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
@@ -88,14 +116,14 @@ export function getPropertySchema(property: {
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     },
     brand: {
-      '@type': 'Brand' as const,
+      '@type': 'Brand',
       name: 'RentHub',
     },
     category: 'Real Estate Rental',
   };
 
   if (rating && reviewCount) {
-    (schema as Record<string, unknown>).aggregateRating = {
+    schema.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: String(rating),
       reviewCount: String(reviewCount),
@@ -104,7 +132,7 @@ export function getPropertySchema(property: {
     };
   }
 
-  return schema as WithContext<Product>;
+  return schema;
 }
 
 export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>): WithContext<BreadcrumbList> {
