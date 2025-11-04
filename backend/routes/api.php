@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
 use App\Http\Controllers\Api\CreditCheckController;
-use App\Http\Controllers\API\CurrencyController;
+use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\Api\ExternalCalendarController;
 use App\Http\Controllers\Api\GDPRController;
 // GoogleCalendarController temporarily not imported to avoid Google Calendar dependency at boot
@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\GuestReferenceController;
 use App\Http\Controllers\Api\GuestScreeningController;
 use App\Http\Controllers\Api\GuestVerificationController;
 use App\Http\Controllers\Api\HealthCheckController;
-use App\Http\Controllers\API\LanguageController;
+use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\MapSearchController;
 use App\Http\Controllers\Api\OAuth2Controller;
 use App\Http\Controllers\Api\PerformanceController;
@@ -702,66 +702,66 @@ Route::post('/v1/google-calendar/webhook', [\App\Http\Controllers\Api\GoogleCale
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Loyalty Program - User Endpoints
     Route::prefix('loyalty')->group(function () {
-        Route::get('/points', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getPoints']);
-        Route::get('/points/history', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getPointsHistory']);
-        Route::post('/points/redeem', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'redeemPoints']);
-        Route::get('/points/expiring', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getExpiringPoints']);
-        Route::post('/points/calculate', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'calculateValue']);
-        Route::get('/tiers', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getTiers']);
-        Route::get('/tiers/{slug}', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getTierDetails']);
+        Route::get('/points', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getPoints']);
+        Route::get('/points/history', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getPointsHistory']);
+        Route::post('/points/redeem', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'redeemPoints']);
+        Route::get('/points/expiring', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getExpiringPoints']);
+        Route::post('/points/calculate', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'calculateValue']);
+        Route::get('/tiers', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getTiers']);
+        Route::get('/tiers/{slug}', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getTierDetails']);
     });
 
     // Loyalty Program - Admin Endpoints
     Route::prefix('admin/loyalty')->middleware('role:admin')->group(function () {
-        Route::post('/award-points', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'awardPoints']);
-        Route::post('/adjust-points', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'adjustPoints']);
-        Route::get('/leaderboard', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'getLeaderboard']);
-        Route::get('/statistics', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'getStatistics']);
-        Route::get('/users/{userId}', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'getUserLoyalty']);
-        Route::post('/expire-points', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'expirePoints']);
-        Route::get('/expiring-soon', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'getUsersWithExpiringPoints']);
-        Route::post('/birthday-bonuses', [\App\Http\Controllers\API\V1\Admin\LoyaltyAdminController::class, 'awardBirthdayBonuses']);
+        Route::post('/award-points', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'awardPoints']);
+        Route::post('/adjust-points', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'adjustPoints']);
+        Route::get('/leaderboard', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'getLeaderboard']);
+        Route::get('/statistics', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'getStatistics']);
+        Route::get('/users/{userId}', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'getUserLoyalty']);
+        Route::post('/expire-points', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'expirePoints']);
+        Route::get('/expiring-soon', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'getUsersWithExpiringPoints']);
+        Route::post('/birthday-bonuses', [\App\Http\Controllers\Api\V1\Admin\LoyaltyAdminController::class, 'awardBirthdayBonuses']);
     });
 });
 
 // Public Loyalty Tiers (no auth required)
 Route::prefix('v1')->group(function () {
-    Route::get('/loyalty/tiers', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getTiers']);
-    Route::get('/loyalty/tiers/{slug}', [\App\Http\Controllers\API\V1\LoyaltyController::class, 'getTierDetails']);
+    Route::get('/loyalty/tiers', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getTiers']);
+    Route::get('/loyalty/tiers/{slug}', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'getTierDetails']);
 });
 
 // Dashboard Analytics Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('owner/dashboard')->group(function () {
-        Route::get('/stats', [App\Http\Controllers\Api\OwnerDashboardController::class, 'stats']);
-        Route::get('/revenue', [App\Http\Controllers\Api\OwnerDashboardController::class, 'revenue']);
-        Route::get('/properties', [App\Http\Controllers\Api\OwnerDashboardController::class, 'properties']);
+        Route::get('/stats', [App\Http\Controllers\Api\V1\OwnerDashboardController::class, 'stats']);
+        Route::get('/revenue', [App\Http\Controllers\Api\V1\OwnerDashboardController::class, 'revenue']);
+        Route::get('/properties', [App\Http\Controllers\Api\V1\OwnerDashboardController::class, 'properties']);
     });
 
     Route::prefix('tenant/dashboard')->group(function () {
-        Route::get('/stats', [App\Http\Controllers\Api\TenantDashboardController::class, 'stats']);
+        Route::get('/stats', [App\Http\Controllers\Api\V1\TenantDashboardController::class, 'stats']);
     });
 });
 
 // Social Authentication Routes
 Route::prefix('auth/social')->group(function () {
-    Route::get('{provider}/redirect', [App\Http\Controllers\API\SocialAuthController::class, 'redirect']);
-    Route::get('{provider}/callback', [App\Http\Controllers\API\SocialAuthController::class, 'callback']);
-    Route::post('{provider}/link', [App\Http\Controllers\API\SocialAuthController::class, 'link'])->middleware('auth:sanctum');
-    Route::delete('{provider}/unlink', [App\Http\Controllers\API\SocialAuthController::class, 'unlink'])->middleware('auth:sanctum');
+    Route::get('{provider}/redirect', [App\Http\Controllers\Api\SocialAuthController::class, 'redirect']);
+    Route::get('{provider}/callback', [App\Http\Controllers\Api\SocialAuthController::class, 'callback']);
+    Route::post('{provider}/link', [App\Http\Controllers\Api\SocialAuthController::class, 'link'])->middleware('auth:sanctum');
+    Route::delete('{provider}/unlink', [App\Http\Controllers\Api\SocialAuthController::class, 'unlink'])->middleware('auth:sanctum');
 });
 
 // Dashboard Routes
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [App\Http\Controllers\API\DashboardController::class, 'index']);
-    Route::get('/revenue', [App\Http\Controllers\API\DashboardController::class, 'revenue']);
-    Route::get('/bookings', [App\Http\Controllers\API\DashboardController::class, 'bookings']);
-    Route::get('/properties', [App\Http\Controllers\API\DashboardController::class, 'properties']);
+    Route::get('/', [App\Http\Controllers\Api\DashboardController::class, 'index']);
+    Route::get('/revenue', [App\Http\Controllers\Api\DashboardController::class, 'revenue']);
+    Route::get('/bookings', [App\Http\Controllers\Api\DashboardController::class, 'bookings']);
+    Route::get('/properties', [App\Http\Controllers\Api\DashboardController::class, 'properties']);
 });
 
 // Multi-Currency Routes
 Route::prefix('currency')->group(function () {
-    Route::get('/', [App\Http\Controllers\API\MultiCurrencyController::class, 'index']);
-    Route::get('/rates', [App\Http\Controllers\API\MultiCurrencyController::class, 'rates']);
-    Route::post('/convert', [App\Http\Controllers\API\MultiCurrencyController::class, 'convert']);
+    Route::get('/', [App\Http\Controllers\Api\MultiCurrencyController::class, 'index']);
+    Route::get('/rates', [App\Http\Controllers\Api\MultiCurrencyController::class, 'rates']);
+    Route::post('/convert', [App\Http\Controllers\Api\MultiCurrencyController::class, 'convert']);
 });
