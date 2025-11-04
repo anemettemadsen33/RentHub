@@ -47,7 +47,7 @@ export const guestVerificationApi = {
   async addReference(data: ReferenceForm) {
     const response = await apiClient.post<{
       message: string;
-      reference: any;
+      reference: unknown;
     }>('/guest-verification/references', data);
     return response.data;
   },
@@ -71,7 +71,7 @@ export const guestVerificationApi = {
   async verifyReference(token: string, data: ReferenceVerificationForm) {
     const response = await apiClient.post<{
       message: string;
-      reference: any;
+      reference: unknown;
     }>(`/guest-verification/references/${token}/verify`, data);
     return response.data;
   },

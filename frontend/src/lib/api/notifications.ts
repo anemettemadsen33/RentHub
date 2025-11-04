@@ -7,7 +7,7 @@ export interface Notification {
     title: string;
     message: string;
     action_url?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   read_at?: string;
   created_at: string;

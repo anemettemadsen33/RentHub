@@ -1,4 +1,4 @@
-import { Thing, WithContext, Organization, WebSite, BreadcrumbList, Product, AggregateRating } from 'schema-dts';
+import { Thing, WithContext, Organization, WebSite, BreadcrumbList, Product } from 'schema-dts';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.com';
 
@@ -39,7 +39,7 @@ export function getWebsiteSchema(): WithContext<WebSite> {
         urlTemplate: `${SITE_URL}/properties?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
-    } as any,
+    } as unknown as { '@type': string; target: unknown; 'query-input': string },
   };
 }
 
@@ -68,12 +68,7 @@ export function getPropertySchema(property: {
     title,
     description,
     price,
-    location,
     images = [],
-    bedrooms,
-    bathrooms,
-    area,
-    amenities = [],
     rating,
     reviewCount,
   } = property;
@@ -106,7 +101,7 @@ export function getPropertySchema(property: {
       reviewCount: String(reviewCount),
       bestRating: '5',
       worstRating: '1',
-    } as any;
+    } as unknown as { '@type': string; ratingValue: string; reviewCount: string; bestRating: string; worstRating: string };
   }
 
   return schema;
@@ -168,7 +163,7 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
   };
 }
 
-export function renderJsonLd(schema: WithContext<Thing> | any) {
+export function renderJsonLd(schema: WithContext<Thing> | unknown) {
   return {
     __html: JSON.stringify(schema),
   };

@@ -55,7 +55,7 @@ export function generateMetadata(config: SEOConfig): Metadata {
           alt: title,
         },
       ],
-      type: ogType as any,
+      type: ogType as 'website' | 'article',
       locale: 'en_US',
     },
     twitter: {
@@ -137,7 +137,6 @@ export function generateSearchMetadata(params: {
   }
 
   if (minPrice || maxPrice) {
-    const priceRange = `$${minPrice || 0} - $${maxPrice || 'any'}`;
     keywords.push('affordable rentals', 'price range');
   }
 
