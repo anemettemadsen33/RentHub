@@ -39,7 +39,7 @@ export function getWebsiteSchema(): WithContext<WebSite> {
         urlTemplate: `${SITE_URL}/properties?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
-    },
+    } as any,
   };
 }
 
@@ -86,7 +86,7 @@ export function getPropertySchema(property: {
     image: images.map((img) => (img.startsWith('http') ? img : `${SITE_URL}${img}`)),
     offers: {
       '@type': 'Offer',
-      price: price.toString(),
+      price: String(price),
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       url: `${SITE_URL}/properties/${id}`,
@@ -102,11 +102,11 @@ export function getPropertySchema(property: {
   if (rating && reviewCount) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
-      ratingValue: rating.toString(),
-      reviewCount: reviewCount.toString(),
+      ratingValue: String(rating),
+      reviewCount: String(reviewCount),
       bestRating: '5',
       worstRating: '1',
-    };
+    } as any;
   }
 
   return schema;
@@ -145,7 +145,7 @@ export function getSearchResultsSchema(
         url: `${SITE_URL}/properties/${property.id}`,
         offers: {
           '@type': 'Offer',
-          price: property.price.toString(),
+          price: String(property.price),
           priceCurrency: 'USD',
         },
       },

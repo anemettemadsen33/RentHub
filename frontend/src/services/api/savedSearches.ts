@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import { SavedSearch, SavedSearchFormData, SavedSearchStatistics } from '@/types/saved-search';
-import { Property } from '@/types/property';
+import { Property } from '@/types';
 
 interface ApiResponse<T> {
   success: boolean;
