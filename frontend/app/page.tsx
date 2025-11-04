@@ -6,9 +6,8 @@ export default function Home() {
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
       </div>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
             <h1 className="text-6xl font-bold text-foreground mb-4">
               Welcome to <span className="text-primary">RentHub</span>
             </h1>
@@ -75,7 +74,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
