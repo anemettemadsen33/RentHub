@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
         hostname: 'api.renthub.com',
       },
       {
+        protocol: 'https',
+        hostname: 'renthub-dji696t0.on-forge.com',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
       },
