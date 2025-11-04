@@ -5,16 +5,16 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  MapPinIcon,
-  HeartIcon,
-  ShareIcon,
-  StarIcon,
-  CalendarIcon,
-  UsersIcon,
-  HomeIcon,
-  CheckCircleIcon,
-} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
+  MapPin as MapPinIcon,
+  Heart as HeartIcon,
+  Share as ShareIcon,
+  Star as StarIcon,
+  Calendar as CalendarIcon,
+  Users as UsersIcon,
+  Home as HomeIcon,
+  CheckCircle as CheckCircleIcon,
+} from 'lucide-react';
+import { Heart as HeartSolidIcon } from 'lucide-react';
 
 interface Property {
   id: number;

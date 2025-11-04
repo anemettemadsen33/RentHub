@@ -28,7 +28,8 @@ export default function OwnerPropertiesPage() {
     
     try {
       const response = await propertiesApi.getMy();
-      let data = response.data.data;
+      const paginatedData = response.data;
+      let data: Property[] = (paginatedData as any).data || [];
 
       // Filter by status
       if (filter !== 'all') {
@@ -174,7 +175,7 @@ export default function OwnerPropertiesPage() {
                 <div className="relative h-48 bg-gray-200">
                   {property.main_image || property.images?.[0] ? (
                     <img
-                      src={property.main_image || property.images[0]}
+                      src={property.main_image || property.images?.[0] || ''}
                       alt={property.title}
                       className="w-full h-full object-cover"
                     />

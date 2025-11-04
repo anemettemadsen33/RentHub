@@ -66,8 +66,8 @@ export default function NewBookingPage() {
     setLoading(true);
     try {
       const response = await propertiesApi.getById(id);
-      if (response.success && response.data) {
-        setProperty(response.data);
+      if (response.data.success && response.data.data) {
+        setProperty(response.data.data);
       }
     } catch (err: any) {
       setError('Property not found');
@@ -88,8 +88,8 @@ export default function NewBookingPage() {
         guests: formData.guests,
       });
 
-      if (response.success && response.data) {
-        setCalculation(response.data);
+      if (response.data.success && response.data.data) {
+        setCalculation(response.data.data);
       }
     } catch (err: any) {
       console.error('Calculation error:', err);
@@ -114,8 +114,8 @@ export default function NewBookingPage() {
     try {
       const response = await bookingsApi.create(formData);
 
-      if (response.success && response.data) {
-        router.push(`/bookings/${response.data.id}`);
+      if (response.data.success && response.data.data) {
+        router.push(`/bookings/${response.data.data.id}`);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create booking');

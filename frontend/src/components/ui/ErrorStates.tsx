@@ -1,5 +1,5 @@
 import React from 'react';
-import { XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { XCircle as XCircleIcon, AlertTriangle as ExclamationTriangleIcon } from 'lucide-react';
 
 interface ErrorMessageProps {
   title?: string;

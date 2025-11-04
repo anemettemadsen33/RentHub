@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Share2, Trash2, ArrowLeft, Bell, BellOff, Edit2 } from 'lucide-react';
-import Layout from '@/components/Layout';
-import PropertyCard from '@/components/PropertyCard';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { Layout } from '@/components/Layout';
+import { PropertyCard } from '@/components/PropertyCard';
+import { Button } from '@/components/ui/Button';
+import toast from 'react-hot-toast';
 import {
   getWishlist,
   deleteWishlist,
@@ -36,7 +36,6 @@ export default function WishlistDetailPage() {
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [priceAlert, setPriceAlert] = useState<string>('');
   const [notifyAvailability, setNotifyAvailability] = useState(false);
-  const { toast } = useToast();
 
   const wishlistId = Number(params.id);
 

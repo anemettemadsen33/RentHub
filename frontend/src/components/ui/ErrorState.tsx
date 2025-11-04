@@ -36,7 +36,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   );
 };
 
-export const ErrorBoundary: React.Component<
+export class ErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
   { hasError: boolean; error?: Error }
 > {

@@ -1,4 +1,4 @@
-import api from './client';
+import { apiClient as api } from './client';
 
 export interface Wishlist {
   id: number;

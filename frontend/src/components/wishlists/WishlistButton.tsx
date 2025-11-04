@@ -2,26 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/Button';
+import toast from 'react-hot-toast';
 import { togglePropertyInWishlist, checkPropertyInWishlist } from '@/lib/api/wishlists';
 
 interface WishlistButtonProps {
   propertyId: number;
   variant?: 'default' | 'icon';
-  size?: 'sm' | 'default' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export default function WishlistButton({
   propertyId,
   variant = 'icon',
-  size = 'default',
+  size = 'md',
   className = '',
 }: WishlistButtonProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     checkStatus();
@@ -45,26 +44,16 @@ export default function WishlistButton({
       const result = await togglePropertyInWishlist(propertyId);
       setIsFavorite(result.action === 'added');
 
-      toast({
-        title: result.action === 'added' ? 'Added to Favorites' : 'Removed from Favorites',
-        description:
-          result.action === 'added'
-            ? 'Property saved to your favorites'
-            : 'Property removed from your favorites',
-      });
+      toast.success(
+        result.action === 'added'
+          ? 'Property saved to your favorites'
+          : 'Property removed from your favorites'
+      );
     } catch (error: any) {
       if (error.response?.status === 401) {
-        toast({
-          title: 'Login Required',
-          description: 'Please login to save properties to your wishlist',
-          variant: 'destructive',
-        });
+        toast.error('Please login to save properties to your wishlist');
       } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to update wishlist',
-          variant: 'destructive',
-        });
+        toast.error('Failed to update wishlist');
       }
     } finally {
       setIsLoading(false);
@@ -75,7 +64,7 @@ export default function WishlistButton({
     return (
       <Button
         variant="ghost"
-        size="icon"
+        size="sm"
         onClick={handleToggle}
         disabled={isLoading}
         className={`rounded-full ${className}`}

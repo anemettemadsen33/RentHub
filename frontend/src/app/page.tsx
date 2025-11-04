@@ -72,6 +72,7 @@ export default function Home() {
                 <span>Admin Panel: http://localhost:8000/admin</span>
               </p>
             </div>
+          </div>
         </div>
       </div>
     </div>

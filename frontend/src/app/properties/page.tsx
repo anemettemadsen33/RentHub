@@ -34,13 +34,13 @@ export default function PropertiesPage() {
       const finalFilters = searchFilters || filters;
       const response = await propertiesApi.getAll(finalFilters);
 
-      if (response.success && response.data) {
-        setProperties(response.data.data);
+      if (response.data.success && response.data.data) {
+        setProperties(response.data.data.data);
         setPagination({
-          current_page: response.data.current_page,
-          last_page: response.data.last_page,
-          per_page: response.data.per_page,
-          total: response.data.total,
+          current_page: response.data.data.current_page,
+          last_page: response.data.data.last_page,
+          per_page: response.data.data.per_page,
+          total: response.data.data.total,
         });
       }
     } catch (err: any) {
@@ -64,7 +64,7 @@ export default function PropertiesPage() {
     const newFilters = {
       ...filters,
       sort_by: sortBy as any,
-      sort_order: sortBy === filters.sort_by && filters.sort_order === 'desc' ? 'asc' : 'desc',
+      sort_order: (sortBy === filters.sort_by && filters.sort_order === 'desc' ? 'asc' : 'desc') as 'asc' | 'desc',
     };
     setFilters(newFilters);
   };

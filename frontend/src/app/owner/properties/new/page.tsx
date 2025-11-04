@@ -38,8 +38,8 @@ export default function NewPropertyPage() {
   const fetchAmenities = async () => {
     try {
       const response = await propertiesApi.getAmenities();
-      if (response.success && response.data) {
-        setAmenities(response.data);
+      if (response.data.success && response.data.data) {
+        setAmenities(response.data.data);
       }
     } catch (err) {
       console.error('Failed to fetch amenities:', err);
@@ -74,8 +74,8 @@ export default function NewPropertyPage() {
     try {
       const response = await propertiesApi.create(formData);
       
-      if (response.success && response.data) {
-        router.push(`/owner/properties/${response.data.id}/edit`);
+      if (response.data.success && response.data.data) {
+        router.push(`/owner/properties/${response.data.data.id}/edit`);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create property');

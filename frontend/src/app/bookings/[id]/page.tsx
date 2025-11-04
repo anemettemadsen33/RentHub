@@ -31,8 +31,8 @@ export default function BookingDetailsPage() {
 
     try {
       const response = await bookingsApi.getById(id);
-      if (response.success && response.data) {
-        setBooking(response.data);
+      if (response.data.success && response.data.data) {
+        setBooking(response.data.data);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Booking not found');
