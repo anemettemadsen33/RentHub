@@ -16,8 +16,11 @@ class SmartLockTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $owner;
+
     protected Property $property;
+
     protected SmartLock $smartLock;
 
     protected function setUp(): void

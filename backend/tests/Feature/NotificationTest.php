@@ -15,6 +15,7 @@ class NotificationTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $owner;
 
     protected function setUp(): void
@@ -109,7 +110,7 @@ class NotificationTest extends TestCase
     public function test_user_can_mark_notification_as_read()
     {
         // Create a notification for the user
-        $this->user->notify(new \App\Notifications\TestNotification());
+        $this->user->notify(new \App\Notifications\TestNotification);
         $notification = $this->user->notifications()->first();
 
         $response = $this->actingAs($this->user, 'sanctum')
@@ -123,8 +124,8 @@ class NotificationTest extends TestCase
     public function test_user_can_mark_all_notifications_as_read()
     {
         // Create multiple notifications
-        $this->user->notify(new \App\Notifications\TestNotification());
-        $this->user->notify(new \App\Notifications\TestNotification());
+        $this->user->notify(new \App\Notifications\TestNotification);
+        $this->user->notify(new \App\Notifications\TestNotification);
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/v1/notifications/read-all');
@@ -136,7 +137,7 @@ class NotificationTest extends TestCase
 
     public function test_user_can_delete_notification()
     {
-        $this->user->notify(new \App\Notifications\TestNotification());
+        $this->user->notify(new \App\Notifications\TestNotification);
         $notification = $this->user->notifications()->first();
 
         $response = $this->actingAs($this->user, 'sanctum')
@@ -149,9 +150,9 @@ class NotificationTest extends TestCase
 
     public function test_unread_notification_count()
     {
-        $this->user->notify(new \App\Notifications\TestNotification());
-        $this->user->notify(new \App\Notifications\TestNotification());
-        $this->user->notify(new \App\Notifications\TestNotification());
+        $this->user->notify(new \App\Notifications\TestNotification);
+        $this->user->notify(new \App\Notifications\TestNotification);
+        $this->user->notify(new \App\Notifications\TestNotification);
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->getJson('/api/v1/notifications/unread-count');
