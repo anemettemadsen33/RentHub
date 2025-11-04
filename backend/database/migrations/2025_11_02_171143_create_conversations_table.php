@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('last_message_at')->nullable();
             $table->boolean('is_archived')->default(false);
             $table->timestamps();
-            
+
             $table->index(['tenant_id', 'owner_id']);
             $table->index('last_message_at');
         });

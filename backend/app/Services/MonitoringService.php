@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MonitoringService
 {
     protected $provider;
+
     protected $config;
 
     public function __construct()
@@ -22,7 +23,7 @@ class MonitoringService
      */
     public function metric(string $name, float $value, array $tags = []): void
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -51,7 +52,7 @@ class MonitoringService
      */
     public function event(string $name, array $data = []): void
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -98,7 +99,7 @@ class MonitoringService
      */
     public function recordException(\Throwable $exception, array $context = []): void
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -132,7 +133,7 @@ class MonitoringService
      */
     protected function sendToDatadog(string $name, float $value, array $tags): void
     {
-        if (!$this->config['datadog']['enabled']) {
+        if (! $this->config['datadog']['enabled']) {
             return;
         }
 
@@ -161,7 +162,7 @@ class MonitoringService
      */
     protected function sendEventToDatadog(string $name, array $data): void
     {
-        if (!$this->config['datadog']['enabled']) {
+        if (! $this->config['datadog']['enabled']) {
             return;
         }
 
@@ -201,7 +202,7 @@ class MonitoringService
      */
     protected function sendToNewRelic(string $name, float $value, array $tags): void
     {
-        if (!$this->config['newrelic']['enabled']) {
+        if (! $this->config['newrelic']['enabled']) {
             return;
         }
 
@@ -215,7 +216,7 @@ class MonitoringService
      */
     protected function sendEventToNewRelic(string $name, array $data): void
     {
-        if (!$this->config['newrelic']['enabled']) {
+        if (! $this->config['newrelic']['enabled']) {
             return;
         }
 
@@ -230,7 +231,7 @@ class MonitoringService
     protected function sendToPrometheus(string $name, float $value, array $tags): void
     {
         // Prometheus uses a pull model, so we store metrics in cache
-        $key = "prometheus:{$name}:" . md5(json_encode($tags));
+        $key = "prometheus:{$name}:".md5(json_encode($tags));
         Cache::put($key, ['value' => $value, 'tags' => $tags], now()->addMinutes(5));
     }
 
@@ -247,6 +248,7 @@ class MonitoringService
                 $formatted[] = "{$key}:{$value}";
             }
         }
+
         return $formatted;
     }
 
@@ -264,14 +266,14 @@ class MonitoringService
     public function sendAlert(string $title, string $message, string $severity = 'warning', array $context = []): void
     {
         $alertConfig = $this->config['alerts'] ?? [];
-        
-        if (!($alertConfig['enabled'] ?? false)) {
+
+        if (! ($alertConfig['enabled'] ?? false)) {
             return;
         }
 
         // Send to configured channels
         foreach ($alertConfig['channels'] ?? [] as $channel => $config) {
-            if (!($config['enabled'] ?? false)) {
+            if (! ($config['enabled'] ?? false)) {
                 continue;
             }
 

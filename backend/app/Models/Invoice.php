@@ -80,7 +80,7 @@ class Invoice extends Model
     public static function generateInvoiceNumber(): string
     {
         $date = now()->format('Ym');
-        $lastInvoice = static::whereRaw('invoice_number LIKE ?', [$date . '%'])
+        $lastInvoice = static::whereRaw('invoice_number LIKE ?', [$date.'%'])
             ->orderBy('invoice_number', 'desc')
             ->first();
 
@@ -91,14 +91,14 @@ class Invoice extends Model
             $newNumber = '0001';
         }
 
-        return $date . $newNumber;
+        return $date.$newNumber;
     }
 
     // Check if invoice is overdue
     public function isOverdue(): bool
     {
-        return $this->status !== 'paid' 
-            && $this->due_date 
+        return $this->status !== 'paid'
+            && $this->due_date
             && $this->due_date->isPast();
     }
 
@@ -119,6 +119,7 @@ class Invoice extends Model
         if ($this->pdf_path) {
             return Storage::url($this->pdf_path);
         }
+
         return null;
     }
 

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('translations')) {
+        if (! Schema::hasTable('translations')) {
             Schema::create('translations', function (Blueprint $table) {
                 $table->id();
                 $table->string('translatable_type');
@@ -17,14 +17,14 @@ return new class extends Migration
                 $table->string('field');
                 $table->text('value');
                 $table->timestamps();
-                
+
                 $table->index(['translatable_type', 'translatable_id']);
                 $table->unique(['translatable_type', 'translatable_id', 'locale', 'field'], 'translations_unique');
             });
         }
 
         // Add supported languages to settings
-        if (!Schema::hasTable('language_settings')) {
+        if (! Schema::hasTable('language_settings')) {
             Schema::create('language_settings', function (Blueprint $table) {
                 $table->id();
                 $table->string('code', 5)->unique();

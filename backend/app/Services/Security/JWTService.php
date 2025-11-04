@@ -3,16 +3,19 @@
 namespace App\Services\Security;
 
 use App\Models\User;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Carbon\Carbon;
 use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class JWTService
 {
     private string $secretKey;
+
     private string $algorithm = 'HS256';
+
     private int $accessTokenLifetime = 3600; // 1 hour
+
     private int $refreshTokenLifetime = 2592000; // 30 days
 
     public function __construct()
@@ -84,7 +87,7 @@ class JWTService
         try {
             return JWT::decode($token, new Key($this->secretKey, $this->algorithm));
         } catch (Exception $e) {
-            throw new Exception('Invalid token: ' . $e->getMessage());
+            throw new Exception('Invalid token: '.$e->getMessage());
         }
     }
 
@@ -101,7 +104,7 @@ class JWTService
 
         $user = User::find($decoded->sub);
 
-        if (!$user) {
+        if (! $user) {
             throw new Exception('User not found');
         }
 
@@ -134,6 +137,7 @@ class JWTService
     {
         try {
             $decoded = $this->verifyToken($token);
+
             return cache()->has("jwt:blacklist:{$decoded->jti}");
         } catch (Exception $e) {
             return true;
@@ -147,7 +151,7 @@ class JWTService
     {
         try {
             $decoded = $this->verifyToken($token);
-            
+
             if ($this->isBlacklisted($token)) {
                 return null;
             }

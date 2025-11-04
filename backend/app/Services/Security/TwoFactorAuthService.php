@@ -2,8 +2,8 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
 use App\Models\TwoFactorAuth;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -15,7 +15,7 @@ class TwoFactorAuthService
 
     public function __construct()
     {
-        $this->google2fa = new Google2FA();
+        $this->google2fa = new Google2FA;
     }
 
     /**
@@ -25,8 +25,8 @@ class TwoFactorAuthService
     {
         $twoFactor = TwoFactorAuth::where('user_id', $user->id)->first();
 
-        if (!$twoFactor) {
-            $twoFactor = new TwoFactorAuth();
+        if (! $twoFactor) {
+            $twoFactor = new TwoFactorAuth;
             $twoFactor->user_id = $user->id;
         }
 
@@ -81,7 +81,7 @@ class TwoFactorAuthService
             ->where('enabled', true)
             ->first();
 
-        if (!$twoFactor) {
+        if (! $twoFactor) {
             return false;
         }
 
@@ -104,7 +104,7 @@ class TwoFactorAuthService
     protected function verifyTotp(TwoFactorAuth $twoFactor, string $code): bool
     {
         $secret = decrypt($twoFactor->secret);
-        
+
         $valid = $this->google2fa->verifyKey($secret, $code);
 
         if ($valid) {
@@ -121,17 +121,17 @@ class TwoFactorAuthService
      */
     protected function verifyCode(User $user, string $code): bool
     {
-        $storedCode = Cache::get('2fa_code:' . $user->id);
+        $storedCode = Cache::get('2fa_code:'.$user->id);
 
-        if (!$storedCode) {
+        if (! $storedCode) {
             return false;
         }
 
         $valid = hash_equals($storedCode, $code);
 
         if ($valid) {
-            Cache::forget('2fa_code:' . $user->id);
-            
+            Cache::forget('2fa_code:'.$user->id);
+
             TwoFactorAuth::where('user_id', $user->id)->update([
                 'last_used_at' => now(),
             ]);
@@ -149,12 +149,12 @@ class TwoFactorAuthService
             ->where('enabled', true)
             ->first();
 
-        if (!$twoFactor) {
+        if (! $twoFactor) {
             return false;
         }
 
         $code = $this->generateCode();
-        Cache::put('2fa_code:' . $user->id, $code, now()->addMinutes(10));
+        Cache::put('2fa_code:'.$user->id, $code, now()->addMinutes(10));
 
         switch ($twoFactor->method) {
             case 'sms':
@@ -184,6 +184,7 @@ class TwoFactorAuthService
         // Integration with SMS provider (Twilio, etc.)
         // For now, just log it
         \Log::info("2FA SMS Code for {$user->email}: {$code}");
+
         return true;
     }
 
@@ -194,12 +195,14 @@ class TwoFactorAuthService
     {
         try {
             Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($code));
+
             return true;
         } catch (\Exception $e) {
             \Log::error('Failed to send 2FA email', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -213,11 +216,11 @@ class TwoFactorAuthService
         $count = config('security.two_factor.backup_codes_count', 10);
 
         for ($i = 0; $i < $count; $i++) {
-            $codes[] = Str::random(8) . '-' . Str::random(8);
+            $codes[] = Str::random(8).'-'.Str::random(8);
         }
 
         // Store hashed backup codes
-        $hashedCodes = array_map(fn($code) => hash('sha256', $code), $codes);
+        $hashedCodes = array_map(fn ($code) => hash('sha256', $code), $codes);
 
         TwoFactorAuth::where('user_id', $user->id)->update([
             'backup_codes' => json_encode($hashedCodes),
@@ -233,7 +236,7 @@ class TwoFactorAuthService
     {
         $twoFactor = TwoFactorAuth::where('user_id', $user->id)->first();
 
-        if (!$twoFactor || !$twoFactor->backup_codes) {
+        if (! $twoFactor || ! $twoFactor->backup_codes) {
             return false;
         }
 
@@ -279,11 +282,12 @@ class TwoFactorAuthService
      */
     public function isEnforced(User $user): bool
     {
-        if (!config('security.two_factor.enabled', false)) {
+        if (! config('security.two_factor.enabled', false)) {
             return false;
         }
 
         $enforcedRoles = config('security.two_factor.enforced_for_roles', []);
+
         return in_array($user->role, $enforcedRoles);
     }
 
@@ -296,7 +300,7 @@ class TwoFactorAuthService
             return $phone;
         }
 
-        return str_repeat('*', strlen($phone) - 4) . substr($phone, -4);
+        return str_repeat('*', strlen($phone) - 4).substr($phone, -4);
     }
 
     /**
@@ -305,7 +309,7 @@ class TwoFactorAuthService
     protected function maskEmail(string $email): string
     {
         $parts = explode('@', $email);
-        
+
         if (count($parts) !== 2) {
             return $email;
         }
@@ -313,8 +317,8 @@ class TwoFactorAuthService
         $username = $parts[0];
         $domain = $parts[1];
 
-        $maskedUsername = substr($username, 0, 2) . str_repeat('*', max(0, strlen($username) - 2));
+        $maskedUsername = substr($username, 0, 2).str_repeat('*', max(0, strlen($username) - 2));
 
-        return $maskedUsername . '@' . $domain;
+        return $maskedUsername.'@'.$domain;
     }
 }

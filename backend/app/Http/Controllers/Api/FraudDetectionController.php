@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\FraudAlert;
-use App\Models\User;
-use App\Models\Property;
 use App\Models\Booking;
+use App\Models\FraudAlert;
 use App\Models\Payment;
-use App\Models\Review;
+use App\Models\Property;
+use App\Models\User;
 use App\Models\UserBehavior;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,29 +20,29 @@ class FraudDetectionController extends Controller
     public function getAlerts(Request $request)
     {
         $query = FraudAlert::with(['user', 'property', 'booking', 'payment']);
-        
+
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->has('severity')) {
             $query->where('severity', $request->severity);
         }
-        
+
         if ($request->has('alert_type')) {
             $query->where('alert_type', $request->alert_type);
         }
-        
+
         $alerts = $query->orderBy('fraud_score', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 20));
-        
+
         return response()->json([
             'success' => true,
             'alerts' => $alerts,
         ]);
     }
-    
+
     /**
      * Get fraud alert details
      */
@@ -51,23 +50,23 @@ class FraudDetectionController extends Controller
     {
         $alert = FraudAlert::with(['user', 'property', 'booking', 'payment', 'reviewer'])
             ->findOrFail($alertId);
-        
+
         return response()->json([
             'success' => true,
             'alert' => $alert,
         ]);
     }
-    
+
     /**
      * Check user for fraud indicators
      */
     public function checkUser(Request $request, $userId)
     {
         $user = User::findOrFail($userId);
-        
+
         $fraudScore = $this->calculateUserFraudScore($user);
         $indicators = $this->getUserFraudIndicators($user);
-        
+
         if ($fraudScore > 70) {
             $this->createFraudAlert(
                 'suspicious_user',
@@ -81,7 +80,7 @@ class FraudDetectionController extends Controller
                 $fraudScore
             );
         }
-        
+
         return response()->json([
             'success' => true,
             'user_id' => $userId,
@@ -90,17 +89,17 @@ class FraudDetectionController extends Controller
             'indicators' => $indicators,
         ]);
     }
-    
+
     /**
      * Check property for fraud indicators
      */
     public function checkProperty(Request $request, $propertyId)
     {
         $property = Property::findOrFail($propertyId);
-        
+
         $fraudScore = $this->calculatePropertyFraudScore($property);
         $indicators = $this->getPropertyFraudIndicators($property);
-        
+
         if ($fraudScore > 70) {
             $this->createFraudAlert(
                 'suspicious_listing',
@@ -114,7 +113,7 @@ class FraudDetectionController extends Controller
                 $fraudScore
             );
         }
-        
+
         return response()->json([
             'success' => true,
             'property_id' => $propertyId,
@@ -123,17 +122,17 @@ class FraudDetectionController extends Controller
             'indicators' => $indicators,
         ]);
     }
-    
+
     /**
      * Check booking for fraud indicators
      */
     public function checkBooking(Request $request, $bookingId)
     {
         $booking = Booking::with(['user', 'property'])->findOrFail($bookingId);
-        
+
         $fraudScore = $this->calculateBookingFraudScore($booking);
         $indicators = $this->getBookingFraudIndicators($booking);
-        
+
         if ($fraudScore > 70) {
             $this->createFraudAlert(
                 'suspicious_booking',
@@ -147,7 +146,7 @@ class FraudDetectionController extends Controller
                 $fraudScore
             );
         }
-        
+
         return response()->json([
             'success' => true,
             'booking_id' => $bookingId,
@@ -156,17 +155,17 @@ class FraudDetectionController extends Controller
             'indicators' => $indicators,
         ]);
     }
-    
+
     /**
      * Check payment for fraud indicators
      */
     public function checkPayment(Request $request, $paymentId)
     {
         $payment = Payment::with(['booking', 'user'])->findOrFail($paymentId);
-        
+
         $fraudScore = $this->calculatePaymentFraudScore($payment);
         $indicators = $this->getPaymentFraudIndicators($payment);
-        
+
         if ($fraudScore > 70) {
             $this->createFraudAlert(
                 'payment_fraud',
@@ -180,7 +179,7 @@ class FraudDetectionController extends Controller
                 $fraudScore
             );
         }
-        
+
         return response()->json([
             'success' => true,
             'payment_id' => $paymentId,
@@ -189,7 +188,7 @@ class FraudDetectionController extends Controller
             'indicators' => $indicators,
         ]);
     }
-    
+
     /**
      * Resolve fraud alert
      */
@@ -199,22 +198,22 @@ class FraudDetectionController extends Controller
             'resolution_notes' => 'required|string',
             'action_type' => 'sometimes|in:account_suspended,property_removed,payment_blocked,review_removed,no_action',
         ]);
-        
+
         $alert = FraudAlert::findOrFail($alertId);
         $alert->resolve($request->user()->id, $request->resolution_notes, $request->action_type);
-        
+
         // Execute action if specified
         if ($request->has('action_type') && $request->action_type !== 'no_action') {
             $this->executeAction($alert, $request->action_type);
         }
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Fraud alert resolved successfully',
             'alert' => $alert->fresh(),
         ]);
     }
-    
+
     /**
      * Mark alert as false positive
      */
@@ -223,17 +222,17 @@ class FraudDetectionController extends Controller
         $request->validate([
             'notes' => 'required|string',
         ]);
-        
+
         $alert = FraudAlert::findOrFail($alertId);
         $alert->markFalsePositive($request->user()->id, $request->notes);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Marked as false positive',
             'alert' => $alert->fresh(),
         ]);
     }
-    
+
     /**
      * Get fraud detection stats
      */
@@ -259,13 +258,13 @@ class FraudDetectionController extends Controller
                 ->limit(10)
                 ->get(),
         ];
-        
+
         return response()->json([
             'success' => true,
             'stats' => $stats,
         ]);
     }
-    
+
     /**
      * Run fraud detection scan
      */
@@ -274,177 +273,177 @@ class FraudDetectionController extends Controller
         $request->validate([
             'scan_type' => 'required|in:users,properties,bookings,payments,all',
         ]);
-        
+
         $results = [];
-        
+
         if ($request->scan_type === 'users' || $request->scan_type === 'all') {
             $results['users'] = $this->scanUsers();
         }
-        
+
         if ($request->scan_type === 'properties' || $request->scan_type === 'all') {
             $results['properties'] = $this->scanProperties();
         }
-        
+
         if ($request->scan_type === 'bookings' || $request->scan_type === 'all') {
             $results['bookings'] = $this->scanBookings();
         }
-        
+
         if ($request->scan_type === 'payments' || $request->scan_type === 'all') {
             $results['payments'] = $this->scanPayments();
         }
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Fraud detection scan completed',
             'results' => $results,
         ]);
     }
-    
+
     // ========== Private Methods ==========
-    
+
     /**
      * Calculate user fraud score
      */
     private function calculateUserFraudScore(User $user): float
     {
         $score = 0;
-        
+
         // New account (created in last 7 days)
         if ($user->created_at->diffInDays(now()) < 7) {
             $score += 20;
         }
-        
+
         // No verified email
-        if (!$user->email_verified_at) {
+        if (! $user->email_verified_at) {
             $score += 15;
         }
-        
+
         // No profile picture
-        if (!$user->avatar) {
+        if (! $user->avatar) {
             $score += 10;
         }
-        
+
         // Multiple accounts from same IP (would need IP tracking)
         // This is a placeholder - implement IP tracking if needed
-        
+
         // Rapid booking activity
         $recentBookings = Booking::where('user_id', $user->id)
             ->where('created_at', '>=', now()->subHours(24))
             ->count();
-        
+
         if ($recentBookings > 5) {
             $score += 25;
         }
-        
+
         // Multiple cancellations
         $cancellationRate = $this->getCancellationRate($user->id);
         if ($cancellationRate > 0.5) {
             $score += 20;
         }
-        
+
         // Bot-like behavior
         $botScore = $this->detectBotBehavior($user->id);
         $score += $botScore;
-        
+
         return min(100, $score);
     }
-    
+
     /**
      * Calculate property fraud score
      */
     private function calculatePropertyFraudScore(Property $property): float
     {
         $score = 0;
-        
+
         // No photos
-        if (!$property->photos || count($property->photos) == 0) {
+        if (! $property->photos || count($property->photos) == 0) {
             $score += 25;
         }
-        
+
         // Too-good-to-be-true pricing
         $avgPrice = Property::where('city', $property->city)
             ->where('type', $property->type)
             ->avg('price_per_night');
-        
+
         if ($avgPrice && $property->price_per_night < ($avgPrice * 0.5)) {
             $score += 30;
         }
-        
+
         // Duplicate listing (similar title/description)
         $duplicateCount = Property::where('id', '!=', $property->id)
             ->where(function ($query) use ($property) {
-                $query->where('title', 'LIKE', '%' . substr($property->title, 0, 20) . '%')
-                      ->orWhere('address', $property->address);
+                $query->where('title', 'LIKE', '%'.substr($property->title, 0, 20).'%')
+                    ->orWhere('address', $property->address);
             })
             ->count();
-        
+
         if ($duplicateCount > 0) {
             $score += 35;
         }
-        
+
         // New owner with no verification
         $owner = $property->owner;
-        if ($owner && !$owner->email_verified_at) {
+        if ($owner && ! $owner->email_verified_at) {
             $score += 15;
         }
-        
+
         // Suspicious description (external links, phone numbers)
         if ($this->hasSuspiciousContent($property->description)) {
             $score += 20;
         }
-        
+
         return min(100, $score);
     }
-    
+
     /**
      * Calculate booking fraud score
      */
     private function calculateBookingFraudScore(Booking $booking): float
     {
         $score = 0;
-        
+
         // Last-minute booking for high-value property
         if ($booking->check_in->diffInHours(now()) < 24 && $booking->total_price > 500) {
             $score += 20;
         }
-        
+
         // Unusual booking duration
         $duration = $booking->check_in->diffInDays($booking->check_out);
         if ($duration > 180) {
             $score += 15;
         }
-        
+
         // New user making expensive booking
         $user = $booking->user;
         if ($user->created_at->diffInDays(now()) < 7 && $booking->total_price > 1000) {
             $score += 30;
         }
-        
+
         // Multiple bookings in short time
         $recentBookings = Booking::where('user_id', $booking->user_id)
             ->where('created_at', '>=', now()->subHours(6))
             ->where('id', '!=', $booking->id)
             ->count();
-        
+
         if ($recentBookings > 3) {
             $score += 25;
         }
-        
+
         // Unusual guest count
         if ($booking->number_of_guests > $booking->property->guests) {
             $score += 20;
         }
-        
+
         return min(100, $score);
     }
-    
+
     /**
      * Calculate payment fraud score
      */
     private function calculatePaymentFraudScore(Payment $payment): float
     {
         $score = 0;
-        
+
         // High-value payment from new user
         if ($payment->amount > 1000) {
             $user = $payment->user;
@@ -452,154 +451,154 @@ class FraudDetectionController extends Controller
                 $score += 40;
             }
         }
-        
+
         // Multiple failed payments
         $failedPayments = Payment::where('user_id', $payment->user_id)
             ->where('status', 'failed')
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
-        
+
         if ($failedPayments > 3) {
             $score += 30;
         }
-        
+
         // Payment from different country (would need IP geolocation)
         // Placeholder for geo-location check
-        
+
         // Rapid successive payments
         $recentPayments = Payment::where('user_id', $payment->user_id)
             ->where('created_at', '>=', now()->subHours(1))
             ->where('id', '!=', $payment->id)
             ->count();
-        
+
         if ($recentPayments > 2) {
             $score += 20;
         }
-        
+
         return min(100, $score);
     }
-    
+
     /**
      * Get user fraud indicators
      */
     private function getUserFraudIndicators(User $user): array
     {
         $indicators = [];
-        
+
         if ($user->created_at->diffInDays(now()) < 7) {
             $indicators[] = 'New account';
         }
-        
-        if (!$user->email_verified_at) {
+
+        if (! $user->email_verified_at) {
             $indicators[] = 'Unverified email';
         }
-        
-        if (!$user->avatar) {
+
+        if (! $user->avatar) {
             $indicators[] = 'No profile picture';
         }
-        
+
         $cancellationRate = $this->getCancellationRate($user->id);
         if ($cancellationRate > 0.5) {
-            $indicators[] = 'High cancellation rate (' . round($cancellationRate * 100) . '%)';
+            $indicators[] = 'High cancellation rate ('.round($cancellationRate * 100).'%)';
         }
-        
+
         $recentBookings = Booking::where('user_id', $user->id)
             ->where('created_at', '>=', now()->subHours(24))
             ->count();
-        
+
         if ($recentBookings > 5) {
-            $indicators[] = 'Rapid booking activity (' . $recentBookings . ' in 24h)';
+            $indicators[] = 'Rapid booking activity ('.$recentBookings.' in 24h)';
         }
-        
+
         if ($this->detectBotBehavior($user->id) > 20) {
             $indicators[] = 'Bot-like behavior detected';
         }
-        
+
         return $indicators;
     }
-    
+
     /**
      * Get property fraud indicators
      */
     private function getPropertyFraudIndicators(Property $property): array
     {
         $indicators = [];
-        
-        if (!$property->photos || count($property->photos) == 0) {
+
+        if (! $property->photos || count($property->photos) == 0) {
             $indicators[] = 'No photos uploaded';
         }
-        
+
         $avgPrice = Property::where('city', $property->city)
             ->where('type', $property->type)
             ->avg('price_per_night');
-        
+
         if ($avgPrice && $property->price_per_night < ($avgPrice * 0.5)) {
             $indicators[] = 'Price significantly below market average';
         }
-        
+
         if ($this->hasSuspiciousContent($property->description)) {
             $indicators[] = 'Suspicious content in description';
         }
-        
+
         $owner = $property->owner;
-        if ($owner && !$owner->email_verified_at) {
+        if ($owner && ! $owner->email_verified_at) {
             $indicators[] = 'Owner not verified';
         }
-        
+
         return $indicators;
     }
-    
+
     /**
      * Get booking fraud indicators
      */
     private function getBookingFraudIndicators(Booking $booking): array
     {
         $indicators = [];
-        
+
         if ($booking->check_in->diffInHours(now()) < 24) {
             $indicators[] = 'Last-minute booking';
         }
-        
+
         $duration = $booking->check_in->diffInDays($booking->check_out);
         if ($duration > 180) {
-            $indicators[] = 'Unusually long stay (' . $duration . ' days)';
+            $indicators[] = 'Unusually long stay ('.$duration.' days)';
         }
-        
+
         $user = $booking->user;
         if ($user->created_at->diffInDays(now()) < 7) {
             $indicators[] = 'New user account';
         }
-        
+
         if ($booking->number_of_guests > $booking->property->guests) {
             $indicators[] = 'Guest count exceeds property capacity';
         }
-        
+
         return $indicators;
     }
-    
+
     /**
      * Get payment fraud indicators
      */
     private function getPaymentFraudIndicators(Payment $payment): array
     {
         $indicators = [];
-        
+
         if ($payment->amount > 1000) {
             $indicators[] = 'High-value transaction';
         }
-        
+
         $failedPayments = Payment::where('user_id', $payment->user_id)
             ->where('status', 'failed')
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
-        
+
         if ($failedPayments > 3) {
             $indicators[] = 'Multiple failed payment attempts';
         }
-        
+
         return $indicators;
     }
-    
+
     /**
      * Detect bot behavior
      */
@@ -609,42 +608,42 @@ class FraudDetectionController extends Controller
             ->where('action_at', '>=', now()->subHours(1))
             ->orderBy('action_at')
             ->get();
-        
+
         if ($behaviors->count() < 10) {
             return 0;
         }
-        
+
         $score = 0;
-        
+
         // Check for regular intervals (bot-like)
         $intervals = [];
         for ($i = 1; $i < $behaviors->count(); $i++) {
-            $interval = $behaviors[$i]->action_at->diffInSeconds($behaviors[$i-1]->action_at);
+            $interval = $behaviors[$i]->action_at->diffInSeconds($behaviors[$i - 1]->action_at);
             $intervals[] = $interval;
         }
-        
-        if (!empty($intervals)) {
+
+        if (! empty($intervals)) {
             $avgInterval = array_sum($intervals) / count($intervals);
             $variance = 0;
             foreach ($intervals as $interval) {
                 $variance += pow($interval - $avgInterval, 2);
             }
             $variance /= count($intervals);
-            
+
             // Low variance suggests bot behavior
             if ($variance < 10) {
                 $score += 30;
             }
         }
-        
+
         // Check for rapid-fire actions
         if ($behaviors->count() > 50) {
             $score += 20;
         }
-        
+
         return $score;
     }
-    
+
     /**
      * Check for suspicious content
      */
@@ -657,45 +656,52 @@ class FraudDetectionController extends Controller
             '/telegram/i',
             '/email.*@/i',
         ];
-        
+
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $text)) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Get cancellation rate
      */
     private function getCancellationRate(int $userId): float
     {
         $totalBookings = Booking::where('user_id', $userId)->count();
-        
+
         if ($totalBookings == 0) {
             return 0;
         }
-        
+
         $cancelledBookings = Booking::where('user_id', $userId)
             ->where('status', 'cancelled')
             ->count();
-        
+
         return $cancelledBookings / $totalBookings;
     }
-    
+
     /**
      * Get risk level
      */
     private function getRiskLevel(float $fraudScore): string
     {
-        if ($fraudScore >= 85) return 'critical';
-        if ($fraudScore >= 70) return 'high';
-        if ($fraudScore >= 50) return 'medium';
+        if ($fraudScore >= 85) {
+            return 'critical';
+        }
+        if ($fraudScore >= 70) {
+            return 'high';
+        }
+        if ($fraudScore >= 50) {
+            return 'medium';
+        }
+
         return 'low';
     }
-    
+
     /**
      * Create fraud alert
      */
@@ -723,7 +729,7 @@ class FraudDetectionController extends Controller
             'status' => 'pending',
         ]);
     }
-    
+
     /**
      * Execute action on fraud alert
      */
@@ -736,27 +742,27 @@ class FraudDetectionController extends Controller
                     $alert->user->update(['status' => 'suspended']);
                 }
                 break;
-                
+
             case 'property_removed':
                 if ($alert->property) {
                     // Remove property
                     $alert->property->update(['status' => 'removed']);
                 }
                 break;
-                
+
             case 'payment_blocked':
                 if ($alert->payment) {
                     // Block payment
                     $alert->payment->update(['status' => 'blocked']);
                 }
                 break;
-                
+
             case 'review_removed':
                 // Would need review_id in alert
                 break;
         }
     }
-    
+
     /**
      * Calculate detection rate
      */
@@ -766,10 +772,10 @@ class FraudDetectionController extends Controller
         $truePositives = FraudAlert::where('status', 'resolved')
             ->where('action_taken', true)
             ->count();
-        
+
         return $total > 0 ? round(($truePositives / $total) * 100, 2) : 0;
     }
-    
+
     /**
      * Scan users for fraud
      */
@@ -777,10 +783,10 @@ class FraudDetectionController extends Controller
     {
         $users = User::where('created_at', '>=', now()->subDays(30))->get();
         $flaggedCount = 0;
-        
+
         foreach ($users as $user) {
             $fraudScore = $this->calculateUserFraudScore($user);
-            
+
             if ($fraudScore > 70) {
                 $indicators = $this->getUserFraudIndicators($user);
                 $this->createFraudAlert(
@@ -797,13 +803,13 @@ class FraudDetectionController extends Controller
                 $flaggedCount++;
             }
         }
-        
+
         return [
             'scanned' => $users->count(),
             'flagged' => $flaggedCount,
         ];
     }
-    
+
     /**
      * Scan properties for fraud
      */
@@ -811,10 +817,10 @@ class FraudDetectionController extends Controller
     {
         $properties = Property::where('created_at', '>=', now()->subDays(30))->get();
         $flaggedCount = 0;
-        
+
         foreach ($properties as $property) {
             $fraudScore = $this->calculatePropertyFraudScore($property);
-            
+
             if ($fraudScore > 70) {
                 $indicators = $this->getPropertyFraudIndicators($property);
                 $this->createFraudAlert(
@@ -831,13 +837,13 @@ class FraudDetectionController extends Controller
                 $flaggedCount++;
             }
         }
-        
+
         return [
             'scanned' => $properties->count(),
             'flagged' => $flaggedCount,
         ];
     }
-    
+
     /**
      * Scan bookings for fraud
      */
@@ -845,10 +851,10 @@ class FraudDetectionController extends Controller
     {
         $bookings = Booking::where('created_at', '>=', now()->subDays(7))->get();
         $flaggedCount = 0;
-        
+
         foreach ($bookings as $booking) {
             $fraudScore = $this->calculateBookingFraudScore($booking);
-            
+
             if ($fraudScore > 70) {
                 $indicators = $this->getBookingFraudIndicators($booking);
                 $this->createFraudAlert(
@@ -865,13 +871,13 @@ class FraudDetectionController extends Controller
                 $flaggedCount++;
             }
         }
-        
+
         return [
             'scanned' => $bookings->count(),
             'flagged' => $flaggedCount,
         ];
     }
-    
+
     /**
      * Scan payments for fraud
      */
@@ -879,10 +885,10 @@ class FraudDetectionController extends Controller
     {
         $payments = Payment::where('created_at', '>=', now()->subDays(7))->get();
         $flaggedCount = 0;
-        
+
         foreach ($payments as $payment) {
             $fraudScore = $this->calculatePaymentFraudScore($payment);
-            
+
             if ($fraudScore > 70) {
                 $indicators = $this->getPaymentFraudIndicators($payment);
                 $this->createFraudAlert(
@@ -899,7 +905,7 @@ class FraudDetectionController extends Controller
                 $flaggedCount++;
             }
         }
-        
+
         return [
             'scanned' => $payments->count(),
             'flagged' => $flaggedCount,

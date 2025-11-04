@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\InsurancePlans\Schemas;
 
 use Filament\Schemas\Components\Checkbox;
+use Filament\Schemas\Components\KeyValue;
+use Filament\Schemas\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\Textarea;
 use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Repeater;
-use Filament\Schemas\Components\KeyValue;
 use Filament\Schemas\Schema;
 
 class InsurancePlanForm
@@ -23,13 +23,13 @@ class InsurancePlanForm
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        
+
                         TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
                             ->helperText('URL-friendly identifier'),
-                        
+
                         Select::make('type')
                             ->required()
                             ->options([
@@ -39,7 +39,7 @@ class InsurancePlanForm
                                 'travel' => 'Travel Insurance',
                                 'comprehensive' => 'Comprehensive Coverage',
                             ]),
-                        
+
                         Textarea::make('description')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -53,13 +53,13 @@ class InsurancePlanForm
                             ->prefix('€')
                             ->default(0)
                             ->helperText('Fixed price per booking'),
-                        
+
                         TextInput::make('price_per_night')
                             ->numeric()
                             ->prefix('€')
                             ->default(0)
                             ->helperText('Price per night'),
-                        
+
                         TextInput::make('price_percentage')
                             ->numeric()
                             ->suffix('%')
@@ -67,7 +67,7 @@ class InsurancePlanForm
                             ->minValue(0)
                             ->maxValue(100)
                             ->helperText('Percentage of booking total'),
-                        
+
                         TextInput::make('max_coverage')
                             ->required()
                             ->numeric()
@@ -83,17 +83,17 @@ class InsurancePlanForm
                             ->numeric()
                             ->default(1)
                             ->minValue(1),
-                        
+
                         TextInput::make('max_nights')
                             ->numeric()
                             ->nullable()
                             ->helperText('Leave empty for no limit'),
-                        
+
                         TextInput::make('min_booking_value')
                             ->numeric()
                             ->prefix('€')
                             ->default(0),
-                        
+
                         TextInput::make('max_booking_value')
                             ->numeric()
                             ->prefix('€')
@@ -109,7 +109,7 @@ class InsurancePlanForm
                             ->valueLabel('Description')
                             ->addActionLabel('Add Coverage Item')
                             ->columnSpanFull(),
-                        
+
                         Repeater::make('exclusions')
                             ->simple(
                                 TextInput::make('exclusion')
@@ -124,15 +124,15 @@ class InsurancePlanForm
                         Textarea::make('terms_and_conditions')
                             ->rows(5)
                             ->columnSpanFull(),
-                        
+
                         Checkbox::make('is_active')
                             ->default(true)
                             ->label('Active'),
-                        
+
                         Checkbox::make('is_mandatory')
                             ->default(false)
                             ->label('Mandatory for all bookings'),
-                        
+
                         TextInput::make('display_order')
                             ->numeric()
                             ->default(0)

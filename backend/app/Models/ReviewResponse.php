@@ -10,7 +10,7 @@ class ReviewResponse extends Model
     protected $fillable = [
         'review_id',
         'user_id',
-        'response'
+        'response',
     ];
 
     // Relationships

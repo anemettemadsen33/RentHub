@@ -27,7 +27,7 @@ return new class extends Migration
                 'insurance_document',
                 'bank_statement',
                 'tax_document',
-                'other'
+                'other',
             ]);
             $table->string('file_path');
             $table->string('file_name');
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Additional info like expiry date, document number, etc.
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Indexes (morphs() already creates index for verifiable_type and verifiable_id)
             $table->index('document_type');
             $table->index('status');

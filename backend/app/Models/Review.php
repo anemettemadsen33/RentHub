@@ -26,14 +26,14 @@ class Review extends Model
         'owner_response',
         'owner_response_at',
         'photos',
-        'helpful_count'
+        'helpful_count',
     ];
 
     protected $casts = [
         'is_approved' => 'boolean',
         'owner_response_at' => 'datetime',
         'photos' => 'array',
-        'helpful_count' => 'integer'
+        'helpful_count' => 'integer',
     ];
 
     // Relationships
@@ -91,10 +91,10 @@ class Review extends Model
             $this->check_in_rating,
             $this->accuracy_rating,
             $this->location_rating,
-            $this->value_rating
+            $this->value_rating,
         ];
 
-        $validRatings = array_filter($ratings, function($rating) {
+        $validRatings = array_filter($ratings, function ($rating) {
             return $rating !== null;
         });
 
@@ -103,7 +103,7 @@ class Review extends Model
 
     public function getHasOwnerResponseAttribute()
     {
-        return !empty($this->owner_response);
+        return ! empty($this->owner_response);
     }
 
     // Scopes
@@ -139,7 +139,7 @@ class Review extends Model
 
     public function scopeVerifiedGuest($query)
     {
-        return $query->whereHas('booking', function($q) {
+        return $query->whereHas('booking', function ($q) {
             $q->where('status', 'completed');
         });
     }

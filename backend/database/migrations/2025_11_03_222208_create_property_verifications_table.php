@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('property_verifications')) {
+        if (! Schema::hasTable('property_verifications')) {
             Schema::create('property_verifications', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('property_id')->constrained()->onDelete('cascade');
@@ -24,7 +24,7 @@ return new class extends Migration
         }
 
         // Add verification status to properties table
-        if (Schema::hasTable('properties') && !Schema::hasColumn('properties', 'is_verified')) {
+        if (Schema::hasTable('properties') && ! Schema::hasColumn('properties', 'is_verified')) {
             Schema::table('properties', function (Blueprint $table) {
                 $table->boolean('is_verified')->default(false)->after('status');
                 $table->timestamp('verified_at')->nullable()->after('is_verified');

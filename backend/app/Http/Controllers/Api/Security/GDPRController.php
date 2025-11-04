@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\GDPRService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class GDPRController extends Controller
 {
@@ -37,9 +37,9 @@ class GDPRController extends Controller
         $request->validate(['immediate' => 'nullable|boolean']);
         $immediate = $request->immediate === true && $request->user()->role === 'admin';
 
-        $this->gdprService->deleteUserData($request->user(), !$immediate);
+        $this->gdprService->deleteUserData($request->user(), ! $immediate);
 
-        $message = $immediate 
+        $message = $immediate
             ? 'Your data has been deleted immediately.'
             : 'Your data deletion has been scheduled. You have 30 days to cancel.';
 
@@ -49,7 +49,7 @@ class GDPRController extends Controller
     public function cancelDeletion(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         \App\Models\GDPRRequest::where('user_id', $user->id)
             ->where('type', 'deletion')
             ->where('status', 'pending')
@@ -63,6 +63,7 @@ class GDPRController extends Controller
     public function getConsents(Request $request): JsonResponse
     {
         $consents = $this->gdprService->getUserConsents($request->user());
+
         return response()->json(['data' => $consents]);
     }
 
@@ -86,6 +87,7 @@ class GDPRController extends Controller
     {
         $request->validate(['type' => 'required|string']);
         $this->gdprService->revokeConsent($request->user(), $request->type);
+
         return response()->json(['message' => 'Consent revoked successfully']);
     }
 }

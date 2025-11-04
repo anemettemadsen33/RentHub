@@ -22,7 +22,7 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Additional sync details
             $table->timestamp('synced_at');
             $table->timestamps();
-            
+
             $table->index('external_calendar_id');
             $table->index(['external_calendar_id', 'status']);
             $table->index('synced_at');

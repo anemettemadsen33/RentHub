@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\AI\FraudDetectionService;
 use App\Models\FraudAlert;
-use Illuminate\Http\Request;
+use App\Services\AI\FraudDetectionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class FraudDetectionController extends Controller
 {
@@ -19,7 +19,7 @@ class FraudDetectionController extends Controller
      */
     public function analyzeUser(int $userId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -42,7 +42,7 @@ class FraudDetectionController extends Controller
      */
     public function analyzeProperty(int $propertyId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -65,7 +65,7 @@ class FraudDetectionController extends Controller
      */
     public function analyzePayment(int $paymentId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -88,7 +88,7 @@ class FraudDetectionController extends Controller
      */
     public function analyzeReview(int $reviewId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -111,7 +111,7 @@ class FraudDetectionController extends Controller
      */
     public function analyzeBooking(int $bookingId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -134,7 +134,7 @@ class FraudDetectionController extends Controller
      */
     public function getAlerts(Request $request): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -173,7 +173,7 @@ class FraudDetectionController extends Controller
      */
     public function getAlertDetails(int $alertId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -194,7 +194,7 @@ class FraudDetectionController extends Controller
      */
     public function resolveAlert(Request $request, int $alertId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -207,7 +207,7 @@ class FraudDetectionController extends Controller
         ]);
 
         $alert = FraudAlert::findOrFail($alertId);
-        
+
         $alert->resolve(
             auth()->id(),
             $request->resolution_notes,
@@ -226,7 +226,7 @@ class FraudDetectionController extends Controller
      */
     public function markFalsePositive(Request $request, int $alertId): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -252,7 +252,7 @@ class FraudDetectionController extends Controller
      */
     public function getStatistics(Request $request): JsonResponse
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('last_synced_at')->nullable();
             $table->text('sync_error')->nullable(); // Last sync error if any
             $table->timestamps();
-            
+
             $table->index('property_id');
             $table->index(['property_id', 'sync_enabled']);
         });

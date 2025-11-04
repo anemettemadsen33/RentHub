@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use App\Models\ExternalCalendar;
-use App\Models\CalendarSyncLog;
+use App\Models\Property;
 use App\Services\ICalService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ExternalCalendarController extends Controller
@@ -23,10 +22,10 @@ class ExternalCalendarController extends Controller
     public function index(Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -47,10 +46,10 @@ class ExternalCalendarController extends Controller
     public function store(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -64,7 +63,7 @@ class ExternalCalendarController extends Controller
         $calendar = $property->externalCalendars()->create([
             'platform' => $request->platform,
             'url' => $request->url,
-            'name' => $request->name ?? ucfirst($request->platform) . ' Calendar',
+            'name' => $request->name ?? ucfirst($request->platform).' Calendar',
             'sync_enabled' => $request->sync_enabled ?? true,
         ]);
 
@@ -81,10 +80,10 @@ class ExternalCalendarController extends Controller
     public function update(Request $request, Property $property, ExternalCalendar $externalCalendar): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -92,7 +91,7 @@ class ExternalCalendarController extends Controller
         if ($externalCalendar->property_id !== $property->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Calendar does not belong to this property'
+                'message' => 'Calendar does not belong to this property',
             ], 403);
         }
 
@@ -117,10 +116,10 @@ class ExternalCalendarController extends Controller
     public function destroy(Property $property, ExternalCalendar $externalCalendar): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -128,7 +127,7 @@ class ExternalCalendarController extends Controller
         if ($externalCalendar->property_id !== $property->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Calendar does not belong to this property'
+                'message' => 'Calendar does not belong to this property',
             ], 403);
         }
 
@@ -146,10 +145,10 @@ class ExternalCalendarController extends Controller
     public function sync(Property $property, ExternalCalendar $externalCalendar): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -157,14 +156,14 @@ class ExternalCalendarController extends Controller
         if ($externalCalendar->property_id !== $property->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Calendar does not belong to this property'
+                'message' => 'Calendar does not belong to this property',
             ], 403);
         }
 
-        if (!$externalCalendar->sync_enabled) {
+        if (! $externalCalendar->sync_enabled) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sync is disabled for this calendar'
+                'message' => 'Sync is disabled for this calendar',
             ], 422);
         }
 
@@ -198,10 +197,10 @@ class ExternalCalendarController extends Controller
     public function syncLogs(Property $property, ExternalCalendar $externalCalendar): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -209,7 +208,7 @@ class ExternalCalendarController extends Controller
         if ($externalCalendar->property_id !== $property->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Calendar does not belong to this property'
+                'message' => 'Calendar does not belong to this property',
             ], 403);
         }
 
@@ -232,7 +231,7 @@ class ExternalCalendarController extends Controller
 
         return response($icalContent, 200)
             ->header('Content-Type', 'text/calendar; charset=utf-8')
-            ->header('Content-Disposition', 'attachment; filename="property-' . $property->id . '.ics"');
+            ->header('Content-Disposition', 'attachment; filename="property-'.$property->id.'.ics"');
     }
 
     /**

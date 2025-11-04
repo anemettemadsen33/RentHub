@@ -2,19 +2,18 @@
 
 namespace App\Services\AI;
 
-use App\Models\User;
-use App\Models\Property;
 use App\Models\Booking;
-use App\Models\Payment;
-use App\Models\Review;
 use App\Models\FraudAlert;
+use App\Models\Payment;
+use App\Models\Property;
+use App\Models\Review;
+use App\Models\User;
 use App\Models\UserBehavior;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class FraudDetectionService
 {
     private const FRAUD_THRESHOLD = 70.0;
+
     private const HIGH_RISK_THRESHOLD = 85.0;
 
     /**
@@ -37,14 +36,14 @@ class FraudDetectionService
         $recentBookings = Booking::where('user_id', $userId)
             ->where('created_at', '>', now()->subHours(24))
             ->count();
-        
+
         if ($recentBookings > 5) {
             $fraudScore += 25;
             $evidence[] = "Unusual number of booking attempts: {$recentBookings} in 24 hours";
         }
 
         // Check for incomplete profile
-        if (!$user->email_verified_at) {
+        if (! $user->email_verified_at) {
             $fraudScore += 15;
             $evidence[] = 'Email not verified';
         }
@@ -54,7 +53,7 @@ class FraudDetectionService
             ->where('status', 'failed')
             ->where('created_at', '>', now()->subDays(7))
             ->count();
-        
+
         if ($failedPayments > 3) {
             $fraudScore += 30;
             $evidence[] = "Multiple failed payments: {$failedPayments}";
@@ -64,7 +63,7 @@ class FraudDetectionService
         $behaviors = UserBehavior::where('user_id', $userId)
             ->where('action_at', '>', now()->subHour())
             ->get();
-        
+
         if ($behaviors->count() > 100) {
             $fraudScore += 35;
             $evidence[] = 'Excessive activity (possible bot)';
@@ -113,7 +112,7 @@ class FraudDetectionService
         $duplicateProperties = Property::where('title', $property->title)
             ->where('id', '!=', $propertyId)
             ->count();
-        
+
         if ($duplicateProperties > 0) {
             $fraudScore += 50;
             $evidence[] = "Property title appears in {$duplicateProperties} other listings";
@@ -123,10 +122,10 @@ class FraudDetectionService
         $avgPrice = Property::where('city', $property->city)
             ->where('type', $property->type)
             ->avg('price_per_night');
-        
+
         if ($avgPrice > 0 && $property->price_per_night < $avgPrice * 0.3) {
             $fraudScore += 45;
-            $evidence[] = "Price significantly below market average (70% lower)";
+            $evidence[] = 'Price significantly below market average (70% lower)';
         }
 
         // Check owner account
@@ -137,13 +136,13 @@ class FraudDetectionService
         }
 
         // Check for missing verification
-        if (!$property->owner->verification || $property->owner->verification->verified === false) {
+        if (! $property->owner->verification || $property->owner->verification->verified === false) {
             $fraudScore += 20;
             $evidence[] = 'Owner not verified';
         }
 
         // Check description for suspicious patterns
-        if ($this->hasS suspiciousContent($property->description)) {
+        if ($this->hasSuspiciousContent($property->description)) {
             $fraudScore += 30;
             $evidence[] = 'Description contains suspicious content';
         }
@@ -187,7 +186,7 @@ class FraudDetectionService
         $recentPayments = Payment::where('user_id', $payment->user_id)
             ->where('created_at', '>', now()->subHours(1))
             ->count();
-        
+
         if ($recentPayments > 5) {
             $fraudScore += 35;
             $evidence[] = "High payment velocity: {$recentPayments} payments in 1 hour";
@@ -249,8 +248,8 @@ class FraudDetectionService
             ->where('property_id', $review->property_id)
             ->where('status', 'completed')
             ->exists();
-        
-        if (!$hasBooking) {
+
+        if (! $hasBooking) {
             $fraudScore += 60;
             $evidence[] = 'Review from user without completed booking';
         }
@@ -265,7 +264,7 @@ class FraudDetectionService
         $userReviews = Review::where('user_id', $review->user_id)
             ->where('created_at', '>', now()->subDay())
             ->count();
-        
+
         if ($userReviews > 10) {
             $fraudScore += 35;
             $evidence[] = "Excessive reviews: {$userReviews} in 24 hours";
@@ -276,7 +275,7 @@ class FraudDetectionService
             ->where('id', '!=', $reviewId)
             ->where('comment', $review->comment)
             ->count();
-        
+
         if ($similarReviews > 0) {
             $fraudScore += 45;
             $evidence[] = 'Duplicate review content detected';
@@ -285,7 +284,7 @@ class FraudDetectionService
         // Check rating patterns (always 5 or always 1)
         $userRatings = Review::where('user_id', $review->user_id)
             ->pluck('rating');
-        
+
         if ($userRatings->count() > 5 && $userRatings->unique()->count() === 1) {
             $fraudScore += 25;
             $evidence[] = 'Suspicious rating pattern (all same rating)';
@@ -349,7 +348,7 @@ class FraudDetectionService
         $userAlerts = FraudAlert::where('user_id', $booking->user_id)
             ->where('status', '!=', 'resolved')
             ->count();
-        
+
         if ($userAlerts > 0) {
             $fraudScore += 35;
             $evidence[] = "User has {$userAlerts} active fraud alerts";
@@ -405,9 +404,16 @@ class FraudDetectionService
      */
     private function determineSeverity(float $fraudScore): string
     {
-        if ($fraudScore >= self::HIGH_RISK_THRESHOLD) return 'critical';
-        if ($fraudScore >= 80) return 'high';
-        if ($fraudScore >= 70) return 'medium';
+        if ($fraudScore >= self::HIGH_RISK_THRESHOLD) {
+            return 'critical';
+        }
+        if ($fraudScore >= 80) {
+            return 'high';
+        }
+        if ($fraudScore >= 70) {
+            return 'medium';
+        }
+
         return 'low';
     }
 
@@ -447,6 +453,7 @@ class FraudDetectionService
     {
         // Simplified high-risk country list
         $highRiskCountries = ['XX', 'YY']; // Replace with actual list
+
         return in_array($country, $highRiskCountries);
     }
 
@@ -459,7 +466,9 @@ class FraudDetectionService
     private function calculatePaymentFailureRate(int $userId): float
     {
         $total = Payment::where('user_id', $userId)->count();
-        if ($total === 0) return 0;
+        if ($total === 0) {
+            return 0;
+        }
 
         $failed = Payment::where('user_id', $userId)
             ->where('status', 'failed')

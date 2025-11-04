@@ -5,8 +5,8 @@ namespace App\Http\Controllers\API\Security;
 use App\Http\Controllers\Controller;
 use App\Services\Security\SecurityAuditService;
 use App\Services\Security\VulnerabilityScanner;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SecurityAuditController extends Controller
 {
@@ -18,7 +18,7 @@ class SecurityAuditController extends Controller
     public function getUserAuditTrail(Request $request): JsonResponse
     {
         $request->validate(['days' => 'nullable|integer|min:1|max:365']);
-        
+
         $trail = $this->auditService->getUserAuditTrail(
             $request->user(),
             $request->days ?? 30
@@ -30,7 +30,7 @@ class SecurityAuditController extends Controller
     public function getSecurityIncidents(Request $request): JsonResponse
     {
         $request->validate(['hours' => 'nullable|integer|min:1|max:720']);
-        
+
         $incidents = $this->auditService->getRecentIncidents($request->hours ?? 24);
 
         return response()->json(['data' => $incidents]);
@@ -39,7 +39,7 @@ class SecurityAuditController extends Controller
     public function runVulnerabilityScan(Request $request): JsonResponse
     {
         $this->authorize('run-security-scans');
-        
+
         $results = $this->scanner->runScan();
 
         return response()->json(['data' => $results]);
@@ -48,7 +48,7 @@ class SecurityAuditController extends Controller
     public function getSecurityReport(Request $request): JsonResponse
     {
         $this->authorize('view-security-reports');
-        
+
         $report = $this->scanner->generateReport();
 
         return response()->json(['report' => $report]);

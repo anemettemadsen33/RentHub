@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
@@ -45,10 +45,10 @@ class CalendarController extends Controller
 
         foreach ($period as $date) {
             $dateString = $date->format('Y-m-d');
-            
+
             $calendar[] = [
                 'date' => $dateString,
-                'available' => !$this->isDateUnavailable($property, $dateString),
+                'available' => ! $this->isDateUnavailable($property, $dateString),
                 'blocked' => $property->isDateBlocked($dateString),
                 'booked' => $this->isDateBooked($property, $dateString),
                 'price' => $this->getPriceForDate($property, $dateString),
@@ -87,7 +87,7 @@ class CalendarController extends Controller
         foreach ($period as $date) {
             $dateString = $date->format('Y-m-d');
             $customPricing = $property->custom_pricing ?? [];
-            
+
             if (isset($customPricing[$dateString])) {
                 $calendar[$dateString] = [
                     'price' => $customPricing[$dateString],
@@ -112,10 +112,10 @@ class CalendarController extends Controller
     public function bulkBlockDates(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -164,10 +164,10 @@ class CalendarController extends Controller
     public function bulkUnblockDates(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -207,10 +207,10 @@ class CalendarController extends Controller
     public function bulkSetPricing(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -260,10 +260,10 @@ class CalendarController extends Controller
     public function bulkRemovePricing(Request $request, Property $property): JsonResponse
     {
         // Check authorization
-        if ($property->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+        if ($property->user_id !== auth()->id() && ! auth()->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
@@ -338,7 +338,7 @@ class CalendarController extends Controller
     private function getPriceForDate(Property $property, string $date): float
     {
         $customPricing = $property->custom_pricing ?? [];
-        
+
         if (isset($customPricing[$date])) {
             return (float) $customPricing[$date];
         }

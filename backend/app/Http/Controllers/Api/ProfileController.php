@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -15,47 +15,47 @@ class ProfileController extends Controller
     public function getCompletionStatus(Request $request)
     {
         $user = $request->user();
-        
+
         $completed = [];
         $pending = [];
-        
+
         // Basic Info (Step 1)
         if ($user->name && $user->email) {
             $completed[] = 'basic_info';
         } else {
             $pending[] = 'basic_info';
         }
-        
+
         // Contact Info (Step 2)
         if ($user->phone) {
             $completed[] = 'contact_info';
         } else {
             $pending[] = 'contact_info';
         }
-        
+
         // Profile Details (Step 3)
         if ($user->bio && $user->avatar) {
             $completed[] = 'profile_details';
         } else {
             $pending[] = 'profile_details';
         }
-        
+
         // Verification (Step 4)
         if ($user->email_verified_at) {
             $completed[] = 'email_verification';
         } else {
             $pending[] = 'email_verification';
         }
-        
+
         if ($user->phone_verified_at) {
             $completed[] = 'phone_verification';
         } else {
             $pending[] = 'phone_verification';
         }
-        
+
         $totalSteps = count($completed) + count($pending);
         $percentage = $totalSteps > 0 ? (count($completed) / $totalSteps) * 100 : 0;
-        
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -63,7 +63,7 @@ class ProfileController extends Controller
                 'pending' => $pending,
                 'percentage' => round($percentage, 2),
                 'is_complete' => empty($pending),
-            ]
+            ],
         ]);
     }
 
@@ -79,7 +79,7 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -90,7 +90,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Basic info updated successfully',
-            'data' => $request->user()
+            'data' => $request->user(),
         ]);
     }
 
@@ -106,7 +106,7 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -117,7 +117,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Contact info updated successfully',
-            'data' => $request->user()
+            'data' => $request->user(),
         ]);
     }
 
@@ -134,7 +134,7 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -158,7 +158,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile details updated successfully',
-            'data' => $request->user()
+            'data' => $request->user(),
         ]);
     }
 
@@ -168,15 +168,15 @@ class ProfileController extends Controller
     public function completeWizard(Request $request)
     {
         $user = $request->user();
-        
+
         // Check if all steps are completed
         $status = $this->getCompletionStatus($request)->getData()->data;
-        
-        if (!$status->is_complete) {
+
+        if (! $status->is_complete) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please complete all steps before finishing',
-                'data' => $status
+                'data' => $status,
             ], 400);
         }
 
@@ -188,7 +188,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile completed successfully!',
-            'data' => $user
+            'data' => $user,
         ]);
     }
 
@@ -198,16 +198,16 @@ class ProfileController extends Controller
     public function getProfile(Request $request)
     {
         $user = $request->user();
-        
+
         return response()->json([
             'success' => true,
             'data' => [
                 'user' => $user,
-                'avatar_url' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                'avatar_url' => $user->avatar ? asset('storage/'.$user->avatar) : null,
                 'is_email_verified' => $user->email_verified_at !== null,
                 'is_phone_verified' => $user->phone_verified_at !== null,
                 'has_2fa_enabled' => $user->two_factor_enabled,
-            ]
+            ],
         ]);
     }
 
@@ -232,7 +232,7 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -241,7 +241,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully',
-            'data' => $request->user()
+            'data' => $request->user(),
         ]);
     }
 
@@ -257,7 +257,7 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -278,8 +278,8 @@ class ProfileController extends Controller
             'message' => 'Avatar uploaded successfully',
             'data' => [
                 'avatar' => $path,
-                'avatar_url' => asset('storage/' . $path)
-            ]
+                'avatar_url' => asset('storage/'.$path),
+            ],
         ]);
     }
 
@@ -290,10 +290,10 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->avatar) {
+        if (! $user->avatar) {
             return response()->json([
                 'success' => false,
-                'message' => 'No avatar to delete'
+                'message' => 'No avatar to delete',
             ], 400);
         }
 
@@ -302,7 +302,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Avatar deleted successfully'
+            'message' => 'Avatar deleted successfully',
         ]);
     }
 
@@ -323,22 +323,22 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
-        
+
         // Store settings in JSON column or separate table
         $settings = $user->settings ?? [];
         $settings = array_merge($settings, $validator->validated());
-        
+
         $user->update(['settings' => $settings]);
 
         return response()->json([
             'success' => true,
             'message' => 'Settings updated successfully',
-            'data' => $settings
+            'data' => $settings,
         ]);
     }
 
@@ -359,22 +359,22 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $user = $request->user();
-        
+
         // Store privacy settings
         $privacy = $user->privacy_settings ?? [];
         $privacy = array_merge($privacy, $validator->validated());
-        
+
         $user->update(['privacy_settings' => $privacy]);
 
         return response()->json([
             'success' => true,
             'message' => 'Privacy settings updated successfully',
-            'data' => $privacy
+            'data' => $privacy,
         ]);
     }
 
@@ -396,8 +396,8 @@ class ProfileController extends Controller
                     'phone' => $user->phone_verified_at !== null,
                     'identity' => $user->identity_verified_at !== null,
                     'government_id' => $user->government_id_verified_at !== null,
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 }

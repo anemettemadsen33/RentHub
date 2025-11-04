@@ -5,27 +5,27 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GuestVerificationResource\Pages;
 use App\Models\GuestVerification;
 use Filament\Forms;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Infolists;
 use Illuminate\Database\Eloquent\Builder;
 
 class GuestVerificationResource extends Resource
 {
     protected static ?string $model = GuestVerification::class;
-    
+
     public static function getNavigationIcon(): ?string
     {
         return 'heroicon-o-shield-check';
     }
-    
+
     public static function getNavigationLabel(): string
     {
         return 'Guest Verifications';
     }
-    
+
     public static function getNavigationSort(): ?int
     {
         return 3;
@@ -200,7 +200,7 @@ class GuestVerificationResource extends Resource
                 Tables\Columns\TextColumn::make('trust_score')
                     ->label('Trust Score')
                     ->badge()
-                    ->color(fn ($state) => match(true) {
+                    ->color(fn ($state) => match (true) {
                         $state >= 4.5 => 'success',
                         $state >= 3.5 => 'primary',
                         $state >= 2.5 => 'warning',
@@ -314,7 +314,7 @@ class GuestVerificationResource extends Resource
                             ->label('Email'),
                         Infolists\Components\TextEntry::make('trust_score')
                             ->badge()
-                            ->color(fn ($state) => match(true) {
+                            ->color(fn ($state) => match (true) {
                                 $state >= 4.5 => 'success',
                                 $state >= 3.5 => 'primary',
                                 $state >= 2.5 => 'warning',

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('pricing_rules')) {
+        if (! Schema::hasTable('pricing_rules')) {
             Schema::create('pricing_rules', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('property_id')->constrained()->onDelete('cascade');
@@ -26,7 +26,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('price_history')) {
+        if (! Schema::hasTable('price_history')) {
             Schema::create('price_history', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('property_id')->constrained()->onDelete('cascade');
@@ -35,7 +35,7 @@ return new class extends Migration
                 $table->decimal('final_price', 10, 2);
                 $table->json('applied_rules')->nullable();
                 $table->timestamps();
-                
+
                 $table->unique(['property_id', 'date']);
             });
         }

@@ -6,13 +6,12 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
 
 class ReviewsTable
 {
@@ -59,9 +58,9 @@ class ReviewsTable
                 IconColumn::make('has_owner_response')
                     ->label('Response')
                     ->boolean()
-                    ->getStateUsing(fn ($record) => !empty($record->owner_response))
+                    ->getStateUsing(fn ($record) => ! empty($record->owner_response))
                     ->sortable(query: function ($query, $direction) {
-                        return $query->orderByRaw('owner_response IS NOT NULL ' . $direction);
+                        return $query->orderByRaw('owner_response IS NOT NULL '.$direction);
                     }),
                 TextColumn::make('booking.id')
                     ->label('Booking ID')
@@ -114,7 +113,7 @@ class ReviewsTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->update(['is_approved' => true]))
-                    ->visible(fn ($record) => !$record->is_approved),
+                    ->visible(fn ($record) => ! $record->is_approved),
                 Action::make('reject')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')

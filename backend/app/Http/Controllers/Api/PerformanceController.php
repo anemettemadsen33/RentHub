@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -24,9 +24,9 @@ class PerformanceController extends Controller
         ]);
 
         // Store metrics for analytics
-        $key = 'web_vitals:' . date('Y-m-d');
+        $key = 'web_vitals:'.date('Y-m-d');
         $metrics = Cache::get($key, []);
-        
+
         $metrics[] = [
             'timestamp' => now()->toIso8601String(),
             'metric' => $validated['metric'],
@@ -61,10 +61,10 @@ class PerformanceController extends Controller
 
         for ($i = 0; $i < $days; $i++) {
             $date = now()->subDays($i)->format('Y-m-d');
-            $key = 'web_vitals:' . $date;
+            $key = 'web_vitals:'.$date;
             $metrics = Cache::get($key, []);
 
-            if (!empty($metrics)) {
+            if (! empty($metrics)) {
                 $summary[$date] = $this->calculateMetricsSummary($metrics);
             }
         }
@@ -77,7 +77,7 @@ class PerformanceController extends Controller
      */
     public function getRecommendations(): JsonResponse
     {
-        $key = 'web_vitals:' . date('Y-m-d');
+        $key = 'web_vitals:'.date('Y-m-d');
         $metrics = Cache::get($key, []);
 
         if (empty($metrics)) {
@@ -161,7 +161,7 @@ class PerformanceController extends Controller
         foreach ($budget as $resource => $limit) {
             $usage = $current[$resource];
             $percentage = ($usage / $limit) * 100;
-            
+
             $status[$resource] = [
                 'limit' => $limit,
                 'current' => $usage,
@@ -182,7 +182,7 @@ class PerformanceController extends Controller
 
         foreach ($metrics as $entry) {
             $metricName = $entry['metric'];
-            if (!isset($grouped[$metricName])) {
+            if (! isset($grouped[$metricName])) {
                 $grouped[$metricName] = [
                     'values' => [],
                     'ratings' => ['good' => 0, 'needs-improvement' => 0, 'poor' => 0],
@@ -237,8 +237,8 @@ class PerformanceController extends Controller
 
         for ($i = 30; $i < 90; $i++) {
             $date = now()->subDays($i)->format('Y-m-d');
-            $key = 'web_vitals:' . $date;
-            
+            $key = 'web_vitals:'.$date;
+
             if (Cache::has($key)) {
                 Cache::forget($key);
                 $cleared++;

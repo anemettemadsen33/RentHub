@@ -14,7 +14,7 @@ class XssProtection
     public function handle(Request $request, Closure $next): Response
     {
         $input = $request->all();
-        
+
         array_walk_recursive($input, function (&$value) {
             if (is_string($value)) {
                 $value = $this->sanitize($value);
@@ -33,14 +33,14 @@ class XssProtection
     {
         // Remove null bytes
         $value = str_replace(chr(0), '', $value);
-        
+
         // Strip tags except allowed ones
         $allowedTags = '<p><br><strong><em><ul><ol><li><a>';
         $value = strip_tags($value, $allowedTags);
-        
+
         // Encode special characters
         $value = htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        
+
         return $value;
     }
 }

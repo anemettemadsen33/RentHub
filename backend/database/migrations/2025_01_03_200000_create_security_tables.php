@@ -15,7 +15,7 @@ return new class extends Migration
         // This table is already created by an earlier migration
 
         // Session management
-        if (!Schema::hasTable('active_sessions')) {
+        if (! Schema::hasTable('active_sessions')) {
             Schema::create('active_sessions', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -26,13 +26,13 @@ return new class extends Migration
                 $table->timestamp('last_activity');
                 $table->timestamp('expires_at');
                 $table->timestamps();
-                
+
                 $table->index(['user_id', 'expires_at']);
             });
         }
 
         // Data requests (GDPR)
-        if (!Schema::hasTable('data_requests')) {
+        if (! Schema::hasTable('data_requests')) {
             Schema::create('data_requests', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -42,7 +42,7 @@ return new class extends Migration
                 $table->timestamp('requested_at');
                 $table->timestamp('completed_at')->nullable();
                 $table->timestamps();
-                
+
                 $table->index(['user_id', 'status']);
                 $table->index(['type', 'status']);
             });
@@ -52,14 +52,14 @@ return new class extends Migration
         // This table is already created by an earlier migration
 
         // Failed login attempts
-        if (!Schema::hasTable('failed_login_attempts')) {
+        if (! Schema::hasTable('failed_login_attempts')) {
             Schema::create('failed_login_attempts', function (Blueprint $table) {
                 $table->id();
                 $table->string('email')->index();
                 $table->string('ip_address')->index();
                 $table->string('user_agent')->nullable();
                 $table->timestamp('attempted_at');
-                
+
                 $table->index(['email', 'attempted_at']);
                 $table->index(['ip_address', 'attempted_at']);
             });

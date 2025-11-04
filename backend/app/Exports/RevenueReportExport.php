@@ -3,15 +3,16 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RevenueReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class RevenueReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $data;
+
     protected $summary;
 
     public function __construct($data, $summary = null)
@@ -43,9 +44,9 @@ class RevenueReportExport implements FromCollection, WithHeadings, WithMapping, 
             $row['date'] ?? $row['month'] ?? '-',
             $row['property_name'] ?? $row['property'] ?? '-',
             $row['bookings'] ?? 0,
-            '$' . number_format($row['revenue'] ?? 0, 2),
-            '$' . number_format($row['avg_rate'] ?? 0, 2),
-            number_format($row['occupancy'] ?? 0, 1) . '%',
+            '$'.number_format($row['revenue'] ?? 0, 2),
+            '$'.number_format($row['avg_rate'] ?? 0, 2),
+            number_format($row['occupancy'] ?? 0, 1).'%',
         ];
     }
 

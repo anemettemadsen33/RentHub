@@ -1,22 +1,22 @@
 <?php
 
 return [
-    
+
     /*
     |--------------------------------------------------------------------------
     | API Versioning
     |--------------------------------------------------------------------------
     */
-    
+
     'versioning' => [
         'enabled' => env('API_VERSIONING_ENABLED', true),
         'default' => env('API_DEFAULT_VERSION', 'v1'),
         'prefix' => 'api',
         'header' => 'X-API-Version',
         'query_param' => 'version',
-        
+
         'supported_versions' => ['v1', 'v2'],
-        
+
         'deprecation' => [
             'enabled' => true,
             'header' => 'X-API-Deprecation',
@@ -29,12 +29,12 @@ return [
     | GraphQL Configuration
     |--------------------------------------------------------------------------
     */
-    
+
     'graphql' => [
         'enabled' => env('GRAPHQL_ENABLED', true),
         'route' => 'graphql',
         'playground_enabled' => env('GRAPHQL_PLAYGROUND', true),
-        
+
         'schemas' => [
             'default' => [
                 'query' => [
@@ -54,7 +54,7 @@ return [
                 ],
             ],
         ],
-        
+
         'security' => [
             'max_query_depth' => 10,
             'max_query_complexity' => 1000,
@@ -67,20 +67,20 @@ return [
     | WebSocket Configuration
     |--------------------------------------------------------------------------
     */
-    
+
     'websocket' => [
         'enabled' => env('WEBSOCKET_ENABLED', true),
         'host' => env('WEBSOCKET_HOST', '0.0.0.0'),
         'port' => env('WEBSOCKET_PORT', 6001),
         'ssl' => env('WEBSOCKET_SSL', false),
-        
+
         'channels' => [
             'booking_updates' => true,
             'property_views' => true,
             'messages' => true,
             'notifications' => true,
         ],
-        
+
         'redis' => [
             'host' => env('REDIS_HOST', '127.0.0.1'),
             'port' => env('REDIS_PORT', 6379),
@@ -92,27 +92,27 @@ return [
     | Background Jobs Configuration
     |--------------------------------------------------------------------------
     */
-    
+
     'jobs' => [
         'default_queue' => env('QUEUE_CONNECTION', 'redis'),
-        
+
         'queues' => [
             'high' => ['priority' => 10, 'timeout' => 60],
             'default' => ['priority' => 5, 'timeout' => 300],
             'low' => ['priority' => 1, 'timeout' => 600],
         ],
-        
+
         'workers' => [
             'high' => 3,
             'default' => 2,
             'low' => 1,
         ],
-        
+
         'retry' => [
             'times' => 3,
             'delay' => 60,
         ],
-        
+
         'optimization' => [
             'batch_processing' => true,
             'chunk_size' => 100,
@@ -125,12 +125,12 @@ return [
     | Database Sharding
     |--------------------------------------------------------------------------
     */
-    
+
     'sharding' => [
         'enabled' => env('DB_SHARDING_ENABLED', false),
         'strategy' => 'hash', // hash, range, list
         'shard_key' => 'user_id',
-        
+
         'shards' => [
             'shard_1' => [
                 'host' => env('DB_SHARD_1_HOST', '127.0.0.1'),
@@ -150,14 +150,14 @@ return [
     | Full-Text Search
     |--------------------------------------------------------------------------
     */
-    
+
     'search' => [
         'driver' => env('SEARCH_DRIVER', 'meilisearch'), // elasticsearch, meilisearch, algolia
-        
+
         'meilisearch' => [
             'host' => env('MEILISEARCH_HOST', 'http://127.0.0.1:7700'),
             'key' => env('MEILISEARCH_KEY'),
-            
+
             'indexes' => [
                 'properties' => [
                     'searchable' => ['title', 'description', 'address', 'city'],
@@ -170,7 +170,7 @@ return [
                 ],
             ],
         ],
-        
+
         'elasticsearch' => [
             'hosts' => [env('ELASTICSEARCH_HOST', 'localhost:9200')],
             'index_prefix' => env('ELASTICSEARCH_PREFIX', 'renthub_'),
@@ -182,12 +182,12 @@ return [
     | API Documentation (OpenAPI/Swagger)
     |--------------------------------------------------------------------------
     */
-    
+
     'documentation' => [
         'enabled' => env('API_DOCS_ENABLED', true),
         'route' => 'api/documentation',
         'format' => 'openapi', // openapi, swagger
-        
+
         'openapi' => [
             'version' => '3.0.0',
             'title' => 'RentHub API',
@@ -201,14 +201,14 @@ return [
                 'url' => 'https://opensource.org/licenses/MIT',
             ],
         ],
-        
+
         'servers' => [
             [
-                'url' => env('APP_URL') . '/api/v1',
+                'url' => env('APP_URL').'/api/v1',
                 'description' => 'Production Server',
             ],
         ],
-        
+
         'security' => [
             'bearerAuth' => [
                 'type' => 'http',
@@ -223,19 +223,19 @@ return [
     | Testing Configuration
     |--------------------------------------------------------------------------
     */
-    
+
     'testing' => [
         'unit' => [
             'enabled' => true,
             'coverage_target' => 80,
             'exclude' => ['vendor', 'tests', 'storage'],
         ],
-        
+
         'integration' => [
             'enabled' => true,
             'database' => 'testing',
         ],
-        
+
         'e2e' => [
             'enabled' => env('E2E_TESTS_ENABLED', false),
             'browser' => 'chrome',
@@ -248,10 +248,10 @@ return [
     | Rate Limiting
     |--------------------------------------------------------------------------
     */
-    
+
     'rate_limiting' => [
         'enabled' => true,
-        
+
         'limits' => [
             'global' => [
                 'max_attempts' => 60,
@@ -273,18 +273,18 @@ return [
     | Caching Strategy
     |--------------------------------------------------------------------------
     */
-    
+
     'caching' => [
         'enabled' => true,
         'driver' => env('CACHE_DRIVER', 'redis'),
-        
+
         'ttl' => [
             'properties' => 3600,
             'users' => 1800,
             'search' => 600,
             'static' => 86400,
         ],
-        
+
         'tags' => [
             'properties' => 'properties',
             'users' => 'users',

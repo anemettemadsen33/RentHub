@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BookingInsurance extends Model
 {
@@ -65,7 +65,7 @@ class BookingInsurance extends Model
     public static function generatePolicyNumber(): string
     {
         do {
-            $policyNumber = 'INS-' . strtoupper(uniqid()) . '-' . rand(1000, 9999);
+            $policyNumber = 'INS-'.strtoupper(uniqid()).'-'.rand(1000, 9999);
         } while (self::where('policy_number', $policyNumber)->exists());
 
         return $policyNumber;
@@ -87,7 +87,7 @@ class BookingInsurance extends Model
 
     public function cancel(): bool
     {
-        if (!in_array($this->status, ['pending', 'active'])) {
+        if (! in_array($this->status, ['pending', 'active'])) {
             return false;
         }
 
@@ -98,8 +98,8 @@ class BookingInsurance extends Model
 
     public function isActive(): bool
     {
-        return $this->status === 'active' 
-            && $this->valid_from <= now() 
+        return $this->status === 'active'
+            && $this->valid_from <= now()
             && $this->valid_until >= now();
     }
 

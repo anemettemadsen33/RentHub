@@ -48,7 +48,7 @@ class IoTDeviceController extends Controller
     public function show(IoTDevice $device)
     {
         try {
-            if (!$this->iotService->canControlDevice($device, Auth::user())) {
+            if (! $this->iotService->canControlDevice($device, Auth::user())) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
@@ -133,7 +133,7 @@ class IoTDeviceController extends Controller
         try {
             $streamUrl = $this->iotService->getCameraStream($device, Auth::user());
 
-            if (!$streamUrl) {
+            if (! $streamUrl) {
                 return response()->json(['error' => 'Camera stream not available'], 404);
             }
 
@@ -175,7 +175,7 @@ class IoTDeviceController extends Controller
     public function deviceHistory(IoTDevice $device)
     {
         try {
-            if (!$this->iotService->canControlDevice($device, Auth::user())) {
+            if (! $this->iotService->canControlDevice($device, Auth::user())) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
@@ -192,7 +192,7 @@ class IoTDeviceController extends Controller
     public function commandHistory(IoTDevice $device)
     {
         try {
-            if (!$this->iotService->canControlDevice($device, Auth::user())) {
+            if (! $this->iotService->canControlDevice($device, Auth::user())) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 

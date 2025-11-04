@@ -23,7 +23,7 @@ class ReferralService
     {
         do {
             $code = strtoupper(Str::random(8));
-        } while (User::where('referral_code', $code)->exists() || 
+        } while (User::where('referral_code', $code)->exists() ||
                  Referral::where('referral_code', $code)->exists());
 
         $user->update(['referral_code' => $code]);
@@ -71,7 +71,7 @@ class ReferralService
         // Find active referral by code
         $referrer = User::where('referral_code', $referralCode)->first();
 
-        if (!$referrer) {
+        if (! $referrer) {
             return null;
         }
 
@@ -80,7 +80,7 @@ class ReferralService
             ->where('referred_email', $newUser->email)
             ->first();
 
-        if (!$referral) {
+        if (! $referral) {
             // Create new referral record
             $referral = Referral::create([
                 'referrer_id' => $referrer->id,
@@ -100,7 +100,7 @@ class ReferralService
 
         // Update user's referred_by
         $newUser->update(['referred_by' => $referrer->id]);
-        
+
         // Update referrer's total referrals
         $referrer->increment('total_referrals');
 
@@ -140,7 +140,7 @@ class ReferralService
     {
         $referred = $referral->referred;
 
-        if (!$referred) {
+        if (! $referred) {
             return;
         }
 
@@ -203,11 +203,12 @@ class ReferralService
             ->where('status', 'registered')
             ->first();
 
-        if (!$referral) {
+        if (! $referral) {
             return 0;
         }
 
         $metadata = $referral->metadata ?? [];
+
         return $metadata['referred_discount_available'] ?? $referral->referred_reward_amount;
     }
 
@@ -220,7 +221,7 @@ class ReferralService
             ->where('status', 'registered')
             ->first();
 
-        if (!$referral) {
+        if (! $referral) {
             return null;
         }
 
@@ -273,12 +274,12 @@ class ReferralService
     /**
      * Get referral link for user
      */
-    public function getReferralLink(User $user, string $baseUrl = null): string
+    public function getReferralLink(User $user, ?string $baseUrl = null): string
     {
         $code = $this->getUserReferralCode($user);
         $baseUrl = $baseUrl ?? config('app.frontend_url', config('app.url'));
 
-        return $baseUrl . '/register?ref=' . $code;
+        return $baseUrl.'/register?ref='.$code;
     }
 
     /**
@@ -311,7 +312,7 @@ class ReferralService
             ->orderBy('successful_referrals', 'desc')
             ->limit($limit)
             ->get()
-            ->map(fn($user) => [
+            ->map(fn ($user) => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'successful_referrals' => $user->successful_referrals,

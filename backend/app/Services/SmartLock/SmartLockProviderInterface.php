@@ -2,8 +2,8 @@
 
 namespace App\Services\SmartLock;
 
-use App\Models\SmartLock;
 use App\Models\AccessCode;
+use App\Models\SmartLock;
 
 interface SmartLockProviderInterface
 {

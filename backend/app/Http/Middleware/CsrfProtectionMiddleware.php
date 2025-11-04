@@ -15,7 +15,7 @@ class CsrfProtectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!config('security.app_security.csrf_protection.enabled', true)) {
+        if (! config('security.app_security.csrf_protection.enabled', true)) {
             return $next($request);
         }
 
@@ -31,7 +31,7 @@ class CsrfProtectionMiddleware
 
         $token = $this->getTokenFromRequest($request);
 
-        if (!$token || !$this->validateToken($token)) {
+        if (! $token || ! $this->validateToken($token)) {
             return response()->json([
                 'error' => 'CSRF token mismatch',
             ], 419);
@@ -65,7 +65,7 @@ class CsrfProtectionMiddleware
         $token = $request->header('X-CSRF-TOKEN');
 
         // Then check request body
-        if (!$token) {
+        if (! $token) {
             $token = $request->input('_token');
         }
 
@@ -77,9 +77,9 @@ class CsrfProtectionMiddleware
      */
     protected function validateToken(string $token): bool
     {
-        $storedToken = Cache::get('csrf_token:' . $token);
+        $storedToken = Cache::get('csrf_token:'.$token);
 
-        if (!$storedToken) {
+        if (! $storedToken) {
             return false;
         }
 
@@ -87,7 +87,8 @@ class CsrfProtectionMiddleware
         $tokenAge = now()->timestamp - $storedToken['created_at'];
 
         if ($tokenAge > $lifetime) {
-            Cache::forget('csrf_token:' . $token);
+            Cache::forget('csrf_token:'.$token);
+
             return false;
         }
 
@@ -102,7 +103,7 @@ class CsrfProtectionMiddleware
         $token = Str::random(40);
         $lifetime = config('security.app_security.csrf_protection.token_lifetime', 7200);
 
-        Cache::put('csrf_token:' . $token, [
+        Cache::put('csrf_token:'.$token, [
             'created_at' => now()->timestamp,
         ], $lifetime);
 

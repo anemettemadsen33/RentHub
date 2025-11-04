@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('last_read_at')->nullable();
             $table->boolean('is_muted')->default(false);
             $table->timestamps();
-            
+
             $table->unique(['conversation_id', 'user_id']);
         });
     }

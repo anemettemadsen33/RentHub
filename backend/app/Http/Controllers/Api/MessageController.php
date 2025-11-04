@@ -13,7 +13,7 @@ class MessageController extends Controller
     public function index(Request $request, $conversationId)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $conversationId)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -34,7 +34,7 @@ class MessageController extends Controller
                 'last_page' => $messages->lastPage(),
                 'per_page' => $messages->perPage(),
                 'total' => $messages->total(),
-            ]
+            ],
         ]);
     }
 
@@ -47,7 +47,7 @@ class MessageController extends Controller
         ]);
 
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $conversationId)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -72,7 +72,7 @@ class MessageController extends Controller
         $message = $conversation->messages()->create([
             'sender_id' => $user->id,
             'message' => $validated['message'],
-            'attachments' => !empty($attachments) ? $attachments : null,
+            'attachments' => ! empty($attachments) ? $attachments : null,
         ]);
 
         $conversation->update(['last_message_at' => now()]);
@@ -85,7 +85,7 @@ class MessageController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Message sent successfully',
-            'data' => $message->load('sender:id,name,email,avatar')
+            'data' => $message->load('sender:id,name,email,avatar'),
         ], 201);
     }
 
@@ -96,7 +96,7 @@ class MessageController extends Controller
         ]);
 
         $user = $request->user();
-        
+
         $message = Message::where('id', $id)
             ->where('sender_id', $user->id)
             ->firstOrFail();
@@ -104,7 +104,7 @@ class MessageController extends Controller
         if ($message->created_at->diffInMinutes(now()) > 15) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot edit message after 15 minutes'
+                'message' => 'Cannot edit message after 15 minutes',
             ], 422);
         }
 
@@ -113,14 +113,14 @@ class MessageController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Message updated successfully',
-            'data' => $message->load('sender:id,name,email,avatar')
+            'data' => $message->load('sender:id,name,email,avatar'),
         ]);
     }
 
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $message = Message::where('id', $id)
             ->where('sender_id', $user->id)
             ->firstOrFail();
@@ -137,16 +137,16 @@ class MessageController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Message deleted successfully'
+            'message' => 'Message deleted successfully',
         ]);
     }
 
     public function markAsRead(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $message = Message::findOrFail($id);
-        
+
         $conversation = $message->conversation()
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -160,7 +160,7 @@ class MessageController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Message marked as read'
+            'message' => 'Message marked as read',
         ]);
     }
 
@@ -181,7 +181,7 @@ class MessageController extends Controller
                 'path' => $path,
                 'type' => $file->getMimeType(),
                 'size' => $file->getSize(),
-            ]
+            ],
         ]);
     }
 }

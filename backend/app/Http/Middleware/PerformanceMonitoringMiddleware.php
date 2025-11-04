@@ -31,8 +31,8 @@ class PerformanceMonitoringMiddleware
 
         // Add performance headers in development
         if (config('app.debug')) {
-            $response->headers->set('X-Response-Time', round($duration, 2) . 'ms');
-            $response->headers->set('X-Memory-Usage', round($memoryUsed / 1024, 2) . 'KB');
+            $response->headers->set('X-Response-Time', round($duration, 2).'ms');
+            $response->headers->set('X-Memory-Usage', round($memoryUsed / 1024, 2).'KB');
         }
 
         // Log slow requests
@@ -40,8 +40,8 @@ class PerformanceMonitoringMiddleware
             \Log::warning('Slow request detected', [
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
-                'duration' => round($duration, 2) . 'ms',
-                'memory' => round($memoryUsed / 1024, 2) . 'KB',
+                'duration' => round($duration, 2).'ms',
+                'memory' => round($memoryUsed / 1024, 2).'KB',
             ]);
         }
 

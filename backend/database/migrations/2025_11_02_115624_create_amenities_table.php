@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('is_popular')->default(false);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['category', 'is_popular']);
             $table->index(['sort_order']);

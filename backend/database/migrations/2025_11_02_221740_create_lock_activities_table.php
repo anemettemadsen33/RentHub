@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('user_agent')->nullable();
             $table->timestamp('event_at')->useCurrent();
             $table->timestamps();
-            
+
             $table->index(['smart_lock_id', 'event_at']);
             $table->index(['user_id', 'event_at']);
             $table->index(['event_type', 'event_at']);

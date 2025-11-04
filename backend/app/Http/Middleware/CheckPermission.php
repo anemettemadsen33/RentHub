@@ -22,12 +22,12 @@ class CheckPermission
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         // Check if user has any of the required permissions
-        if (!$this->rbacService->hasAnyPermission($user, $permissions)) {
+        if (! $this->rbacService->hasAnyPermission($user, $permissions)) {
             return response()->json([
                 'error' => 'Forbidden',
                 'message' => 'You do not have the required permissions',

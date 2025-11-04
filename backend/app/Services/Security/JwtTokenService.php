@@ -3,16 +3,19 @@
 namespace App\Services\Security;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class JwtTokenService
 {
     private string $secret;
+
     private string $algorithm = 'HS256';
+
     private int $accessTokenExpiry = 900; // 15 minutes
+
     private int $refreshTokenExpiry = 604800; // 7 days
 
     public function __construct()
@@ -81,7 +84,7 @@ class JwtTokenService
 
             // Check if token is revoked
             if ($decoded->type === 'refresh' && isset($decoded->jti)) {
-                if (!Cache::has("refresh_token:{$decoded->jti}")) {
+                if (! Cache::has("refresh_token:{$decoded->jti}")) {
                     return null;
                 }
             }
@@ -99,13 +102,13 @@ class JwtTokenService
     {
         $decoded = $this->verifyToken($refreshToken);
 
-        if (!$decoded || $decoded->type !== 'refresh') {
+        if (! $decoded || $decoded->type !== 'refresh') {
             return null;
         }
 
         $user = User::find($decoded->sub);
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
@@ -123,7 +126,7 @@ class JwtTokenService
     {
         $decoded = $this->verifyToken($token);
 
-        if (!$decoded || $decoded->type !== 'refresh' || !isset($decoded->jti)) {
+        if (! $decoded || $decoded->type !== 'refresh' || ! isset($decoded->jti)) {
             return false;
         }
 
@@ -147,7 +150,7 @@ class JwtTokenService
      */
     public function generateApiKey(User $user, string $name, ?Carbon $expiresAt = null): array
     {
-        $key = 'rh_' . bin2hex(random_bytes(32));
+        $key = 'rh_'.bin2hex(random_bytes(32));
         $hashedKey = hash('sha256', $key);
 
         $data = [
@@ -175,12 +178,13 @@ class JwtTokenService
         $hashedKey = hash('sha256', $key);
         $data = Cache::get("api_key:{$hashedKey}");
 
-        if (!$data) {
+        if (! $data) {
             return null;
         }
 
         if ($data['expires_at'] && Carbon::parse($data['expires_at'])->isPast()) {
             Cache::forget("api_key:{$hashedKey}");
+
             return null;
         }
 

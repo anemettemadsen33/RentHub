@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\LoyaltyTier;
 use App\Models\LoyaltyBenefit;
+use App\Models\LoyaltyTier;
+use Illuminate\Database\Seeder;
 
 class LoyaltyTierSeeder extends Seeder
 {
@@ -269,4 +269,3 @@ class LoyaltyTierSeeder extends Seeder
         ]);
     }
 }
-

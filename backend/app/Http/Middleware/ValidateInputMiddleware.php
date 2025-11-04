@@ -19,16 +19,16 @@ class ValidateInputMiddleware
         '/(\bUPDATE\b.*\bSET\b)/i',
         '/(\bDELETE\b.*\bFROM\b)/i',
         '/(\bDROP\b.*\bTABLE\b)/i',
-        
+
         // XSS patterns
         '/<script[^>]*>.*?<\/script>/is',
         '/javascript:/i',
         '/on\w+\s*=/i',
-        
+
         // Path traversal
         '/\.\.\//',
         '/\.\.\\\\/',
-        
+
         // Command injection
         '/[;&|`$]/',
     ];
@@ -42,7 +42,7 @@ class ValidateInputMiddleware
         if ($this->containsDangerousContent($request->all())) {
             return response()->json([
                 'message' => 'Invalid input detected.',
-                'error' => 'SECURITY_VALIDATION_FAILED'
+                'error' => 'SECURITY_VALIDATION_FAILED',
             ], 400);
         }
 
@@ -65,10 +65,10 @@ class ValidateInputMiddleware
         if (is_string($data)) {
             // Remove null bytes
             $data = str_replace("\0", '', $data);
-            
+
             // Trim whitespace
             $data = trim($data);
-            
+
             // Convert special HTML characters
             return htmlspecialchars($data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }

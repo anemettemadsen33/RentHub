@@ -2,13 +2,13 @@
 
 namespace App\Services\SmartLock;
 
-use App\Models\SmartLock;
 use App\Models\AccessCode;
-use App\Models\LockActivity;
 use App\Models\Booking;
+use App\Models\LockActivity;
+use App\Models\SmartLock;
 use App\Notifications\AccessCodeCreatedNotification;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SmartLockService
 {
@@ -32,13 +32,15 @@ class SmartLockService
         $property = $booking->property;
         $smartLock = $property->smartLocks()->where('status', 'active')->first();
 
-        if (!$smartLock) {
+        if (! $smartLock) {
             Log::warning("No active smart lock found for property {$property->id}");
+
             return null;
         }
 
-        if (!$smartLock->auto_generate_codes) {
+        if (! $smartLock->auto_generate_codes) {
             Log::info("Auto-generate codes disabled for lock {$smartLock->id}");
+
             return null;
         }
 
@@ -60,10 +62,10 @@ class SmartLockService
         // Try to create on provider
         try {
             $provider = $this->getProvider($smartLock->provider);
-            
+
             if ($provider) {
                 $result = $provider->createAccessCode($smartLock, $accessCode);
-                
+
                 $accessCode->update([
                     'external_code_id' => $result['code_id'] ?? null,
                     'status' => 'active',
@@ -96,10 +98,10 @@ class SmartLockService
     public function revokeAccessCode(AccessCode $accessCode): bool
     {
         $smartLock = $accessCode->smartLock;
-        
+
         try {
             $provider = $this->getProvider($smartLock->provider);
-            
+
             if ($provider && $accessCode->external_code_id) {
                 $provider->deleteAccessCode($smartLock, $accessCode);
             }
@@ -112,12 +114,13 @@ class SmartLockService
                 'access_code_id' => $accessCode->id,
                 'user_id' => auth()->id(),
                 'event_type' => 'code_deleted',
-                'description' => "Access code revoked",
+                'description' => 'Access code revoked',
             ]);
 
             return true;
         } catch (\Exception $e) {
             Log::error("Failed to revoke access code: {$e->getMessage()}");
+
             return false;
         }
     }
@@ -129,8 +132,8 @@ class SmartLockService
     {
         try {
             $provider = $this->getProvider($lock->provider);
-            
-            if (!$provider) {
+
+            if (! $provider) {
                 return false;
             }
 
@@ -156,6 +159,7 @@ class SmartLockService
                 'status' => 'error',
                 'error_message' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -167,8 +171,8 @@ class SmartLockService
     {
         try {
             $provider = $this->getProvider($lock->provider);
-            
-            if (!$provider) {
+
+            if (! $provider) {
                 return false;
             }
 
@@ -180,13 +184,14 @@ class SmartLockService
                     'user_id' => auth()->id(),
                     'event_type' => 'lock',
                     'access_method' => 'remote',
-                    'description' => "Lock secured remotely",
+                    'description' => 'Lock secured remotely',
                 ]);
             }
 
             return $result;
         } catch (\Exception $e) {
             Log::error("Failed to lock remotely: {$e->getMessage()}");
+
             return false;
         }
     }
@@ -198,8 +203,8 @@ class SmartLockService
     {
         try {
             $provider = $this->getProvider($lock->provider);
-            
-            if (!$provider) {
+
+            if (! $provider) {
                 return false;
             }
 
@@ -211,13 +216,14 @@ class SmartLockService
                     'user_id' => auth()->id(),
                     'event_type' => 'unlock',
                     'access_method' => 'remote',
-                    'description' => "Lock opened remotely",
+                    'description' => 'Lock opened remotely',
                 ]);
             }
 
             return $result;
         } catch (\Exception $e) {
             Log::error("Failed to unlock remotely: {$e->getMessage()}");
+
             return false;
         }
     }

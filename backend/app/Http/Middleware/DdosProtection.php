@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 
 class DdosProtection
@@ -16,7 +15,7 @@ class DdosProtection
     public function handle(Request $request, Closure $next): Response
     {
         $ip = $request->ip();
-        $key = 'ddos_protection:' . $ip;
+        $key = 'ddos_protection:'.$ip;
 
         // Check if IP is blocked
         if (Cache::has("blocked:{$key}")) {
@@ -31,7 +30,7 @@ class DdosProtection
         // Block if threshold exceeded (100 requests per minute)
         if ($requests > 100) {
             Cache::put("blocked:{$key}", true, now()->addMinutes(15));
-            
+
             // Log potential DDoS attack
             \Log::warning('Potential DDoS attack detected', [
                 'ip' => $ip,
@@ -43,7 +42,7 @@ class DdosProtection
         }
 
         $response = $next($request);
-        
+
         // Add rate limit headers
         $response->headers->set('X-RateLimit-Limit', '100');
         $response->headers->set('X-RateLimit-Remaining', max(0, 100 - $requests));

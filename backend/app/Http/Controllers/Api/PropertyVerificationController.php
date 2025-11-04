@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PropertyVerification;
 use App\Models\Property;
-use Illuminate\Http\Request;
+use App\Models\PropertyVerification;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PropertyVerificationController extends Controller
@@ -15,7 +14,7 @@ class PropertyVerificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         if ($user->isAdmin()) {
             $verifications = PropertyVerification::with(['property', 'user', 'reviewer'])
                 ->when($request->status, function ($query, $status) {
@@ -39,10 +38,10 @@ class PropertyVerificationController extends Controller
     public function show(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         $verification = PropertyVerification::with(['property', 'user', 'reviewer'])->findOrFail($id);
-        
-        if (!$user->isAdmin() && $verification->user_id !== $user->id) {
+
+        if (! $user->isAdmin() && $verification->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -53,11 +52,11 @@ class PropertyVerificationController extends Controller
     {
         $user = $request->user();
         $property = Property::findOrFail($propertyId);
-        
-        if (!$user->isAdmin() && $property->user_id !== $user->id) {
+
+        if (! $user->isAdmin() && $property->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        
+
         $verification = PropertyVerification::firstOrCreate(
             ['property_id' => $propertyId],
             ['user_id' => $property->user_id]
@@ -80,7 +79,7 @@ class PropertyVerificationController extends Controller
 
         $user = $request->user();
         $property = Property::findOrFail($propertyId);
-        
+
         if ($property->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -93,7 +92,7 @@ class PropertyVerificationController extends Controller
         // Upload documents
         $documents = [];
         foreach ($request->file('ownership_documents') as $file) {
-            $path = $file->store('verifications/ownership/' . $propertyId, 'public');
+            $path = $file->store('verifications/ownership/'.$propertyId, 'public');
             $documents[] = $path;
         }
 
@@ -107,7 +106,7 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Ownership documents submitted successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
@@ -129,7 +128,7 @@ class PropertyVerificationController extends Controller
 
         $user = $request->user();
         $property = Property::findOrFail($propertyId);
-        
+
         if ($property->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -147,18 +146,18 @@ class PropertyVerificationController extends Controller
 
         if ($request->has_business_license && $request->hasFile('business_license_document')) {
             $updateData['business_license_document'] = $request->file('business_license_document')
-                ->store('verifications/business-license/' . $propertyId, 'public');
+                ->store('verifications/business-license/'.$propertyId, 'public');
         }
 
         if ($request->has_safety_certificate && $request->hasFile('safety_certificate_document')) {
             $updateData['safety_certificate_document'] = $request->file('safety_certificate_document')
-                ->store('verifications/safety-certificate/' . $propertyId, 'public');
+                ->store('verifications/safety-certificate/'.$propertyId, 'public');
         }
 
         if ($request->has_insurance) {
             if ($request->hasFile('insurance_document')) {
                 $updateData['insurance_document'] = $request->file('insurance_document')
-                    ->store('verifications/insurance/' . $propertyId, 'public');
+                    ->store('verifications/insurance/'.$propertyId, 'public');
             }
             $updateData['insurance_expiry_date'] = $request->insurance_expiry_date;
         }
@@ -168,7 +167,7 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Legal documents submitted successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
@@ -176,7 +175,7 @@ class PropertyVerificationController extends Controller
     {
         $user = $request->user();
         $property = Property::findOrFail($propertyId);
-        
+
         if ($property->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -188,7 +187,7 @@ class PropertyVerificationController extends Controller
 
         if ($verification->ownership_status !== 'approved') {
             return response()->json([
-                'message' => 'Ownership must be verified before requesting inspection'
+                'message' => 'Ownership must be verified before requesting inspection',
             ], 422);
         }
 
@@ -198,19 +197,19 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Inspection requested successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ], 200);
     }
 
     // Admin endpoints
     public function approveOwnership(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'ownership_status' => 'approved',
             'ownership_verified_at' => now(),
@@ -223,13 +222,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Ownership verification approved',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function rejectOwnership(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -242,7 +241,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'ownership_status' => 'rejected',
             'ownership_rejection_reason' => $request->reason,
@@ -254,18 +253,18 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Ownership verification rejected',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function approvePhotos(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'photos_status' => 'approved',
             'photos_verified_at' => now(),
@@ -278,13 +277,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Photos approved',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function rejectPhotos(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -297,7 +296,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'photos_status' => 'rejected',
             'photos_rejection_reason' => $request->reason,
@@ -309,18 +308,18 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Photos rejected',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function approveDetails(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'details_status' => 'approved',
             'details_verified_at' => now(),
@@ -333,13 +332,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Property details approved',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function rejectDetails(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -352,7 +351,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'details_status' => 'rejected',
             'details_to_correct' => $request->details_to_correct,
@@ -364,13 +363,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Property details need corrections',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function scheduleInspection(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -384,7 +383,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'inspection_status' => 'scheduled',
             'inspection_scheduled_at' => $request->inspection_scheduled_at,
@@ -394,13 +393,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Inspection scheduled successfully',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function completeInspection(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -416,7 +415,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'inspection_status' => $request->status,
             'inspection_completed_at' => now(),
@@ -431,24 +430,24 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Inspection completed',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function grantVerifiedBadge(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         if ($verification->overall_status !== 'verified') {
             return response()->json([
-                'message' => 'Property must be fully verified before granting badge'
+                'message' => 'Property must be fully verified before granting badge',
             ], 422);
         }
-        
+
         $verification->update([
             'has_verified_badge' => true,
             'last_verified_at' => now(),
@@ -459,13 +458,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Verified badge granted',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function revokeVerifiedBadge(Request $request, $id): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -478,7 +477,7 @@ class PropertyVerificationController extends Controller
         }
 
         $verification = PropertyVerification::findOrFail($id);
-        
+
         $verification->update([
             'has_verified_badge' => false,
             'admin_notes' => $request->reason,
@@ -488,13 +487,13 @@ class PropertyVerificationController extends Controller
 
         return response()->json([
             'message' => 'Verified badge revoked',
-            'verification' => $verification
+            'verification' => $verification,
         ]);
     }
 
     public function getStatistics(Request $request): JsonResponse
     {
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

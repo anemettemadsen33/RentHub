@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\OAuth2Service;
 use App\Models\OAuthClient;
-use Illuminate\Http\Request;
+use App\Services\OAuth2Service;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class OAuth2Controller extends Controller
@@ -37,23 +37,23 @@ class OAuth2Controller extends Controller
 
         $client = OAuthClient::where('client_id', $request->client_id)->first();
 
-        if (!$client) {
+        if (! $client) {
             return response()->json(['error' => 'Invalid client'], 401);
         }
 
-        if (!in_array($request->redirect_uri, json_decode($client->redirect_uris, true))) {
+        if (! in_array($request->redirect_uri, json_decode($client->redirect_uris, true))) {
             return response()->json(['error' => 'Invalid redirect URI'], 400);
         }
 
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
 
         $scopes = explode(' ', $request->scope ?? '');
         $code = $this->oauth2Service->generateAuthorizationCode($user, $client, $scopes);
 
-        $redirectUrl = $request->redirect_uri . '?' . http_build_query([
+        $redirectUrl = $request->redirect_uri.'?'.http_build_query([
             'code' => $code,
             'state' => $request->state,
         ]);
@@ -105,7 +105,7 @@ class OAuth2Controller extends Controller
             $request->client_secret
         );
 
-        if (!$tokens) {
+        if (! $tokens) {
             return response()->json(['error' => 'Invalid authorization code'], 400);
         }
 
@@ -131,7 +131,7 @@ class OAuth2Controller extends Controller
             $request->client_secret
         );
 
-        if (!$tokens) {
+        if (! $tokens) {
             return response()->json(['error' => 'Invalid refresh token'], 400);
         }
 
@@ -171,7 +171,7 @@ class OAuth2Controller extends Controller
 
         $tokenData = $this->oauth2Service->validateAccessToken($request->token);
 
-        if (!$tokenData) {
+        if (! $tokenData) {
             return response()->json(['active' => false]);
         }
 

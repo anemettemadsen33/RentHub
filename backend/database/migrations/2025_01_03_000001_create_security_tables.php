@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // OAuth Clients - skip if already exists (created by other migration)
-        if (!Schema::hasTable('oauth_clients')) {
+        if (! Schema::hasTable('oauth_clients')) {
             Schema::create('oauth_clients', function (Blueprint $table) {
                 $table->id();
                 $table->string('client_id')->unique();
@@ -23,7 +23,7 @@ return new class extends Migration
         }
 
         // OAuth Access Tokens
-        if (!Schema::hasTable('oauth_access_tokens')) {
+        if (! Schema::hasTable('oauth_access_tokens')) {
             Schema::create('oauth_access_tokens', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -32,13 +32,13 @@ return new class extends Migration
                 $table->json('scopes')->nullable();
                 $table->timestamp('expires_at');
                 $table->timestamps();
-                
+
                 $table->index(['token', 'expires_at']);
             });
         }
 
         // OAuth Refresh Tokens
-        if (!Schema::hasTable('oauth_refresh_tokens')) {
+        if (! Schema::hasTable('oauth_refresh_tokens')) {
             Schema::create('oauth_refresh_tokens', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -47,7 +47,7 @@ return new class extends Migration
                 $table->json('scopes')->nullable();
                 $table->timestamp('expires_at');
                 $table->timestamps();
-                
+
                 $table->index(['token', 'expires_at']);
             });
         }
@@ -71,7 +71,7 @@ return new class extends Migration
         // This table is already created by an earlier migration
 
         // Security Audit Logs
-        if (!Schema::hasTable('security_audit_logs')) {
+        if (! Schema::hasTable('security_audit_logs')) {
             Schema::create('security_audit_logs', function (Blueprint $table) {
                 $table->id();
                 $table->string('category'); // authentication, authorization, data_access, etc.
@@ -80,14 +80,14 @@ return new class extends Migration
                 $table->boolean('successful')->default(true);
                 $table->json('metadata')->nullable();
                 $table->timestamp('created_at');
-                
+
                 $table->index(['user_id', 'created_at']);
                 $table->index(['category', 'created_at']);
             });
         }
 
         // Security Incidents
-        if (!Schema::hasTable('security_incidents')) {
+        if (! Schema::hasTable('security_incidents')) {
             Schema::create('security_incidents', function (Blueprint $table) {
                 $table->id();
                 $table->string('type');
@@ -100,13 +100,13 @@ return new class extends Migration
                 $table->timestamp('detected_at');
                 $table->timestamp('resolved_at')->nullable();
                 $table->timestamps();
-                
+
                 $table->index(['status', 'severity']);
             });
         }
 
         // GDPR Requests
-        if (!Schema::hasTable('gdpr_requests')) {
+        if (! Schema::hasTable('gdpr_requests')) {
             Schema::create('gdpr_requests', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -116,13 +116,13 @@ return new class extends Migration
                 $table->timestamp('scheduled_at')->nullable();
                 $table->timestamp('completed_at')->nullable();
                 $table->timestamps();
-                
+
                 $table->index(['user_id', 'type', 'status']);
             });
         }
 
         // Data Consents
-        if (!Schema::hasTable('data_consents')) {
+        if (! Schema::hasTable('data_consents')) {
             Schema::create('data_consents', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -134,25 +134,25 @@ return new class extends Migration
                 $table->timestamp('granted_at')->nullable();
                 $table->timestamp('revoked_at')->nullable();
                 $table->timestamps();
-                
+
                 $table->index(['user_id', 'consent_type']);
             });
         }
 
         // Password History (for preventing reuse)
-        if (!Schema::hasTable('password_histories')) {
+        if (! Schema::hasTable('password_histories')) {
             Schema::create('password_histories', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
                 $table->string('password');
                 $table->timestamps();
-                
+
                 $table->index('user_id');
             });
         }
 
         // Login Attempts
-        if (!Schema::hasTable('login_attempts')) {
+        if (! Schema::hasTable('login_attempts')) {
             Schema::create('login_attempts', function (Blueprint $table) {
                 $table->id();
                 $table->string('email');
@@ -160,7 +160,7 @@ return new class extends Migration
                 $table->boolean('successful')->default(false);
                 $table->text('user_agent')->nullable();
                 $table->timestamp('attempted_at');
-                
+
                 $table->index(['email', 'attempted_at']);
                 $table->index(['ip_address', 'attempted_at']);
             });

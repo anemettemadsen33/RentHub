@@ -2,12 +2,11 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
-use App\Models\DataProcessingConsent;
 use App\Models\DataExportRequest;
-use Illuminate\Support\Facades\Log;
+use App\Models\DataProcessingConsent;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CCPAService
 {
@@ -75,6 +74,7 @@ class CCPAService
             ]);
 
             DB::commit();
+
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -82,6 +82,7 @@ class CCPAService
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }

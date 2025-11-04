@@ -22,23 +22,23 @@ class CheckAPIKey
     {
         $key = $this->getKeyFromRequest($request);
 
-        if (!$key) {
+        if (! $key) {
             return response()->json(['error' => 'API key required'], 401);
         }
 
         $apiKey = $this->apiKeyService->validateKey($key);
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             return response()->json(['error' => 'Invalid or expired API key'], 401);
         }
 
         // Check IP whitelist
-        if (!$this->apiKeyService->isIpAllowed($apiKey, $request->ip())) {
+        if (! $this->apiKeyService->isIpAllowed($apiKey, $request->ip())) {
             return response()->json(['error' => 'IP not allowed'], 403);
         }
 
         // Check permission if specified
-        if ($permission && !$this->apiKeyService->hasPermission($apiKey, $permission)) {
+        if ($permission && ! $this->apiKeyService->hasPermission($apiKey, $permission)) {
             return response()->json(['error' => 'Insufficient permissions'], 403);
         }
 

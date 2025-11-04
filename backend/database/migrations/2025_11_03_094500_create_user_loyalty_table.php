@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('next_tier_points')->nullable(); // Points needed for next tier
             $table->date('last_birthday_bonus_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique('user_id');
         });
     }

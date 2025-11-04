@@ -27,7 +27,7 @@ class GeneratePricePredictionsJob implements ShouldQueue
             $priceOptimizationService->predictPrices($this->propertyId, $this->startDate, $this->endDate);
             Log::info("Generated price predictions for property {$this->propertyId}");
         } catch (\Exception $e) {
-            Log::error("Failed to generate price predictions for property {$this->propertyId}: " . $e->getMessage());
+            Log::error("Failed to generate price predictions for property {$this->propertyId}: ".$e->getMessage());
             throw $e;
         }
     }

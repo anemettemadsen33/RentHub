@@ -86,9 +86,9 @@ class SmartPricingService
 
         $bookedDays = $property->bookings()
             ->whereIn('status', ['confirmed', 'checked_in'])
-            ->where(function($q) use ($startDate, $endDate) {
+            ->where(function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('check_in_date', [$startDate, $endDate])
-                  ->orWhereBetween('check_out_date', [$startDate, $endDate]);
+                    ->orWhereBetween('check_out_date', [$startDate, $endDate]);
             })
             ->count();
 

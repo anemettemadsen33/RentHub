@@ -45,12 +45,13 @@ class CacheOptimizationService
     public function getCompressedResponse(string $key): ?array
     {
         $compressed = Cache::get($key);
-        
-        if (!$compressed) {
+
+        if (! $compressed) {
             return null;
         }
 
         $decompressed = gzdecode($compressed);
+
         return json_decode($decompressed, true);
     }
 
@@ -91,7 +92,7 @@ class CacheOptimizationService
         int $ttl = 3600
     ) {
         $cacheKey = "{$key}:{$id}";
-        
+
         return Cache::remember($cacheKey, $ttl, function () use ($fetchFromDB, $id) {
             return $fetchFromDB($id);
         });
@@ -103,7 +104,7 @@ class CacheOptimizationService
     public function getCacheStats(): array
     {
         $redis = Redis::connection();
-        
+
         return [
             'memory_usage' => $redis->info('memory')['used_memory_human'] ?? 'N/A',
             'total_keys' => $redis->dbSize(),
@@ -118,12 +119,12 @@ class CacheOptimizationService
     {
         $redis = Redis::connection();
         $stats = $redis->info('stats');
-        
+
         $hits = $stats['keyspace_hits'] ?? 0;
         $misses = $stats['keyspace_misses'] ?? 0;
-        
+
         $total = $hits + $misses;
-        
+
         return $total > 0 ? ($hits / $total) * 100 : 0;
     }
 }

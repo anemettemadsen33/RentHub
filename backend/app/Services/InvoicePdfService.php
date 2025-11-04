@@ -14,7 +14,7 @@ class InvoicePdfService
             'invoice' => $invoice->load(['booking', 'user', 'property', 'bankAccount']),
         ]);
 
-        $filename = 'invoices/' . $invoice->invoice_number . '.pdf';
+        $filename = 'invoices/'.$invoice->invoice_number.'.pdf';
         Storage::put($filename, $pdf->output());
 
         $invoice->update(['pdf_path' => $filename]);
@@ -24,16 +24,16 @@ class InvoicePdfService
 
     public function download(Invoice $invoice)
     {
-        if (!$invoice->pdf_path || !Storage::exists($invoice->pdf_path)) {
+        if (! $invoice->pdf_path || ! Storage::exists($invoice->pdf_path)) {
             $this->generate($invoice);
         }
 
-        return Storage::download($invoice->pdf_path, $invoice->invoice_number . '.pdf');
+        return Storage::download($invoice->pdf_path, $invoice->invoice_number.'.pdf');
     }
 
     public function stream(Invoice $invoice)
     {
-        if (!$invoice->pdf_path || !Storage::exists($invoice->pdf_path)) {
+        if (! $invoice->pdf_path || ! Storage::exists($invoice->pdf_path)) {
             $this->generate($invoice);
         }
 

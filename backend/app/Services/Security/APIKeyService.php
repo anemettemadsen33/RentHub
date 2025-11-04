@@ -2,11 +2,11 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
 use App\Models\ApiKey;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class APIKeyService
 {
@@ -19,7 +19,7 @@ class APIKeyService
         array $scopes = [],
         ?Carbon $expiresAt = null
     ): array {
-        $key = 'rh_' . Str::random(32);
+        $key = 'rh_'.Str::random(32);
         $hashedKey = Hash::make($key);
 
         $apiKey = ApiKey::create([
@@ -82,7 +82,7 @@ class APIKeyService
     public function rotateKey(int $oldKeyId): array
     {
         $oldKey = ApiKey::findOrFail($oldKeyId);
-        
+
         // Generate new key
         $newKeyData = $this->generateKey(
             $oldKey->user,

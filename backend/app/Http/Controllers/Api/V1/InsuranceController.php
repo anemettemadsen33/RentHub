@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\InsurancePlan;
+use App\Models\Booking;
 use App\Models\BookingInsurance;
 use App\Models\InsuranceClaim;
-use App\Models\Booking;
+use App\Models\InsurancePlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -74,16 +74,16 @@ class InsuranceController extends Controller
         $booking = Booking::findOrFail($request->booking_id);
         $plan = InsurancePlan::findOrFail($request->insurance_plan_id);
 
-        if ($booking->user_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($booking->user_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $nights = $booking->check_in->diffInDays($booking->check_out);
         $bookingTotal = $booking->total_price;
 
-        if (!$plan->isEligibleForBooking($bookingTotal, $nights)) {
+        if (! $plan->isEligibleForBooking($bookingTotal, $nights)) {
             return response()->json([
-                'error' => 'This insurance plan is not eligible for this booking'
+                'error' => 'This insurance plan is not eligible for this booking',
             ], 422);
         }
 
@@ -94,7 +94,7 @@ class InsuranceController extends Controller
 
         if ($existingInsurance) {
             return response()->json([
-                'error' => 'This insurance plan is already added to this booking'
+                'error' => 'This insurance plan is already added to this booking',
             ], 422);
         }
 
@@ -122,7 +122,7 @@ class InsuranceController extends Controller
     {
         $booking = Booking::findOrFail($bookingId);
 
-        if ($booking->user_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($booking->user_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -141,7 +141,7 @@ class InsuranceController extends Controller
         $insurance = BookingInsurance::findOrFail($insuranceId);
         $booking = $insurance->booking;
 
-        if ($booking->user_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($booking->user_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -154,7 +154,7 @@ class InsuranceController extends Controller
         }
 
         return response()->json([
-            'error' => 'Insurance cannot be activated'
+            'error' => 'Insurance cannot be activated',
         ], 422);
     }
 
@@ -163,7 +163,7 @@ class InsuranceController extends Controller
         $insurance = BookingInsurance::findOrFail($insuranceId);
         $booking = $insurance->booking;
 
-        if ($booking->user_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($booking->user_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -176,7 +176,7 @@ class InsuranceController extends Controller
         }
 
         return response()->json([
-            'error' => 'Insurance cannot be cancelled'
+            'error' => 'Insurance cannot be cancelled',
         ], 422);
     }
 
@@ -202,15 +202,15 @@ class InsuranceController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        if (!$insurance->canBeClaimed()) {
+        if (! $insurance->canBeClaimed()) {
             return response()->json([
-                'error' => 'This insurance cannot be claimed'
+                'error' => 'This insurance cannot be claimed',
             ], 422);
         }
 
         if ($request->claimed_amount > $insurance->coverage_amount) {
             return response()->json([
-                'error' => 'Claimed amount exceeds coverage limit'
+                'error' => 'Claimed amount exceeds coverage limit',
             ], 422);
         }
 
@@ -252,10 +252,10 @@ class InsuranceController extends Controller
             'bookingInsurance.insurancePlan',
             'bookingInsurance.booking.property',
             'user',
-            'reviewer'
+            'reviewer',
         ])->findOrFail($claimId);
 
-        if ($claim->user_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($claim->user_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

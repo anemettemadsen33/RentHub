@@ -24,7 +24,7 @@ return new class extends Migration
                 'airport_pickup',
                 'late_checkout',
                 'welcome_gift',
-                'other'
+                'other',
             ]);
             $table->string('name');
             $table->text('description')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['tier_id', 'is_active']);
         });
     }

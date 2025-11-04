@@ -53,12 +53,12 @@ class GuestReference extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($reference) {
-            if (!$reference->verification_code) {
+            if (! $reference->verification_code) {
                 $reference->verification_code = Str::random(32);
             }
-            if (!$reference->expires_at) {
+            if (! $reference->expires_at) {
                 $reference->expires_at = now()->addDays(14);
             }
         });
@@ -89,7 +89,7 @@ class GuestReference extends Model
         $this->responded_at = now();
         $this->status = 'verified';
         $this->save();
-        
+
         $this->screening->increment('references_verified');
         $this->screening->screening_score = $this->screening->calculateScreeningScore();
         $this->screening->risk_level = $this->screening->determineRiskLevel();

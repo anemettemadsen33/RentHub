@@ -21,7 +21,7 @@ return [
 
     'database' => [
         'enabled' => env('BACKUP_DATABASE_ENABLED', true),
-        
+
         'connections' => [
             'mysql' => [
                 'driver' => 'mysql',
@@ -68,7 +68,7 @@ return [
 
     'files' => [
         'enabled' => env('BACKUP_FILES_ENABLED', true),
-        
+
         'include' => [
             'storage' => [
                 'path' => storage_path('app'),
@@ -172,7 +172,7 @@ return [
 
     'notifications' => [
         'enabled' => env('BACKUP_NOTIFICATIONS_ENABLED', true),
-        
+
         'events' => [
             'backup_success' => true,
             'backup_failure' => true,
@@ -207,9 +207,9 @@ return [
 
     'testing' => [
         'enabled' => env('BACKUP_TESTING_ENABLED', true),
-        
+
         'schedule' => env('BACKUP_TESTING_SCHEDULE', 'weekly'), // daily, weekly, monthly
-        
+
         'tests' => [
             'database_restore' => true,
             'file_integrity' => true,
@@ -244,7 +244,7 @@ return [
         'failover' => [
             'enabled' => env('DR_FAILOVER_ENABLED', false),
             'automatic' => env('DR_FAILOVER_AUTOMATIC', false),
-            
+
             'secondary_site' => [
                 'url' => env('DR_SECONDARY_URL'),
                 'database_host' => env('DR_SECONDARY_DB_HOST'),
@@ -270,7 +270,7 @@ return [
 
     'verification' => [
         'enabled' => env('BACKUP_VERIFICATION_ENABLED', true),
-        
+
         'methods' => [
             'checksum' => true, // MD5/SHA256 verification
             'size_check' => true,
@@ -290,9 +290,9 @@ return [
     'cleanup' => [
         'enabled' => env('BACKUP_CLEANUP_ENABLED', true),
         'schedule' => env('BACKUP_CLEANUP_SCHEDULE', 'daily'),
-        
+
         'strategy' => env('BACKUP_CLEANUP_STRATEGY', 'grandfather-father-son'), // grandfather-father-son, simple
-        
+
         'max_storage_size' => env('BACKUP_MAX_STORAGE_SIZE', 50), // GB
         'min_free_space' => env('BACKUP_MIN_FREE_SPACE', 10), // GB
     ],
@@ -318,7 +318,7 @@ return [
 
     'monitoring' => [
         'enabled' => env('BACKUP_MONITORING_ENABLED', true),
-        
+
         'metrics' => [
             'backup_size' => true,
             'backup_duration' => true,

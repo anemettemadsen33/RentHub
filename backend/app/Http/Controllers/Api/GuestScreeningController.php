@@ -13,25 +13,25 @@ class GuestScreeningController extends Controller
     public function index(Request $request)
     {
         $query = GuestScreening::with(['user', 'booking', 'reviewer', 'documents', 'creditCheck', 'references']);
-        
+
         if ($request->has('user_id')) {
             $query->where('user_id', $request->user_id);
         }
-        
+
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->has('risk_level')) {
             $query->where('risk_level', $request->risk_level);
         }
-        
+
         if ($request->boolean('active_only')) {
             $query->active();
         }
-        
+
         $screenings = $query->latest()->paginate($request->per_page ?? 15);
-        
+
         return response()->json($screenings);
     }
 
@@ -67,7 +67,7 @@ class GuestScreeningController extends Controller
 
         return response()->json([
             'message' => 'Guest screening initiated successfully',
-            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references'])
+            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references']),
         ], 201);
     }
 
@@ -75,14 +75,14 @@ class GuestScreeningController extends Controller
     {
         $screening = GuestScreening::with(['user', 'booking', 'reviewer', 'documents', 'creditCheck', 'references'])
             ->findOrFail($id);
-        
+
         return response()->json($screening);
     }
 
     public function update(Request $request, $id)
     {
         $screening = GuestScreening::findOrFail($id);
-        
+
         $validator = Validator::make($request->all(), [
             'status' => 'sometimes|in:pending,in_progress,approved,rejected,expired',
             'risk_level' => 'sometimes|in:low,medium,high,unknown',
@@ -109,7 +109,7 @@ class GuestScreeningController extends Controller
 
         return response()->json([
             'message' => 'Guest screening updated successfully',
-            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references'])
+            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references']),
         ]);
     }
 
@@ -119,7 +119,7 @@ class GuestScreeningController extends Controller
         $screening->delete();
 
         return response()->json([
-            'message' => 'Guest screening deleted successfully'
+            'message' => 'Guest screening deleted successfully',
         ]);
     }
 
@@ -149,7 +149,7 @@ class GuestScreeningController extends Controller
 
         return response()->json([
             'message' => 'Identity verified successfully',
-            'screening' => $screening
+            'screening' => $screening,
         ]);
     }
 
@@ -168,7 +168,7 @@ class GuestScreeningController extends Controller
 
         return response()->json([
             'message' => 'Phone verified successfully',
-            'screening' => $screening
+            'screening' => $screening,
         ]);
     }
 
@@ -187,7 +187,7 @@ class GuestScreeningController extends Controller
             'screening_id' => $screening->id,
             'score' => $score,
             'risk_level' => $riskLevel,
-            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references'])
+            'screening' => $screening->load(['user', 'documents', 'creditCheck', 'references']),
         ]);
     }
 
@@ -232,7 +232,7 @@ class GuestScreeningController extends Controller
             ->latest()
             ->first();
 
-        if (!$screening) {
+        if (! $screening) {
             return response()->json(['message' => 'No active screening found'], 404);
         }
 

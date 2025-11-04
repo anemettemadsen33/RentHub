@@ -26,7 +26,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Welcome to RentHub!')
-            ->greeting('Welcome, ' . $notifiable->name . '!')
+            ->greeting('Welcome, '.$notifiable->name.'!')
             ->line('Thank you for joining RentHub - your trusted platform for property rentals.')
             ->line('We are excited to have you as part of our community!')
             ->line('**Here is what you can do:**')

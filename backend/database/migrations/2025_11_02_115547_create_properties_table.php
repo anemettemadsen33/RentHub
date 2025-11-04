@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('price_per_night', 10, 2);
             $table->decimal('cleaning_fee', 10, 2)->nullable();
             $table->decimal('security_deposit', 10, 2)->nullable();
-            
+
             // Address fields
             $table->string('street_address');
             $table->string('city');
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('postal_code');
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
-            
+
             // Property details
             $table->integer('area_sqm')->nullable(); // area in square meters
             $table->year('built_year')->nullable();
@@ -39,16 +39,16 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->timestamp('available_from')->nullable();
             $table->timestamp('available_until')->nullable();
-            
+
             // Images
             $table->json('images')->nullable(); // array of image paths
             $table->string('main_image')->nullable();
-            
+
             // Owner
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
+
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['city', 'country']);
             $table->index(['price_per_night']);

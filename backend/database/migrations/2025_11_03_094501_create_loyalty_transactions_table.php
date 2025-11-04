@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable(); // For earned points
             $table->boolean('is_expired')->default(false);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'created_at']);
             $table->index(['user_id', 'type']);
             $table->index('expires_at');

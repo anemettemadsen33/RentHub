@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InsuranceClaim extends Model
 {
@@ -71,7 +71,7 @@ class InsuranceClaim extends Model
     public static function generateClaimNumber(): string
     {
         do {
-            $claimNumber = 'CLM-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+            $claimNumber = 'CLM-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6));
         } while (self::where('claim_number', $claimNumber)->exists());
 
         return $claimNumber;
@@ -96,7 +96,7 @@ class InsuranceClaim extends Model
 
     public function reject(?string $notes = null, ?int $reviewedBy = null): bool
     {
-        if (!in_array($this->status, ['submitted', 'under_review'])) {
+        if (! in_array($this->status, ['submitted', 'under_review'])) {
             return false;
         }
 
@@ -119,7 +119,7 @@ class InsuranceClaim extends Model
         $this->update([
             'status' => 'paid',
             'resolved_at' => now(),
-            'admin_notes' => ($this->admin_notes ?? '') . "\n\n" . ($notes ?? ''),
+            'admin_notes' => ($this->admin_notes ?? '')."\n\n".($notes ?? ''),
         ]);
 
         return true;

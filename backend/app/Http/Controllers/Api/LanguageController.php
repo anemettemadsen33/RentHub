@@ -34,7 +34,7 @@ class LanguageController extends Controller
     {
         $language = Language::getDefault();
 
-        if (!$language) {
+        if (! $language) {
             return response()->json([
                 'success' => false,
                 'message' => 'No default language set',

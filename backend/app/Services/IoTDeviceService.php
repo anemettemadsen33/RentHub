@@ -12,7 +12,7 @@ class IoTDeviceService
     public function sendCommand(IoTDevice $device, User $user, string $commandType, array $params = []): IoTDeviceCommand
     {
         // Check if user has permission
-        if (!$this->canControlDevice($device, $user)) {
+        if (! $this->canControlDevice($device, $user)) {
             throw new \Exception('User does not have permission to control this device');
         }
 
@@ -72,11 +72,11 @@ class IoTDeviceService
     public function controlLight(IoTDevice $device, User $user, bool $turnOn, ?int $brightness = null, ?string $color = null): IoTDeviceCommand
     {
         $params = ['is_on' => $turnOn];
-        
+
         if ($brightness !== null) {
             $params['brightness'] = $brightness;
         }
-        
+
         if ($color !== null) {
             $params['color'] = $color;
         }
@@ -90,7 +90,7 @@ class IoTDeviceService
             throw new \Exception('Device is not a camera');
         }
 
-        if (!$this->canViewCamera($device, $user)) {
+        if (! $this->canViewCamera($device, $user)) {
             throw new \Exception('User does not have permission to view this camera');
         }
 
@@ -142,7 +142,7 @@ class IoTDeviceService
     {
         $capabilities = $device->deviceType->capabilities ?? [];
 
-        if (!in_array($commandType, $capabilities)) {
+        if (! in_array($commandType, $capabilities)) {
             throw new \Exception("Command {$commandType} is not supported by this device");
         }
 
@@ -172,7 +172,7 @@ class IoTDeviceService
     {
         // This would integrate with actual IoT platform (AWS IoT, Google IoT, etc.)
         // For now, we'll simulate the command being sent
-        
+
         try {
             $command->markAsSent();
 
@@ -184,7 +184,7 @@ class IoTDeviceService
             // - MQTT broker
             // - Device manufacturer's API
 
-            Log::info("IoT Command sent", [
+            Log::info('IoT Command sent', [
                 'device_id' => $device->device_id,
                 'command' => $command->command_type,
                 'params' => $command->command_params,

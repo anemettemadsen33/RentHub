@@ -27,7 +27,7 @@ return new class extends Migration
             $table->text('error_message')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['property_id', 'status']);
             $table->index('provider');
         });

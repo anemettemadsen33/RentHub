@@ -30,6 +30,7 @@ class CurrencyService
     {
         return Cache::remember("currency_rate_{$code}", 3600, function () use ($code) {
             $currency = Currency::where('code', $code)->first();
+
             return $currency ? $currency->exchange_rate : 1;
         });
     }
@@ -41,18 +42,18 @@ class CurrencyService
     {
         try {
             $response = Http::get('https://api.exchangerate-api.com/v4/latest/USD');
-            
+
             if ($response->successful()) {
                 $rates = $response->json()['rates'];
-                
+
                 foreach ($rates as $code => $rate) {
                     Currency::where('code', $code)->update(['exchange_rate' => $rate]);
                 }
-                
+
                 Cache::flush();
             }
         } catch (\Exception $e) {
-            \Log::error('Failed to update currency rates: ' . $e->getMessage());
+            \Log::error('Failed to update currency rates: '.$e->getMessage());
         }
     }
 
@@ -62,11 +63,11 @@ class CurrencyService
     public function format(float $amount, string $code): string
     {
         $currency = Currency::where('code', $code)->first();
-        
-        if (!$currency) {
+
+        if (! $currency) {
             return number_format($amount, 2);
         }
 
-        return $currency->symbol . ' ' . number_format($amount, 2);
+        return $currency->symbol.' '.number_format($amount, 2);
     }
 }

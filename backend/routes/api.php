@@ -1,35 +1,33 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PropertyController;
-use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
+use App\Http\Controllers\Api\CreditCheckController;
+use App\Http\Controllers\API\CurrencyController;
 use App\Http\Controllers\Api\ExternalCalendarController;
+use App\Http\Controllers\Api\GDPRController;
 // GoogleCalendarController temporarily not imported to avoid Google Calendar dependency at boot
 // use App\Http\Controllers\Api\GoogleCalendarController;
-use App\Http\Controllers\Api\MapSearchController;
-use App\Http\Controllers\Api\SavedSearchController;
-use App\Http\Controllers\Api\UserVerificationController;
-use App\Http\Controllers\Api\PropertyVerificationController;
-use App\Http\Controllers\Api\GuestVerificationController;
-use App\Http\Controllers\Api\GuestScreeningController;
-use App\Http\Controllers\Api\CreditCheckController;
 use App\Http\Controllers\Api\GuestReferenceController;
+use App\Http\Controllers\Api\GuestScreeningController;
+use App\Http\Controllers\Api\GuestVerificationController;
+use App\Http\Controllers\Api\HealthCheckController;
+use App\Http\Controllers\API\LanguageController;
+use App\Http\Controllers\Api\MapSearchController;
+use App\Http\Controllers\Api\OAuth2Controller;
+use App\Http\Controllers\Api\PerformanceController;
+use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\PropertyVerificationController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SecurityAuditController;
+use App\Http\Controllers\Api\SeoController;
+use App\Http\Controllers\Api\UserVerificationController;
 use App\Http\Controllers\Api\V1\OwnerDashboardController;
+use App\Http\Controllers\Api\V1\PropertyComparisonController;
 use App\Http\Controllers\Api\V1\TenantDashboardController;
 use App\Http\Controllers\Api\V1\TranslationController;
-use App\Http\Controllers\Api\V1\PropertyComparisonController;
-use App\Http\Controllers\API\LanguageController;
-use App\Http\Controllers\API\CurrencyController;
-use App\Http\Controllers\Api\SeoController;
-use App\Http\Controllers\Api\PerformanceController;
-use App\Http\Controllers\Api\HealthCheckController;
-use App\Http\Controllers\Api\OAuth2Controller;
-use App\Http\Controllers\Api\GDPRController;
-use App\Http\Controllers\Api\SecurityAuditController;
+use Illuminate\Support\Facades\Route;
 
 // Health Check Routes (outside versioned routes)
 Route::get('/health', [HealthCheckController::class, 'index']);
@@ -54,16 +52,16 @@ Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
-    
+
     // Password Reset
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-    
+
     // Two-Factor Authentication (Login)
     Route::post('/2fa/send-code', [AuthController::class, 'sendTwoFactorCode']);
     Route::post('/2fa/verify', [AuthController::class, 'verifyTwoFactorCode']);
     Route::post('/2fa/verify-recovery', [AuthController::class, 'verifyRecoveryCode']);
-    
+
     // Social Login
     Route::get('/auth/{provider}', [AuthController::class, 'redirectToProvider']);
     Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
@@ -106,7 +104,7 @@ Route::prefix('v1')->group(function () {
 
     // OAuth 2.0 Public Endpoints
     Route::post('/oauth/token', [OAuth2Controller::class, 'token']);
-    
+
     // GDPR Public Endpoints
     Route::get('/gdpr/data-protection', [GDPRController::class, 'dataProtection']);
 });
@@ -156,18 +154,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [\App\Http\Controllers\Api\ProfileController::class, 'updateProfile']);
     Route::post('/profile/avatar', [\App\Http\Controllers\Api\ProfileController::class, 'uploadAvatar']);
     Route::delete('/profile/avatar', [\App\Http\Controllers\Api\ProfileController::class, 'deleteAvatar']);
-    
+
     // User Settings
     Route::put('/settings', [\App\Http\Controllers\Api\ProfileController::class, 'updateSettings']);
     Route::put('/privacy', [\App\Http\Controllers\Api\ProfileController::class, 'updatePrivacySettings']);
-    
+
     // Verification Status
     Route::get('/verification-status', [\App\Http\Controllers\Api\ProfileController::class, 'getVerificationStatus']);
-    
+
     // ID Verification
     Route::post('/verification/government-id', [\App\Http\Controllers\Api\VerificationController::class, 'uploadGovernmentId']);
     Route::get('/verification/status', [\App\Http\Controllers\Api\VerificationController::class, 'getStatus']);
-    
+
     // Admin: ID Verification Management
     Route::post('/admin/verification/{userId}/approve', [\App\Http\Controllers\Api\VerificationController::class, 'approveGovernmentId']);
     Route::post('/admin/verification/{userId}/reject', [\App\Http\Controllers\Api\VerificationController::class, 'rejectGovernmentId']);
@@ -176,7 +174,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/roles', [\App\Http\Controllers\Api\RoleController::class, 'getRoles']);
     Route::get('/my-role', [\App\Http\Controllers\Api\RoleController::class, 'getMyRole']);
     Route::post('/check-permission', [\App\Http\Controllers\Api\RoleController::class, 'checkPermission']);
-    
+
     // Admin: Role Management
     Route::get('/admin/users-by-role', [\App\Http\Controllers\Api\RoleController::class, 'getUsersByRole'])->middleware('role:admin');
     Route::put('/admin/users/{userId}/role', [\App\Http\Controllers\Api\RoleController::class, 'changeUserRole'])->middleware('role:admin');
@@ -186,16 +184,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties', [PropertyController::class, 'store'])->middleware('role:owner,admin');
     Route::put('/properties/{property}', [PropertyController::class, 'update'])->middleware('role:owner,admin');
     Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])->middleware('role:owner,admin');
-    
+
     // Property Status Management
     Route::post('/properties/{property}/publish', [PropertyController::class, 'publish'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/unpublish', [PropertyController::class, 'unpublish'])->middleware('role:owner,admin');
-    
+
     // Property Calendar Management (legacy endpoints)
     Route::post('/properties/{property}/block-dates', [PropertyController::class, 'blockDates'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/unblock-dates', [PropertyController::class, 'unblockDates'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/custom-pricing', [PropertyController::class, 'setCustomPricing'])->middleware('role:owner,admin');
-    
+
     // Enhanced Calendar Management
     Route::get('/properties/{property}/calendar', [CalendarController::class, 'getAvailability']);
     Route::get('/properties/{property}/calendar/pricing', [CalendarController::class, 'getPricingCalendar']);
@@ -204,7 +202,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties/{property}/calendar/bulk-unblock', [CalendarController::class, 'bulkUnblockDates'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/calendar/bulk-pricing', [CalendarController::class, 'bulkSetPricing'])->middleware('role:owner,admin');
     Route::delete('/properties/{property}/calendar/bulk-pricing', [CalendarController::class, 'bulkRemovePricing'])->middleware('role:owner,admin');
-    
+
     // External Calendar Management (iCal, Airbnb, Booking.com sync)
     Route::get('/properties/{property}/external-calendars', [ExternalCalendarController::class, 'index'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/external-calendars', [ExternalCalendarController::class, 'store'])->middleware('role:owner,admin');
@@ -213,7 +211,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties/{property}/external-calendars/{externalCalendar}/sync', [ExternalCalendarController::class, 'sync'])->middleware('role:owner,admin');
     Route::get('/properties/{property}/external-calendars/{externalCalendar}/logs', [ExternalCalendarController::class, 'syncLogs'])->middleware('role:owner,admin');
     Route::get('/properties/{property}/ical-url', [ExternalCalendarController::class, 'getICalUrl'])->middleware('role:owner,admin');
-    
+
     // Property Images
     Route::post('/properties/{property}/images', [PropertyController::class, 'uploadImages'])->middleware('role:owner,admin');
     Route::delete('/properties/{property}/images/{imageIndex}', [PropertyController::class, 'deleteImage'])->middleware('role:owner,admin');
@@ -235,10 +233,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'store'])->middleware('role:tenant,owner,admin');
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
-    
+
     // Review responses
     Route::post('/reviews/{id}/response', [ReviewController::class, 'addResponse'])->middleware('role:owner,admin');
-    
+
     // Review helpful votes
     Route::post('/reviews/{id}/vote', [ReviewController::class, 'vote']);
 
@@ -260,11 +258,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Api\NotificationController::class, 'markAllAsRead']);
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);
     Route::delete('/notifications/{id}', [\App\Http\Controllers\Api\NotificationController::class, 'destroy']);
-    
+
     // Notification Preferences
     Route::get('/notifications/preferences', [\App\Http\Controllers\Api\NotificationController::class, 'getPreferences']);
     Route::put('/notifications/preferences', [\App\Http\Controllers\Api\NotificationController::class, 'updatePreferences']);
-    
+
     // Test notification (dev only)
     Route::post('/notifications/test', [\App\Http\Controllers\Api\NotificationController::class, 'testNotification']);
 
@@ -276,7 +274,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::patch('/conversations/{id}/unarchive', [\App\Http\Controllers\Api\ConversationController::class, 'unarchive']);
     Route::delete('/conversations/{id}', [\App\Http\Controllers\Api\ConversationController::class, 'destroy']);
     Route::post('/conversations/{id}/mark-all-read', [\App\Http\Controllers\Api\ConversationController::class, 'markAllAsRead']);
-    
+
     // Messages
     Route::get('/conversations/{conversationId}/messages', [\App\Http\Controllers\Api\MessageController::class, 'index']);
     Route::post('/conversations/{conversationId}/messages', [\App\Http\Controllers\Api\MessageController::class, 'store']);
@@ -291,12 +289,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/wishlists/{id}', [\App\Http\Controllers\Api\WishlistController::class, 'show']);
     Route::put('/wishlists/{id}', [\App\Http\Controllers\Api\WishlistController::class, 'update']);
     Route::delete('/wishlists/{id}', [\App\Http\Controllers\Api\WishlistController::class, 'destroy']);
-    
+
     // Wishlist Items
     Route::post('/wishlists/{id}/properties', [\App\Http\Controllers\Api\WishlistController::class, 'addProperty']);
     Route::delete('/wishlists/{wishlistId}/items/{itemId}', [\App\Http\Controllers\Api\WishlistController::class, 'removeProperty']);
     Route::put('/wishlists/{wishlistId}/items/{itemId}', [\App\Http\Controllers\Api\WishlistController::class, 'updateItem']);
-    
+
     // Quick toggle property in default wishlist
     Route::post('/wishlists/toggle-property', [\App\Http\Controllers\Api\WishlistController::class, 'toggleProperty']);
     Route::get('/wishlists/check/{propertyId}', [\App\Http\Controllers\Api\WishlistController::class, 'checkProperty']);
@@ -327,7 +325,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/user-verifications/address', [UserVerificationController::class, 'submitAddressVerification']);
     Route::post('/user-verifications/background-check', [UserVerificationController::class, 'requestBackgroundCheck']);
     Route::get('/user-verifications/statistics', [UserVerificationController::class, 'getStatistics']);
-    
+
     // Admin: User Verification Management
     Route::post('/admin/user-verifications/{id}/approve-id', [UserVerificationController::class, 'approveId'])->middleware('role:admin');
     Route::post('/admin/user-verifications/{id}/reject-id', [UserVerificationController::class, 'rejectId'])->middleware('role:admin');
@@ -341,7 +339,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/insurance/booking/{bookingId}', [\App\Http\Controllers\Api\V1\InsuranceController::class, 'getBookingInsurances']);
     Route::post('/insurance/{insuranceId}/activate', [\App\Http\Controllers\Api\V1\InsuranceController::class, 'activateInsurance']);
     Route::post('/insurance/{insuranceId}/cancel', [\App\Http\Controllers\Api\V1\InsuranceController::class, 'cancelInsurance']);
-    
+
     // Insurance Claims
     Route::post('/insurance/claims', [\App\Http\Controllers\Api\V1\InsuranceController::class, 'submitClaim']);
     Route::get('/insurance/claims', [\App\Http\Controllers\Api\V1\InsuranceController::class, 'getUserClaims']);
@@ -358,7 +356,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/smart-locks/{lockId}/lock', [\App\Http\Controllers\Api\V1\SmartLockController::class, 'lock']);
         Route::post('/smart-locks/{lockId}/unlock', [\App\Http\Controllers\Api\V1\SmartLockController::class, 'unlock']);
         Route::get('/smart-locks/{lockId}/activities', [\App\Http\Controllers\Api\V1\SmartLockController::class, 'activities']);
-        
+
         // Access Codes
         Route::get('/smart-locks/{lockId}/access-codes', [\App\Http\Controllers\Api\V1\AccessCodeController::class, 'index']);
         Route::post('/smart-locks/{lockId}/access-codes', [\App\Http\Controllers\Api\V1\AccessCodeController::class, 'store']);
@@ -366,7 +364,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/smart-locks/{lockId}/access-codes/{codeId}', [\App\Http\Controllers\Api\V1\AccessCodeController::class, 'update']);
         Route::delete('/smart-locks/{lockId}/access-codes/{codeId}', [\App\Http\Controllers\Api\V1\AccessCodeController::class, 'destroy']);
     });
-    
+
     // Guest access to their booking code
     Route::get('/bookings/{bookingId}/access-code', [\App\Http\Controllers\Api\V1\AccessCodeController::class, 'myCode']);
 
@@ -378,7 +376,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties/{propertyId}/verification/legal-documents', [PropertyVerificationController::class, 'submitLegalDocuments']);
     Route::post('/properties/{propertyId}/verification/request-inspection', [PropertyVerificationController::class, 'requestInspection']);
     Route::get('/property-verifications/statistics', [PropertyVerificationController::class, 'getStatistics']);
-    
+
     // Admin: Property Verification Management
     Route::post('/admin/property-verifications/{id}/approve-ownership', [PropertyVerificationController::class, 'approveOwnership'])->middleware('role:admin');
     Route::post('/admin/property-verifications/{id}/reject-ownership', [PropertyVerificationController::class, 'rejectOwnership'])->middleware('role:admin');
@@ -427,18 +425,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/pricing-rules/{ruleId}', [\App\Http\Controllers\Api\V1\PricingRuleController::class, 'update']);
         Route::delete('/pricing-rules/{ruleId}', [\App\Http\Controllers\Api\V1\PricingRuleController::class, 'destroy']);
         Route::post('/pricing-rules/{ruleId}/toggle', [\App\Http\Controllers\Api\V1\PricingRuleController::class, 'toggle']);
-        
+
         // Price Calculation
         Route::post('/calculate-price', [\App\Http\Controllers\Api\V1\PricingRuleController::class, 'calculatePrice']);
         Route::get('/pricing-calendar', [\App\Http\Controllers\Api\V1\PricingRuleController::class, 'calendar']);
-        
+
         // Price Suggestions (AI-powered)
         Route::get('/price-suggestions', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'index']);
         Route::post('/price-suggestions', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'store']);
         Route::get('/price-suggestions/{suggestionId}', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'show']);
         Route::post('/price-suggestions/{suggestionId}/accept', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'accept']);
         Route::post('/price-suggestions/{suggestionId}/reject', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'reject']);
-        
+
         // Market Analysis & Optimization
         Route::get('/market-analysis', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'marketAnalysis']);
         Route::post('/pricing-optimize', [\App\Http\Controllers\Api\V1\PriceSuggestionController::class, 'optimize']);
@@ -476,7 +474,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 // Public wishlist sharing
 Route::prefix('v1')->group(function () {
     Route::get('/wishlists/shared/{token}', [\App\Http\Controllers\Api\WishlistController::class, 'getShared']);
-    
+
     // Public reference verification (no auth required)
     Route::post('/guest-verification/references/{token}/verify', [GuestVerificationController::class, 'verifyReference']);
 });
@@ -503,12 +501,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/long-term-rentals/{id}/request-renewal', [\App\Http\Controllers\Api\LongTermRentalController::class, 'requestRenewal'])->middleware('role:tenant,owner');
     Route::post('/long-term-rentals/{id}/approve-renewal', [\App\Http\Controllers\Api\LongTermRentalController::class, 'approveRenewal'])->middleware('role:owner,admin');
     Route::post('/long-term-rentals/{id}/cancel', [\App\Http\Controllers\Api\LongTermRentalController::class, 'cancel'])->middleware('role:tenant,owner,admin');
-    
+
     // Rent Payments
     Route::get('/rent-payments', [\App\Http\Controllers\Api\RentPaymentController::class, 'index']);
     Route::get('/rent-payments/{id}', [\App\Http\Controllers\Api\RentPaymentController::class, 'show']);
     Route::post('/rent-payments/{id}/mark-as-paid', [\App\Http\Controllers\Api\RentPaymentController::class, 'markAsPaid'])->middleware('role:owner,admin');
-    
+
     // AI & Machine Learning Features
     // AI Recommendations
     Route::prefix('ai')->group(function () {
@@ -517,7 +515,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/recommendations/{recommendationId}/track', [\App\Http\Controllers\Api\AiRecommendationController::class, 'trackInteraction']);
         Route::get('/properties/{propertyId}/similar', [\App\Http\Controllers\Api\AiRecommendationController::class, 'getSimilarProperties']);
         Route::get('/recommendations/stats', [\App\Http\Controllers\Api\AiRecommendationController::class, 'getRecommendationStats'])->middleware('role:admin');
-        
+
         // Price Optimization (Owner only)
         Route::middleware('role:owner,admin')->group(function () {
             Route::get('/price/{propertyId}/prediction', [\App\Http\Controllers\Api\PriceOptimizationController::class, 'getPrediction']);
@@ -526,13 +524,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::post('/price/{propertyId}/apply', [\App\Http\Controllers\Api\PriceOptimizationController::class, 'applyPriceSuggestion']);
             Route::get('/price/{propertyId}/revenue-report', [\App\Http\Controllers\Api\PriceOptimizationController::class, 'getRevenueReport']);
         });
-        
+
         // ML Model Management (Admin only)
         Route::middleware('role:admin')->group(function () {
             Route::get('/model/metrics', [\App\Http\Controllers\Api\PriceOptimizationController::class, 'getModelMetrics']);
             Route::post('/model/train', [\App\Http\Controllers\Api\PriceOptimizationController::class, 'trainModel']);
         });
-        
+
         // Fraud Detection (Admin only)
         Route::middleware('role:admin')->group(function () {
             Route::get('/fraud/alerts', [\App\Http\Controllers\Api\FraudDetectionController::class, 'getAlerts']);
@@ -550,7 +548,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     Route::post('/rent-payments/update-overdue', [\App\Http\Controllers\Api\RentPaymentController::class, 'updateOverdue'])->middleware('role:admin');
     Route::post('/rent-payments/{id}/send-reminder', [\App\Http\Controllers\Api\RentPaymentController::class, 'sendReminder'])->middleware('role:owner,admin');
-    
+
     // Maintenance Requests
     Route::get('/maintenance-requests', [\App\Http\Controllers\Api\MaintenanceRequestController::class, 'index']);
     Route::post('/maintenance-requests', [\App\Http\Controllers\Api\MaintenanceRequestController::class, 'store'])->middleware('role:tenant,owner');
@@ -607,7 +605,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/concierge-bookings/{booking}', [\App\Http\Controllers\Api\V1\ConciergeBookingController::class, 'update']);
     Route::post('/concierge-bookings/{booking}/cancel', [\App\Http\Controllers\Api\V1\ConciergeBookingController::class, 'cancel']);
     Route::post('/concierge-bookings/{booking}/review', [\App\Http\Controllers\Api\V1\ConciergeBookingController::class, 'addReview']);
-    
+
     // Guest Screening
     Route::get('/guest-screenings', [GuestScreeningController::class, 'index']);
     Route::post('/guest-screenings', [GuestScreeningController::class, 'store'])->middleware('role:owner,admin');
@@ -620,7 +618,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/guest-screenings/statistics/all', [GuestScreeningController::class, 'statistics'])->middleware('role:admin');
     Route::get('/guest-screenings/user/{userId}', [GuestScreeningController::class, 'getUserScreenings']);
     Route::get('/guest-screenings/user/{userId}/latest', [GuestScreeningController::class, 'getLatestScreening']);
-    
+
     // Credit Checks
     Route::get('/credit-checks', [CreditCheckController::class, 'index']);
     Route::post('/credit-checks', [CreditCheckController::class, 'store'])->middleware('role:owner,admin');
@@ -630,14 +628,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/credit-checks/{id}/simulate', [CreditCheckController::class, 'simulateCheck'])->middleware('role:admin');
     Route::get('/credit-checks/user/{userId}', [CreditCheckController::class, 'getUserCreditChecks']);
     Route::get('/credit-checks/user/{userId}/latest', [CreditCheckController::class, 'getLatestCreditCheck']);
-    
+
     // Guest References
     Route::get('/guest-references', [GuestReferenceController::class, 'index']);
     Route::post('/guest-references', [GuestReferenceController::class, 'store'])->middleware('role:tenant,owner,admin');
     Route::get('/guest-references/{id}', [GuestReferenceController::class, 'show']);
     Route::put('/guest-references/{id}', [GuestReferenceController::class, 'update'])->middleware('role:owner,admin');
     Route::delete('/guest-references/{id}', [GuestReferenceController::class, 'destroy'])->middleware('role:owner,admin');
-    
+
     // Loyalty Program
     Route::get('/loyalty', [\App\Http\Controllers\Api\LoyaltyController::class, 'index']);
     Route::get('/loyalty/tiers', [\App\Http\Controllers\Api\LoyaltyController::class, 'tiers']);
@@ -648,7 +646,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/loyalty/claim-birthday', [\App\Http\Controllers\Api\LoyaltyController::class, 'claimBirthdayBonus']);
     Route::get('/loyalty/expiring-points', [\App\Http\Controllers\Api\LoyaltyController::class, 'expiringPoints']);
     Route::get('/loyalty/tiers/{tierId}/benefits', [\App\Http\Controllers\Api\LoyaltyController::class, 'tierBenefits']);
-    
+
     // Referral Program
     Route::get('/referrals', [\App\Http\Controllers\Api\ReferralController::class, 'index']);
     Route::get('/referrals/code', [\App\Http\Controllers\Api\ReferralController::class, 'getCode']);
@@ -657,7 +655,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/referrals/discount', [\App\Http\Controllers\Api\ReferralController::class, 'getDiscount']);
     Route::post('/referrals/apply-discount', [\App\Http\Controllers\Api\ReferralController::class, 'applyDiscount']);
     Route::get('/referrals/leaderboard', [\App\Http\Controllers\Api\ReferralController::class, 'leaderboard']);
-    
+
     // Automated Messaging
     Route::prefix('messaging')->group(function () {
         // Message Templates
@@ -667,18 +665,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/templates/{template}', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'updateTemplate']);
         Route::delete('/templates/{template}', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'deleteTemplate']);
         Route::post('/templates/{template}/preview', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'previewTemplate']);
-        
+
         // Scheduled Messages
         Route::get('/scheduled', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'getScheduledMessages']);
         Route::post('/scheduled', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'createScheduledMessage']);
         Route::post('/scheduled/{message}/cancel', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'cancelScheduledMessage']);
-        
+
         // Auto-Responses
         Route::get('/auto-responses', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'getAutoResponses']);
         Route::post('/auto-responses', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'createAutoResponse']);
         Route::put('/auto-responses/{autoResponse}', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'updateAutoResponse']);
         Route::delete('/auto-responses/{autoResponse}', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'deleteAutoResponse']);
-        
+
         // Smart Replies
         Route::get('/messages/{message}/suggestions', [\App\Http\Controllers\Api\AutomatedMessagingController::class, 'getSuggestedReplies']);
     });
@@ -739,7 +737,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/revenue', [App\Http\Controllers\Api\OwnerDashboardController::class, 'revenue']);
         Route::get('/properties', [App\Http\Controllers\Api\OwnerDashboardController::class, 'properties']);
     });
-    
+
     Route::prefix('tenant/dashboard')->group(function () {
         Route::get('/stats', [App\Http\Controllers\Api\TenantDashboardController::class, 'stats']);
     });

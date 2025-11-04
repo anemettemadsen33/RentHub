@@ -132,7 +132,7 @@ class CleaningService extends Model
 
     public function canRate(): bool
     {
-        return $this->status === 'completed' && !$this->rating;
+        return $this->status === 'completed' && ! $this->rating;
     }
 
     public function markAsStarted(): void
@@ -199,7 +199,7 @@ class CleaningService extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'scheduled' => 'warning',
             'confirmed' => 'info',
             'in_progress' => 'primary',

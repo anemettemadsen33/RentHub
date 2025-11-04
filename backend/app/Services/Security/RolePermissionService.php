@@ -88,7 +88,7 @@ class RolePermissionService
         // Check wildcard permissions
         $parts = explode('.', $permission);
         for ($i = count($parts) - 1; $i > 0; $i--) {
-            $wildcard = implode('.', array_slice($parts, 0, $i)) . '.*';
+            $wildcard = implode('.', array_slice($parts, 0, $i)).'.*';
             if (in_array($wildcard, $permissions)) {
                 return true;
             }
@@ -117,7 +117,7 @@ class RolePermissionService
     public function hasAllPermissions(User $user, array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($user, $permission)) {
+            if (! $this->hasPermission($user, $permission)) {
                 return false;
             }
         }
@@ -205,6 +205,7 @@ class RolePermissionService
     public function hasTemporaryPermission(User $user, string $permission): bool
     {
         $cacheKey = "temp_permission:{$user->id}:{$permission}";
+
         return Cache::has($cacheKey);
     }
 }

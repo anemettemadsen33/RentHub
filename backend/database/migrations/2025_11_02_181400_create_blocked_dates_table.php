@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('google_event_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['property_id', 'start_date', 'end_date']);
             $table->index('google_event_id');

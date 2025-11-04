@@ -93,17 +93,20 @@ class CompressionService
         switch ($mime) {
             case 'image/jpeg':
                 $image = imagecreatefromjpeg($path);
+
                 return imagejpeg($image, $path, $quality);
-            
+
             case 'image/png':
                 $image = imagecreatefrompng($path);
                 $pngQuality = round(9 - ($quality / 100 * 9));
+
                 return imagepng($image, $path, $pngQuality);
-            
+
             case 'image/webp':
                 $image = imagecreatefromwebp($path);
+
                 return imagewebp($image, $path, $quality);
-            
+
             default:
                 return false;
         }

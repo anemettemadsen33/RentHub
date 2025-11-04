@@ -24,7 +24,7 @@ class GenerateRecommendationsJob implements ShouldQueue
             $recommendationService->generateRecommendations($this->userId);
             Log::info("Generated recommendations for user {$this->userId}");
         } catch (\Exception $e) {
-            Log::error("Failed to generate recommendations for user {$this->userId}: " . $e->getMessage());
+            Log::error("Failed to generate recommendations for user {$this->userId}: ".$e->getMessage());
             throw $e;
         }
     }

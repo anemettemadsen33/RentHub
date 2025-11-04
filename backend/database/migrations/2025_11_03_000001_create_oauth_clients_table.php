@@ -10,8 +10,8 @@ return new class extends Migration
     {
         // This table is also created by 2025_01_03_000001_create_security_tables.php
         // Skip creation if it already exists
-        
-        if (!Schema::hasTable('oauth_clients')) {
+
+        if (! Schema::hasTable('oauth_clients')) {
             Schema::create('oauth_clients', function (Blueprint $table) {
                 $table->id();
                 $table->string('client_id')->unique();

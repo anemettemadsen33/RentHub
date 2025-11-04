@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\APIKeyService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class APIKeyController extends Controller
 {
@@ -17,6 +17,7 @@ class APIKeyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $keys = $this->apiKeyService->getUserKeys($request->user());
+
         return response()->json(['data' => $keys]);
     }
 
@@ -29,7 +30,7 @@ class APIKeyController extends Controller
             'expires_in_days' => 'nullable|integer|min:1|max:365',
         ]);
 
-        $expiresAt = $request->expires_in_days 
+        $expiresAt = $request->expires_in_days
             ? Carbon::now()->addDays($request->expires_in_days)
             : null;
 

@@ -18,13 +18,12 @@ class InvoiceMail extends Mailable implements ShouldQueue
 
     public function __construct(
         public Invoice $invoice
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Invoice #' . $this->invoice->invoice_number . ' from RentHub',
+            subject: 'Your Invoice #'.$this->invoice->invoice_number.' from RentHub',
         );
     }
 
@@ -44,7 +43,7 @@ class InvoiceMail extends Mailable implements ShouldQueue
 
         if ($this->invoice->pdf_path && Storage::exists($this->invoice->pdf_path)) {
             $attachments[] = Attachment::fromStoragePath($this->invoice->pdf_path)
-                ->as('Invoice-' . $this->invoice->invoice_number . '.pdf')
+                ->as('Invoice-'.$this->invoice->invoice_number.'.pdf')
                 ->withMime('application/pdf');
         }
 

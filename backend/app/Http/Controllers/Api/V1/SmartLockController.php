@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\SmartLock;
 use App\Models\Property;
+use App\Models\SmartLock;
 use App\Services\SmartLock\SmartLockService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class SmartLockController extends Controller
@@ -22,13 +22,13 @@ class SmartLockController extends Controller
     public function index(Request $request, int $propertyId): JsonResponse
     {
         $property = Property::findOrFail($propertyId);
-        
+
         Gate::authorize('view', $property);
 
         $locks = $property->smartLocks()
             ->with(['accessCodes' => function ($query) {
                 $query->where('status', 'active')
-                      ->orderBy('valid_from', 'desc');
+                    ->orderBy('valid_from', 'desc');
             }])
             ->get();
 
@@ -44,7 +44,7 @@ class SmartLockController extends Controller
     public function store(Request $request, int $propertyId): JsonResponse
     {
         $property = Property::findOrFail($propertyId);
-        
+
         Gate::authorize('update', $property);
 
         $validated = $request->validate([
@@ -61,10 +61,10 @@ class SmartLockController extends Controller
         $validated['status'] = 'active';
 
         // Test connection if credentials provided
-        if (!empty($validated['credentials'])) {
+        if (! empty($validated['credentials'])) {
             $provider = $this->smartLockService->getProvider($validated['provider']);
-            
-            if ($provider && !$provider->testConnection($validated['credentials'])) {
+
+            if ($provider && ! $provider->testConnection($validated['credentials'])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Failed to connect to smart lock provider',
@@ -106,7 +106,7 @@ class SmartLockController extends Controller
     public function update(Request $request, int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $validated = $request->validate([
@@ -133,7 +133,7 @@ class SmartLockController extends Controller
     public function destroy(int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $lock->delete();
@@ -150,7 +150,7 @@ class SmartLockController extends Controller
     public function status(int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('view', $lock->property);
 
         $this->smartLockService->syncLockStatus($lock);
@@ -175,7 +175,7 @@ class SmartLockController extends Controller
     public function lock(int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $success = $this->smartLockService->remoteLock($lock);
@@ -192,7 +192,7 @@ class SmartLockController extends Controller
     public function unlock(int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $success = $this->smartLockService->remoteUnlock($lock);
@@ -209,7 +209,7 @@ class SmartLockController extends Controller
     public function activities(Request $request, int $propertyId, int $lockId): JsonResponse
     {
         $lock = SmartLock::where('property_id', $propertyId)->findOrFail($lockId);
-        
+
         Gate::authorize('view', $lock->property);
 
         $query = $lock->activities()->with(['user', 'accessCode']);

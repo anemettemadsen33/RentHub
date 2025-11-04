@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('is_helpful')->default(true); // true = helpful, false = not helpful
             $table->timestamps();
-            
+
             // Unique constraint - one vote per user per review
             $table->unique(['review_id', 'user_id']);
-            
+
             // Indexes
             $table->index(['review_id', 'is_helpful']);
         });

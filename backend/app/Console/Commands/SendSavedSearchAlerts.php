@@ -9,12 +9,13 @@ use Illuminate\Console\Command;
 class SendSavedSearchAlerts extends Command
 {
     protected $signature = 'saved-searches:send-alerts {--frequency=}';
+
     protected $description = 'Send alerts for saved searches with new matching listings';
 
     public function handle()
     {
         $frequency = $this->option('frequency');
-        
+
         $query = SavedSearch::where('is_active', true)
             ->where('enable_alerts', true)
             ->with('user');
@@ -57,8 +58,9 @@ class SendSavedSearchAlerts extends Command
             $newProperties = $savedSearch->checkNewListings();
 
             if ($newProperties->isEmpty()) {
-                $this->line("  → No new listings found");
+                $this->line('  → No new listings found');
                 $noNewListings++;
+
                 continue;
             }
 
@@ -77,14 +79,14 @@ class SendSavedSearchAlerts extends Command
                 ]);
 
                 $alertsSent++;
-                $this->info("  ✓ Alert sent successfully");
+                $this->info('  ✓ Alert sent successfully');
             } catch (\Exception $e) {
                 $this->error("  ✗ Failed to send alert: {$e->getMessage()}");
             }
         }
 
         $this->newLine();
-        $this->info("Summary:");
+        $this->info('Summary:');
         $this->table(
             ['Metric', 'Count'],
             [

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conversation extends Model
 {
@@ -64,8 +64,8 @@ class Conversation extends Model
     public function unreadCount(User $user): int
     {
         $participant = $this->participants()->where('user_id', $user->id)->first();
-        
-        if (!$participant) {
+
+        if (! $participant) {
             return 0;
         }
 

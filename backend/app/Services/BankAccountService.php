@@ -60,22 +60,22 @@ class BankAccountService
     public function getForProperty(int $propertyId): ?BankAccount
     {
         $property = Property::find($propertyId);
-        
-        if (!$property) {
+
+        if (! $property) {
             return null;
         }
 
         // Try to get owner's default account
         if ($property->user_id) {
             $account = $this->getDefaultForUser($property->user_id);
-            
+
             if ($account) {
                 return $account;
             }
 
             // Try any active account of the owner
             $account = $this->getAnyActiveForUser($property->user_id);
-            
+
             if ($account) {
                 return $account;
             }
@@ -83,7 +83,7 @@ class BankAccountService
 
         // Fallback to company default account
         $account = $this->getCompanyDefault();
-        
+
         if ($account) {
             return $account;
         }
@@ -123,12 +123,14 @@ class BankAccountService
     {
         try {
             $account->setAsDefault();
+
             return true;
         } catch (\Exception $e) {
             \Log::error('Failed to set bank account as default', [
                 'account_id' => $account->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -140,7 +142,7 @@ class BankAccountService
     {
         $errors = [];
 
-        if (!$account->is_active) {
+        if (! $account->is_active) {
             $errors[] = 'Bank account is not active';
         }
 

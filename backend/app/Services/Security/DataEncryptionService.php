@@ -2,8 +2,8 @@
 
 namespace App\Services\Security;
 
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 class DataEncryptionService
 {
@@ -41,7 +41,7 @@ class DataEncryptionService
     public function anonymizePII(array $data): array
     {
         $piiFields = ['email', 'phone', 'ssn', 'passport', 'credit_card'];
-        
+
         foreach ($piiFields as $field) {
             if (isset($data[$field])) {
                 $data[$field] = $this->maskData($data[$field]);
@@ -61,7 +61,7 @@ class DataEncryptionService
             return str_repeat('*', $length);
         }
 
-        return substr($data, 0, 2) . str_repeat('*', $length - 4) . substr($data, -2);
+        return substr($data, 0, 2).str_repeat('*', $length - 4).substr($data, -2);
     }
 
     /**
@@ -71,6 +71,7 @@ class DataEncryptionService
     {
         $token = bin2hex(random_bytes(16));
         cache()->put("token:{$token}", $this->encrypt($data), now()->addHours(24));
+
         return $token;
     }
 
@@ -80,6 +81,7 @@ class DataEncryptionService
     public function detokenize(string $token): ?string
     {
         $encrypted = cache()->get("token:{$token}");
+
         return $encrypted ? $this->decrypt($encrypted) : null;
     }
 }

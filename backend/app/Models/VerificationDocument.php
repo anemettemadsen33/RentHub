@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
 class VerificationDocument extends Model
@@ -68,7 +68,7 @@ class VerificationDocument extends Model
         return Storage::exists($this->file_path);
     }
 
-    public function approve(User $admin, string $notes = null): void
+    public function approve(User $admin, ?string $notes = null): void
     {
         $this->status = 'approved';
         $this->reviewed_by = $admin->id;
@@ -79,7 +79,7 @@ class VerificationDocument extends Model
         $this->save();
     }
 
-    public function reject(User $admin, string $reason, string $notes = null): void
+    public function reject(User $admin, string $reason, ?string $notes = null): void
     {
         $this->status = 'rejected';
         $this->rejection_reason = $reason;
@@ -106,19 +106,19 @@ class VerificationDocument extends Model
         return $this->status === 'rejected';
     }
 
-    public function getFileSize Formatted(): string
+    public function getFileSizeFormatted(): string
     {
         $bytes = $this->file_size;
         if ($bytes >= 1073741824) {
-            return number_format($bytes / 1073741824, 2) . ' GB';
+            return number_format($bytes / 1073741824, 2).' GB';
         } elseif ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 2) . ' MB';
+            return number_format($bytes / 1048576, 2).' MB';
         } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
+            return number_format($bytes / 1024, 2).' KB';
         } elseif ($bytes > 1) {
-            return $bytes . ' bytes';
+            return $bytes.' bytes';
         } elseif ($bytes == 1) {
-            return $bytes . ' byte';
+            return $bytes.' byte';
         } else {
             return '0 bytes';
         }

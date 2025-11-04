@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('currencies')) {
+        if (! Schema::hasTable('currencies')) {
             Schema::create('currencies', function (Blueprint $table) {
                 $table->id();
                 $table->string('code', 3)->unique();
@@ -30,7 +30,7 @@ return new class extends Migration
         }
 
         // Add currency support to properties
-        if (Schema::hasTable('properties') && !Schema::hasColumn('properties', 'currency_code')) {
+        if (Schema::hasTable('properties') && ! Schema::hasColumn('properties', 'currency_code')) {
             Schema::table('properties', function (Blueprint $table) {
                 $table->string('currency_code', 3)->default('USD')->after('price_per_night');
             });

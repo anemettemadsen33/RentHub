@@ -17,12 +17,12 @@ class EditGuestVerification extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-    
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         // Update trust score when saving
         $this->record->updateTrustScore();
-        
+
         return $data;
     }
 }

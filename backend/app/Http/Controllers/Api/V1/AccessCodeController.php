@@ -6,10 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AccessCode;
 use App\Models\SmartLock;
 use App\Services\SmartLock\SmartLockService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Carbon\Carbon;
 
 class AccessCodeController extends Controller
 {
@@ -25,7 +24,7 @@ class AccessCodeController extends Controller
         $lock = SmartLock::where('property_id', $propertyId)
             ->with('property')
             ->findOrFail($lockId);
-        
+
         Gate::authorize('view', $lock->property);
 
         $query = $lock->accessCodes()->with(['booking', 'user']);
@@ -44,6 +43,7 @@ class AccessCodeController extends Controller
         // Mask codes for security
         $codes->getCollection()->transform(function ($code) {
             $code->makeVisible('code'); // Show full code to owners
+
             return $code;
         });
 
@@ -61,7 +61,7 @@ class AccessCodeController extends Controller
         $lock = SmartLock::where('property_id', $propertyId)
             ->with('property')
             ->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $validated = $request->validate([
@@ -86,10 +86,10 @@ class AccessCodeController extends Controller
         // Try to create on provider
         try {
             $provider = $this->smartLockService->getProvider($lock->provider);
-            
+
             if ($provider) {
                 $result = $provider->createAccessCode($lock, $accessCode);
-                
+
                 $accessCode->update([
                     'external_code_id' => $result['code_id'] ?? null,
                     'status' => 'active',
@@ -114,7 +114,7 @@ class AccessCodeController extends Controller
         $lock = SmartLock::where('property_id', $propertyId)
             ->with('property')
             ->findOrFail($lockId);
-        
+
         Gate::authorize('view', $lock->property);
 
         $code = AccessCode::where('smart_lock_id', $lockId)
@@ -138,7 +138,7 @@ class AccessCodeController extends Controller
         $lock = SmartLock::where('property_id', $propertyId)
             ->with('property')
             ->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $code = AccessCode::where('smart_lock_id', $lockId)->findOrFail($codeId);
@@ -157,7 +157,7 @@ class AccessCodeController extends Controller
         if ($lock->credentials) {
             try {
                 $provider = $this->smartLockService->getProvider($lock->provider);
-                
+
                 if ($provider && $code->external_code_id) {
                     $provider->updateAccessCode($lock, $code);
                 }
@@ -181,7 +181,7 @@ class AccessCodeController extends Controller
         $lock = SmartLock::where('property_id', $propertyId)
             ->with('property')
             ->findOrFail($lockId);
-        
+
         Gate::authorize('update', $lock->property);
 
         $code = AccessCode::where('smart_lock_id', $lockId)->findOrFail($codeId);
@@ -208,7 +208,7 @@ class AccessCodeController extends Controller
             ->firstOrFail();
 
         // Verify code is valid
-        if (!$code->isValid()) {
+        if (! $code->isValid()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Access code is not valid at this time',

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Services\TranslationService;
+use Illuminate\Database\Seeder;
 
 class DefaultTranslationsSeeder extends Seeder
 {
@@ -109,10 +109,10 @@ class DefaultTranslationsSeeder extends Seeder
         // Import translations
         $service->importTranslations('en', $enCommon, 'common');
         $service->importTranslations('en', $enProperties, 'properties');
-        
+
         $service->importTranslations('ro', $roCommon, 'common');
         $service->importTranslations('ro', $roProperties, 'properties');
-        
+
         $service->importTranslations('es', $esCommon, 'common');
 
         $this->command->info('✅ Default translations seeded successfully!');

@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class SyncSmartLocksCommand extends Command
 {
     protected $signature = 'smartlocks:sync';
+
     protected $description = 'Sync all smart locks status and expire old access codes';
 
     public function __construct(
@@ -34,17 +35,17 @@ class SyncSmartLocksCommand extends Command
         // Sync all active locks
         $this->info('Syncing smart lock status...');
         $locks = SmartLock::where('status', 'active')->get();
-        
+
         $successCount = 0;
         $errorCount = 0;
 
         foreach ($locks as $lock) {
             $this->info("Syncing lock: {$lock->name} (Property: {$lock->property->title})");
-            
+
             if ($this->smartLockService->syncLockStatus($lock)) {
                 $successCount++;
-                $this->line("  ✓ Synced successfully");
-                
+                $this->line('  ✓ Synced successfully');
+
                 if ($lock->needsBatteryReplacement()) {
                     $this->warn("  ⚠ Low battery: {$lock->battery_level}%");
                 }

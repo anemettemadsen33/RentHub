@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdminUser extends Command
 {
     protected $signature = 'admin:create {email} {password} {name?}';
+
     protected $description = 'Create an admin user';
 
     public function handle()
@@ -19,6 +20,7 @@ class CreateAdminUser extends Command
 
         if (User::where('email', $email)->exists()) {
             $this->error('User with this email already exists!');
+
             return;
         }
 
@@ -33,8 +35,8 @@ class CreateAdminUser extends Command
         ]);
 
         $this->info('Admin user created successfully!');
-        $this->info('Email: ' . $user->email);
-        $this->info('Name: ' . $user->name);
+        $this->info('Email: '.$user->email);
+        $this->info('Name: '.$user->name);
         $this->info('You can now access the admin panel at /admin');
     }
 }

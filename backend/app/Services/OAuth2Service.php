@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\OAuthClient;
 use App\Models\OAuthAccessToken;
+use App\Models\OAuthClient;
 use App\Models\OAuthRefreshToken;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class OAuth2Service
 {
@@ -18,7 +17,7 @@ class OAuth2Service
     public function generateAuthorizationCode(User $user, OAuthClient $client, array $scopes = []): string
     {
         $code = Str::random(64);
-        
+
         cache()->put(
             "oauth:auth_code:{$code}",
             [
@@ -30,10 +29,10 @@ class OAuth2Service
             ],
             600
         );
-        
+
         return $code;
     }
-    
+
     /**
      * Exchange authorization code for access token
      */
@@ -44,26 +43,26 @@ class OAuth2Service
         string $redirectUri
     ): array {
         $data = cache()->get("oauth:auth_code:{$code}");
-        
-        if (!$data || $data['expires_at']->isPast()) {
+
+        if (! $data || $data['expires_at']->isPast()) {
             throw new \Exception('Invalid or expired authorization code');
         }
-        
+
         $client = OAuthClient::where('client_id', $clientId)->first();
-        
-        if (!$client || !Hash::check($clientSecret, $client->client_secret)) {
+
+        if (! $client || ! Hash::check($clientSecret, $client->client_secret)) {
             throw new \Exception('Invalid client credentials');
         }
-        
+
         if ($data['redirect_uri'] !== $redirectUri) {
             throw new \Exception('Redirect URI mismatch');
         }
-        
+
         cache()->forget("oauth:auth_code:{$code}");
-        
+
         return $this->issueTokens($data['user_id'], $client, $data['scopes']);
     }
-    
+
     /**
      * Issue access and refresh tokens
      */
@@ -71,7 +70,7 @@ class OAuth2Service
     {
         $accessToken = Str::random(80);
         $refreshToken = Str::random(80);
-        
+
         OAuthAccessToken::create([
             'user_id' => $userId,
             'client_id' => $client->id,
@@ -79,14 +78,14 @@ class OAuth2Service
             'scopes' => $scopes,
             'expires_at' => now()->addHours(1),
         ]);
-        
+
         OAuthRefreshToken::create([
             'user_id' => $userId,
             'client_id' => $client->id,
             'token' => hash('sha256', $refreshToken),
             'expires_at' => now()->addDays(30),
         ]);
-        
+
         return [
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
@@ -95,35 +94,35 @@ class OAuth2Service
             'scope' => implode(' ', $scopes),
         ];
     }
-    
+
     /**
      * Refresh access token
      */
     public function refreshAccessToken(string $refreshToken, string $clientId, string $clientSecret): array
     {
         $client = OAuthClient::where('client_id', $clientId)->first();
-        
-        if (!$client || !Hash::check($clientSecret, $client->client_secret)) {
+
+        if (! $client || ! Hash::check($clientSecret, $client->client_secret)) {
             throw new \Exception('Invalid client credentials');
         }
-        
+
         $token = OAuthRefreshToken::where('token', hash('sha256', $refreshToken))
             ->where('client_id', $client->id)
             ->where('expires_at', '>', now())
             ->first();
-            
-        if (!$token) {
+
+        if (! $token) {
             throw new \Exception('Invalid or expired refresh token');
         }
-        
+
         // Revoke old access tokens
         OAuthAccessToken::where('user_id', $token->user_id)
             ->where('client_id', $client->id)
             ->delete();
-        
+
         return $this->issueTokens($token->user_id, $client, $token->scopes ?? []);
     }
-    
+
     /**
      * Validate access token
      */
@@ -132,46 +131,46 @@ class OAuth2Service
         $accessToken = OAuthAccessToken::where('token', hash('sha256', $token))
             ->where('expires_at', '>', now())
             ->first();
-            
-        if (!$accessToken) {
+
+        if (! $accessToken) {
             return null;
         }
-        
+
         return [
             'user_id' => $accessToken->user_id,
             'client_id' => $accessToken->client_id,
             'scopes' => $accessToken->scopes ?? [],
         ];
     }
-    
+
     /**
      * Revoke token
      */
     public function revokeToken(string $token): bool
     {
         $hashedToken = hash('sha256', $token);
-        
+
         $deleted = OAuthAccessToken::where('token', $hashedToken)->delete();
         $deleted += OAuthRefreshToken::where('token', $hashedToken)->delete();
-        
+
         return $deleted > 0;
     }
-    
+
     /**
      * Introspect token
      */
     public function introspectToken(string $token): array
     {
         $hashedToken = hash('sha256', $token);
-        
+
         $accessToken = OAuthAccessToken::where('token', $hashedToken)->first();
-        
-        if (!$accessToken) {
+
+        if (! $accessToken) {
             return ['active' => false];
         }
-        
+
         $active = $accessToken->expires_at->isFuture();
-        
+
         return [
             'active' => $active,
             'scope' => implode(' ', $accessToken->scopes ?? []),

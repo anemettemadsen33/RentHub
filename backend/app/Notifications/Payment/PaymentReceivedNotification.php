@@ -2,8 +2,8 @@
 
 namespace App\Notifications\Payment;
 
-use App\Models\Payment;
 use App\Models\NotificationPreference;
+use App\Models\Payment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -29,17 +29,17 @@ class PaymentReceivedNotification extends Notification implements ShouldQueue
     {
         $booking = $this->payment->booking;
         $property = $booking->property;
-        
+
         return (new MailMessage)
-            ->subject('✅ Payment Confirmed - ' . $property->title)
-            ->greeting('Hello ' . $notifiable->name . ',')
+            ->subject('✅ Payment Confirmed - '.$property->title)
+            ->greeting('Hello '.$notifiable->name.',')
             ->line('Your payment has been successfully received and processed.')
-            ->line('**Amount Paid:** $' . number_format($this->payment->amount, 2))
-            ->line('**Payment Method:** ' . ucfirst($this->payment->payment_method))
-            ->line('**Transaction ID:** ' . $this->payment->transaction_id)
-            ->line('**Property:** ' . $property->title)
-            ->line('**Booking ID:** #' . $booking->id)
-            ->action('View Receipt', url('/dashboard/bookings/' . $booking->id))
+            ->line('**Amount Paid:** $'.number_format($this->payment->amount, 2))
+            ->line('**Payment Method:** '.ucfirst($this->payment->payment_method))
+            ->line('**Transaction ID:** '.$this->payment->transaction_id)
+            ->line('**Property:** '.$property->title)
+            ->line('**Booking ID:** #'.$booking->id)
+            ->action('View Receipt', url('/dashboard/bookings/'.$booking->id))
             ->line('A receipt has been sent to your email.')
             ->line('Thank you for your payment!');
     }
@@ -53,8 +53,8 @@ class PaymentReceivedNotification extends Notification implements ShouldQueue
             'amount' => $this->payment->amount,
             'payment_method' => $this->payment->payment_method,
             'transaction_id' => $this->payment->transaction_id,
-            'message' => 'Payment of $' . number_format($this->payment->amount, 2) . ' received successfully',
-            'action_url' => '/dashboard/bookings/' . $this->payment->booking_id,
+            'message' => 'Payment of $'.number_format($this->payment->amount, 2).' received successfully',
+            'action_url' => '/dashboard/bookings/'.$this->payment->booking_id,
         ];
     }
 }

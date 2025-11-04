@@ -53,7 +53,7 @@ class LoyaltyTierResource extends Resource
                         Forms\Components\Toggle::make('is_active')
                             ->default(true),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Points Requirements')
                     ->schema([
                         Forms\Components\TextInput::make('min_points')
@@ -65,7 +65,7 @@ class LoyaltyTierResource extends Resource
                             ->nullable()
                             ->helperText('Leave empty for unlimited'),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Benefits')
                     ->schema([
                         Forms\Components\TextInput::make('discount_percentage')
@@ -109,11 +109,11 @@ class LoyaltyTierResource extends Resource
                 Tables\Columns\TextColumn::make('discount_percentage')
                     ->label('Discount')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => $state . '%'),
+                    ->formatStateUsing(fn ($state) => $state.'%'),
                 Tables\Columns\TextColumn::make('points_multiplier')
                     ->label('Points Multiplier')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => $state . 'x'),
+                    ->formatStateUsing(fn ($state) => $state.'x'),
                 Tables\Columns\IconColumn::make('priority_booking')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_active')

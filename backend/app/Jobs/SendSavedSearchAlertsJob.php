@@ -33,7 +33,7 @@ class SendSavedSearchAlertsJob implements ShouldQueue
         foreach ($savedSearches as $savedSearch) {
             try {
                 // Check if it's time to send alert based on frequency
-                if (!$this->shouldSendAlert($savedSearch)) {
+                if (! $this->shouldSendAlert($savedSearch)) {
                     continue;
                 }
 
@@ -42,6 +42,7 @@ class SendSavedSearchAlertsJob implements ShouldQueue
 
                 if ($newProperties->isEmpty()) {
                     Log::info("No new properties for saved search #{$savedSearch->id}");
+
                     continue;
                 }
 
@@ -58,14 +59,14 @@ class SendSavedSearchAlertsJob implements ShouldQueue
 
                 Log::info("Sent alert for saved search #{$savedSearch->id} with {$newProperties->count()} properties");
             } catch (\Exception $e) {
-                Log::error("Failed to process saved search #{$savedSearch->id}: " . $e->getMessage());
+                Log::error("Failed to process saved search #{$savedSearch->id}: ".$e->getMessage());
             }
         }
     }
 
     private function shouldSendAlert(SavedSearch $savedSearch): bool
     {
-        if (!$savedSearch->last_alert_sent_at) {
+        if (! $savedSearch->last_alert_sent_at) {
             return true; // First alert
         }
 

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class CleaningSchedule extends Model
 {
@@ -84,7 +84,7 @@ class CleaningSchedule extends Model
     // Helper Methods
     public function calculateNextExecution(): ?Carbon
     {
-        if (!$this->active) {
+        if (! $this->active) {
             return null;
         }
 
@@ -93,33 +93,34 @@ class CleaningSchedule extends Model
         switch ($this->frequency) {
             case 'daily':
                 return $baseDate->addDay();
-            
+
             case 'weekly':
                 return $baseDate->addWeek();
-            
+
             case 'biweekly':
                 return $baseDate->addWeeks(2);
-            
+
             case 'monthly':
                 $nextMonth = $baseDate->addMonth();
                 if ($this->day_of_month) {
                     $nextMonth->day($this->day_of_month);
                 }
+
                 return $nextMonth;
-            
+
             case 'custom':
-                if ($this->days_of_week && !empty($this->days_of_week)) {
+                if ($this->days_of_week && ! empty($this->days_of_week)) {
                     // Find next day in the week list
                     $today = $baseDate->dayOfWeek;
                     $daysOfWeek = $this->days_of_week;
                     sort($daysOfWeek);
-                    
+
                     foreach ($daysOfWeek as $day) {
                         if ($day > $today) {
                             return $baseDate->next($day);
                         }
                     }
-                    
+
                     // If no day found this week, go to first day of next week
                     return $baseDate->next($daysOfWeek[0]);
                 }
@@ -132,7 +133,7 @@ class CleaningSchedule extends Model
     public function updateNextExecution(): void
     {
         $next = $this->calculateNextExecution();
-        
+
         if ($next && $this->end_date && $next->gt($this->end_date)) {
             $this->active = false;
             $next = null;
@@ -146,7 +147,7 @@ class CleaningSchedule extends Model
 
     public function execute(): ?CleaningService
     {
-        if (!$this->auto_book) {
+        if (! $this->auto_book) {
             return null;
         }
 
@@ -168,7 +169,7 @@ class CleaningSchedule extends Model
         $this->update([
             'last_executed_at' => now(),
         ]);
-        
+
         $this->updateNextExecution();
 
         return $cleaningService;

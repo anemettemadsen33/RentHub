@@ -30,7 +30,7 @@ class PhoneVerificationNotification extends Notification implements ShouldQueue
         if (config('services.twilio.sid')) {
             return ['twilio'];
         }
-        
+
         return ['mail']; // Fallback to email
     }
 
@@ -43,7 +43,7 @@ class PhoneVerificationNotification extends Notification implements ShouldQueue
         $twilioToken = config('services.twilio.token');
         $twilioFrom = config('services.twilio.from');
 
-        if (!$twilioSid || !$twilioToken || !$twilioFrom) {
+        if (! $twilioSid || ! $twilioToken || ! $twilioFrom) {
             throw new \Exception('Twilio credentials not configured');
         }
 
@@ -67,8 +67,8 @@ class PhoneVerificationNotification extends Notification implements ShouldQueue
     {
         return (new \Illuminate\Notifications\Messages\MailMessage)
             ->subject('Phone Verification Code - RentHub')
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('Your phone verification code is: **' . $this->code . '**')
+            ->greeting('Hello '.$notifiable->name.'!')
+            ->line('Your phone verification code is: **'.$this->code.'**')
             ->line('This code will expire in 10 minutes.')
             ->line('If you did not request this code, please ignore this email.')
             ->salutation('Best regards, The RentHub Team');

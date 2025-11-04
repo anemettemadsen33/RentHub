@@ -28,7 +28,7 @@ return new class extends Migration
             $table->integer('retry_count')->default(0);
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['scheduled_at', 'status']);
             $table->index(['user_id', 'status']);
         });

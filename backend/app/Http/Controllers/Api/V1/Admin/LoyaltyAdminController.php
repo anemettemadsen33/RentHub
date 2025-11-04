@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\LoyaltyService;
 use App\Models\User;
 use App\Models\UserLoyalty;
+use App\Services\LoyaltyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,7 +39,7 @@ class LoyaltyAdminController extends Controller
         }
 
         $user = User::findOrFail($request->user_id);
-        
+
         $transaction = $this->loyaltyService->awardPoints(
             $user,
             $request->points,
@@ -73,7 +73,7 @@ class LoyaltyAdminController extends Controller
         }
 
         $user = User::findOrFail($request->user_id);
-        
+
         $transaction = $this->loyaltyService->adjustPoints(
             $user,
             $request->points,
@@ -118,7 +118,7 @@ class LoyaltyAdminController extends Controller
             'users_by_tier' => UserLoyalty::with('currentTier')
                 ->get()
                 ->groupBy('currentTier.name')
-                ->map(fn($group) => $group->count()),
+                ->map(fn ($group) => $group->count()),
         ];
 
         return response()->json([

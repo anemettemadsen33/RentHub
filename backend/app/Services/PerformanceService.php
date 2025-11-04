@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class PerformanceService
 {
@@ -12,7 +12,7 @@ class PerformanceService
      */
     public function optimizeQuery(Builder $query, array $relations = []): Builder
     {
-        if (!empty($relations)) {
+        if (! empty($relations)) {
             $query->with($relations);
         }
 
@@ -74,7 +74,7 @@ class PerformanceService
      */
     public function optimizeImage(string $path, int $quality = 85): bool
     {
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return false;
         }
 
@@ -84,16 +84,19 @@ class PerformanceService
         switch ($mimeType) {
             case 'image/jpeg':
                 $image = imagecreatefromjpeg($path);
+
                 return imagejpeg($image, $path, $quality);
 
             case 'image/png':
                 $image = imagecreatefrompng($path);
                 imagealphablending($image, false);
                 imagesavealpha($image, true);
+
                 return imagepng($image, $path, floor($quality / 10));
 
             case 'image/webp':
                 $image = imagecreatefromwebp($path);
+
                 return imagewebp($image, $path, $quality);
 
             default:
@@ -115,6 +118,7 @@ class PerformanceService
     public function decompressResponse(string $compressed): array
     {
         $json = gzdecode($compressed);
+
         return json_decode($json, true) ?? [];
     }
 
@@ -123,7 +127,7 @@ class PerformanceService
      */
     public function lazyLoad($model, array $relations): void
     {
-        if (!$model->relationLoaded($relations[0])) {
+        if (! $model->relationLoaded($relations[0])) {
             $model->load($relations);
         }
     }
@@ -134,7 +138,7 @@ class PerformanceService
     public function analyzeIndexUsage(string $table): array
     {
         $indexes = DB::select("SHOW INDEX FROM {$table}");
-        
+
         return collect($indexes)->map(function ($index) {
             return [
                 'key_name' => $index->Key_name,
@@ -171,10 +175,10 @@ class PerformanceService
     public function suggestIndexes(string $query): array
     {
         $suggestions = [];
-        
+
         // Parse query for WHERE clauses
         preg_match_all('/WHERE\s+(\w+)\s*[=<>]/', $query, $whereMatches);
-        if (!empty($whereMatches[1])) {
+        if (! empty($whereMatches[1])) {
             $suggestions[] = [
                 'type' => 'simple_index',
                 'columns' => array_unique($whereMatches[1]),
@@ -183,7 +187,7 @@ class PerformanceService
 
         // Parse query for JOIN clauses
         preg_match_all('/JOIN\s+\w+\s+ON\s+(\w+)\.(\w+)\s*=\s*(\w+)\.(\w+)/', $query, $joinMatches);
-        if (!empty($joinMatches[2])) {
+        if (! empty($joinMatches[2])) {
             $suggestions[] = [
                 'type' => 'join_index',
                 'columns' => array_unique($joinMatches[2]),
@@ -192,7 +196,7 @@ class PerformanceService
 
         // Parse query for ORDER BY clauses
         preg_match_all('/ORDER\s+BY\s+(\w+)/', $query, $orderMatches);
-        if (!empty($orderMatches[1])) {
+        if (! empty($orderMatches[1])) {
             $suggestions[] = [
                 'type' => 'order_index',
                 'columns' => array_unique($orderMatches[1]),

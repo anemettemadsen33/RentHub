@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('fetched_at'); // When rate was last updated
             $table->string('source')->default('manual'); // manual, api, exchangerate-api.com
             $table->timestamps();
-            
+
             $table->unique(['from_currency_id', 'to_currency_id']);
         });
     }

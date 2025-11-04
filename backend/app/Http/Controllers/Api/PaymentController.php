@@ -17,13 +17,12 @@ class PaymentController extends Controller
     public function __construct(
         private InvoicePdfService $pdfService,
         private InvoiceEmailService $emailService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $payments = Payment::where('user_id', $user->id)
             ->with(['booking.property', 'invoice'])
             ->orderBy('created_at', 'desc')
@@ -73,7 +72,7 @@ class PaymentController extends Controller
             ]);
 
             // Create invoice if it doesn't exist
-            if (!$booking->invoices()->exists()) {
+            if (! $booking->invoices()->exists()) {
                 $invoice = $this->createInvoiceForBooking($booking);
                 $payment->update(['invoice_id' => $invoice->id]);
             }
@@ -86,7 +85,8 @@ class PaymentController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Failed to create payment: ' . $e->getMessage()], 500);
+
+            return response()->json(['error' => 'Failed to create payment: '.$e->getMessage()], 500);
         }
     }
 
@@ -135,7 +135,7 @@ class PaymentController extends Controller
                 'payment' => $payment->fresh()->load(['booking.property', 'invoice']),
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update payment: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to update payment: '.$e->getMessage()], 500);
         }
     }
 
@@ -147,7 +147,7 @@ class PaymentController extends Controller
             ->whereNull('user_id')
             ->first();
 
-        if (!$bankAccount && $property->user_id) {
+        if (! $bankAccount && $property->user_id) {
             $bankAccount = \App\Models\BankAccount::where('user_id', $property->user_id)
                 ->where('is_default', true)
                 ->first();
@@ -172,7 +172,7 @@ class PaymentController extends Controller
             'customer_email' => $user->email,
             'customer_phone' => $user->phone ?? null,
             'property_title' => $property->title,
-            'property_address' => $property->address . ', ' . $property->city . ', ' . $property->country,
+            'property_address' => $property->address.', '.$property->city.', '.$property->country,
         ]);
 
         // Generate PDF and send email

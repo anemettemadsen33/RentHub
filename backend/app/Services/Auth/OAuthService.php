@@ -2,11 +2,11 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
 use App\Models\OAuthProvider;
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Exception;
 
 class OAuthService
 {
@@ -33,7 +33,7 @@ class OAuthService
      */
     public function getAuthorizationUrl(string $provider, string $redirectUri): string
     {
-        if (!isset($this->providers[$provider])) {
+        if (! isset($this->providers[$provider])) {
             throw new Exception("Provider {$provider} not supported");
         }
 
@@ -50,7 +50,7 @@ class OAuthService
             'state' => $state,
         ];
 
-        return $this->providers[$provider]['authorize_url'] . '?' . http_build_query($params);
+        return $this->providers[$provider]['authorize_url'].'?'.http_build_query($params);
     }
 
     /**
@@ -79,7 +79,7 @@ class OAuthService
     protected function getAccessToken(string $provider, string $code): string
     {
         $config = config("services.{$provider}");
-        
+
         $response = Http::asForm()->post($this->providers[$provider]['token_url'], [
             'client_id' => $config['client_id'],
             'client_secret' => $config['client_secret'],
@@ -88,7 +88,7 @@ class OAuthService
             'grant_type' => 'authorization_code',
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new Exception('Failed to obtain access token');
         }
 
@@ -103,7 +103,7 @@ class OAuthService
         $response = Http::withToken($accessToken)
             ->get($this->providers[$provider]['user_url']);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new Exception('Failed to get user information');
         }
 
@@ -115,7 +115,7 @@ class OAuthService
      */
     protected function normalizeUserData(string $provider, array $data): array
     {
-        return match($provider) {
+        return match ($provider) {
             'google' => [
                 'provider_id' => $data['id'],
                 'email' => $data['email'],
@@ -157,14 +157,14 @@ class OAuthService
                 'access_token' => $accessToken,
                 'last_login_at' => now(),
             ]);
-            
+
             return $oauthProvider->user;
         }
 
         // Check if user exists by email
         $user = User::where('email', $providerUser['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             // Create new user
             $user = User::create([
                 'name' => $providerUser['name'],
@@ -196,12 +196,12 @@ class OAuthService
             ->where('provider', $provider)
             ->first();
 
-        if (!$oauthProvider) {
+        if (! $oauthProvider) {
             return false;
         }
 
         // Check if user has password (can still login)
-        if (!$user->password && OAuthProvider::where('user_id', $user->id)->count() === 1) {
+        if (! $user->password && OAuthProvider::where('user_id', $user->id)->count() === 1) {
             throw new Exception('Cannot revoke last authentication method');
         }
 

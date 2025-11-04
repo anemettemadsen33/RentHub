@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class RentPayment extends Model
 {
@@ -80,28 +80,29 @@ class RentPayment extends Model
     // Helper Methods
     public function isOverdue(): bool
     {
-        return $this->status !== 'paid' 
+        return $this->status !== 'paid'
             && $this->due_date < Carbon::now();
     }
 
     public function calculateDaysOverdue(): int
     {
-        if (!$this->isOverdue()) {
+        if (! $this->isOverdue()) {
             return 0;
         }
-        
+
         return Carbon::now()->diffInDays($this->due_date);
     }
 
     public function calculateLateFee(float $dailyRate = 5.0, float $maxFee = 100.0): float
     {
         $daysOverdue = $this->calculateDaysOverdue();
-        
+
         if ($daysOverdue <= 0) {
             return 0;
         }
-        
+
         $lateFee = $daysOverdue * $dailyRate;
+
         return min($lateFee, $maxFee);
     }
 
@@ -126,7 +127,7 @@ class RentPayment extends Model
         if ($this->isOverdue()) {
             $daysOverdue = $this->calculateDaysOverdue();
             $lateFee = $this->calculateLateFee();
-            
+
             $this->update([
                 'status' => 'overdue',
                 'days_overdue' => $daysOverdue,

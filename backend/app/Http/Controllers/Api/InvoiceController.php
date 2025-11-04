@@ -13,13 +13,12 @@ class InvoiceController extends Controller
     public function __construct(
         private InvoicePdfService $pdfService,
         private InvoiceEmailService $emailService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $invoices = Invoice::where('user_id', $user->id)
             ->with(['booking.property', 'bankAccount', 'payments'])
             ->orderBy('invoice_date', 'desc')

@@ -77,29 +77,29 @@ class SEOService
     public function generateSitemap(): string
     {
         $properties = Property::where('status', 'active')->get();
-        
+
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        
+
         // Homepage
         $xml .= '<url>';
-        $xml .= '<loc>' . url('/') . '</loc>';
+        $xml .= '<loc>'.url('/').'</loc>';
         $xml .= '<changefreq>daily</changefreq>';
         $xml .= '<priority>1.0</priority>';
         $xml .= '</url>';
-        
+
         // Properties
         foreach ($properties as $property) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('properties.show', $property->slug) . '</loc>';
-            $xml .= '<lastmod>' . $property->updated_at->toAtomString() . '</lastmod>';
+            $xml .= '<loc>'.route('properties.show', $property->slug).'</loc>';
+            $xml .= '<lastmod>'.$property->updated_at->toAtomString().'</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.8</priority>';
             $xml .= '</url>';
         }
-        
+
         $xml .= '</urlset>';
-        
+
         return $xml;
     }
 
@@ -111,14 +111,14 @@ class SEOService
         $robots .= "Disallow: /dashboard/\n";
         $robots .= "Allow: /\n";
         $robots .= "\n";
-        $robots .= "Sitemap: " . url('/sitemap.xml') . "\n";
-        
+        $robots .= 'Sitemap: '.url('/sitemap.xml')."\n";
+
         return $robots;
     }
 
     protected function generateTitle(Property $property): string
     {
-        return Str::limit($property->title . ' | ' . config('app.name'), 60);
+        return Str::limit($property->title.' | '.config('app.name'), 60);
     }
 
     protected function generateDescription(Property $property): string

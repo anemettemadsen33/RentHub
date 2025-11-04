@@ -44,6 +44,7 @@ class RenewGoogleCalendarWebhooks extends Command
 
         if ($expiringTokens->isEmpty()) {
             $this->info('No expiring webhooks found.');
+
             return 0;
         }
 
@@ -55,19 +56,19 @@ class RenewGoogleCalendarWebhooks extends Command
         foreach ($expiringTokens as $token) {
             try {
                 $this->info("Renewing webhook for token ID: {$token->id}");
-                
+
                 // Stop old webhook
                 $this->googleCalendarService->stopWebhook($token);
-                
+
                 // Setup new webhook
                 $this->googleCalendarService->setupWebhook($token);
-                
+
                 $renewed++;
-                $this->info("✓ Webhook renewed successfully");
+                $this->info('✓ Webhook renewed successfully');
             } catch (\Exception $e) {
                 $failed++;
                 $this->error("✗ Failed to renew webhook: {$e->getMessage()}");
-                
+
                 Log::error('Failed to renew Google Calendar webhook', [
                     'token_id' => $token->id,
                     'error' => $e->getMessage(),

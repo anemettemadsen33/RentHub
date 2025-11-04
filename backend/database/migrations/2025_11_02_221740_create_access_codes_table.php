@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['smart_lock_id', 'status']);
             $table->index(['booking_id', 'status']);
             $table->index(['valid_from', 'valid_until']);

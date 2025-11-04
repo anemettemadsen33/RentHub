@@ -14,21 +14,21 @@ return new class extends Migration
         Schema::create('notification_preferences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
+
             // Notification type: booking, payment, review, account, system
             $table->string('notification_type');
-            
+
             // Channels
             $table->boolean('channel_email')->default(true);
             $table->boolean('channel_database')->default(true);
             $table->boolean('channel_sms')->default(false);
             $table->boolean('channel_push')->default(false);
-            
+
             $table->timestamps();
-            
+
             // Unique constraint: one preference per user per notification type
             $table->unique(['user_id', 'notification_type']);
-            
+
             // Indexes
             $table->index('user_id');
             $table->index('notification_type');

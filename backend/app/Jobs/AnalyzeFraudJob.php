@@ -37,7 +37,7 @@ class AnalyzeFraudJob implements ShouldQueue
                 Log::info("No fraud detected: {$this->type} #{$this->entityId}");
             }
         } catch (\Exception $e) {
-            Log::error("Failed to analyze fraud for {$this->type} #{$this->entityId}: " . $e->getMessage());
+            Log::error("Failed to analyze fraud for {$this->type} #{$this->entityId}: ".$e->getMessage());
             throw $e;
         }
     }

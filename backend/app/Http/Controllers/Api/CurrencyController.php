@@ -40,7 +40,7 @@ class CurrencyController extends Controller
     {
         $currency = Currency::getDefault();
 
-        if (!$currency) {
+        if (! $currency) {
             return response()->json([
                 'success' => false,
                 'message' => 'No default currency set',

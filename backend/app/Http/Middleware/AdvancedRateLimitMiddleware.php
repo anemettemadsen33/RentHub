@@ -34,14 +34,14 @@ class AdvancedRateLimitMiddleware
     public function handle(Request $request, Closure $next, string $type = 'api'): Response
     {
         $identifier = $this->getIdentifier($request);
-        
+
         // Check if IP is banned
         if ($this->isBanned($identifier)) {
             Log::warning('Banned IP attempted access', [
                 'ip' => $request->ip(),
                 'url' => $request->fullUrl(),
             ]);
-            
+
             return response()->json([
                 'error' => 'Too many requests. Your IP has been temporarily banned.',
             ], 429);
@@ -50,12 +50,12 @@ class AdvancedRateLimitMiddleware
         // DDoS protection
         if ($this->isDDoSAttempt($identifier)) {
             $this->banIdentifier($identifier);
-            
+
             Log::critical('Possible DDoS attack detected', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
-            
+
             return response()->json([
                 'error' => 'Too many requests. Access denied.',
             ], 429);
@@ -64,12 +64,12 @@ class AdvancedRateLimitMiddleware
         // Standard rate limiting
         $limit = $this->limits[$type] ?? $this->limits['api'];
         $key = "rate_limit:{$type}:{$identifier}";
-        
+
         $attempts = Cache::get($key, 0);
-        
+
         if ($attempts >= $limit['attempts']) {
-            $retryAfter = Cache::get($key . ':expires') - time();
-            
+            $retryAfter = Cache::get($key.':expires') - time();
+
             return response()->json([
                 'error' => 'Rate limit exceeded. Please try again later.',
                 'retry_after' => max($retryAfter, 0),
@@ -79,7 +79,7 @@ class AdvancedRateLimitMiddleware
         // Increment attempt counter
         if ($attempts === 0) {
             Cache::put($key, 1, $limit['decay']);
-            Cache::put($key . ':expires', time() + $limit['decay'], $limit['decay']);
+            Cache::put($key.':expires', time() + $limit['decay'], $limit['decay']);
         } else {
             Cache::increment($key);
         }
@@ -89,7 +89,7 @@ class AdvancedRateLimitMiddleware
         // Add rate limit headers
         $response->headers->set('X-RateLimit-Limit', $limit['attempts']);
         $response->headers->set('X-RateLimit-Remaining', max(0, $limit['attempts'] - $attempts - 1));
-        $response->headers->set('X-RateLimit-Reset', Cache::get($key . ':expires', time()));
+        $response->headers->set('X-RateLimit-Reset', Cache::get($key.':expires', time()));
 
         return $response;
     }
@@ -98,10 +98,10 @@ class AdvancedRateLimitMiddleware
     {
         $user = $request->user();
         if ($user) {
-            return 'user:' . $user->id;
+            return 'user:'.$user->id;
         }
-        
-        return 'ip:' . $request->ip();
+
+        return 'ip:'.$request->ip();
     }
 
     protected function isBanned(string $identifier): bool
@@ -122,7 +122,7 @@ class AdvancedRateLimitMiddleware
     {
         $key = "ddos_check:{$identifier}";
         $burstKey = "ddos_burst:{$identifier}";
-        
+
         // Track requests per second
         $requestsThisSecond = Cache::get($key, 0);
         if ($requestsThisSecond === 0) {
@@ -131,7 +131,7 @@ class AdvancedRateLimitMiddleware
             Cache::increment($key);
             $requestsThisSecond++;
         }
-        
+
         // Track burst requests
         $burstRequests = Cache::get($burstKey, 0);
         if ($burstRequests === 0) {
@@ -140,7 +140,7 @@ class AdvancedRateLimitMiddleware
             Cache::increment($burstKey);
             $burstRequests++;
         }
-        
+
         return $requestsThisSecond > $this->ddosProtection['requests_per_second'] ||
                $burstRequests > $this->ddosProtection['burst_threshold'];
     }

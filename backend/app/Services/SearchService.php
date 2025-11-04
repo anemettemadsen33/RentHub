@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 class SearchService
 {
     protected $config;
+
     protected $driver;
 
     public function __construct()
@@ -17,7 +18,7 @@ class SearchService
 
     public function search(string $index, string $query, array $filters = [], array $options = []): array
     {
-        return match($this->driver) {
+        return match ($this->driver) {
             'meilisearch' => $this->searchMeilisearch($index, $query, $filters, $options),
             'elasticsearch' => $this->searchElasticsearch($index, $query, $filters, $options),
             default => throw new \Exception("Unsupported search driver: {$this->driver}")
@@ -35,7 +36,7 @@ class SearchService
             'offset' => $options['offset'] ?? 0,
         ];
 
-        if (!empty($filters)) {
+        if (! empty($filters)) {
             $params['filter'] = $this->buildMeilisearchFilters($filters);
         }
 
@@ -53,7 +54,7 @@ class SearchService
     protected function searchElasticsearch(string $index, string $query, array $filters, array $options): array
     {
         $config = $this->config['elasticsearch'];
-        $indexName = $config['index_prefix'] . $index;
+        $indexName = $config['index_prefix'].$index;
         $url = "{$config['hosts'][0]}/{$indexName}/_search";
 
         $body = [
@@ -71,18 +72,18 @@ class SearchService
             'size' => $options['limit'] ?? 20,
         ];
 
-        if (!empty($filters)) {
+        if (! empty($filters)) {
             $body['query']['bool']['filter'] = $this->buildElasticsearchFilters($filters);
         }
 
         $response = Http::post($url, $body);
-        
+
         return $response->json();
     }
 
     public function index(string $index, array $documents): bool
     {
-        return match($this->driver) {
+        return match ($this->driver) {
             'meilisearch' => $this->indexMeilisearch($index, $documents),
             'elasticsearch' => $this->indexElasticsearch($index, $documents),
             default => false
@@ -104,8 +105,8 @@ class SearchService
     protected function indexElasticsearch(string $index, array $documents): bool
     {
         $config = $this->config['elasticsearch'];
-        $indexName = $config['index_prefix'] . $index;
-        
+        $indexName = $config['index_prefix'].$index;
+
         $body = [];
         foreach ($documents as $doc) {
             $body[] = json_encode(['index' => ['_index' => $indexName, '_id' => $doc['id']]]);
@@ -114,7 +115,7 @@ class SearchService
 
         $url = "{$config['hosts'][0]}/_bulk";
         $response = Http::withHeaders(['Content-Type' => 'application/x-ndjson'])
-            ->withBody(implode("\n", $body) . "\n", 'application/x-ndjson')
+            ->withBody(implode("\n", $body)."\n", 'application/x-ndjson')
             ->post($url);
 
         return $response->successful();
@@ -122,7 +123,7 @@ class SearchService
 
     public function delete(string $index, $documentId): bool
     {
-        return match($this->driver) {
+        return match ($this->driver) {
             'meilisearch' => $this->deleteMeilisearch($index, $documentId),
             'elasticsearch' => $this->deleteElasticsearch($index, $documentId),
             default => false
@@ -144,34 +145,34 @@ class SearchService
     protected function deleteElasticsearch(string $index, $documentId): bool
     {
         $config = $this->config['elasticsearch'];
-        $indexName = $config['index_prefix'] . $index;
+        $indexName = $config['index_prefix'].$index;
         $url = "{$config['hosts'][0]}/{$indexName}/_doc/{$documentId}";
 
         $response = Http::delete($url);
-        
+
         return $response->successful();
     }
 
     protected function buildMeilisearchFilters(array $filters): string
     {
         $filterStrings = [];
-        
+
         foreach ($filters as $field => $value) {
             if (is_array($value)) {
-                $values = array_map(fn($v) => is_string($v) ? "\"{$v}\"" : $v, $value);
-                $filterStrings[] = "{$field} IN [" . implode(', ', $values) . "]";
+                $values = array_map(fn ($v) => is_string($v) ? "\"{$v}\"" : $v, $value);
+                $filterStrings[] = "{$field} IN [".implode(', ', $values).']';
             } else {
                 $filterStrings[] = is_string($value) ? "{$field} = \"{$value}\"" : "{$field} = {$value}";
             }
         }
-        
+
         return implode(' AND ', $filterStrings);
     }
 
     protected function buildElasticsearchFilters(array $filters): array
     {
         $terms = [];
-        
+
         foreach ($filters as $field => $value) {
             if (is_array($value)) {
                 $terms[] = ['terms' => [$field => $value]];
@@ -179,7 +180,7 @@ class SearchService
                 $terms[] = ['term' => [$field => $value]];
             }
         }
-        
+
         return $terms;
     }
 }

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Conversation;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ConversationPolicy
 {
@@ -15,7 +14,7 @@ class ConversationPolicy
 
     public function view(User $user, Conversation $conversation): bool
     {
-        return $user->id === $conversation->tenant_id 
+        return $user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id
             || $user->isAdmin();
     }
@@ -27,14 +26,14 @@ class ConversationPolicy
 
     public function update(User $user, Conversation $conversation): bool
     {
-        return ($user->id === $conversation->tenant_id 
+        return ($user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id)
-            && !$conversation->is_archived;
+            && ! $conversation->is_archived;
     }
 
     public function delete(User $user, Conversation $conversation): bool
     {
-        return $user->id === $conversation->tenant_id 
+        return $user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id
             || $user->isAdmin();
     }
@@ -51,7 +50,7 @@ class ConversationPolicy
 
     public function archive(User $user, Conversation $conversation): bool
     {
-        return $user->id === $conversation->tenant_id 
+        return $user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id;
     }
 }

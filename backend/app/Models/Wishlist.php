@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Wishlist extends Model
@@ -27,7 +27,7 @@ class Wishlist extends Model
         parent::boot();
 
         static::creating(function ($wishlist) {
-            if (!$wishlist->share_token) {
+            if (! $wishlist->share_token) {
                 $wishlist->share_token = Str::random(32);
             }
         });

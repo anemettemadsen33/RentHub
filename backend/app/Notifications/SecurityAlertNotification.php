@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
+use App\Models\SecurityIncident;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\SecurityIncident;
 
 class SecurityAlertNotification extends Notification implements ShouldQueue
 {
@@ -20,13 +20,14 @@ class SecurityAlertNotification extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         $channels = config('security.monitoring.alert_channels', ['mail']);
+
         return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
     {
         $severity = strtoupper($this->incident->severity);
-        $color = match($this->incident->severity) {
+        $color = match ($this->incident->severity) {
             'critical' => '#dc3545',
             'high' => '#fd7e14',
             'medium' => '#ffc107',
@@ -35,8 +36,8 @@ class SecurityAlertNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("[{$severity}] Security Alert: {$this->incident->type}")
-            ->greeting("Security Alert Detected")
-            ->line("A security incident has been detected and requires your attention.")
+            ->greeting('Security Alert Detected')
+            ->line('A security incident has been detected and requires your attention.')
             ->line("**Severity:** {$severity}")
             ->line("**Type:** {$this->incident->type}")
             ->line("**Description:** {$this->incident->description}")
@@ -49,8 +50,8 @@ class SecurityAlertNotification extends Notification implements ShouldQueue
     public function toSlack(object $notifiable): SlackMessage
     {
         $severity = strtoupper($this->incident->severity);
-        
-        $emoji = match($this->incident->severity) {
+
+        $emoji = match ($this->incident->severity) {
             'critical' => '🚨',
             'high' => '⚠️',
             'medium' => '⚡',

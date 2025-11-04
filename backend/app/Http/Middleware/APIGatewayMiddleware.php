@@ -16,12 +16,12 @@ class APIGatewayMiddleware
     public function handle(Request $request, Closure $next)
     {
         // 1. API Key Validation
-        if (!$this->validateApiKey($request)) {
+        if (! $this->validateApiKey($request)) {
             return response()->json(['error' => 'Invalid or missing API key'], 401);
         }
 
         // 2. Rate Limiting (per API key)
-        if (!$this->checkRateLimit($request)) {
+        if (! $this->checkRateLimit($request)) {
             return response()->json([
                 'error' => 'Rate limit exceeded',
                 'retry_after' => $this->getRetryAfter($request),
@@ -29,17 +29,17 @@ class APIGatewayMiddleware
         }
 
         // 3. Request Validation
-        if (!$this->validateRequest($request)) {
+        if (! $this->validateRequest($request)) {
             return response()->json(['error' => 'Invalid request format'], 400);
         }
 
         // 4. IP Whitelisting/Blacklisting
-        if (!$this->checkIPAccess($request)) {
+        if (! $this->checkIPAccess($request)) {
             return response()->json(['error' => 'Access denied from this IP'], 403);
         }
 
         // 5. Request Signing Verification
-        if (config('api.require_signature') && !$this->verifySignature($request)) {
+        if (config('api.require_signature') && ! $this->verifySignature($request)) {
             return response()->json(['error' => 'Invalid request signature'], 401);
         }
 
@@ -65,13 +65,13 @@ class APIGatewayMiddleware
     {
         $apiKey = $request->header('X-API-Key') ?? $request->query('api_key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             return false;
         }
 
         // Check in cache first
         $cacheKey = "api_key:valid:{$apiKey}";
-        
+
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
         }
@@ -108,15 +108,15 @@ class APIGatewayMiddleware
 
         foreach ($limits as $window => $maxAttempts) {
             $key = "rate_limit:{$apiKey}:{$endpoint}:{$window}";
-            
+
             if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
                 Log::warning('API Gateway: Rate limit exceeded', [
-                    'api_key' => substr($apiKey, 0, 8) . '...',
+                    'api_key' => substr($apiKey, 0, 8).'...',
                     'endpoint' => $endpoint,
                     'window' => $window,
                     'ip' => $request->ip(),
                 ]);
-                
+
                 return false;
             }
 
@@ -180,8 +180,8 @@ class APIGatewayMiddleware
         // Check content type for POST/PUT/PATCH
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH'])) {
             $contentType = $request->header('Content-Type');
-            
-            if (!str_contains($contentType, 'application/json')) {
+
+            if (! str_contains($contentType, 'application/json')) {
                 return false;
             }
         }
@@ -211,6 +211,7 @@ class APIGatewayMiddleware
                 'ip' => $ip,
                 'endpoint' => $request->route()->getName(),
             ]);
+
             return false;
         }
 
@@ -234,7 +235,7 @@ class APIGatewayMiddleware
         $signature = $request->header('X-Signature');
         $timestamp = $request->header('X-Timestamp');
 
-        if (!$signature || !$timestamp) {
+        if (! $signature || ! $timestamp) {
             return false;
         }
 
@@ -246,12 +247,12 @@ class APIGatewayMiddleware
         $apiKey = $request->header('X-API-Key');
         $apiSecret = $this->getApiSecret($apiKey);
 
-        if (!$apiSecret) {
+        if (! $apiSecret) {
             return false;
         }
 
         // Compute expected signature
-        $payload = $request->method() . $request->getPathInfo() . $timestamp . $request->getContent();
+        $payload = $request->method().$request->getPathInfo().$timestamp.$request->getContent();
         $expectedSignature = hash_hmac('sha256', $payload, $apiSecret);
 
         return hash_equals($expectedSignature, $signature);
@@ -274,7 +275,7 @@ class APIGatewayMiddleware
     private function logApiRequest(Request $request): void
     {
         $logData = [
-            'api_key' => substr($request->header('X-API-Key'), 0, 8) . '...',
+            'api_key' => substr($request->header('X-API-Key'), 0, 8).'...',
             'method' => $request->method(),
             'endpoint' => $request->route()->getName(),
             'path' => $request->getPathInfo(),
@@ -296,10 +297,10 @@ class APIGatewayMiddleware
     {
         if ($response instanceof \Illuminate\Http\JsonResponse) {
             $data = $response->getData(true);
-            
+
             // Remove sensitive fields
             $sensitiveFields = ['password', 'secret', 'token', 'api_key', 'ssn'];
-            
+
             array_walk_recursive($data, function (&$value, $key) use ($sensitiveFields) {
                 if (in_array(strtolower($key), $sensitiveFields)) {
                     $value = '[FILTERED]';

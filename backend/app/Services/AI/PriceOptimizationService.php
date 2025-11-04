@@ -2,11 +2,11 @@
 
 namespace App\Services\AI;
 
-use App\Models\Property;
-use App\Models\PricePrediction;
-use App\Models\RevenueSuggestion;
-use App\Models\OccupancyPrediction;
 use App\Models\Booking;
+use App\Models\OccupancyPrediction;
+use App\Models\PricePrediction;
+use App\Models\Property;
+use App\Models\RevenueSuggestion;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -218,7 +218,7 @@ class PriceOptimizationService
     private function analyzePerformance(Property $property): array
     {
         $last90Days = now()->subDays(90);
-        
+
         $bookings = Booking::where('property_id', $property->id)
             ->where('check_in', '>=', $last90Days)
             ->get();
@@ -295,7 +295,7 @@ class PriceOptimizationService
         return [
             'property_id' => $property->id,
             'suggestion_type' => 'minimum_stay',
-            'description' => "Short average booking length suggests implementing minimum stay requirement",
+            'description' => 'Short average booking length suggests implementing minimum stay requirement',
             'parameters' => [
                 'current_min_stay' => $property->minimum_stay ?? 1,
                 'suggested_min_stay' => 3,
@@ -328,7 +328,7 @@ class PriceOptimizationService
         return [
             'property_id' => $property->id,
             'suggestion_type' => 'last_minute_discount',
-            'description' => "Many available dates in next 30 days - offer last-minute discount",
+            'description' => 'Many available dates in next 30 days - offer last-minute discount',
             'parameters' => [
                 'discount_percentage' => 10,
                 'booking_window_days' => 7,
@@ -356,19 +356,30 @@ class PriceOptimizationService
         $probability = 50.0;
 
         // Historical data
-        if ($factors['historical_bookings'] > 0.7) $probability += 20;
-        elseif ($factors['historical_bookings'] > 0.5) $probability += 10;
+        if ($factors['historical_bookings'] > 0.7) {
+            $probability += 20;
+        } elseif ($factors['historical_bookings'] > 0.5) {
+            $probability += 10;
+        }
 
         // Rating impact
-        if ($factors['review_rating'] >= 4.5) $probability += 15;
-        elseif ($factors['review_rating'] >= 4.0) $probability += 10;
+        if ($factors['review_rating'] >= 4.5) {
+            $probability += 15;
+        } elseif ($factors['review_rating'] >= 4.0) {
+            $probability += 10;
+        }
 
         // Weekend boost
-        if ($factors['is_weekend']) $probability += 10;
+        if ($factors['is_weekend']) {
+            $probability += 10;
+        }
 
         // Booking window
-        if ($factors['days_until'] > 60) $probability -= 20;
-        elseif ($factors['days_until'] < 14) $probability += 10;
+        if ($factors['days_until'] > 60) {
+            $probability -= 20;
+        } elseif ($factors['days_until'] < 14) {
+            $probability += 10;
+        }
 
         return max(min($probability, 100), 0);
     }
@@ -376,10 +387,10 @@ class PriceOptimizationService
     private function calculateOccupancyConfidence(Property $property, array $factors): float
     {
         $confidence = 60.0;
-        
+
         $bookingCount = Booking::where('property_id', $property->id)->count();
         $confidence += min($bookingCount, 30);
-        
+
         return min($confidence, 95.0);
     }
 
@@ -387,15 +398,23 @@ class PriceOptimizationService
     {
         // Simplified holiday detection - can be enhanced with actual holiday API
         $holidays = ['12-25', '01-01', '12-31', '07-04'];
+
         return in_array($date->format('m-d'), $holidays);
     }
 
     private function getSeason(Carbon $date): string
     {
         $month = $date->month;
-        if (in_array($month, [12, 1, 2])) return 'winter';
-        if (in_array($month, [3, 4, 5])) return 'spring';
-        if (in_array($month, [6, 7, 8])) return 'summer';
+        if (in_array($month, [12, 1, 2])) {
+            return 'winter';
+        }
+        if (in_array($month, [3, 4, 5])) {
+            return 'spring';
+        }
+        if (in_array($month, [6, 7, 8])) {
+            return 'summer';
+        }
+
         return 'fall';
     }
 
@@ -438,7 +457,9 @@ class PriceOptimizationService
     private function calculateCancellationRate(Property $property): float
     {
         $total = Booking::where('property_id', $property->id)->count();
-        if ($total === 0) return 0;
+        if ($total === 0) {
+            return 0;
+        }
 
         $cancelled = Booking::where('property_id', $property->id)
             ->where('status', 'cancelled')
@@ -457,7 +478,7 @@ class PriceOptimizationService
             ->toArray();
 
         $avgBookings = count($bookingsByMonth) > 0 ? array_sum($bookingsByMonth) / count($bookingsByMonth) : 0;
-        
+
         $lowSeasons = [];
         foreach ($bookingsByMonth as $month => $count) {
             if ($count < $avgBookings * 0.6) {
@@ -480,11 +501,11 @@ class PriceOptimizationService
             ->flatMap(function ($booking) {
                 return collect(Carbon::parse($booking->check_in)->range($booking->check_out));
             })
-            ->map(fn($date) => $date->format('Y-m-d'))
+            ->map(fn ($date) => $date->format('Y-m-d'))
             ->unique();
 
         $allDates = collect(now()->range(now()->addDays(30)))
-            ->map(fn($date) => $date->format('Y-m-d'));
+            ->map(fn ($date) => $date->format('Y-m-d'));
 
         return $allDates->diff($bookedDates);
     }

@@ -9,13 +9,13 @@ class DatabaseOptimizationService
 {
     public function analyzeQueryPerformance(): array
     {
-        $slowQueries = DB::select("
+        $slowQueries = DB::select('
             SELECT query_time, sql_text
             FROM performance_schema.events_statements_history
             WHERE query_time > 1
             ORDER BY query_time DESC
             LIMIT 50
-        ");
+        ');
 
         return [
             'slow_queries' => $slowQueries,
@@ -37,12 +37,12 @@ class DatabaseOptimizationService
     {
         $columns = Schema::getColumnListing($table);
         $indexes = $this->getTableIndexes($table);
-        
+
         $foreignKeyColumns = $this->getForeignKeyColumns($table);
         $missingIndexes = [];
 
         foreach ($foreignKeyColumns as $column) {
-            if (!$this->hasIndex($indexes, $column)) {
+            if (! $this->hasIndex($indexes, $column)) {
                 $missingIndexes[] = $column;
             }
         }
@@ -52,7 +52,7 @@ class DatabaseOptimizationService
 
     public function getTableSize(string $table): array
     {
-        $result = DB::selectOne("
+        $result = DB::selectOne('
             SELECT 
                 table_name,
                 ROUND(((data_length + index_length) / 1024 / 1024), 2) AS size_mb,
@@ -60,14 +60,14 @@ class DatabaseOptimizationService
             FROM information_schema.TABLES
             WHERE table_schema = DATABASE()
             AND table_name = ?
-        ", [$table]);
+        ', [$table]);
 
         return (array) $result;
     }
 
     public function getDatabaseStatistics(): array
     {
-        $tables = DB::select("
+        $tables = DB::select('
             SELECT 
                 table_name,
                 ROUND(((data_length + index_length) / 1024 / 1024), 2) AS size_mb,
@@ -76,7 +76,7 @@ class DatabaseOptimizationService
             FROM information_schema.TABLES
             WHERE table_schema = DATABASE()
             ORDER BY (data_length + index_length) DESC
-        ");
+        ');
 
         return [
             'tables' => $tables,
@@ -92,13 +92,13 @@ class DatabaseOptimizationService
 
     protected function getForeignKeyColumns(string $table): array
     {
-        $foreignKeys = DB::select("
+        $foreignKeys = DB::select('
             SELECT COLUMN_NAME
             FROM information_schema.KEY_COLUMN_USAGE
             WHERE TABLE_SCHEMA = DATABASE()
             AND TABLE_NAME = ?
             AND REFERENCED_TABLE_NAME IS NOT NULL
-        ", [$table]);
+        ', [$table]);
 
         return array_column($foreignKeys, 'COLUMN_NAME');
     }
@@ -119,7 +119,7 @@ class DatabaseOptimizationService
         $recommendations = [];
 
         foreach ($slowQueries as $query) {
-            if (stripos($query->sql_text, 'SELECT') !== false && 
+            if (stripos($query->sql_text, 'SELECT') !== false &&
                 stripos($query->sql_text, 'WHERE') !== false &&
                 stripos($query->sql_text, 'INDEX') === false) {
                 $recommendations[] = 'Consider adding indexes for WHERE clause columns';

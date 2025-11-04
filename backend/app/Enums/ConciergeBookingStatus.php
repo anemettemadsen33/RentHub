@@ -13,7 +13,7 @@ enum ConciergeBookingStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::CONFIRMED => 'Confirmed',
             self::IN_PROGRESS => 'In Progress',
@@ -25,7 +25,7 @@ enum ConciergeBookingStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'warning',
             self::CONFIRMED => 'info',
             self::IN_PROGRESS => 'primary',

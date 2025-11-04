@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\GuestVerification;
 use App\Models\GuestReference;
+use App\Models\GuestVerification;
 use App\Models\VerificationLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class GuestVerificationController extends Controller
@@ -21,10 +20,10 @@ class GuestVerificationController extends Controller
             ->where('user_id', $request->user()->id)
             ->first();
 
-        if (!$verification) {
+        if (! $verification) {
             return response()->json([
                 'status' => 'not_started',
-                'message' => 'No verification started yet'
+                'message' => 'No verification started yet',
             ]);
         }
 
@@ -54,7 +53,7 @@ class GuestVerificationController extends Controller
         }
 
         $user = $request->user();
-        
+
         // Get or create verification record
         $verification = GuestVerification::firstOrCreate(
             ['user_id' => $user->id],
@@ -63,7 +62,7 @@ class GuestVerificationController extends Controller
 
         // Store documents
         $documentFront = $request->file('document_front')->store('verifications/identity', 'public');
-        $documentBack = $request->hasFile('document_back') 
+        $documentBack = $request->hasFile('document_back')
             ? $request->file('document_back')->store('verifications/identity', 'public')
             : null;
         $selfie = $request->file('selfie_photo')->store('verifications/selfie', 'public');
@@ -110,7 +109,7 @@ class GuestVerificationController extends Controller
         }
 
         $user = $request->user();
-        
+
         $verification = GuestVerification::firstOrCreate(
             ['user_id' => $user->id]
         );
@@ -118,7 +117,7 @@ class GuestVerificationController extends Controller
         // Check reference limit
         if ($verification->guestReferences()->count() >= 5) {
             return response()->json([
-                'message' => 'Maximum 5 references allowed'
+                'message' => 'Maximum 5 references allowed',
             ], 422);
         }
 
@@ -154,14 +153,14 @@ class GuestVerificationController extends Controller
     public function requestCreditCheck(Request $request)
     {
         $user = $request->user();
-        
+
         $verification = GuestVerification::firstOrCreate(
             ['user_id' => $user->id]
         );
 
         if ($verification->credit_check_enabled && $verification->credit_status !== 'not_requested') {
             return response()->json([
-                'message' => 'Credit check already requested'
+                'message' => 'Credit check already requested',
             ], 422);
         }
 
@@ -171,7 +170,7 @@ class GuestVerificationController extends Controller
         ]);
 
         // TODO: Integrate with credit check API (Experian, Equifax, etc.)
-        
+
         VerificationLog::log(
             $verification->id,
             'credit',
@@ -192,7 +191,7 @@ class GuestVerificationController extends Controller
     {
         $verification = GuestVerification::where('user_id', $request->user()->id)->first();
 
-        if (!$verification) {
+        if (! $verification) {
             return response()->json([
                 'trust_score' => 0,
                 'completed_bookings' => 0,
@@ -238,7 +237,7 @@ class GuestVerificationController extends Controller
 
         $reference = GuestReference::where('verification_token', $token)->first();
 
-        if (!$reference) {
+        if (! $reference) {
             return response()->json(['message' => 'Invalid verification token'], 404);
         }
 

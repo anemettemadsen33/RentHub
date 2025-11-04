@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('active_until')->nullable();
             $table->json('settings')->nullable(); // Delay, max uses per user, etc.
             $table->timestamps();
-            
+
             $table->index(['user_id', 'is_active']);
             $table->index('trigger_type');
         });

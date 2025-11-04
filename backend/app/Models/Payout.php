@@ -62,7 +62,7 @@ class Payout extends Model
     public static function generatePayoutNumber(): string
     {
         $date = now()->format('Ym');
-        $lastPayout = static::whereRaw('payout_number LIKE ?', [$date . '%'])
+        $lastPayout = static::whereRaw('payout_number LIKE ?', [$date.'%'])
             ->orderBy('payout_number', 'desc')
             ->first();
 
@@ -73,7 +73,7 @@ class Payout extends Model
             $newNumber = '0001';
         }
 
-        return 'PO' . $date . $newNumber;
+        return 'PO'.$date.$newNumber;
     }
 
     // Calculate commission and payout amounts

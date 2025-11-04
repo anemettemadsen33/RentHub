@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Property;
-use Illuminate\Database\Eloquent\Builder;
 
 class GeoSearchService
 {
@@ -11,9 +10,9 @@ class GeoSearchService
      * Calculate distance between two coordinates using Haversine formula
      */
     public static function calculateDistance(
-        float $lat1, 
-        float $lon1, 
-        float $lat2, 
+        float $lat1,
+        float $lon1,
+        float $lat2,
         float $lon2
     ): float {
         $earthRadius = 6371; // km
@@ -46,31 +45,31 @@ class GeoSearchService
             ->whereNotNull('longitude');
 
         // Apply filters
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
-        if (!empty($filters['min_price'])) {
+        if (! empty($filters['min_price'])) {
             $query->where('price_per_night', '>=', $filters['min_price']);
         }
 
-        if (!empty($filters['max_price'])) {
+        if (! empty($filters['max_price'])) {
             $query->where('price_per_night', '<=', $filters['max_price']);
         }
 
-        if (!empty($filters['bedrooms'])) {
+        if (! empty($filters['bedrooms'])) {
             $query->where('bedrooms', '>=', $filters['bedrooms']);
         }
 
-        if (!empty($filters['bathrooms'])) {
+        if (! empty($filters['bathrooms'])) {
             $query->where('bathrooms', '>=', $filters['bathrooms']);
         }
 
-        if (!empty($filters['guests'])) {
+        if (! empty($filters['guests'])) {
             $query->where('guests', '>=', $filters['guests']);
         }
 
-        if (!empty($filters['amenities'])) {
+        if (! empty($filters['amenities'])) {
             $query->whereHas('amenities', function ($q) use ($filters) {
                 $q->whereIn('amenity_id', $filters['amenities']);
             });
@@ -82,10 +81,10 @@ class GeoSearchService
 
         $query->whereBetween('latitude', [
             $latitude - $latDelta,
-            $latitude + $latDelta
+            $latitude + $latDelta,
         ])->whereBetween('longitude', [
             $longitude - $lonDelta,
-            $longitude + $lonDelta
+            $longitude + $lonDelta,
         ]);
 
         // Get properties and calculate exact distance
@@ -96,6 +95,7 @@ class GeoSearchService
                 $property->latitude,
                 $property->longitude
             );
+
             return $property;
         })->filter(function ($property) use ($radiusKm) {
             return $property->distance <= $radiusKm;
@@ -123,31 +123,31 @@ class GeoSearchService
             ->whereBetween('longitude', [$swLng, $neLng]);
 
         // Apply filters
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
-        if (!empty($filters['min_price'])) {
+        if (! empty($filters['min_price'])) {
             $query->where('price_per_night', '>=', $filters['min_price']);
         }
 
-        if (!empty($filters['max_price'])) {
+        if (! empty($filters['max_price'])) {
             $query->where('price_per_night', '<=', $filters['max_price']);
         }
 
-        if (!empty($filters['bedrooms'])) {
+        if (! empty($filters['bedrooms'])) {
             $query->where('bedrooms', '>=', $filters['bedrooms']);
         }
 
-        if (!empty($filters['bathrooms'])) {
+        if (! empty($filters['bathrooms'])) {
             $query->where('bathrooms', '>=', $filters['bathrooms']);
         }
 
-        if (!empty($filters['guests'])) {
+        if (! empty($filters['guests'])) {
             $query->where('guests', '>=', $filters['guests']);
         }
 
-        if (!empty($filters['amenities'])) {
+        if (! empty($filters['amenities'])) {
             $query->whereHas('amenities', function ($q) use ($filters) {
                 $q->whereIn('amenity_id', $filters['amenities']);
             });
@@ -189,7 +189,7 @@ class GeoSearchService
             $gridLng = floor($property->longitude / $gridLngSize);
             $key = "{$gridLat}_{$gridLng}";
 
-            if (!isset($clusters[$key])) {
+            if (! isset($clusters[$key])) {
                 $clusters[$key] = [
                     'type' => 'cluster',
                     'count' => 0,
@@ -204,7 +204,7 @@ class GeoSearchService
             $clusters[$key]['latitude'] += $property->latitude;
             $clusters[$key]['longitude'] += $property->longitude;
             $clusters[$key]['properties'][] = $property->id;
-            
+
             if ($clusters[$key]['min_price'] === null || $property->price_per_night < $clusters[$key]['min_price']) {
                 $clusters[$key]['min_price'] = $property->price_per_night;
             }
@@ -214,7 +214,7 @@ class GeoSearchService
         foreach ($clusters as &$cluster) {
             $cluster['latitude'] /= $cluster['count'];
             $cluster['longitude'] /= $cluster['count'];
-            
+
             // Convert single-property clusters to property markers
             if ($cluster['count'] === 1) {
                 $property = $properties->firstWhere('id', $cluster['properties'][0]);

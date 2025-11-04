@@ -2,9 +2,9 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class RBACService
@@ -20,7 +20,7 @@ class RBACService
 
         $user->roles()->syncWithoutDetaching($role->id);
         $this->clearUserCache($user);
-        
+
         return true;
     }
 
@@ -35,7 +35,7 @@ class RBACService
 
         $user->roles()->detach($role->id);
         $this->clearUserCache($user);
-        
+
         return true;
     }
 
@@ -50,7 +50,7 @@ class RBACService
 
         $role->permissions()->syncWithoutDetaching($permission->id);
         $this->clearRoleCache($role);
-        
+
         return true;
     }
 
@@ -100,7 +100,7 @@ class RBACService
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -110,11 +110,11 @@ class RBACService
     public function hasAllPermissions(User $user, array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($user, $permission)) {
+            if (! $this->hasPermission($user, $permission)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -128,7 +128,7 @@ class RBACService
             3600,
             function () use ($user) {
                 $directPermissions = $user->permissions()->pluck('name')->toArray();
-                
+
                 $rolePermissions = $user->roles()
                     ->with('permissions')
                     ->get()
@@ -167,7 +167,7 @@ class RBACService
             'description' => $description,
         ]);
 
-        if (!empty($permissions)) {
+        if (! empty($permissions)) {
             $permissionIds = Permission::whereIn('name', $permissions)->pluck('id');
             $role->permissions()->attach($permissionIds);
         }
@@ -194,7 +194,7 @@ class RBACService
     {
         Cache::forget("user:{$user->id}:roles");
         Cache::forget("user:{$user->id}:all_permissions");
-        
+
         // Clear individual permission caches
         $permissions = Permission::pluck('name');
         foreach ($permissions as $permission) {

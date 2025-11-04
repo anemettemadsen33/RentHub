@@ -3,16 +3,15 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Notifications\Notification;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Enums\IconSize;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 
 class Settings extends Page implements HasForms
 {
@@ -21,17 +20,17 @@ class Settings extends Page implements HasForms
     public string $view = 'filament.pages.settings';
 
     public ?array $data = [];
-    
+
     public static function getNavigationIcon(): string
     {
         return 'heroicon-o-cog-6-tooth';
     }
-    
+
     public static function getNavigationLabel(): string
     {
         return 'Settings';
     }
-    
+
     public static function getNavigationSort(): ?int
     {
         return 100;
@@ -65,92 +64,92 @@ class Settings extends Page implements HasForms
                     ->description('Configure frontend application URL')
                     ->icon('heroicon-o-computer-desktop')
                     ->schema([
-                    TextInput::make('frontend_url')
-                        ->label('Frontend URL')
-                        ->url()
-                        ->required()
-                        ->placeholder('https://renthub.com')
-                        ->helperText('The URL where your frontend application is hosted')
-                        ->columnSpanFull(),
+                        TextInput::make('frontend_url')
+                            ->label('Frontend URL')
+                            ->url()
+                            ->required()
+                            ->placeholder('https://renthub.com')
+                            ->helperText('The URL where your frontend application is hosted')
+                            ->columnSpanFull(),
                     ]),
-                
+
                 Section::make('Company Information')
                     ->description('Manage company details and contact information')
                     ->icon('heroicon-o-building-office')
                     ->schema([
-                    TextInput::make('company_name')
-                        ->label('Company Name')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('company_email')
-                        ->label('Company Email')
-                        ->email()
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('company_phone')
-                        ->label('Phone Number')
-                        ->tel()
-                        ->maxLength(255),
-                    Textarea::make('company_address')
-                        ->label('Address')
-                        ->rows(3)
-                        ->columnSpanFull(),
-                    Textarea::make('company_google_maps')
-                        ->label('Google Maps Embed URL')
-                        ->placeholder('https://www.google.com/maps/embed?pb=...')
-                        ->helperText('Paste the embed URL from Google Maps')
-                        ->rows(3)
-                        ->columnSpanFull(),
+                        TextInput::make('company_name')
+                            ->label('Company Name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('company_email')
+                            ->label('Company Email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('company_phone')
+                            ->label('Phone Number')
+                            ->tel()
+                            ->maxLength(255),
+                        Textarea::make('company_address')
+                            ->label('Address')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        Textarea::make('company_google_maps')
+                            ->label('Google Maps Embed URL')
+                            ->placeholder('https://www.google.com/maps/embed?pb=...')
+                            ->helperText('Paste the embed URL from Google Maps')
+                            ->rows(3)
+                            ->columnSpanFull(),
                     ]),
-                
+
                 Section::make('Mail Configuration')
                     ->description('Configure email settings for notifications')
                     ->icon('heroicon-o-envelope')
                     ->schema([
-                    Select::make('mail_mailer')
-                        ->label('Mail Driver')
-                        ->options([
-                            'smtp' => 'SMTP',
-                            'sendmail' => 'Sendmail',
-                            'mailgun' => 'Mailgun',
-                            'ses' => 'Amazon SES',
-                            'postmark' => 'Postmark',
-                        ])
-                        ->required(),
-                    TextInput::make('mail_host')
-                        ->label('Mail Host')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('mail_port')
-                        ->label('Mail Port')
-                        ->required()
-                        ->numeric()
-                        ->maxLength(10),
-                    Select::make('mail_encryption')
-                        ->label('Encryption')
-                        ->options([
-                            'tls' => 'TLS',
-                            'ssl' => 'SSL',
-                            'none' => 'None',
-                        ])
-                        ->required(),
-                    TextInput::make('mail_username')
-                        ->label('Username')
-                        ->maxLength(255),
-                    TextInput::make('mail_password')
-                        ->label('Password')
-                        ->password()
-                        ->revealable()
-                        ->maxLength(255),
-                    TextInput::make('mail_from_address')
-                        ->label('From Address')
-                        ->email()
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('mail_from_name')
-                        ->label('From Name')
-                        ->required()
-                        ->maxLength(255),
+                        Select::make('mail_mailer')
+                            ->label('Mail Driver')
+                            ->options([
+                                'smtp' => 'SMTP',
+                                'sendmail' => 'Sendmail',
+                                'mailgun' => 'Mailgun',
+                                'ses' => 'Amazon SES',
+                                'postmark' => 'Postmark',
+                            ])
+                            ->required(),
+                        TextInput::make('mail_host')
+                            ->label('Mail Host')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('mail_port')
+                            ->label('Mail Port')
+                            ->required()
+                            ->numeric()
+                            ->maxLength(10),
+                        Select::make('mail_encryption')
+                            ->label('Encryption')
+                            ->options([
+                                'tls' => 'TLS',
+                                'ssl' => 'SSL',
+                                'none' => 'None',
+                            ])
+                            ->required(),
+                        TextInput::make('mail_username')
+                            ->label('Username')
+                            ->maxLength(255),
+                        TextInput::make('mail_password')
+                            ->label('Password')
+                            ->password()
+                            ->revealable()
+                            ->maxLength(255),
+                        TextInput::make('mail_from_address')
+                            ->label('From Address')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('mail_from_name')
+                            ->label('From Name')
+                            ->required()
+                            ->maxLength(255),
                     ]),
             ])
             ->statePath('data');

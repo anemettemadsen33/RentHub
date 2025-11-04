@@ -2,10 +2,10 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
 use App\Models\ApiKey;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class APIKeyService
 {
@@ -19,8 +19,8 @@ class APIKeyService
         ?Carbon $expiresAt = null,
         ?string $ipWhitelist = null
     ): ApiKey {
-        $key = 'rh_' . Str::random(40);
-        
+        $key = 'rh_'.Str::random(40);
+
         return ApiKey::create([
             'user_id' => $user->id,
             'name' => $name,
@@ -39,7 +39,7 @@ class APIKeyService
     public function validateKey(string $key): ?ApiKey
     {
         $hashedKey = hash('sha256', $key);
-        
+
         $apiKey = ApiKey::where('key', $hashedKey)
             ->where('active', true)
             ->where(function ($query) {
@@ -64,11 +64,12 @@ class APIKeyService
      */
     public function isIpAllowed(ApiKey $apiKey, string $ip): bool
     {
-        if (!$apiKey->ip_whitelist) {
+        if (! $apiKey->ip_whitelist) {
             return true;
         }
 
         $whitelist = explode(',', $apiKey->ip_whitelist);
+
         return in_array($ip, array_map('trim', $whitelist));
     }
 
@@ -77,7 +78,7 @@ class APIKeyService
      */
     public function hasPermission(ApiKey $apiKey, string $permission): bool
     {
-        if (!$apiKey->permissions) {
+        if (! $apiKey->permissions) {
             return true; // No restrictions
         }
 
@@ -103,7 +104,7 @@ class APIKeyService
         // Create new key with same settings
         return $this->createKey(
             $apiKey->user,
-            $apiKey->name . ' (rotated)',
+            $apiKey->name.' (rotated)',
             $apiKey->permissions,
             $apiKey->expires_at,
             $apiKey->ip_whitelist

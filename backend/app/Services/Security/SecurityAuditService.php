@@ -2,12 +2,12 @@
 
 namespace App\Services\Security;
 
-use App\Models\User;
 use App\Models\SecurityAuditLog;
 use App\Models\SecurityIncident;
+use App\Models\User;
+use App\Notifications\SecurityAlertNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\SecurityAlertNotification;
 
 class SecurityAuditService
 {
@@ -21,7 +21,7 @@ class SecurityAuditService
             'user_agent' => request()->userAgent(),
         ]));
 
-        if (!$successful) {
+        if (! $successful) {
             $this->checkFailedLoginThreshold($user);
         }
     }
@@ -45,7 +45,7 @@ class SecurityAuditService
      */
     public function logDataAccess(User $user, string $resource, string $action, array $metadata = []): void
     {
-        if (!config('security.audit.log_data_access', true)) {
+        if (! config('security.audit.log_data_access', true)) {
             return;
         }
 
@@ -60,7 +60,7 @@ class SecurityAuditService
      */
     public function logDataModification(User $user, string $resource, string $action, array $before = [], array $after = []): void
     {
-        if (!config('security.audit.log_data_modifications', true)) {
+        if (! config('security.audit.log_data_modifications', true)) {
             return;
         }
 
@@ -77,7 +77,7 @@ class SecurityAuditService
      */
     public function logAdminAction(User $admin, string $action, array $metadata = []): void
     {
-        if (!config('security.audit.log_admin_actions', true)) {
+        if (! config('security.audit.log_admin_actions', true)) {
             return;
         }
 
@@ -164,12 +164,12 @@ class SecurityAuditService
      */
     private function notifySecurityTeam(SecurityIncident $incident): void
     {
-        if (!config('security.monitoring.alert_on_suspicious_activity', true)) {
+        if (! config('security.monitoring.alert_on_suspicious_activity', true)) {
             return;
         }
 
         $channels = config('security.monitoring.alert_channels', ['email']);
-        
+
         // Get security team users
         $securityTeam = User::whereHas('roles', function ($query) {
             $query->where('name', 'security_admin');
@@ -230,7 +230,7 @@ class SecurityAuditService
     public function cleanOldLogs(): int
     {
         $retentionDays = config('security.audit.retention_days', 365);
-        
+
         return SecurityAuditLog::where('created_at', '<', now()->subDays($retentionDays))
             ->delete();
     }

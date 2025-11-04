@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Properties\Schemas;
 
+use App\Models\Amenity;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use App\Models\Amenity;
 
 class PropertyForm
 {
@@ -171,8 +171,8 @@ class PropertyForm
                     ->schema(
                         collect(['basic', 'comfort', 'outdoor', 'luxury', 'transportation', 'safety', 'accessibility', 'family'])
                             ->map(function ($category) {
-                                return CheckboxList::make('amenities_' . $category)
-                                    ->label(ucfirst($category) . ' Amenities')
+                                return CheckboxList::make('amenities_'.$category)
+                                    ->label(ucfirst($category).' Amenities')
                                     ->relationship('amenities', 'name', fn ($query) => $query->where('category', $category))
                                     ->options(function () use ($category) {
                                         return Amenity::query()

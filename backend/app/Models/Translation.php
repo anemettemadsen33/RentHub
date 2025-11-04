@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Translation extends Model
@@ -28,14 +28,14 @@ class Translation extends Model
         });
     }
 
-    public static function get(string $key, string $locale = null, string $group = 'common', $default = null)
+    public static function get(string $key, ?string $locale = null, string $group = 'common', $default = null)
     {
         $locale = $locale ?? config('app.locale', 'en');
-        
+
         $translation = Cache::remember(
             "translation.{$locale}.{$group}.{$key}",
             3600,
-            fn() => self::where('locale', $locale)
+            fn () => self::where('locale', $locale)
                 ->where('group', $group)
                 ->where('key', $key)
                 ->first()
@@ -44,10 +44,10 @@ class Translation extends Model
         return $translation?->value ?? $default ?? $key;
     }
 
-    public static function getAllByLocale(string $locale, string $group = null)
+    public static function getAllByLocale(string $locale, ?string $group = null)
     {
         $query = self::where('locale', $locale);
-        
+
         if ($group) {
             $query->where('group', $group);
         }

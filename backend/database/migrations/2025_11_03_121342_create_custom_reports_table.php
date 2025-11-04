@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('run_count')->default(0);
             $table->timestamp('last_run_at')->nullable();
             $table->timestamps();
-            
+
             $table->index(['user_id', 'report_type']);
         });
     }

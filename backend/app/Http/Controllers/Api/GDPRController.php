@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Services\Security\GDPRService;
 use App\Services\Security\AnonymizationService;
+use App\Services\Security\GDPRService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class GDPRController extends Controller
 {
@@ -21,7 +20,7 @@ class GDPRController extends Controller
     public function getUserData(Request $request)
     {
         $user = auth()->user();
-        
+
         $this->gdprService->recordDataAccess($user, 'view', 'User requested data access');
 
         return response()->json([
@@ -47,17 +46,17 @@ class GDPRController extends Controller
     public function exportData(Request $request)
     {
         $user = auth()->user();
-        
+
         $this->gdprService->recordDataAccess($user, 'export', 'User requested data export');
 
         try {
             $zipPath = $this->gdprService->exportUserDataZip($user);
-            
+
             return response()->download($zipPath)->deleteFileAfterSend(true);
-            
+
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to export data: ' . $e->getMessage(),
+                'error' => 'Failed to export data: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -75,7 +74,7 @@ class GDPRController extends Controller
         ]);
 
         $user = auth()->user();
-        
+
         $this->gdprService->updateConsent($user, $validated);
 
         return response()->json([
@@ -95,7 +94,7 @@ class GDPRController extends Controller
         ]);
 
         $user = auth()->user();
-        
+
         // Check if user has active bookings or obligations
         $activeBookings = $user->bookings()
             ->where('status', 'confirmed')
@@ -110,8 +109,8 @@ class GDPRController extends Controller
         }
 
         $this->gdprService->recordDataAccess(
-            $user, 
-            'delete_request', 
+            $user,
+            'delete_request',
             $validated['reason'] ?? 'User requested account deletion'
         );
 
@@ -134,7 +133,7 @@ class GDPRController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->deletion_requested_at) {
+        if (! $user->deletion_requested_at) {
             return response()->json([
                 'error' => 'No deletion request found',
             ], 400);
@@ -180,7 +179,7 @@ class GDPRController extends Controller
             ->get();
 
         return response()->json([
-            'access_logs' => $logs->map(function($log) {
+            'access_logs' => $logs->map(function ($log) {
                 return [
                     'type' => $log->access_type,
                     'date' => $log->created_at,

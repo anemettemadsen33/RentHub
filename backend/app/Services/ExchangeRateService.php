@@ -14,16 +14,17 @@ class ExchangeRateService
     public function updateExchangeRates(): void
     {
         $baseCurrency = Currency::getDefault();
-        
-        if (!$baseCurrency) {
+
+        if (! $baseCurrency) {
             Log::error('No default currency set');
+
             return;
         }
 
         try {
-            $response = Http::get(self::API_URL . $baseCurrency->code);
+            $response = Http::get(self::API_URL.$baseCurrency->code);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \Exception('Failed to fetch exchange rates');
             }
 
@@ -63,7 +64,7 @@ class ExchangeRateService
 
             Log::info('Exchange rates updated successfully');
         } catch (\Exception $e) {
-            Log::error('Failed to update exchange rates: ' . $e->getMessage());
+            Log::error('Failed to update exchange rates: '.$e->getMessage());
             throw $e;
         }
     }

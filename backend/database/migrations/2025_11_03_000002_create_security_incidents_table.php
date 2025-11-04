@@ -10,8 +10,8 @@ return new class extends Migration
     {
         // This table is also created by earlier migrations
         // Skip creation if it already exists
-        
-        if (!Schema::hasTable('security_incidents')) {
+
+        if (! Schema::hasTable('security_incidents')) {
             Schema::create('security_incidents', function (Blueprint $table) {
                 $table->id();
                 $table->string('type', 50)->index();

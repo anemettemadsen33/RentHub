@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Property;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,26 +13,26 @@ class ConversationController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $conversations = Conversation::where(function ($query) use ($user) {
             $query->where('tenant_id', $user->id)
                 ->orWhere('owner_id', $user->id);
         })
-        ->with([
-            'property:id,title,address,featured_image',
-            'tenant:id,name,email,avatar',
-            'owner:id,name,email,avatar',
-            'latestMessage' => function ($query) {
-                $query->select('id', 'conversation_id', 'sender_id', 'message', 'created_at', 'read_at')
-                    ->latest()
-                    ->limit(1);
-            }
-        ])
-        ->when($request->is_archived, function ($query) use ($request) {
-            $query->where('is_archived', $request->is_archived);
-        })
-        ->orderBy('last_message_at', 'desc')
-        ->paginate($request->per_page ?? 20);
+            ->with([
+                'property:id,title,address,featured_image',
+                'tenant:id,name,email,avatar',
+                'owner:id,name,email,avatar',
+                'latestMessage' => function ($query) {
+                    $query->select('id', 'conversation_id', 'sender_id', 'message', 'created_at', 'read_at')
+                        ->latest()
+                        ->limit(1);
+                },
+            ])
+            ->when($request->is_archived, function ($query) use ($request) {
+                $query->where('is_archived', $request->is_archived);
+            })
+            ->orderBy('last_message_at', 'desc')
+            ->paginate($request->per_page ?? 20);
 
         return response()->json([
             'success' => true,
@@ -55,7 +54,7 @@ class ConversationController extends Controller
                 'last_page' => $conversations->lastPage(),
                 'per_page' => $conversations->perPage(),
                 'total' => $conversations->total(),
-            ]
+            ],
         ]);
     }
 
@@ -71,10 +70,10 @@ class ConversationController extends Controller
 
         $user = $request->user();
         $property = Property::findOrFail($validated['property_id']);
-        
+
         $tenantId = $user->id;
         $ownerId = $validated['recipient_id'];
-        
+
         if ($user->id == $property->user_id) {
             $ownerId = $user->id;
             $tenantId = $validated['recipient_id'];
@@ -91,7 +90,7 @@ class ConversationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Conversation already exists',
-                'data' => ['conversation_id' => $existingConversation->id]
+                'data' => ['conversation_id' => $existingConversation->id],
             ], 409);
         }
 
@@ -121,14 +120,15 @@ class ConversationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Conversation created successfully',
-                'data' => $conversation->load(['property', 'tenant', 'owner', 'messages'])
+                'data' => $conversation->load(['property', 'tenant', 'owner', 'messages']),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create conversation',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -136,7 +136,7 @@ class ConversationController extends Controller
     public function show(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $id)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -146,7 +146,7 @@ class ConversationController extends Controller
                 'property:id,title,address,featured_image',
                 'tenant:id,name,email,avatar',
                 'owner:id,name,email,avatar',
-                'booking'
+                'booking',
             ])
             ->firstOrFail();
 
@@ -165,14 +165,14 @@ class ConversationController extends Controller
                 'last_message_at' => $conversation->last_message_at,
                 'is_archived' => $conversation->is_archived,
                 'created_at' => $conversation->created_at,
-            ]
+            ],
         ]);
     }
 
     public function archive(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $id)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -184,14 +184,14 @@ class ConversationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Conversation archived successfully'
+            'message' => 'Conversation archived successfully',
         ]);
     }
 
     public function unarchive(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $id)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -203,14 +203,14 @@ class ConversationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Conversation unarchived successfully'
+            'message' => 'Conversation unarchived successfully',
         ]);
     }
 
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $id)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -222,14 +222,14 @@ class ConversationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Conversation deleted successfully'
+            'message' => 'Conversation deleted successfully',
         ]);
     }
 
     public function markAllAsRead(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $conversation = Conversation::where('id', $id)
             ->where(function ($query) use ($user) {
                 $query->where('tenant_id', $user->id)
@@ -241,7 +241,7 @@ class ConversationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'All messages marked as read'
+            'message' => 'All messages marked as read',
         ]);
     }
 }

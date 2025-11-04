@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CleaningService;
 use App\Models\Property;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\CleaningServiceNotification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CleaningServiceController extends Controller
 {
@@ -22,13 +21,13 @@ class CleaningServiceController extends Controller
 
         // Filter by user role
         if ($user->role === 'owner') {
-            $query->whereHas('property', function($q) use ($user) {
+            $query->whereHas('property', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         } elseif ($user->role === 'tenant') {
-            $query->whereHas('booking', function($q) use ($user) {
+            $query->whereHas('booking', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
-            })->orWhereHas('longTermRental', function($q) use ($user) {
+            })->orWhereHas('longTermRental', function ($q) use ($user) {
                 $q->where('tenant_id', $user->id);
             });
         }
@@ -166,7 +165,7 @@ class CleaningServiceController extends Controller
 
     public function destroy(CleaningService $cleaningService): JsonResponse
     {
-        if (!$cleaningService->canCancel()) {
+        if (! $cleaningService->canCancel()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot delete cleaning service in current status',
@@ -227,7 +226,7 @@ class CleaningServiceController extends Controller
 
     public function cancel(Request $request, CleaningService $cleaningService): JsonResponse
     {
-        if (!$cleaningService->canCancel()) {
+        if (! $cleaningService->canCancel()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot cancel cleaning service in current status',
@@ -256,7 +255,7 @@ class CleaningServiceController extends Controller
 
     public function rate(Request $request, CleaningService $cleaningService): JsonResponse
     {
-        if (!$cleaningService->canRate()) {
+        if (! $cleaningService->canRate()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot rate this cleaning service',

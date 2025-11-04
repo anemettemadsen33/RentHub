@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Security\InputValidationService;
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\Security\InputValidationService;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,11 +19,11 @@ class SqlInjectionProtectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!config('security.app_security.sql_injection.enabled', true)) {
+        if (! config('security.app_security.sql_injection.enabled', true)) {
             return $next($request);
         }
 
-        if (!config('security.app_security.sql_injection.validate_input', true)) {
+        if (! config('security.app_security.sql_injection.validate_input', true)) {
             return $next($request);
         }
 
@@ -55,13 +55,14 @@ class SqlInjectionProtectionMiddleware
                     return true;
                 }
             }
+
             return false;
         }
 
-        if (!is_string($input)) {
+        if (! is_string($input)) {
             return false;
         }
 
-        return !$this->validationService->validateSqlInput($input);
+        return ! $this->validationService->validateSqlInput($input);
     }
 }

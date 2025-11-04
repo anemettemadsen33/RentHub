@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class LongTermRental extends Model
 {
@@ -123,7 +123,7 @@ class LongTermRental extends Model
     // Helper Methods
     public function isActive(): bool
     {
-        return $this->status === 'active' 
+        return $this->status === 'active'
             && $this->start_date <= Carbon::now()
             && $this->end_date >= Carbon::now();
     }
@@ -140,17 +140,18 @@ class LongTermRental extends Model
 
     public function canRequestRenewal(): bool
     {
-        if (!$this->auto_renewable) {
+        if (! $this->auto_renewable) {
             return false;
         }
-        
+
         $daysUntilExpiry = $this->daysUntilExpiry();
+
         return $daysUntilExpiry > 0 && $daysUntilExpiry <= $this->renewal_notice_days;
     }
 
     public function depositPaidInFull(): bool
     {
-        return $this->deposit_status === 'paid' 
+        return $this->deposit_status === 'paid'
             && $this->deposit_paid_amount >= $this->security_deposit;
     }
 
@@ -158,7 +159,7 @@ class LongTermRental extends Model
     {
         $startDate = Carbon::parse($this->start_date);
         $endDate = Carbon::parse($this->end_date);
-        
+
         // Create deposit payment
         RentPayment::create([
             'long_term_rental_id' => $this->id,
@@ -168,11 +169,11 @@ class LongTermRental extends Model
             'amount_due' => $this->security_deposit,
             'status' => 'scheduled',
         ]);
-        
+
         // Create monthly rent payments
         $currentDate = $startDate->copy();
         $monthNumber = 1;
-        
+
         while ($currentDate <= $endDate) {
             RentPayment::create([
                 'long_term_rental_id' => $this->id,
@@ -183,7 +184,7 @@ class LongTermRental extends Model
                 'amount_due' => $this->monthly_rent,
                 'status' => 'scheduled',
             ]);
-            
+
             $currentDate->addMonth();
             $monthNumber++;
         }

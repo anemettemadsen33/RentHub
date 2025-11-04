@@ -28,12 +28,12 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'role', 
-                'phone', 
-                'bio', 
-                'avatar', 
-                'is_verified', 
-                'verified_at'
+                'role',
+                'phone',
+                'bio',
+                'avatar',
+                'is_verified',
+                'verified_at',
             ]);
         });
     }

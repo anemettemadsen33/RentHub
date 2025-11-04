@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\ExternalCalendars\Schemas;
 
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 class ExternalCalendarInfolist
@@ -68,7 +68,7 @@ class ExternalCalendarInfolist
                             ->label('Error Message')
                             ->color('danger')
                             ->columnSpanFull()
-                            ->visible(fn ($record) => !empty($record->sync_error)),
+                            ->visible(fn ($record) => ! empty($record->sync_error)),
                     ]),
 
                 Section::make('Timestamps')

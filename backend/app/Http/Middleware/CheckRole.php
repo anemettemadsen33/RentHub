@@ -12,23 +12,22 @@ class CheckRole
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  ...$roles
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!$request->user()) {
+        if (! $request->user()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated'
+                'message' => 'Unauthenticated',
             ], 401);
         }
 
         $userRole = $request->user()->role;
 
-        if (!in_array($userRole, $roles)) {
+        if (! in_array($userRole, $roles)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized. Required role: ' . implode(' or ', $roles)
+                'message' => 'Unauthorized. Required role: '.implode(' or ', $roles),
             ], 403);
         }
 

@@ -2,19 +2,19 @@
 
 namespace App\Services\AI;
 
-use App\Models\User;
+use App\Models\Booking;
 use App\Models\Property;
 use App\Models\PropertyRecommendation;
+use App\Models\User;
 use App\Models\UserBehavior;
-use App\Models\Booking;
-use App\Models\Review;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class RecommendationService
 {
     private const CACHE_TTL = 3600; // 1 hour
+
     private const RECOMMENDATION_COUNT = 20;
 
     /**
@@ -94,15 +94,15 @@ class RecommendationService
                 ->orderByRaw('COUNT(*) DESC')
                 ->limit(10);
         })
-        ->with(['amenities', 'reviews'])
-        ->get()
-        ->map(function ($property) {
-            return [
-                'property' => $property,
-                'score' => $this->calculateCollaborativeScore($property),
-                'reason' => 'collaborative',
-            ];
-        });
+            ->with(['amenities', 'reviews'])
+            ->get()
+            ->map(function ($property) {
+                return [
+                    'property' => $property,
+                    'score' => $this->calculateCollaborativeScore($property),
+                    'reason' => 'collaborative',
+                ];
+            });
 
         return $recommendations;
     }
@@ -129,13 +129,14 @@ class RecommendationService
             ->get()
             ->map(function ($property) use ($referenceProperties) {
                 $similarity = $this->calculateSimilarity($property, $referenceProperties);
+
                 return [
                     'property' => $property,
                     'score' => $similarity,
                     'reason' => 'content_based',
                 ];
             })
-            ->filter(fn($item) => $item['score'] > 0.5)
+            ->filter(fn ($item) => $item['score'] > 0.5)
             ->sortByDesc('score')
             ->take(10);
 
@@ -254,9 +255,9 @@ class RecommendationService
         return User::whereHas('bookings', function ($query) use ($userProfile) {
             $query->whereIn('property_id', $userProfile['booked_properties']);
         })
-        ->where('id', '!=', $userId)
-        ->limit(50)
-        ->get();
+            ->where('id', '!=', $userId)
+            ->limit(50)
+            ->get();
     }
 
     /**
@@ -269,30 +270,40 @@ class RecommendationService
         }
 
         $referenceProperties = Property::whereIn('id', $referencePropertyIds)->get();
-        
+
         $similarities = $referenceProperties->map(function ($refProp) use ($property) {
             $score = 0;
             $maxScore = 5;
 
             // Type similarity
-            if ($property->type === $refProp->type) $score += 1;
+            if ($property->type === $refProp->type) {
+                $score += 1;
+            }
 
             // Price similarity (within 30%)
             $priceDiff = abs($property->price_per_night - $refProp->price_per_night) / $refProp->price_per_night;
-            if ($priceDiff < 0.3) $score += 1;
+            if ($priceDiff < 0.3) {
+                $score += 1;
+            }
 
             // Location similarity (same city)
-            if ($property->city === $refProp->city) $score += 1;
+            if ($property->city === $refProp->city) {
+                $score += 1;
+            }
 
             // Capacity similarity
             $capacityDiff = abs($property->guests - $refProp->guests);
-            if ($capacityDiff <= 2) $score += 1;
+            if ($capacityDiff <= 2) {
+                $score += 1;
+            }
 
             // Amenities overlap
             $propertyAmenities = $property->amenities->pluck('id')->toArray();
             $refAmenities = $refProp->amenities->pluck('id')->toArray();
             $overlap = count(array_intersect($propertyAmenities, $refAmenities));
-            if ($overlap > 0) $score += min($overlap / max(count($propertyAmenities), 1), 1);
+            if ($overlap > 0) {
+                $score += min($overlap / max(count($propertyAmenities), 1), 1);
+            }
 
             return $score / $maxScore;
         });
@@ -324,7 +335,7 @@ class RecommendationService
     private function calculatePriceRange(Collection $bookings): array
     {
         $prices = $bookings->pluck('property.price_per_night')->filter();
-        
+
         if ($prices->isEmpty()) {
             return ['min' => 0, 'max' => 0];
         }
@@ -339,7 +350,7 @@ class RecommendationService
     private function extractPreferredAmenities(Collection $behaviors): array
     {
         $propertyIds = $behaviors->where('action', 'view')->pluck('property_id');
-        
+
         return DB::table('amenity_property')
             ->whereIn('property_id', $propertyIds)
             ->select('amenity_id', DB::raw('COUNT(*) as count'))

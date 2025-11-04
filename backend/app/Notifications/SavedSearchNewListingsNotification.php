@@ -14,6 +14,7 @@ class SavedSearchNewListingsNotification extends Notification implements ShouldQ
     use Queueable;
 
     public SavedSearch $savedSearch;
+
     public Collection $newProperties;
 
     public function __construct(SavedSearch $savedSearch, Collection $newProperties)
@@ -31,29 +32,29 @@ class SavedSearchNewListingsNotification extends Notification implements ShouldQ
     {
         $count = $this->newProperties->count();
         $searchName = $this->savedSearch->name;
-        
+
         $mail = (new MailMessage)
-            ->subject("🏠 {$count} New " . ($count === 1 ? 'Property' : 'Properties') . " for '{$searchName}'")
+            ->subject("🏠 {$count} New ".($count === 1 ? 'Property' : 'Properties')." for '{$searchName}'")
             ->greeting("Hello {$notifiable->name}!")
-            ->line("Great news! We found {$count} new " . ($count === 1 ? 'property' : 'properties') . " matching your saved search: **{$searchName}**");
+            ->line("Great news! We found {$count} new ".($count === 1 ? 'property' : 'properties')." matching your saved search: **{$searchName}**");
 
         // Add up to 3 properties preview
         $previewCount = min(3, $count);
         foreach ($this->newProperties->take($previewCount) as $property) {
             $mail->line("**{$property->title}**")
-                 ->line("📍 {$property->city}, {$property->country}")
-                 ->line("💰 \${$property->price_per_night}/night")
-                 ->line("🛏️ {$property->bedrooms} bed · 🛁 {$property->bathrooms} bath")
-                 ->line('---');
+                ->line("📍 {$property->city}, {$property->country}")
+                ->line("💰 \${$property->price_per_night}/night")
+                ->line("🛏️ {$property->bedrooms} bed · 🛁 {$property->bathrooms} bath")
+                ->line('---');
         }
 
         if ($count > 3) {
-            $mail->line("And " . ($count - 3) . " more...");
+            $mail->line('And '.($count - 3).' more...');
         }
 
         $mail->action('View All Properties', url("/search?saved_search={$this->savedSearch->id}"))
-             ->line('Act fast - these properties might get booked quickly!')
-             ->line('You can manage your saved searches and alerts in your account settings.');
+            ->line('Act fast - these properties might get booked quickly!')
+            ->line('You can manage your saved searches and alerts in your account settings.');
 
         return $mail;
     }

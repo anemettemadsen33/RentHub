@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\AI\PriceOptimizationService;
-use App\Models\Property;
 use App\Models\PricePrediction;
+use App\Models\Property;
 use App\Models\RevenueSuggestion;
-use App\Models\OccupancyPrediction;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use App\Services\AI\PriceOptimizationService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PriceOptimizationController extends Controller
 {
@@ -29,9 +28,9 @@ class PriceOptimizationController extends Controller
         ]);
 
         $property = Property::findOrFail($propertyId);
-        
+
         // Check if user owns the property
-        if ($property->owner_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+        if ($property->owner_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -56,8 +55,8 @@ class PriceOptimizationController extends Controller
     public function getRevenueSuggestions(int $propertyId): JsonResponse
     {
         $property = Property::findOrFail($propertyId);
-        
-        if ($property->owner_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+
+        if ($property->owner_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -79,8 +78,8 @@ class PriceOptimizationController extends Controller
     {
         $suggestion = RevenueSuggestion::findOrFail($suggestionId);
         $property = $suggestion->property;
-        
-        if ($property->owner_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+
+        if ($property->owner_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -89,10 +88,8 @@ class PriceOptimizationController extends Controller
 
         // Apply the suggestion based on type
         match ($suggestion->suggestion_type) {
-            'price_increase', 'price_decrease' => 
-                $property->update(['price_per_night' => $suggestion->parameters['suggested_price']]),
-            'minimum_stay' => 
-                $property->update(['minimum_stay' => $suggestion->parameters['suggested_min_stay']]),
+            'price_increase', 'price_decrease' => $property->update(['price_per_night' => $suggestion->parameters['suggested_price']]),
+            'minimum_stay' => $property->update(['minimum_stay' => $suggestion->parameters['suggested_min_stay']]),
             default => null,
         };
 
@@ -116,8 +113,8 @@ class PriceOptimizationController extends Controller
         ]);
 
         $property = Property::findOrFail($propertyId);
-        
-        if ($property->owner_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+
+        if ($property->owner_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -142,8 +139,8 @@ class PriceOptimizationController extends Controller
     public function getPredictionAccuracy(int $propertyId): JsonResponse
     {
         $property = Property::findOrFail($propertyId);
-        
-        if ($property->owner_id !== auth()->id() && !auth()->user()->hasRole('admin')) {
+
+        if ($property->owner_id !== auth()->id() && ! auth()->user()->hasRole('admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',

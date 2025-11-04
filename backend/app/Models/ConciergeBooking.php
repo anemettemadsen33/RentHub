@@ -58,10 +58,10 @@ class ConciergeBooking extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($booking) {
-            if (!$booking->booking_reference) {
-                $booking->booking_reference = 'CONC-' . strtoupper(Str::random(10));
+            if (! $booking->booking_reference) {
+                $booking->booking_reference = 'CONC-'.strtoupper(Str::random(10));
             }
         });
     }
@@ -112,7 +112,7 @@ class ConciergeBooking extends Model
         $this->save();
     }
 
-    public function cancel(string $reason = null)
+    public function cancel(?string $reason = null)
     {
         $this->status = 'cancelled';
         $this->cancelled_at = now();
@@ -120,7 +120,7 @@ class ConciergeBooking extends Model
         $this->save();
     }
 
-    public function addReview(int $rating, string $review = null)
+    public function addReview(int $rating, ?string $review = null)
     {
         $this->rating = $rating;
         $this->review = $review;
@@ -146,6 +146,6 @@ class ConciergeBooking extends Model
     public function scopeUpcoming($query)
     {
         return $query->whereIn('status', ['pending', 'confirmed'])
-                     ->where('service_date', '>=', now());
+            ->where('service_date', '>=', now());
     }
 }

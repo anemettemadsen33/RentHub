@@ -20,7 +20,7 @@ class InsurancePlansTable
                 \Filament\Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\TextColumn::make('type')
                     ->badge()
                     ->colors([
@@ -31,33 +31,33 @@ class InsurancePlansTable
                         'danger' => 'comprehensive',
                     ])
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\TextColumn::make('max_coverage')
                     ->money('EUR')
                     ->label('Coverage')
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\TextColumn::make('fixed_price')
                     ->money('EUR')
                     ->label('Fixed Price')
                     ->sortable()
                     ->toggleable(),
-                
+
                 \Filament\Tables\Columns\IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean()
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\IconColumn::make('is_mandatory')
                     ->label('Mandatory')
                     ->boolean()
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\TextColumn::make('bookingInsurances_count')
                     ->counts('bookingInsurances')
                     ->label('Active Policies')
                     ->sortable(),
-                
+
                 \Filament\Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

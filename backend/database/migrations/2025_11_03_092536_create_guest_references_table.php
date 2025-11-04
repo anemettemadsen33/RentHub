@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('guest_screening_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
+
             // Reference details
             $table->string('reference_name');
             $table->string('reference_email')->nullable();
@@ -26,21 +26,21 @@ return new class extends Migration
                 'colleague',
                 'friend',
                 'family',
-                'other'
+                'other',
             ]);
             $table->text('relationship_description')->nullable();
-            
+
             // Verification
             $table->enum('status', ['pending', 'contacted', 'verified', 'failed', 'expired'])->default('pending');
             $table->text('verification_notes')->nullable();
             $table->string('verification_code')->nullable();
-            
+
             // Reference response
             $table->boolean('responded')->default(false);
             $table->timestamp('responded_at')->nullable();
             $table->integer('rating')->nullable(); // 1-5
             $table->text('comments')->nullable();
-            
+
             // Questions & Answers
             $table->boolean('would_rent_again')->nullable();
             $table->boolean('reliable_tenant')->nullable();
@@ -48,14 +48,14 @@ return new class extends Migration
             $table->boolean('payment_issues')->nullable();
             $table->text('strengths')->nullable();
             $table->text('concerns')->nullable();
-            
+
             // Contact attempts
             $table->integer('contact_attempts')->default(0);
             $table->timestamp('last_contact_at')->nullable();
             $table->timestamp('expires_at')->nullable();
-            
+
             $table->timestamps();
-            
+
             // Indexes
             $table->index('guest_screening_id');
             $table->index('user_id');

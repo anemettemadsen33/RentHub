@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\Properties\RelationManagers;
 
+use BackedEnum;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Notifications\Notification;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Http;
-use BackedEnum;
 
 class ExternalCalendarsRelationManager extends RelationManager
 {
@@ -140,7 +140,7 @@ class ExternalCalendarsRelationManager extends RelationManager
                                     ->body("Added {$data['dates_added']} dates, removed {$data['dates_removed']} dates")
                                     ->success()
                                     ->send();
-                                
+
                                 $this->refreshTable();
                             } else {
                                 throw new \Exception($response->json('message') ?? 'Sync failed');
@@ -166,7 +166,7 @@ class ExternalCalendarsRelationManager extends RelationManager
                     ->openUrlInNewTab(),
 
                 Tables\Actions\EditAction::make(),
-                
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('sync_availability')->default(true);
             $table->timestamp('last_synced_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['property_id', 'channel']);
             $table->index('external_id');
         });

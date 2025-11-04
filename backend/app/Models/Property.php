@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Property extends Model
 {
     protected $fillable = [
         'title',
-        'description', 
+        'description',
         'type',
         'furnishing_status',
         'bedrooms',
@@ -49,7 +49,7 @@ class Property extends Model
         'rules',
         'images',
         'main_image',
-        'user_id'
+        'user_id',
     ];
 
     protected $casts = [
@@ -187,17 +187,17 @@ class Property extends Model
         if ($checkIn && $checkOut) {
             return $query->whereDoesntHave('bookings', function ($q) use ($checkIn, $checkOut) {
                 $q->where('status', '!=', 'cancelled')
-                  ->where(function ($q2) use ($checkIn, $checkOut) {
-                      $q2->whereBetween('check_in', [$checkIn, $checkOut])
-                         ->orWhereBetween('check_out', [$checkIn, $checkOut])
-                         ->orWhere(function ($q3) use ($checkIn, $checkOut) {
-                             $q3->where('check_in', '<=', $checkIn)
-                                ->where('check_out', '>=', $checkOut);
-                         });
-                  });
+                    ->where(function ($q2) use ($checkIn, $checkOut) {
+                        $q2->whereBetween('check_in', [$checkIn, $checkOut])
+                            ->orWhereBetween('check_out', [$checkIn, $checkOut])
+                            ->orWhere(function ($q3) use ($checkIn, $checkOut) {
+                                $q3->where('check_in', '<=', $checkIn)
+                                    ->where('check_out', '>=', $checkOut);
+                            });
+                    });
             });
         }
-        
+
         return $query;
     }
 
@@ -206,11 +206,11 @@ class Property extends Model
         if ($city) {
             $query->where('city', 'like', "%{$city}%");
         }
-        
+
         if ($country) {
             $query->where('country', 'like', "%{$country}%");
         }
-        
+
         return $query;
     }
 
@@ -219,11 +219,11 @@ class Property extends Model
         if ($minPrice) {
             $query->where('price_per_night', '>=', $minPrice);
         }
-        
+
         if ($maxPrice) {
             $query->where('price_per_night', '<=', $maxPrice);
         }
-        
+
         return $query;
     }
 
@@ -275,7 +275,7 @@ class Property extends Model
 
     public function isDateBlocked($date): bool
     {
-        if (!$this->blocked_dates) {
+        if (! $this->blocked_dates) {
             return false;
         }
 
@@ -285,9 +285,10 @@ class Property extends Model
     public function blockDate($date): bool
     {
         $blockedDates = $this->blocked_dates ?? [];
-        
-        if (!in_array($date, $blockedDates)) {
+
+        if (! in_array($date, $blockedDates)) {
             $blockedDates[] = $date;
+
             return $this->update(['blocked_dates' => $blockedDates]);
         }
 
@@ -297,9 +298,10 @@ class Property extends Model
     public function unblockDate($date): bool
     {
         $blockedDates = $this->blocked_dates ?? [];
-        
+
         if (($key = array_search($date, $blockedDates)) !== false) {
             unset($blockedDates[$key]);
+
             return $this->update(['blocked_dates' => array_values($blockedDates)]);
         }
 
@@ -319,16 +321,17 @@ class Property extends Model
     {
         $customPricing = $this->custom_pricing ?? [];
         $customPricing[$date] = $price;
-        
+
         return $this->update(['custom_pricing' => $customPricing]);
     }
 
     public function removeCustomPrice($date): bool
     {
         $customPricing = $this->custom_pricing ?? [];
-        
+
         if (isset($customPricing[$date])) {
             unset($customPricing[$date]);
+
             return $this->update(['custom_pricing' => $customPricing]);
         }
 

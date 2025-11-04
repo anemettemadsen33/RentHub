@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class AuditLogger
 {
@@ -14,7 +13,7 @@ class AuditLogger
     public function log(string $action, string $entity, array $details = [], string $severity = 'info'): void
     {
         $request = request();
-        
+
         AuditLog::create([
             'user_id' => Auth::id(),
             'action' => $action,
@@ -99,7 +98,7 @@ class AuditLogger
     protected function sanitizeDetails(array $details): array
     {
         $sensitiveKeys = ['password', 'token', 'secret', 'api_key', 'ssn', 'credit_card'];
-        
+
         foreach ($details as $key => $value) {
             if (is_string($key) && $this->isSensitiveKey($key, $sensitiveKeys)) {
                 $details[$key] = '[REDACTED]';
@@ -117,7 +116,7 @@ class AuditLogger
     protected function isSensitiveKey(string $key, array $sensitiveKeys): bool
     {
         $lowercaseKey = strtolower($key);
-        
+
         foreach ($sensitiveKeys as $sensitiveKey) {
             if (str_contains($lowercaseKey, $sensitiveKey)) {
                 return true;

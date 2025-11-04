@@ -4,8 +4,8 @@ namespace App\Observers;
 
 use App\Models\Booking;
 use App\Models\GoogleCalendarToken;
-use App\Services\InvoiceGenerationService;
 use App\Services\GoogleCalendarService;
+use App\Services\InvoiceGenerationService;
 
 class BookingObserver
 {
@@ -13,8 +13,7 @@ class BookingObserver
         private InvoiceGenerationService $invoiceService,
         private GoogleCalendarService $googleCalendarService,
         private \App\Services\SmartLock\SmartLockService $smartLockService
-    ) {
-    }
+    ) {}
 
     /**
      * Handle the Booking "created" event.
@@ -55,12 +54,13 @@ class BookingObserver
     {
         try {
             // Check if we can generate invoice
-            if (!$this->invoiceService->canGenerateInvoice($booking)) {
+            if (! $this->invoiceService->canGenerateInvoice($booking)) {
                 \Log::info('Skipping invoice generation for booking', [
                     'booking_id' => $booking->id,
                     'status' => $booking->status,
                     'has_invoice' => $booking->invoices()->exists(),
                 ]);
+
                 return;
             }
 
@@ -84,7 +84,7 @@ class BookingObserver
         // Generate smart lock access code
         try {
             $accessCode = $this->smartLockService->createAccessCodeForBooking($booking);
-            
+
             if ($accessCode) {
                 \Log::info('Auto-generated access code for confirmed booking', [
                     'booking_id' => $booking->id,

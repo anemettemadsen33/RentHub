@@ -11,13 +11,13 @@ use App\Filament\Resources\InsurancePlans\Schemas\InsurancePlanInfolist;
 use App\Filament\Resources\InsurancePlans\Tables\InsurancePlansTable;
 use App\Models\InsurancePlan;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class InsurancePlanResource extends Resource
 {
@@ -26,7 +26,7 @@ class InsurancePlanResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
     protected static string|UnitEnum|null $navigationGroup = 'Insurance Management';
-    
+
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';

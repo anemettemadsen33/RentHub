@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Services\Auth\JWTService;
 use Closure;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
 
 class JWTAuthenticate
 {
@@ -23,7 +23,7 @@ class JWTAuthenticate
     {
         $token = $this->getTokenFromRequest($request);
 
-        if (!$token) {
+        if (! $token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -31,7 +31,7 @@ class JWTAuthenticate
             $decoded = $this->jwtService->validateAccessToken($token);
             $user = $this->jwtService->getUserFromToken($token);
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'User not found'], 401);
             }
 
@@ -40,7 +40,7 @@ class JWTAuthenticate
             $request->attributes->set('jwt_payload', $decoded);
 
         } catch (Exception $e) {
-            return response()->json(['error' => 'Invalid token: ' . $e->getMessage()], 401);
+            return response()->json(['error' => 'Invalid token: '.$e->getMessage()], 401);
         }
 
         return $next($request);

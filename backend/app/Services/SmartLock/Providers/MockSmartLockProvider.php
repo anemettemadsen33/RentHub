@@ -2,9 +2,9 @@
 
 namespace App\Services\SmartLock\Providers;
 
-use App\Services\SmartLock\SmartLockProviderInterface;
-use App\Models\SmartLock;
 use App\Models\AccessCode;
+use App\Models\SmartLock;
+use App\Services\SmartLock\SmartLockProviderInterface;
 use Illuminate\Support\Str;
 
 /**
@@ -25,7 +25,7 @@ class MockSmartLockProvider implements SmartLockProviderInterface
 
         return [
             'success' => true,
-            'code_id' => 'mock_' . Str::random(10),
+            'code_id' => 'mock_'.Str::random(10),
             'code' => $accessCode->code,
             'valid_from' => $accessCode->valid_from->toIso8601String(),
             'valid_until' => $accessCode->valid_until?->toIso8601String(),
@@ -46,6 +46,7 @@ class MockSmartLockProvider implements SmartLockProviderInterface
     public function deleteAccessCode(SmartLock $lock, AccessCode $accessCode): bool
     {
         usleep(100000);
+
         return true;
     }
 
@@ -65,12 +66,14 @@ class MockSmartLockProvider implements SmartLockProviderInterface
     public function lock(SmartLock $lock): bool
     {
         usleep(200000); // 0.2 seconds
+
         return true;
     }
 
     public function unlock(SmartLock $lock): bool
     {
         usleep(200000);
+
         return true;
     }
 
@@ -83,7 +86,7 @@ class MockSmartLockProvider implements SmartLockProviderInterface
             $activities[] = [
                 'event_type' => $types[array_rand($types)],
                 'timestamp' => now()->subHours(rand(1, 48))->toIso8601String(),
-                'user' => 'Guest ' . rand(1, 5),
+                'user' => 'Guest '.rand(1, 5),
                 'method' => ['code', 'app', 'remote'][rand(0, 2)],
             ];
         }

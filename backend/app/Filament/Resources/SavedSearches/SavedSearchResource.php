@@ -16,7 +16,9 @@ use Filament\Tables\Table;
 class SavedSearchResource extends Resource
 {
     protected static ?string $model = SavedSearch::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema

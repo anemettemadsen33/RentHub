@@ -68,13 +68,13 @@ class SavedSearch extends Model
         // Location-based search (radius)
         if ($this->latitude && $this->longitude && $this->radius_km) {
             $radiusKm = $this->radius_km;
-            $query->selectRaw("
+            $query->selectRaw('
                 *,
                 (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * 
                 cos(radians(longitude) - radians(?)) + sin(radians(?)) * 
                 sin(radians(latitude)))) AS distance
-            ", [$this->latitude, $this->longitude, $this->latitude])
-            ->having('distance', '<=', $radiusKm);
+            ', [$this->latitude, $this->longitude, $this->latitude])
+                ->having('distance', '<=', $radiusKm);
         }
 
         // Price range
@@ -154,23 +154,39 @@ class SavedSearch extends Model
         // Apply all search filters (same as executeSearch)
         if ($this->latitude && $this->longitude && $this->radius_km) {
             $radiusKm = $this->radius_km;
-            $query->selectRaw("
+            $query->selectRaw('
                 *,
                 (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * 
                 cos(radians(longitude) - radians(?)) + sin(radians(?)) * 
                 sin(radians(latitude)))) AS distance
-            ", [$this->latitude, $this->longitude, $this->latitude])
-            ->having('distance', '<=', $radiusKm);
+            ', [$this->latitude, $this->longitude, $this->latitude])
+                ->having('distance', '<=', $radiusKm);
         }
 
-        if ($this->min_price) $query->where('price_per_night', '>=', $this->min_price);
-        if ($this->max_price) $query->where('price_per_night', '<=', $this->max_price);
-        if ($this->min_bedrooms) $query->where('bedrooms', '>=', $this->min_bedrooms);
-        if ($this->max_bedrooms) $query->where('bedrooms', '<=', $this->max_bedrooms);
-        if ($this->min_bathrooms) $query->where('bathrooms', '>=', $this->min_bathrooms);
-        if ($this->max_bathrooms) $query->where('bathrooms', '<=', $this->max_bathrooms);
-        if ($this->min_guests) $query->where('max_guests', '>=', $this->min_guests);
-        if ($this->property_type) $query->where('property_type', $this->property_type);
+        if ($this->min_price) {
+            $query->where('price_per_night', '>=', $this->min_price);
+        }
+        if ($this->max_price) {
+            $query->where('price_per_night', '<=', $this->max_price);
+        }
+        if ($this->min_bedrooms) {
+            $query->where('bedrooms', '>=', $this->min_bedrooms);
+        }
+        if ($this->max_bedrooms) {
+            $query->where('bedrooms', '<=', $this->max_bedrooms);
+        }
+        if ($this->min_bathrooms) {
+            $query->where('bathrooms', '>=', $this->min_bathrooms);
+        }
+        if ($this->max_bathrooms) {
+            $query->where('bathrooms', '<=', $this->max_bathrooms);
+        }
+        if ($this->min_guests) {
+            $query->where('max_guests', '>=', $this->min_guests);
+        }
+        if ($this->property_type) {
+            $query->where('property_type', $this->property_type);
+        }
 
         if ($this->amenities && count($this->amenities) > 0) {
             foreach ($this->amenities as $amenityId) {

@@ -19,7 +19,7 @@ class CleanupExpiredData extends Command
         if ($this->option('dry-run')) {
             $this->warn('DRY RUN MODE - No data will be deleted');
             $stats = $retentionService->getRetentionStats();
-            
+
             $this->table(
                 ['Data Type', 'Total Records', 'Expired Records', 'Retention Days'],
                 collect($stats)->map(function ($stat, $type) {

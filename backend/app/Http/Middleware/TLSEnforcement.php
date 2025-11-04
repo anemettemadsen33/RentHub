@@ -14,7 +14,7 @@ class TLSEnforcement
     public function handle(Request $request, Closure $next): Response
     {
         // Enforce HTTPS in production
-        if (!$request->secure() && app()->environment('production')) {
+        if (! $request->secure() && app()->environment('production')) {
             return redirect()->secure($request->getRequestUri(), 301);
         }
 

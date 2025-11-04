@@ -2,17 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\BlockedDate;
+use App\Models\Booking;
 use App\Models\GoogleCalendarToken;
 use App\Models\Property;
 use App\Models\User;
-use App\Models\Booking;
-use App\Models\BlockedDate;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class GoogleCalendarService
 {
     private $client = null;
+
     private $service = null;
 
     public function __construct()
@@ -20,19 +21,19 @@ class GoogleCalendarService
         // Don't initialize Google Client in constructor to avoid autoload dependency
         // Initialize lazily when needed
     }
-    
+
     private function initializeClient()
     {
         if ($this->client !== null) {
             return;
         }
-        
+
         try {
-            if (!class_exists('Google\Client')) {
+            if (! class_exists('Google\Client')) {
                 throw new Exception('Google API Client not installed');
             }
-            
-            $this->client = new \Google\Client();
+
+            $this->client = new \Google\Client;
             $this->client->setApplicationName(config('app.name'));
             $this->client->setScopes([
                 \Google\Service\Calendar::CALENDAR,
@@ -44,7 +45,7 @@ class GoogleCalendarService
             $this->client->setAccessType('offline');
             $this->client->setPrompt('consent');
         } catch (\Exception $e) {
-            Log::error('Failed to initialize Google Calendar Service: ' . $e->getMessage());
+            Log::error('Failed to initialize Google Calendar Service: '.$e->getMessage());
             throw $e;
         }
     }
@@ -63,7 +64,7 @@ class GoogleCalendarService
         ]));
 
         $this->client->setState($state);
-        
+
         return $this->client->createAuthUrl();
     }
 
@@ -75,7 +76,7 @@ class GoogleCalendarService
         $token = $this->client->fetchAccessTokenWithAuthCode($code);
 
         if (isset($token['error'])) {
-            throw new Exception("OAuth error: " . $token['error']);
+            throw new Exception('OAuth error: '.$token['error']);
         }
 
         $userId = $state['user_id'];
@@ -84,7 +85,7 @@ class GoogleCalendarService
         // Get calendar info
         $this->client->setAccessToken($token);
         $this->service = new GoogleCalendar($this->client);
-        
+
         $calendarList = $this->service->calendarList->get('primary');
 
         // Store or update token
@@ -115,7 +116,7 @@ class GoogleCalendarService
      */
     public function refreshToken(GoogleCalendarToken $googleToken): void
     {
-        if (!$googleToken->isTokenExpired()) {
+        if (! $googleToken->isTokenExpired()) {
             return;
         }
 
@@ -129,7 +130,7 @@ class GoogleCalendarService
             $token = $this->client->fetchAccessTokenWithRefreshToken($googleToken->refresh_token);
 
             if (isset($token['error'])) {
-                throw new Exception("Token refresh error: " . $token['error']);
+                throw new Exception('Token refresh error: '.$token['error']);
             }
 
             $googleToken->update([
@@ -162,8 +163,8 @@ class GoogleCalendarService
     {
         try {
             $service = $this->getService($googleToken);
-            
-            $webhook = new \Google\Service\Calendar\Channel();
+
+            $webhook = new \Google\Service\Calendar\Channel;
             $webhook->setId(uniqid('renthub_', true));
             $webhook->setType('web_hook');
             $webhook->setAddress(route('api.google-calendar.webhook'));
@@ -195,14 +196,14 @@ class GoogleCalendarService
      */
     public function stopWebhook(GoogleCalendarToken $googleToken): void
     {
-        if (!$googleToken->webhook_id || !$googleToken->webhook_resource_id) {
+        if (! $googleToken->webhook_id || ! $googleToken->webhook_resource_id) {
             return;
         }
 
         try {
             $service = $this->getService($googleToken);
-            
-            $channel = new \Google\Service\Calendar\Channel();
+
+            $channel = new \Google\Service\Calendar\Channel;
             $channel->setId($googleToken->webhook_id);
             $channel->setResourceId($googleToken->webhook_resource_id);
 
@@ -263,7 +264,7 @@ class GoogleCalendarService
             }
 
             $googleToken->markSyncSuccess();
-            
+
             Log::info('Booking synced to Google Calendar', [
                 'booking_id' => $booking->id,
                 'event_id' => $booking->google_event_id,
@@ -283,7 +284,7 @@ class GoogleCalendarService
      */
     public function deleteBookingFromGoogle(Booking $booking, GoogleCalendarToken $googleToken): void
     {
-        if (!$booking->google_event_id) {
+        if (! $booking->google_event_id) {
             return;
         }
 
@@ -340,7 +341,7 @@ class GoogleCalendarService
             }
 
             $googleToken->markSyncSuccess();
-            
+
             Log::info('Blocked date synced to Google Calendar', [
                 'blocked_date_id' => $blockedDate->id,
                 'event_id' => $blockedDate->google_event_id,
@@ -362,7 +363,7 @@ class GoogleCalendarService
     {
         try {
             $service = $this->getService($googleToken);
-            
+
             $optParams = [
                 'maxResults' => 100,
                 'orderBy' => 'startTime',
@@ -390,7 +391,7 @@ class GoogleCalendarService
                     'property_id' => $property->id,
                     'start_date' => $start,
                     'end_date' => $end,
-                    'reason' => 'Imported from Google Calendar: ' . $event->getSummary(),
+                    'reason' => 'Imported from Google Calendar: '.$event->getSummary(),
                     'google_event_id' => $event->getId(),
                 ]);
 
@@ -425,11 +426,12 @@ class GoogleCalendarService
             ->where('sync_enabled', true)
             ->first();
 
-        if (!$googleToken) {
+        if (! $googleToken) {
             Log::warning('Webhook received for unknown channel', [
                 'channel_id' => $channelId,
                 'resource_id' => $resourceId,
             ]);
+
             return;
         }
 
@@ -456,7 +458,7 @@ class GoogleCalendarService
     public function disconnect(GoogleCalendarToken $googleToken): void
     {
         $this->stopWebhook($googleToken);
-        
+
         try {
             $this->client->revokeToken($googleToken->access_token);
         } catch (Exception $e) {

@@ -2,14 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\RefreshToken;
 use App\Models\SecurityIncident;
 use App\Models\User;
-use App\Models\RefreshToken;
-use App\Events\SecurityIncident as SecurityIncidentEvent;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\SecurityIncidentNotification;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class SecurityIncidentResponseService
 {
@@ -17,20 +16,30 @@ class SecurityIncidentResponseService
      * Incident severity levels
      */
     const SEVERITY_LOW = 'low';
+
     const SEVERITY_MEDIUM = 'medium';
+
     const SEVERITY_HIGH = 'high';
+
     const SEVERITY_CRITICAL = 'critical';
 
     /**
      * Incident types
      */
     const TYPE_BRUTE_FORCE = 'brute_force';
+
     const TYPE_TOKEN_REUSE = 'token_reuse';
+
     const TYPE_UNAUTHORIZED_ACCESS = 'unauthorized_access';
+
     const TYPE_DATA_BREACH = 'data_breach';
+
     const TYPE_DDOS = 'ddos';
+
     const TYPE_SQL_INJECTION = 'sql_injection';
+
     const TYPE_XSS = 'xss';
+
     const TYPE_SUSPICIOUS_ACTIVITY = 'suspicious_activity';
 
     /**
@@ -144,7 +153,7 @@ class SecurityIncidentResponseService
      */
     private function handleTokenReuse(SecurityIncident $incident): void
     {
-        if (!$incident->user_id) {
+        if (! $incident->user_id) {
             return;
         }
 
@@ -368,13 +377,13 @@ class SecurityIncidentResponseService
      */
     private function notifyPagerDuty(SecurityIncident $incident): void
     {
-        if (!config('services.pagerduty.enabled')) {
+        if (! config('services.pagerduty.enabled')) {
             return;
         }
 
         // PagerDuty API integration
-        $client = new \GuzzleHttp\Client();
-        
+        $client = new \GuzzleHttp\Client;
+
         try {
             $client->post('https://events.pagerduty.com/v2/enqueue', [
                 'json' => [
@@ -398,12 +407,12 @@ class SecurityIncidentResponseService
      */
     private function createIncidentChannel(SecurityIncident $incident): void
     {
-        if (!config('services.slack.enabled')) {
+        if (! config('services.slack.enabled')) {
             return;
         }
 
         $channelName = "incident-{$incident->id}";
-        
+
         // Slack API to create channel
         // Implementation depends on Slack SDK
         Log::info('Incident channel created', ['channel' => $channelName]);
@@ -425,7 +434,7 @@ class SecurityIncidentResponseService
     private function notifyLegalTeam(SecurityIncident $incident): void
     {
         $legalTeam = explode(',', config('security.legal_team_emails'));
-        
+
         // Send urgent email notification
         Log::critical('Legal team notified of potential breach', [
             'incident_id' => $incident->id,
@@ -452,7 +461,7 @@ class SecurityIncidentResponseService
     {
         // Update WAF configuration
         Cache::put("waf_rule_enabled:{$attackType}", true, now()->addWeek());
-        
+
         Log::info('WAF rules enabled', ['attack_type' => $attackType]);
     }
 
@@ -494,7 +503,7 @@ class SecurityIncidentResponseService
     private function calculateAverageResponseTime($incidents): float
     {
         $resolved = $incidents->whereNotNull('resolved_at');
-        
+
         if ($resolved->isEmpty()) {
             return 0;
         }

@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\UserLoyalty;
+use App\Models\Booking;
 use App\Models\LoyaltyTier;
 use App\Models\LoyaltyTransaction;
-use App\Models\Booking;
-use Carbon\Carbon;
+use App\Models\User;
+use App\Models\UserLoyalty;
 use Illuminate\Support\Facades\DB;
 
 class LoyaltyService
@@ -113,7 +112,7 @@ class LoyaltyService
     ): LoyaltyTransaction {
         $loyalty = $user->loyalty;
 
-        if (!$loyalty || !$loyalty->canRedeemPoints($points)) {
+        if (! $loyalty || ! $loyalty->canRedeemPoints($points)) {
             throw new \Exception('Insufficient points to redeem');
         }
 
@@ -158,7 +157,7 @@ class LoyaltyService
     {
         $loyalty = $user->loyalty;
 
-        if (!$loyalty || !$user->date_of_birth) {
+        if (! $loyalty || ! $user->date_of_birth) {
             return null;
         }
 
@@ -298,7 +297,7 @@ class LoyaltyService
     {
         $loyalty = $user->loyalty;
 
-        if (!$loyalty) {
+        if (! $loyalty) {
             return [
                 'tier' => null,
                 'total_earned' => 0,

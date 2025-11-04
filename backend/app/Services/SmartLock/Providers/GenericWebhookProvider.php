@@ -2,9 +2,9 @@
 
 namespace App\Services\SmartLock\Providers;
 
-use App\Services\SmartLock\SmartLockProviderInterface;
-use App\Models\SmartLock;
 use App\Models\AccessCode;
+use App\Models\SmartLock;
+use App\Services\SmartLock\SmartLockProviderInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class GenericWebhookProvider implements SmartLockProviderInterface
 {
     protected string $baseUrl;
+
     protected array $headers;
 
     public function __construct(string $baseUrl = '', array $headers = [])
@@ -26,16 +27,16 @@ class GenericWebhookProvider implements SmartLockProviderInterface
     {
         try {
             $response = Http::withHeaders($this->headers)
-                ->$method($this->baseUrl . $endpoint, $data);
+                ->$method($this->baseUrl.$endpoint, $data);
 
             if ($response->successful()) {
                 return $response->json();
             }
 
-            Log::error("Smart lock API error: " . $response->body());
-            throw new \Exception("API request failed: " . $response->status());
+            Log::error('Smart lock API error: '.$response->body());
+            throw new \Exception('API request failed: '.$response->status());
         } catch (\Exception $e) {
-            Log::error("Smart lock request exception: " . $e->getMessage());
+            Log::error('Smart lock request exception: '.$e->getMessage());
             throw $e;
         }
     }
@@ -44,11 +45,12 @@ class GenericWebhookProvider implements SmartLockProviderInterface
     {
         try {
             $this->headers = [
-                'Authorization' => 'Bearer ' . ($credentials['api_key'] ?? ''),
+                'Authorization' => 'Bearer '.($credentials['api_key'] ?? ''),
                 'Accept' => 'application/json',
             ];
 
             $result = $this->makeRequest('get', '/api/status');
+
             return isset($result['status']) && $result['status'] === 'ok';
         } catch (\Exception $e) {
             return false;
@@ -90,6 +92,7 @@ class GenericWebhookProvider implements SmartLockProviderInterface
                 'delete',
                 "/api/locks/{$lock->lock_id}/codes/{$accessCode->external_code_id}"
             );
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -109,6 +112,7 @@ class GenericWebhookProvider implements SmartLockProviderInterface
 
         try {
             $this->makeRequest('post', "/api/locks/{$lock->lock_id}/lock");
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -121,6 +125,7 @@ class GenericWebhookProvider implements SmartLockProviderInterface
 
         try {
             $this->makeRequest('post', "/api/locks/{$lock->lock_id}/unlock");
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -140,8 +145,8 @@ class GenericWebhookProvider implements SmartLockProviderInterface
         }
 
         $endpoint = "/api/locks/{$lock->lock_id}/activities";
-        if (!empty($params)) {
-            $endpoint .= '?' . http_build_query($params);
+        if (! empty($params)) {
+            $endpoint .= '?'.http_build_query($params);
         }
 
         return $this->makeRequest('get', $endpoint);
@@ -157,10 +162,10 @@ class GenericWebhookProvider implements SmartLockProviderInterface
     protected function initializeFromLock(SmartLock $lock): void
     {
         $credentials = $lock->credentials ?? [];
-        
+
         $this->baseUrl = $credentials['base_url'] ?? '';
         $this->headers = [
-            'Authorization' => 'Bearer ' . ($credentials['api_key'] ?? ''),
+            'Authorization' => 'Bearer '.($credentials['api_key'] ?? ''),
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ];

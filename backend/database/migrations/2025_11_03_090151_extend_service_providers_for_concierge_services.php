@@ -16,7 +16,7 @@ return new class extends Migration
             Schema::table('service_providers', function (Blueprint $table) {
                 // Add concierge service types to existing enum if not already there
                 // Note: In SQLite this might need recreation, but for most DBs we just add new types
-                if (!Schema::hasColumn('service_providers', 'concierge_services')) {
+                if (! Schema::hasColumn('service_providers', 'concierge_services')) {
                     $table->json('concierge_services')->nullable()->after('service_areas'); // Array of concierge service types they offer
                 }
                 if (Schema::hasColumn('service_providers', 'rating')) {

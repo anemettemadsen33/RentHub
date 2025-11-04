@@ -23,7 +23,7 @@ class CalculateSimilarPropertiesJob implements ShouldQueue
     {
         try {
             $property = Property::with('amenities')->findOrFail($this->propertyId);
-            
+
             // Find similar properties based on various factors
             $candidates = Property::where('id', '!=', $this->propertyId)
                 ->where('status', 'active')
@@ -32,7 +32,7 @@ class CalculateSimilarPropertiesJob implements ShouldQueue
 
             foreach ($candidates as $candidate) {
                 $similarityScore = $this->calculateSimilarity($property, $candidate);
-                
+
                 if ($similarityScore >= 50) { // Minimum 50% similarity
                     SimilarProperty::updateOrCreate(
                         [
@@ -50,7 +50,7 @@ class CalculateSimilarPropertiesJob implements ShouldQueue
 
             Log::info("Calculated similar properties for property {$this->propertyId}");
         } catch (\Exception $e) {
-            Log::error("Failed to calculate similar properties for property {$this->propertyId}: " . $e->getMessage());
+            Log::error("Failed to calculate similar properties for property {$this->propertyId}: ".$e->getMessage());
             throw $e;
         }
     }

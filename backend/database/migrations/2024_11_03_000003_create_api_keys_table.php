@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('usage_count')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'active']);
             $table->index('expires_at');
         });
