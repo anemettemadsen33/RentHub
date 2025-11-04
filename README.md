@@ -207,9 +207,16 @@ make test
 
 ## Deployment
 
-### Laravel Forge Deployment (Recommended for Backend)
+### Production Deployment (Forge + Vercel)
 
-The backend can be easily deployed to Laravel Forge. See detailed instructions:
+**Quick Start**: Get your production environment up in 15 minutes!
+- **Quick Setup Guide**: [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) - Start here!
+- **Step-by-Step Checklist**: [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+- **Complete Guide**: [PRODUCTION_DEPLOYMENT_GUIDE.md](PRODUCTION_DEPLOYMENT_GUIDE.md)
+
+### Laravel Forge (Backend)
+
+The backend can be easily deployed to Laravel Forge:
 - **Quick Setup**: [FORGE_CONFIG.md](FORGE_CONFIG.md)
 - **Complete Guide**: [FORGE_DEPLOYMENT.md](FORGE_DEPLOYMENT.md)
 
@@ -218,23 +225,29 @@ The backend can be easily deployed to Laravel Forge. See detailed instructions:
 - Use the provided `forge-deploy.sh` script
 - Repository has a monorepo structure with backend in `backend/` directory
 
-### Production Checklist
-1. Run deployment checks:
-   ```bash
-   make deploy-check
-   ```
+### Vercel (Frontend)
 
-2. Configure production environment variables
+The frontend deploys seamlessly to Vercel:
+- **Vercel Guide**: [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md)
+- Set Root Directory to `frontend`
+- Configure environment variables in Vercel dashboard
 
-3. Deploy using Docker Compose:
-   ```bash
-   docker-compose -f docker-compose.production.yml up -d
-   ```
+### Alternative Deployment Options
 
-4. Or deploy to Kubernetes:
-   ```bash
-   kubectl apply -f k8s/
-   ```
+**Docker Compose**:
+```bash
+docker-compose -f docker-compose.production.yml up -d
+```
+
+**Kubernetes**:
+```bash
+kubectl apply -f k8s/
+```
+
+**Pre-Deployment Check**:
+```bash
+make deploy-check
+```
 
 ## Contributing
 
