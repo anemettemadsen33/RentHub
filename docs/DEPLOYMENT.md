@@ -4,11 +4,183 @@ This guide covers various deployment options for RentHub.
 
 ## Table of Contents
 
+- [Laravel Forge Deployment](#laravel-forge-deployment)
 - [Docker Deployment](#docker-deployment)
 - [Kubernetes Deployment](#kubernetes-deployment)
 - [Production Checklist](#production-checklist)
 - [Environment Configuration](#environment-configuration)
 - [Monitoring and Logging](#monitoring-and-logging)
+
+## Laravel Forge Deployment
+
+Laravel Forge provides a simple way to deploy and manage Laravel applications on DigitalOcean, AWS, Linode, and other cloud providers.
+
+### Prerequisites
+
+- Laravel Forge account
+- Server provisioned through Forge
+- Git repository connected to Forge
+- Database created on the server
+
+### Initial Setup
+
+1. **Create a New Site in Forge**
+   - Log in to Laravel Forge
+   - Select your server
+   - Click "New Site"
+   - Enter your domain (e.g., `api.renthub.com`)
+   - Choose "Show Advanced" and set:
+     - Web Directory: `/public`
+     - PHP Version: `8.2` or higher
+
+2. **Install Repository**
+   - Go to your site's "Apps" tab
+   - Click "Install Repository"
+   - Select your Git provider (GitHub)
+   - Enter repository: `anemettemadsen33/RentHub`
+   - Branch: `main`
+   - Check "Install Composer Dependencies"
+
+3. **Configure Environment**
+   - Go to the "Environment" tab
+   - Update your `.env` file with production settings
+   - Key variables to set:
+     ```env
+     APP_ENV=production
+     APP_DEBUG=false
+     APP_URL=https://api.renthub.com
+     DB_CONNECTION=mysql
+     DB_HOST=localhost
+     DB_DATABASE=your_database
+     DB_USERNAME=your_username
+     DB_PASSWORD=your_password
+     ```
+   - Click "Save" when done
+
+4. **Run Initial Commands**
+   - SSH into your server or use Forge's terminal
+   - Navigate to `/home/forge/api.renthub.com`
+   - Run:
+     ```bash
+     php artisan key:generate
+     php artisan migrate --force
+     php artisan storage:link
+     php artisan optimize
+     ```
+
+### Deployment Hook
+
+The deployment script is located at `backend/forge-deploy.sh`. This script runs automatically when you deploy through Forge.
+
+To set up the deployment hook:
+
+1. Go to your site's "Apps" tab in Forge
+2. Click "Edit Deployment Script"
+3. Update the script to match the path to your backend directory:
+
+```bash
+cd /home/forge/api.renthub.com
+bash backend/forge-deploy.sh
+```
+
+Or if your repository root is the backend:
+
+```bash
+cd /home/forge/api.renthub.com
+bash forge-deploy.sh
+```
+
+The deployment script includes:
+- Git pull from main branch
+- Composer dependency updates
+- Database migrations
+- Cache optimization
+- Queue worker restart
+- Asset compilation
+
+### Quick Deploy
+
+To deploy your application:
+1. Push your changes to the `main` branch
+2. Forge will automatically deploy (if Quick Deploy is enabled)
+3. Or manually click "Deploy Now" in Forge
+
+### Queue Workers
+
+Set up queue workers in Forge:
+
+1. Go to "Queue" tab
+2. Click "New Worker"
+3. Configure:
+   - Connection: `redis` or `database`
+   - Queue: `default`
+   - Processes: `1` (adjust based on load)
+   - Timeout: `60`
+   - Sleep: `3`
+
+### Scheduled Tasks
+
+The Laravel scheduler should run every minute:
+
+1. Go to "Scheduler" tab
+2. Verify the scheduler command is set:
+   ```bash
+   php artisan schedule:run
+   ```
+
+### SSL Certificate
+
+Enable SSL for your site:
+
+1. Go to "SSL" tab
+2. Click "LetsEncrypt"
+3. Enter your domain
+4. Click "Obtain Certificate"
+
+### Monitoring
+
+- Enable "Quick Deploy" for automatic deployments on push
+- Set up "Notification Channels" for deployment notifications
+- Monitor logs at `/home/forge/api.renthub.com/storage/logs/`
+
+### Manual Deployment Commands
+
+If needed, you can manually run deployment commands via SSH:
+
+```bash
+cd /home/forge/api.renthub.com
+bash backend/forge-deploy.sh
+```
+
+Or individual commands:
+```bash
+php artisan migrate --force
+php artisan cache:clear
+php artisan config:cache
+php artisan queue:restart
+```
+
+### Troubleshooting
+
+**Permission Issues:**
+```bash
+sudo chown -R forge:forge /home/forge/api.renthub.com
+sudo chmod -R 775 /home/forge/api.renthub.com/storage
+sudo chmod -R 775 /home/forge/api.renthub.com/bootstrap/cache
+```
+
+**Queue Not Processing:**
+- Check queue worker status in Forge
+- Restart queue workers: `php artisan queue:restart`
+- Check logs: `tail -f storage/logs/laravel.log`
+
+**Cache Issues:**
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
 
 ## Docker Deployment
 
