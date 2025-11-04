@@ -2,6 +2,7 @@
     "name": "renthub/monorepo",
     "description": "RentHub monorepo deployment wrapper for Laravel Forge",
     "type": "project",
+    "license": "MIT",
     "require": {
         "php": "^8.2"
     },
