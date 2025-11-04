@@ -86,7 +86,7 @@ export function getPropertySchema(property: {
     image: images.map((img) => (img.startsWith('http') ? img : `${SITE_URL}${img}`)),
     offers: {
       '@type': 'Offer',
-      price: price,
+      price: String(price),
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       url: `${SITE_URL}/properties/${id}`,
@@ -102,11 +102,11 @@ export function getPropertySchema(property: {
   if (rating && reviewCount) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
-      ratingValue: rating,
-      reviewCount: reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    };
+      ratingValue: String(rating),
+      reviewCount: String(reviewCount),
+      bestRating: '5',
+      worstRating: '1',
+    } as any;
   }
 
   return schema;
@@ -145,7 +145,7 @@ export function getSearchResultsSchema(
         url: `${SITE_URL}/properties/${property.id}`,
         offers: {
           '@type': 'Offer',
-          price: property.price,
+          price: String(property.price),
           priceCurrency: 'USD',
         },
       },
