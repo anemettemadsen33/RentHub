@@ -28,7 +28,7 @@ export async function cacheProperty(propertyId: string): Promise<void> {
   }
 }
 
-export async function getCachedProperty(propertyId: string): Promise<any> {
+export async function getCachedProperty(propertyId: string): Promise<unknown> {
   if ('caches' in window) {
     const cache = await caches.open('property-cache');
     const response = await cache.match(`/api/properties/${propertyId}`);

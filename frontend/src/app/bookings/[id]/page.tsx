@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { bookingsApi, Booking } from '@/lib/api/bookings';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function BookingDetailsPage() {
   const params = useParams();
@@ -23,7 +24,7 @@ export default function BookingDetailsPage() {
     if (params.id) {
       fetchBooking(parseInt(params.id as string));
     }
-  }, [params.id, user]);
+  }, [params.id, user, router]);
 
   const fetchBooking = async (id: number) => {
     setLoading(true);
@@ -34,8 +35,9 @@ export default function BookingDetailsPage() {
       if (response.data.success && response.data.data) {
         setBooking(response.data.data);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Booking not found');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Booking not found');
     } finally {
       setLoading(false);
     }
@@ -47,8 +49,9 @@ export default function BookingDetailsPage() {
     try {
       await bookingsApi.cancel(booking.id);
       fetchBooking(booking.id);
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to cancel booking');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Failed to cancel booking');
     }
   };
 
@@ -129,9 +132,11 @@ export default function BookingDetailsPage() {
               
               <div className="flex gap-4">
                 {booking.property?.main_image && (
-                  <img
+                  <Image
                     src={booking.property.main_image}
                     alt={booking.property.title}
+                    width={128}
+                    height={128}
                     className="w-32 h-32 object-cover rounded-lg"
                   />
                 )}
