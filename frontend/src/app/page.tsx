@@ -57,20 +57,23 @@ export default function Home() {
           </div>
 
           <div className="mt-16 p-6 bg-muted rounded-lg max-w-2xl mx-auto border border-border">
-            <h2 className="text-2xl font-bold mb-4">🎉 Setup Complete!</h2>
-            <div className="text-left space-y-2">
-              <p className="flex items-center gap-2">
-                <span className="text-green-600 dark:text-green-400">✓</span>
-                <span>Backend API running on http://localhost:8000</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-green-600 dark:text-green-400">✓</span>
-                <span>Frontend running on http://localhost:3000</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-primary">→</span>
-                <span>Admin Panel: http://localhost:8000/admin</span>
-              </p>
+            <h2 className="text-2xl font-bold mb-4">Get Started Today!</h2>
+            <p className="text-muted-foreground mb-4">
+              Join thousands of satisfied property owners and tenants
+            </p>
+            <div className="flex justify-center gap-4">
+              <a
+                href="/auth/register"
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Sign Up Free
+              </a>
+              <a
+                href="/properties"
+                className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+              >
+                Explore Properties
+              </a>
             </div>
           </div>
         </div>

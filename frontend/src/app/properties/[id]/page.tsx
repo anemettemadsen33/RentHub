@@ -66,12 +66,13 @@ export default function PropertyDetailPage() {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/properties/${propertyId}`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/properties/${propertyId}`);
         const data = await response.json();
         setProperty(data);
         
         // Fetch similar properties
-        const similarResponse = await fetch(`http://localhost:8000/api/properties?type=${data.property_type}&limit=3`);
+        const similarResponse = await fetch(`${apiUrl}/api/properties?type=${data.property_type}&limit=3`);
         const similarData = await similarResponse.json();
         setSimilarProperties(similarData.data.filter((p: Property) => p.id !== data.id));
       } catch (error) {
