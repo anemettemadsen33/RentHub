@@ -6,7 +6,14 @@ echo "Starting deployment..."
 echo "================================"
 
 # Get the deployment directory (where Forge clones the repo)
-DEPLOYMENT_DIR="${FORGE_SITE_PATH:-/home/forge/renthub-dji696t0.on-forge.com}"
+# FORGE_SITE_PATH is automatically set by Laravel Forge
+if [ -z "$FORGE_SITE_PATH" ]; then
+    echo "ERROR: FORGE_SITE_PATH environment variable is not set"
+    echo "This script should be run by Laravel Forge deployment"
+    exit 1
+fi
+
+DEPLOYMENT_DIR="$FORGE_SITE_PATH"
 BACKEND_DIR="$DEPLOYMENT_DIR/backend"
 
 echo "Deployment directory: $DEPLOYMENT_DIR"
@@ -61,6 +68,8 @@ if [ -f "package.json" ]; then
 fi
 
 # Set correct permissions
+# Laravel needs write access to storage and bootstrap/cache
+# 775 is used because Forge's web server (www-data) needs group write access
 echo "Setting permissions..."
 chmod -R 775 storage bootstrap/cache
 
