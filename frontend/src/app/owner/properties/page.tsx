@@ -28,7 +28,8 @@ export default function OwnerPropertiesPage() {
     
     try {
       const response = await propertiesApi.getMy();
-      let data = response.data.data;
+      const paginatedData = response.data;
+      let data: Property[] = (paginatedData as any).data || [];
 
       // Filter by status
       if (filter !== 'all') {

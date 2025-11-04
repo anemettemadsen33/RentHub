@@ -30,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('auth_token');
       if (token) {
         const response = await authApi.me();
-        if (response.success && response.data) {
-          setUser(response.data);
+        if (response.data.success && response.data.data) {
+          setUser(response.data.data);
         }
       }
     } catch (error) {
@@ -45,23 +45,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<AuthResponse> => {
     const response = await authApi.login({ email, password });
     
-    if (response.success && response.data) {
-      localStorage.setItem('auth_token', response.data.token);
-      setUser(response.data.user);
+    if (response.data.success && response.data.data) {
+      localStorage.setItem('auth_token', response.data.data.token);
+      setUser(response.data.data.user);
     }
     
-    return response;
+    return response.data;
   };
 
   const register = async (data: any): Promise<AuthResponse> => {
     const response = await authApi.register(data);
     
-    if (response.success && response.data) {
-      localStorage.setItem('auth_token', response.data.token);
-      setUser(response.data.user);
+    if (response.data.success && response.data.data) {
+      localStorage.setItem('auth_token', response.data.data.token);
+      setUser(response.data.data.user);
     }
     
-    return response;
+    return response.data;
   };
 
   const logout = async () => {
@@ -79,8 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshUser = async () => {
     try {
       const response = await authApi.me();
-      if (response.success && response.data) {
-        setUser(response.data);
+      if (response.data.success && response.data.data) {
+        setUser(response.data.data);
       }
     } catch (error) {
       console.error('Failed to refresh user:', error);

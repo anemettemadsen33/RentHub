@@ -30,8 +30,8 @@ export default function MyBookingsPage() {
       const params = filter !== 'all' ? { status: filter } : {};
       const response = await bookingsApi.getMy(params);
 
-      if (response.success) {
-        setBookings(response.data);
+      if (response.data.success) {
+        setBookings(response.data.data);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load bookings');
