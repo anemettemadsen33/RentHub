@@ -25,7 +25,7 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'phone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'in:owner,tenant'],
+            'role' => ['nullable', 'in:owner,tenant'],
         ]);
 
         if ($validator->fails()) {
@@ -40,7 +40,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'role' => $request->role,
+            'role' => $request->role ?? 'tenant',
         ]);
 
         // Send email verification
@@ -50,12 +50,9 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'success' => true,
+            'user' => $user,
+            'token' => $token,
             'message' => 'Registration successful! Please check your email to verify your account.',
-            'data' => [
-                'user' => $user,
-                'token' => $token,
-            ],
         ], 201);
     }
 
@@ -111,12 +108,9 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'success' => true,
+            'user' => $user,
+            'token' => $token,
             'message' => 'Login successful',
-            'data' => [
-                'user' => $user,
-                'token' => $token,
-            ],
         ]);
     }
 

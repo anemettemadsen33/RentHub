@@ -14,6 +14,22 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($user) {
+            // Create default wishlist for new users
+            $user->wishlists()->create([
+                'name' => 'Favorites',
+                'is_default' => true,
+            ]);
+        });
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
