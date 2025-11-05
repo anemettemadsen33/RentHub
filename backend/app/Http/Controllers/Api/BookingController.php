@@ -48,13 +48,15 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
             'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
             'guests' => 'required|integer|min:1',
-            'guest_name' => 'required|string|max:255',
-            'guest_email' => 'required|email|max:255',
+            'guest_name' => 'nullable|string|max:255',
+            'guest_email' => 'nullable|email|max:255',
             'guest_phone' => 'nullable|string|max:20',
             'special_requests' => 'nullable|string|max:1000',
         ]);
@@ -122,9 +124,9 @@ class BookingController extends Controller
             'taxes' => $taxes,
             'total_amount' => $totalAmount,
             'status' => 'pending',
-            'guest_name' => $request->guest_name,
-            'guest_email' => $request->guest_email,
-            'guest_phone' => $request->guest_phone,
+            'guest_name' => $request->guest_name ?? $user->name,
+            'guest_email' => $request->guest_email ?? $user->email,
+            'guest_phone' => $request->guest_phone ?? $user->phone,
             'special_requests' => $request->special_requests,
             'payment_status' => 'pending',
         ]);
@@ -132,9 +134,17 @@ class BookingController extends Controller
         $booking->load(['property', 'user']);
 
         return response()->json([
-            'success' => true,
+            'id' => $booking->id,
+            'property_id' => $booking->property_id,
+            'user_id' => $booking->user_id,
+            'total_price' => $booking->total_amount,
+            'total_amount' => $booking->total_amount,
+            'check_in' => $booking->check_in,
+            'check_out' => $booking->check_out,
+            'guests' => $booking->guests,
+            'nights' => $booking->nights,
+            'status' => $booking->status,
             'message' => 'Booking created successfully',
-            'data' => $booking,
         ], 201);
     }
 
