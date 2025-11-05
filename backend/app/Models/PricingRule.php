@@ -36,6 +36,17 @@ class PricingRule extends Model
         'priority' => 'integer',
     ];
 
+    protected $appends = ['minimum_nights'];
+
+    // Accessor for backwards compatibility with tests
+    protected function minimumNights(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->min_nights,
+            set: fn ($value) => ['min_nights' => $value]
+        );
+    }
+
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
