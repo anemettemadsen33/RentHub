@@ -73,6 +73,8 @@ class Property extends Model
         'available_until' => 'datetime',
     ];
 
+    protected $appends = ['price', 'owner_id'];
+
     // Relationships
     public function user(): BelongsTo
     {
@@ -170,6 +172,23 @@ class Property extends Model
     {
         return Attribute::make(
             get: fn () => $this->reviews()->where('is_approved', true)->count()
+        );
+    }
+
+    // Alias accessors for backwards compatibility with tests
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->price_per_night,
+            set: fn ($value) => ['price_per_night' => $value]
+        );
+    }
+
+    protected function ownerId(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->user_id,
+            set: fn ($value) => ['user_id' => $value]
         );
     }
 
