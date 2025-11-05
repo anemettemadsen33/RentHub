@@ -113,16 +113,18 @@ class NotificationController extends Controller
     public function getPreferences(Request $request): JsonResponse
     {
         $user = $request->user();
-        $preferences = [];
-
-        foreach (NotificationPreference::types() as $type) {
-            $preference = NotificationPreference::getOrCreateDefaults($user->id, $type);
-            $preferences[] = $preference;
+        
+        // Get the first preference for the user or create a default one
+        $preference = NotificationPreference::where('user_id', $user->id)->first();
+        
+        if (!$preference) {
+            $preference = NotificationPreference::getOrCreateDefaults($user->id, NotificationPreference::TYPE_BOOKING);
         }
 
         return response()->json([
-            'success' => true,
-            'data' => $preferences,
+            'email_enabled' => $preference->email_enabled,
+            'sms_enabled' => $preference->sms_enabled,
+            'push_enabled' => $preference->push_enabled,
         ]);
     }
 

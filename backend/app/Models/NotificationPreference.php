@@ -25,6 +25,33 @@ class NotificationPreference extends Model
         'channel_push' => 'boolean',
     ];
 
+    protected $appends = ['email_enabled', 'sms_enabled', 'push_enabled'];
+
+    // Accessor aliases for backward compatibility with tests
+    protected function emailEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->channel_email,
+            set: fn ($value) => ['channel_email' => $value]
+        );
+    }
+
+    protected function smsEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->channel_sms,
+            set: fn ($value) => ['channel_sms' => $value]
+        );
+    }
+
+    protected function pushEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->channel_push,
+            set: fn ($value) => ['channel_push' => $value]
+        );
+    }
+
     // Available notification types
     public const TYPE_BOOKING = 'booking';
 
