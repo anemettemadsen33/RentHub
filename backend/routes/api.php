@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
 use App\Http\Controllers\Api\CreditCheckController;
@@ -196,6 +197,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties/{property}/block-dates', [PropertyController::class, 'blockDates'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/unblock-dates', [PropertyController::class, 'unblockDates'])->middleware('role:owner,admin');
     Route::post('/properties/{property}/custom-pricing', [PropertyController::class, 'setCustomPricing'])->middleware('role:owner,admin');
+
+    // Blocked Dates Management
+    Route::get('/properties/{property}/blocked-dates', [BlockedDateController::class, 'index']);
+    Route::post('/properties/{property}/blocked-dates', [BlockedDateController::class, 'store'])->middleware('role:owner,admin');
+    Route::delete('/blocked-dates/{blockedDate}', [BlockedDateController::class, 'destroy'])->middleware('role:owner,admin');
 
     // Enhanced Calendar Management
     Route::get('/properties/{property}/calendar', [CalendarController::class, 'getAvailability']);
