@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Property extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'title',
         'description',
@@ -70,6 +72,8 @@ class Property extends Model
         'available_from' => 'datetime',
         'available_until' => 'datetime',
     ];
+
+    protected $appends = ['price', 'owner_id'];
 
     // Relationships
     public function user(): BelongsTo
@@ -168,6 +172,23 @@ class Property extends Model
     {
         return Attribute::make(
             get: fn () => $this->reviews()->where('is_approved', true)->count()
+        );
+    }
+
+    // Alias accessors for backwards compatibility with tests
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->price_per_night,
+            set: fn ($value) => ['price_per_night' => $value]
+        );
+    }
+
+    protected function ownerId(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->user_id,
+            set: fn ($value) => ['user_id' => $value]
         );
     }
 

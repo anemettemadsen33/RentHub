@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_public')->default(false);
+            $table->boolean('is_default')->default(false);
             $table->string('share_token')->nullable()->unique();
             $table->timestamps();
 

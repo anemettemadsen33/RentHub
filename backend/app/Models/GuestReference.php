@@ -13,15 +13,18 @@ class GuestReference extends Model
 
     protected $fillable = [
         'guest_screening_id',
+        'guest_verification_id',
         'user_id',
         'reference_name',
         'reference_email',
         'reference_phone',
+        'reference_type',
         'relationship',
         'relationship_description',
         'status',
         'verification_notes',
         'verification_code',
+        'verification_token',
         'responded',
         'responded_at',
         'rating',
@@ -69,6 +72,11 @@ class GuestReference extends Model
         return $this->belongsTo(GuestScreening::class, 'guest_screening_id');
     }
 
+    public function verification(): BelongsTo
+    {
+        return $this->belongsTo(GuestVerification::class, 'guest_verification_id');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -90,10 +98,19 @@ class GuestReference extends Model
         $this->status = 'verified';
         $this->save();
 
-        $this->screening->increment('references_verified');
-        $this->screening->screening_score = $this->screening->calculateScreeningScore();
-        $this->screening->risk_level = $this->screening->determineRiskLevel();
-        $this->screening->save();
+        // Update screening if related
+        if ($this->screening) {
+            $this->screening->increment('references_verified');
+            $this->screening->screening_score = $this->screening->calculateScreeningScore();
+            $this->screening->risk_level = $this->screening->determineRiskLevel();
+            $this->screening->save();
+        }
+
+        // Update verification if related
+        if ($this->verification) {
+            $this->verification->increment('references_verified');
+            $this->verification->updateTrustScore();
+        }
     }
 
     public function isExpired(): bool

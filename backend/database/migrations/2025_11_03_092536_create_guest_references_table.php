@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('guest_references', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guest_screening_id')->constrained()->onDelete('cascade');
+            $table->foreignId('guest_screening_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('guest_verification_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
             // Reference details
             $table->string('reference_name');
             $table->string('reference_email')->nullable();
             $table->string('reference_phone')->nullable();
+            $table->string('reference_type')->nullable(); // For compatibility with tests
             $table->enum('relationship', [
                 'previous_landlord',
                 'employer',
@@ -27,13 +29,14 @@ return new class extends Migration
                 'friend',
                 'family',
                 'other',
-            ]);
+            ])->nullable();
             $table->text('relationship_description')->nullable();
 
             // Verification
             $table->enum('status', ['pending', 'contacted', 'verified', 'failed', 'expired'])->default('pending');
             $table->text('verification_notes')->nullable();
             $table->string('verification_code')->nullable();
+            $table->string('verification_token')->nullable(); // For compatibility
 
             // Reference response
             $table->boolean('responded')->default(false);
@@ -58,6 +61,7 @@ return new class extends Migration
 
             // Indexes
             $table->index('guest_screening_id');
+            $table->index('guest_verification_id');
             $table->index('user_id');
             $table->index('status');
             $table->index('verification_code');

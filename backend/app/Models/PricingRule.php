@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PricingRule extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'property_id',
         'type',
@@ -33,6 +35,17 @@ class PricingRule extends Model
         'is_active' => 'boolean',
         'priority' => 'integer',
     ];
+
+    protected $appends = ['minimum_nights'];
+
+    // Accessor for backwards compatibility with tests
+    protected function minimumNights(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->min_nights,
+            set: fn ($value) => ['min_nights' => $value]
+        );
+    }
 
     public function property(): BelongsTo
     {
