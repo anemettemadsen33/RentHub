@@ -1,14 +1,14 @@
 {
   "nav": {
-    "home": "Home",
-    "properties": "Properties",
-    "bookings": "Bookings",
-    "messages": "Messages",
-    "profile": "Profile",
-    "login": "Login",
-    "register": "Register",
-    "logout": "Logout",
-    "dashboard": "Dashboard"
+    "home": "Inicio",
+    "properties": "Propiedades",
+    "bookings": "Reservas",
+    "messages": "Mensajes",
+    "profile": "Perfil",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "dashboard": "Panel"
   },
   "hero": {
     "title": "Find Your Perfect Rental",

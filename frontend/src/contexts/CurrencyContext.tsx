@@ -36,11 +36,13 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load saved currency from localStorage
+  // Load saved currency from localStorage (client-side only)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currency') as Currency;
-    if (savedCurrency && currencies[savedCurrency]) {
-      setCurrencyState(savedCurrency);
+    if (typeof window !== 'undefined') {
+      const savedCurrency = localStorage.getItem('currency') as Currency;
+      if (savedCurrency && currencies[savedCurrency]) {
+        setCurrencyState(savedCurrency);
+      }
     }
   }, []);
 
@@ -75,7 +77,9 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
 
   const setCurrency = (newCurrency: Currency) => {
     setCurrencyState(newCurrency);
-    localStorage.setItem('currency', newCurrency);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currency', newCurrency);
+    }
   };
 
   const convertPrice = (amount: number, fromCurrency: Currency = 'USD'): number => {

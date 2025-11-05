@@ -1,4 +1,4 @@
-# RentHub Frontend - Next.js 14/19 + TypeScript + shadcn/ui
+# RentHub Frontend - Next.js 16 + TypeScript + shadcn/ui
 
 ## Overview
 

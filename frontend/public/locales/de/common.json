@@ -1,13 +1,13 @@
 {
   "nav": {
-    "home": "Home",
-    "properties": "Properties",
-    "bookings": "Bookings",
-    "messages": "Messages",
-    "profile": "Profile",
-    "login": "Login",
-    "register": "Register",
-    "logout": "Logout",
+    "home": "Startseite",
+    "properties": "Immobilien",
+    "bookings": "Buchungen",
+    "messages": "Nachrichten",
+    "profile": "Profil",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
     "dashboard": "Dashboard"
   },
   "hero": {
