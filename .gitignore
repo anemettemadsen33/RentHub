@@ -36,3 +36,19 @@ install-*.sh
 # Environment variables
 .env.local
 .env.*.local
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build outputs
+.next/
+frontend/.next/
+backend/dist/
+backend/build/
+
+# Lock files (should be committed in projects)
+# Uncomment if you want to ignore lock files
+# package-lock.json
+# yarn.lock
