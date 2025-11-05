@@ -15,6 +15,8 @@ jobs:
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     services:
       mysql:
@@ -101,6 +103,8 @@ jobs:
   frontend-build:
     name: Frontend Build & Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -142,6 +146,8 @@ jobs:
   security-check:
     name: Security Audit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -170,6 +176,8 @@ jobs:
     name: Lighthouse Performance
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -205,6 +213,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [backend-test, frontend-build]
+    permissions:
+      contents: read
+      packages: write
     
     steps:
       - name: Checkout code
@@ -247,6 +258,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     needs: [backend-test, frontend-build, security-check]
+    permissions:
+      contents: read
+      deployments: write
     environment:
       name: staging
       url: https://staging.renthub.com
@@ -280,6 +294,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [backend-test, frontend-build, security-check, docker-build]
+    permissions:
+      contents: read
+      deployments: write
     environment:
       name: production
       url: https://renthub.com
@@ -346,6 +363,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [deploy-production]
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
