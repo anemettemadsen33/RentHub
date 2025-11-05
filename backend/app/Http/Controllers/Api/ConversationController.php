@@ -117,10 +117,15 @@ class ConversationController extends Controller
 
             DB::commit();
 
+            $conversation->load(['property', 'tenant', 'owner', 'messages']);
+
             return response()->json([
-                'success' => true,
+                'id' => $conversation->id,
+                'messages' => $conversation->messages,
+                'property' => $conversation->property,
+                'tenant' => $conversation->tenant,
+                'owner' => $conversation->owner,
                 'message' => 'Conversation created successfully',
-                'data' => $conversation->load(['property', 'tenant', 'owner', 'messages']),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
