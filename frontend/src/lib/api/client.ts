@@ -1,13 +1,8 @@
 import axios from 'axios';
-
-// Normalize API URL to prevent double slashes
-const normalizeUrl = (url: string | undefined): string => {
-  if (!url) return 'http://localhost:8000';
-  return url.replace(/\/+$/, ''); // Remove trailing slashes
-};
+import { normalizeApiUrl } from '@/lib/utils/url';
 
 export const apiClient = axios.create({
-  baseURL: normalizeUrl(process.env.NEXT_PUBLIC_API_URL) + '/api/v1',
+  baseURL: normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL) + '/api/v1',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
