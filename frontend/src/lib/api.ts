@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { normalizeApiUrl } from '@/lib/utils/url'
 
+// Legacy API client - uses /api endpoint (non-versioned)
+// For backward compatibility with existing code
+// New code should use apiClient from '@/lib/api/client' which uses /api/v1
 const API_BASE_URL = normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL) + '/api'
 
 export const api = axios.create({
@@ -9,6 +12,7 @@ export const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
+  withCredentials: true,
 })
 
 // Request interceptor to add auth token
