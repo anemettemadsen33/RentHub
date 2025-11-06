@@ -22,12 +22,15 @@ return [
     'allowed_origins' => [
         env('FRONTEND_URL', 'http://localhost:3000'),
         'http://127.0.0.1:3000',
+        'http://localhost:3000',
     ],
 
     'allowed_origins_patterns' => [
-        '#^https?://([\w-]+\.)?renthub\.com$#',
-        '#^https?://([\w-]+\.)?vercel\.app$#',
-        '#^https?://([\w-]+\.)?on-forge\.com$#',
+        '#^https?://([\w-]+\.)?renthub\.com$#i',
+        '#^https?://([\w-]+\.)?vercel\.app$#i',
+        '#^https?://([\w-]+\.)?on-forge\.com$#i',
+        '#^https?://renthub-[\w-]+\.on-forge\.com$#i',
+        '#^https?://rent-hub-[\w-]+\.vercel\.app$#i',
     ],
 
     'allowed_headers' => ['*'],

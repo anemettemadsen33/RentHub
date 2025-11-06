@@ -12,18 +12,19 @@ class SecurityHeaders
         $response = $next($request);
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(self), microphone=()');
 
+        // Use Content-Security-Policy with frame-ancestors instead of X-Frame-Options
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; ".
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com; ".
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ".
             "img-src 'self' data: https:; ".
             "font-src 'self' data: https://fonts.gstatic.com; ".
-            "connect-src 'self' https://api.exchangerate-api.com;"
+            "connect-src 'self' https://api.exchangerate-api.com; ".
+            "frame-ancestors 'self';"
         );
 
         if ($request->secure()) {

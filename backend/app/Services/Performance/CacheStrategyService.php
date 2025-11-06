@@ -145,20 +145,15 @@ class CacheStrategyService
         $configs = [
             'static' => [
                 'Cache-Control' => 'public, max-age=31536000, immutable',
-                'Expires' => gmdate('D, d M Y H:i:s', time() + 31536000).' GMT',
             ],
             'dynamic' => [
-                'Cache-Control' => 'public, max-age=3600, must-revalidate',
-                'Expires' => gmdate('D, d M Y H:i:s', time() + 3600).' GMT',
+                'Cache-Control' => 'public, max-age=3600',
             ],
             'private' => [
                 'Cache-Control' => 'private, max-age=600',
-                'Expires' => gmdate('D, d M Y H:i:s', time() + 600).' GMT',
             ],
             'no-cache' => [
-                'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                'Pragma' => 'no-cache',
-                'Expires' => '0',
+                'Cache-Control' => 'no-cache, no-store',
             ],
         ];
 

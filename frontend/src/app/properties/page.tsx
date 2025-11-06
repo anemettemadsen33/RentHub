@@ -103,6 +103,7 @@ export default function PropertiesPage() {
               value={filters.sort_by}
               onChange={(e) => handleSortChange(e.target.value)}
               className="px-3 py-2 border border-input rounded-md text-sm bg-background focus:ring-2 focus:ring-ring"
+              aria-label="Sort properties by"
             >
               <option value="created_at">Newest</option>
               <option value="price">Price</option>
