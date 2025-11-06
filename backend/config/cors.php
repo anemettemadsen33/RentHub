@@ -25,8 +25,11 @@ return [
     ],
 
     'allowed_origins_patterns' => [
+        // Matches renthub.com or any subdomain (www.renthub.com, api.renthub.com, etc.)
         '#^https?://([\w-]+\.)?renthub\.com$#i',
+        // Matches any Vercel deployment (requires subdomain: your-app.vercel.app)
         '#^https?://[\w-]+\.vercel\.app$#i',
+        // Matches any Forge deployment (requires subdomain: your-site.on-forge.com)
         '#^https?://[\w-]+\.on-forge\.com$#i',
     ],
 
