@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { normalizeApiUrl } from '@/lib/utils/url';
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api/v1',
+  baseURL: normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL) + '/api/v1',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

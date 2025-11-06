@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { normalizeApiUrl } from '@/lib/utils/url'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+const API_BASE_URL = normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL) + '/api'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

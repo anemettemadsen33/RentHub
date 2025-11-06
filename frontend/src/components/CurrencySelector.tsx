@@ -28,7 +28,7 @@ export function CurrencySelector() {
   };
 
   return (
-    <select value={selected} onChange={(e) => handleChange(e.target.value)}>
+    <select value={selected} onChange={(e) => handleChange(e.target.value)} aria-label="Select currency">
       {currencies.map((curr: any) => (
         <option key={curr.code} value={curr.code}>
           {curr.symbol} {curr.code}

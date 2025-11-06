@@ -228,8 +228,9 @@ export default function ProfileWizardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Gender</label>
+                  <label htmlFor="gender-select" className="block text-sm font-medium text-gray-700">Gender</label>
                   <select
+                    id="gender-select"
                     value={basicInfo.gender}
                     onChange={e => setBasicInfo({ ...basicInfo, gender: e.target.value })}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"

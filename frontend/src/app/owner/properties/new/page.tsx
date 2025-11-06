@@ -159,8 +159,9 @@ export default function NewPropertyPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
+                  <label htmlFor="property-type" className="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
                   <select
+                    id="property-type"
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
@@ -176,8 +177,9 @@ export default function NewPropertyPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Furnishing</label>
+                  <label htmlFor="furnishing-status" className="block text-sm font-medium text-gray-700 mb-2">Furnishing</label>
                   <select
+                    id="furnishing-status"
                     name="furnishing_status"
                     value={formData.furnishing_status || ''}
                     onChange={handleChange}
@@ -458,8 +460,9 @@ export default function NewPropertyPage() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <label htmlFor="property-status" className="block text-sm font-medium text-gray-700 mb-2">Status</label>
                 <select
+                  id="property-status"
                   name="status"
                   value={formData.status}
                   onChange={handleChange}

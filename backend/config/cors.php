@@ -25,9 +25,9 @@ return [
     ],
 
     'allowed_origins_patterns' => [
-        '#^https?://([\w-]+\.)?renthub\.com$#',
-        '#^https?://([\w-]+\.)?vercel\.app$#',
-        '#^https?://([\w-]+\.)?on-forge\.com$#',
+        '#^https?://([\w-]+\.)?renthub\.com$#i',
+        '#^https?://([\w-]+\.)?vercel\.app$#i',
+        '#^https?://([\w-]+\.)?on-forge\.com$#i',
     ],
 
     'allowed_headers' => ['*'],

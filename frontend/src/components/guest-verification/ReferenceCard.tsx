@@ -102,8 +102,9 @@ export function ReferenceCard({ verification, onUpdate }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <label htmlFor="reference-type" className="block text-sm font-medium text-gray-700">Type</label>
             <select
+              id="reference-type"
               value={formData.reference_type}
               onChange={(e) => setFormData({ ...formData, reference_type: e.target.value as any })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
