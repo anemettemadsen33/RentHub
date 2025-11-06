@@ -201,7 +201,7 @@ The following performance issues from the problem statement are configuration-re
 2. `backend/app/Http/Middleware/SecurityHeaders.php` - Security headers
 3. `backend/app/Services/Performance/CacheStrategyService.php` - Cache control
 
-**Frontend** (10 files):
+**Frontend** (11 files):
 1. `frontend/src/app/properties/page.tsx` - Sort select accessibility
 2. `frontend/src/components/CurrencySelector.tsx` - Currency select accessibility
 3. `frontend/src/app/owner/properties/new/page.tsx` - Property form selects accessibility
@@ -209,11 +209,12 @@ The following performance issues from the problem statement are configuration-re
 5. `frontend/src/app/profile/complete-wizard/page.tsx` - Gender select accessibility
 6. `frontend/src/components/guest-verification/ReferenceCard.tsx` - Reference type select accessibility
 7. `frontend/src/components/guest-verification/IdentityVerificationCard.tsx` - Document type select accessibility
-8. `frontend/src/lib/api/client.ts` - API URL normalization
-9. `frontend/src/services/api/client.ts` - API URL normalization
-10. `frontend/src/lib/api.ts` - API URL normalization
+8. `frontend/src/lib/utils/url.ts` - Shared URL normalization utility (new file)
+9. `frontend/src/lib/api/client.ts` - Use shared URL normalization
+10. `frontend/src/services/api/client.ts` - Use shared URL normalization
+11. `frontend/src/lib/api.ts` - Use shared URL normalization
 
-**Total Changes**: 13 files, 48 insertions(+), 23 deletions(-)
+**Total Changes**: 14 files (1 new), 52 insertions(+), 27 deletions(-)
 
 ---
 
