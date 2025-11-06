@@ -26,15 +26,15 @@ return [
 
     'allowed_origins_patterns' => [
         '#^https?://([\w-]+\.)?renthub\.com$#i',
-        '#^https?://([\w-]+\.)?vercel\.app$#i',
-        '#^https?://([\w-]+\.)?on-forge\.com$#i',
+        '#^https?://[\w-]+\.vercel\.app$#i',
+        '#^https?://[\w-]+\.on-forge\.com$#i',
     ],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['Authorization', 'Content-Type', 'X-Requested-With'],
 
-    'max_age' => 0,
+    'max_age' => 3600,
 
     'supports_credentials' => true,
 
