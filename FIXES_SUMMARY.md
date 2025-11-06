@@ -84,7 +84,29 @@ from origin 'https://rent-hub-six.vercel.app' has been blocked by CORS policy
 
 ---
 
-### 5. ✅ Shadcn Components Verification
+### 5. ✅ API URL Double Slash Issue
+
+**Problem**: API requests showing double slashes in URLs:
+```
+renthub-dji696t0.on-forge.com//api/v1/property-comparison
+renthub-dji696t0.on-forge.com//api/v1/properties
+```
+
+**Files Fixed**:
+- `frontend/src/lib/api/client.ts`
+- `frontend/src/services/api/client.ts`
+- `frontend/src/lib/api.ts`
+
+**Changes**:
+- Added `normalizeUrl()` function to strip trailing slashes from base URLs
+- Applied normalization to all API client configurations
+- Prevents double slashes when NEXT_PUBLIC_API_URL has a trailing slash
+
+**Result**: API URLs are properly formatted without double slashes, preventing potential routing issues.
+
+---
+
+### 6. ✅ Shadcn Components Verification
 
 **Problem**: Request to add complete shadcn components from https://ui.shadcn.com/
 
@@ -155,6 +177,7 @@ The following performance issues from the problem statement are configuration-re
 ✅ CORS configuration updated to support Vercel and Forge deployments  
 ✅ Security headers modernized (X-Frame-Options → CSP frame-ancestors)  
 ✅ Cache control headers simplified and deprecated headers removed  
+✅ API URL double slash issue fixed with URL normalization  
 ✅ Verified all shadcn components are installed (57 total)  
 
 ### What Requires Additional Action:
@@ -178,7 +201,7 @@ The following performance issues from the problem statement are configuration-re
 2. `backend/app/Http/Middleware/SecurityHeaders.php` - Security headers
 3. `backend/app/Services/Performance/CacheStrategyService.php` - Cache control
 
-**Frontend** (7 files):
+**Frontend** (10 files):
 1. `frontend/src/app/properties/page.tsx` - Sort select accessibility
 2. `frontend/src/components/CurrencySelector.tsx` - Currency select accessibility
 3. `frontend/src/app/owner/properties/new/page.tsx` - Property form selects accessibility
@@ -186,8 +209,11 @@ The following performance issues from the problem statement are configuration-re
 5. `frontend/src/app/profile/complete-wizard/page.tsx` - Gender select accessibility
 6. `frontend/src/components/guest-verification/ReferenceCard.tsx` - Reference type select accessibility
 7. `frontend/src/components/guest-verification/IdentityVerificationCard.tsx` - Document type select accessibility
+8. `frontend/src/lib/api/client.ts` - API URL normalization
+9. `frontend/src/services/api/client.ts` - API URL normalization
+10. `frontend/src/lib/api.ts` - API URL normalization
 
-**Total Changes**: 10 files, 27 insertions(+), 20 deletions(-)
+**Total Changes**: 13 files, 48 insertions(+), 23 deletions(-)
 
 ---
 
