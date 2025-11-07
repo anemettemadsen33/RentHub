@@ -5,6 +5,14 @@ import { useRouter } from 'next/navigation';
 import { bookingsApi, Booking } from '@/lib/api/bookings';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Calendar, MapPin, Users, DollarSign, AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function MyBookingsPage() {
   const router = useRouter();
@@ -52,31 +60,39 @@ export default function MyBookingsPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const styles = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      completed: 'bg-blue-100 text-blue-800',
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      pending: 'secondary',
+      confirmed: 'default',
+      cancelled: 'destructive',
+      completed: 'outline',
+    };
+
+    const icons: Record<string, React.ReactNode> = {
+      pending: <Clock className="h-3 w-3 mr-1" />,
+      confirmed: <CheckCircle2 className="h-3 w-3 mr-1" />,
+      cancelled: <AlertCircle className="h-3 w-3 mr-1" />,
+      completed: <CheckCircle2 className="h-3 w-3 mr-1" />,
     };
 
     return (
-      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${styles[status as keyof typeof styles]}`}>
+      <Badge variant={variants[status] || 'default'} className="flex items-center w-fit">
+        {icons[status]}
         {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
+      </Badge>
     );
   };
 
   const getPaymentBadge = (status: string) => {
-    const styles = {
-      unpaid: 'bg-gray-100 text-gray-800',
-      paid: 'bg-green-100 text-green-800',
-      refunded: 'bg-orange-100 text-orange-800',
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      unpaid: 'secondary',
+      paid: 'default',
+      refunded: 'outline',
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded ${styles[status as keyof typeof styles]}`}>
+      <Badge variant={variants[status] || 'default'}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
+      </Badge>
     );
   };
 
@@ -90,82 +106,75 @@ export default function MyBookingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading bookings...</p>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-16">
+          <Skeleton className="h-10 w-64 mb-4" />
+          <Skeleton className="h-4 w-96 mb-8" />
+          <div className="grid gap-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-6">
+                  <div className="flex gap-6">
+                    <Skeleton className="h-32 w-48 rounded-lg" />
+                    <div className="flex-1 space-y-3">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-1/3" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-          <p className="mt-2 text-gray-600">View and manage your property bookings</p>
+          <h1 className="text-4xl font-bold mb-2">My Bookings</h1>
+          <p className="text-lg text-muted-foreground">View and manage your property bookings</p>
         </div>
 
-        {/* Filters */}
-        <div className="mb-6 flex gap-4">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg ${
-              filter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-4 py-2 rounded-lg ${
-              filter === 'pending' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => setFilter('confirmed')}
-            className={`px-4 py-2 rounded-lg ${
-              filter === 'confirmed' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Confirmed
-          </button>
-          <button
-            onClick={() => setFilter('cancelled')}
-            className={`px-4 py-2 rounded-lg ${
-              filter === 'cancelled' ? 'bg-red-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Cancelled
-          </button>
-        </div>
+        {/* Filters with Tabs */}
+        <Tabs value={filter} onValueChange={(v) => setFilter(v as any)} className="mb-8">
+          <TabsList className="grid w-full max-w-md grid-cols-4">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
+            <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-            {error}
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No bookings found</h3>
-            <p className="text-gray-600 mb-6">You haven't made any bookings yet.</p>
-            <Link
-              href="/properties"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-            >
-              Browse Properties
-            </Link>
-          </div>
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <Calendar className="h-20 w-20 text-muted-foreground mb-4" />
+              <h3 className="text-2xl font-semibold mb-2">No bookings found</h3>
+              <p className="text-muted-foreground mb-6 text-center">You haven't made any bookings yet. Start exploring properties!</p>
+              <Link href="/properties">
+                <Button size="lg">
+                  Browse Properties
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (

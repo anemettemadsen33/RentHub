@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 import { PropertyFilters } from '@/lib/api/properties';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Search, Loader2, MapPin, Users, Bed, DollarSign } from 'lucide-react';
 
 interface SearchBarProps {
   onSearch: (filters: PropertyFilters) => void;
@@ -32,113 +37,121 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-      <form onSubmit={handleSubmit}>
-        {/* Main Search */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Location or Property Name
-            </label>
-            <input
-              type="text"
-              name="search"
-              value={filters.search}
-              onChange={handleChange}
-              placeholder="e.g., New York, Downtown, Cozy Apartment..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
+    <Card className="shadow-xl border-2">
+      <CardContent className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Main Search */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="search" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                Location or Property Name
+              </Label>
+              <Input
+                id="search"
+                type="text"
+                name="search"
+                value={filters.search}
+                onChange={handleChange}
+                placeholder="e.g., New York, Downtown, Cozy Apartment..."
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="guests" className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                Guests
+              </Label>
+              <Input
+                id="guests"
+                type="number"
+                name="guests"
+                min="1"
+                value={filters.guests || ''}
+                onChange={handleChange}
+                placeholder="Any"
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bedrooms" className="flex items-center gap-2">
+                <Bed className="h-4 w-4 text-primary" />
+                Bedrooms
+              </Label>
+              <Input
+                id="bedrooms"
+                type="number"
+                name="bedrooms"
+                min="0"
+                value={filters.bedrooms || ''}
+                onChange={handleChange}
+                placeholder="Any"
+                className="h-11"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Guests
-            </label>
-            <input
-              type="number"
-              name="guests"
-              min="1"
-              value={filters.guests || ''}
-              onChange={handleChange}
-              placeholder="Any"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          {/* Price Range */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="min_price" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-primary" />
+                Min Price ($/night)
+              </Label>
+              <Input
+                id="min_price"
+                type="number"
+                name="min_price"
+                min="0"
+                value={filters.min_price || ''}
+                onChange={handleChange}
+                placeholder="No min"
+                className="h-11"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Bedrooms
-            </label>
-            <input
-              type="number"
-              name="bedrooms"
-              min="0"
-              value={filters.bedrooms || ''}
-              onChange={handleChange}
-              placeholder="Any"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="max_price" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-primary" />
+                Max Price ($/night)
+              </Label>
+              <Input
+                id="max_price"
+                type="number"
+                name="max_price"
+                min="0"
+                value={filters.max_price || ''}
+                onChange={handleChange}
+                placeholder="No max"
+                className="h-11"
+              />
+            </div>
 
-        {/* Price Range */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Min Price ($/night)
-            </label>
-            <input
-              type="number"
-              name="min_price"
-              min="0"
-              value={filters.min_price || ''}
-              onChange={handleChange}
-              placeholder="No min"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="flex items-end">
+              <Button
+                type="submit"
+                disabled={loading}
+                size="lg"
+                className="w-full h-11 shadow-md hover:shadow-lg transition-all"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-5 w-5 mr-2" />
+                    Search Properties
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Max Price ($/night)
-            </label>
-            <input
-              type="number"
-              name="max_price"
-              min="0"
-              value={filters.max_price || ''}
-              onChange={handleChange}
-              placeholder="No max"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="flex items-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  Search
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
