@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { api } from '@/services/api';
 
 interface Property {
@@ -41,20 +41,7 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [sessionId, setSessionId] = useState<string>('');
 
-  useEffect(() => {
-    // Generate or retrieve session ID
-    let sid = localStorage.getItem('comparison-session-id');
-    if (!sid) {
-      sid = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('comparison-session-id', sid);
-    }
-    setSessionId(sid);
-
-    // Load comparison from server
-    loadComparison();
-  }, []);
-
-  const loadComparison = async () => {
+  const loadComparison = useCallback(async () => {
     try {
       const sid = localStorage.getItem('comparison-session-id');
       const response = await api.get('/property-comparison', {
@@ -68,7 +55,20 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Failed to load comparison:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Generate or retrieve session ID
+    let sid = localStorage.getItem('comparison-session-id');
+    if (!sid) {
+      sid = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('comparison-session-id', sid);
+    }
+    setSessionId(sid);
+
+    // Load comparison from server
+    loadComparison();
+  }, [loadComparison]);
 
   const addToComparison = async (propertyId: number) => {
     if (comparisonIds.includes(propertyId)) {
