@@ -61,7 +61,8 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     // Generate or retrieve session ID
     let sid = localStorage.getItem('comparison-session-id');
     if (!sid) {
-      sid = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Use crypto.randomUUID() for cryptographically secure session ID
+      sid = `session-${Date.now()}-${crypto.randomUUID()}`;
       localStorage.setItem('comparison-session-id', sid);
     }
     setSessionId(sid);
