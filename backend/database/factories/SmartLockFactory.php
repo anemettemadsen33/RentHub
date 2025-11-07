@@ -21,7 +21,7 @@ class SmartLockFactory extends Factory
     public function definition(): array
     {
         $provider = fake()->randomElement(['august', 'yale', 'schlage', 'kwikset', 'smartthings']);
-        
+
         return [
             'property_id' => Property::factory(),
             'provider' => $provider,

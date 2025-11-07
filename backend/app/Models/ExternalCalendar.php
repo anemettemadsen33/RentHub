@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ExternalCalendar extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'property_id',
         'platform',

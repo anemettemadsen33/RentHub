@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 /**
  * Hook for managing focus trap in modals/dialogs
@@ -81,45 +81,39 @@ export const useKeyboardNav = (
   items: any[],
   onSelect: (index: number) => void
 ) => {
-  const selectedIndexRef = useRef(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          selectedIndexRef.current = Math.min(
-            selectedIndexRef.current + 1,
-            items.length - 1
-          );
+          setSelectedIndex((prev) => Math.min(prev + 1, items.length - 1));
           break;
         case 'ArrowUp':
           e.preventDefault();
-          selectedIndexRef.current = Math.max(
-            selectedIndexRef.current - 1,
-            0
-          );
+          setSelectedIndex((prev) => Math.max(prev - 1, 0));
           break;
         case 'Enter':
           e.preventDefault();
-          onSelect(selectedIndexRef.current);
+          onSelect(selectedIndex);
           break;
         case 'Home':
           e.preventDefault();
-          selectedIndexRef.current = 0;
+          setSelectedIndex(0);
           break;
         case 'End':
           e.preventDefault();
-          selectedIndexRef.current = items.length - 1;
+          setSelectedIndex(items.length - 1);
           break;
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [items, onSelect]);
+  }, [items, onSelect, selectedIndex]);
 
-  return selectedIndexRef.current;
+  return selectedIndex;
 };
 
 /**

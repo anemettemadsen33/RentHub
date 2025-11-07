@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WishlistItem extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'wishlist_id',
         'property_id',

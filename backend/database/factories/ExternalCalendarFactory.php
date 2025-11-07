@@ -21,7 +21,7 @@ class ExternalCalendarFactory extends Factory
     public function definition(): array
     {
         $platform = fake()->randomElement(['airbnb', 'booking_com', 'vrbo', 'ical', 'google']);
-        
+
         return [
             'property_id' => Property::factory(),
             'platform' => $platform,

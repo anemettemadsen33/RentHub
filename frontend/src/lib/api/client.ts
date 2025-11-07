@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { normalizeApiUrl } from '@/lib/utils/url';
 
+// Modern API client - uses /api/v1 endpoint (versioned)
+// Preferred for new code
+// For legacy non-versioned endpoints, use api from '@/lib/api'
 export const apiClient = axios.create({
   baseURL: normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL) + '/api/v1',
   headers: {

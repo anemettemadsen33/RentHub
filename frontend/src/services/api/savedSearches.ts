@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient } from '@/lib/api/client';
 import { SavedSearch, SavedSearchFormData, SavedSearchStatistics } from '@/types/saved-search';
 import { Property } from '@/types';
 

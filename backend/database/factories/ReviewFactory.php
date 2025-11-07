@@ -23,7 +23,7 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         $rating = fake()->numberBetween(3, 5);
-        
+
         return [
             'property_id' => Property::factory(),
             'user_id' => User::factory(),

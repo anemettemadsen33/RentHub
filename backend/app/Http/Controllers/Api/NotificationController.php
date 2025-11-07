@@ -113,11 +113,11 @@ class NotificationController extends Controller
     public function getPreferences(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         // Get the first preference for the user or create a default one
         $preference = NotificationPreference::where('user_id', $user->id)->first();
-        
-        if (!$preference) {
+
+        if (! $preference) {
             $preference = NotificationPreference::getOrCreateDefaults($user->id, NotificationPreference::TYPE_BOOKING);
         }
 

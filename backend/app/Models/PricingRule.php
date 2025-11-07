@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PricingRule extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'property_id',
         'type',
