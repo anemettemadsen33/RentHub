@@ -271,7 +271,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Notification Preferences
     Route::get('/notifications/preferences', [\App\Http\Controllers\Api\NotificationController::class, 'getPreferences']);
     Route::put('/notifications/preferences', [\App\Http\Controllers\Api\NotificationController::class, 'updatePreferences']);
-    
+
     // Notification Preferences alias routes (for backward compatibility)
     Route::get('/notification-preferences', [\App\Http\Controllers\Api\NotificationController::class, 'getPreferences']);
     Route::put('/notification-preferences', [\App\Http\Controllers\Api\NotificationController::class, 'updatePreferences']);

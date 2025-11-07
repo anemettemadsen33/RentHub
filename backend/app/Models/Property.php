@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Property extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'title',
         'description',

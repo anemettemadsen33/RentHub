@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Review extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'property_id',
         'user_id',
