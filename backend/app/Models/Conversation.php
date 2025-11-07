@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Conversation extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'property_id',
         'booking_id',

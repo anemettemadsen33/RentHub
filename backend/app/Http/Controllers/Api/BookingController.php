@@ -49,7 +49,7 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
             'check_in' => 'required|date|after_or_equal:today',
