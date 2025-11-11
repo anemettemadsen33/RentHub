@@ -32,6 +32,25 @@ sudo -S service php8.3-fpm reload
 
 ---
 
+## ⚙️ Configure Web Directory
+
+**IMPORTANT**: After initial deployment, update web directory:
+
+**In Forge UI:**
+1. Go to: Sites → renthub-mnnzqvzb.on-forge.com → Meta/Settings
+2. Find "Web Directory"
+3. Change from: `/public`
+4. Change to: `/backend/public`
+5. Click "Update"
+
+**Or edit Nginx manually:**
+1. Sites → Files → Edit Nginx Configuration
+2. Find: `root /home/forge/renthub-mnnzqvzb.on-forge.com/public;`
+3. Change to: `root /home/forge/renthub-mnnzqvzb.on-forge.com/backend/public;`
+4. Click "Update"
+
+---
+
 ## 🔧 First Time Setup (via SSH)
 
 After first deployment, SSH into server and run:
