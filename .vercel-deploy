@@ -1,0 +1,13 @@
+# Vercel Deployment Trigger
+
+This file triggers a fresh Vercel deployment.
+
+Last updated: 2025-11-11 19:56
+
+## Status
+- ✅ patch-package added to dependencies
+- ✅ vercel.json configured for Next.js 15
+- ✅ Root directory set to "frontend"
+- 🔄 Waiting for deployment...
+
+Vercel should auto-deploy when this file is pushed to GitHub.
