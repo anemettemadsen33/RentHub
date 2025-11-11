@@ -22,15 +22,25 @@ class DynamicConfigServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Only load settings if the settings table exists
-        if (Schema::hasTable('settings')) {
-            $this->loadEmailSettings();
-            $this->loadFrontendSettings();
-            $this->loadPaymentSettings();
-            $this->loadSmsSettings();
-            $this->loadSocialLoginSettings();
-            $this->loadMapSettings();
-            $this->loadAnalyticsSettings();
+        // Skip during composer install or if database doesn't exist
+        if (app()->runningInConsole() && !app()->runningUnitTests()) {
+            return;
+        }
+
+        try {
+            // Only load settings if the settings table exists
+            if (Schema::hasTable('settings')) {
+                $this->loadEmailSettings();
+                $this->loadFrontendSettings();
+                $this->loadPaymentSettings();
+                $this->loadSmsSettings();
+                $this->loadSocialLoginSettings();
+                $this->loadMapSettings();
+                $this->loadAnalyticsSettings();
+            }
+        } catch (\Exception $e) {
+            // Silently fail if database is not available
+            return;
         }
     }
 
