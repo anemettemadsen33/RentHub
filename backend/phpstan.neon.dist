@@ -7,12 +7,8 @@ parameters:
   level: 4
   ignoreErrors:
     - '#Call to an undefined method [^\s]+::whereJsonContains#'
-  checkGenericClassInNonGenericObjectType: false
-  checkMissingIterableValueType: false
-  parallel: true
-
-  # Larastan specific
-  larastan:
-    containerModelPath: app
-    # You can enable this for more strict models checking later
-    # modelPropertiesInference: true
+    - identifier: missingType.iterableValue
+    - identifier: missingType.generics
+  parallel:
+    maximumNumberOfProcesses: 4
+    processTimeout: 300.0
