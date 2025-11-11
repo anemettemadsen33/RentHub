@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RentHub - Frontend Console Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #results {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .warning { color: #fbbf24; }
+        .info { color: #60a5fa; }
+        .stat {
+            display: inline-block;
+            margin: 10px 20px 10px 0;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 RentHub Frontend - Console Test Suite</h1>
+        <p>Test toate funcțiile API și verifică console errors</p>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Quick Tests</h2>
+        <button onclick="testAll()">▶️ Run All Tests</button>
+        <button onclick="testBackend()">🔌 Test Backend Connection</button>
+        <button onclick="testAuth()">🔐 Test Authentication</button>
+        <button onclick="testProperties()">🏠 Test Properties API</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Results</h2>
+        <div id="stats">
+            <span class="stat">Total: <span id="total">0</span></span>
+            <span class="stat" style="background: #dcfce7;">Passed: <span id="passed">0</span></span>
+            <span class="stat" style="background: #fee2e2;">Failed: <span id="failed">0</span></span>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/v1';
+        let testResults = [];
+        let stats = { total: 0, passed: 0, failed: 0 };
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                success: '#4ade80',
+                error: '#f87171',
+                warning: '#fbbf24',
+                info: '#60a5fa'
+            };
+            const color = colors[type] || colors.info;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateStats() {
+            document.getElementById('total').textContent = stats.total;
+            document.getElementById('passed').textContent = stats.passed;
+            document.getElementById('failed').textContent = stats.failed;
+        }
+
+        function recordTest(name, passed) {
+            stats.total++;
+            if (passed) {
+                stats.passed++;
+                log(`✅ PASSED: ${name}`, 'success');
+            } else {
+                stats.failed++;
+                log(`❌ FAILED: ${name}`, 'error');
+            }
+            updateStats();
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            stats = { total: 0, passed: 0, failed: 0 };
+            updateStats();
+            log('🗑️ Results cleared', 'info');
+        }
+
+        async function testBackend() {
+            log('🔌 Testing backend connection...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL.replace('/api/v1', '')}/api/health`);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    recordTest('Backend Health Check', true);
+                    log(`   Environment: ${data.environment}`, 'success');
+                    log(`   Database: Connected`, 'success');
+                } else {
+                    recordTest('Backend Health Check', false);
+                }
+            } catch (error) {
+                recordTest('Backend Health Check', false);
+                log(`   Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAuth() {
+            log('🔐 Testing authentication endpoints...', 'info');
+            
+            // Test Register Endpoint
+            try {
+                const testEmail = `test_${Date.now()}@renthub.test`;
+                const registerData = {
+                    name: 'Test User',
+                    email: testEmail,
+                    password: 'Password123!',
+                    password_confirmation: 'Password123!',
+                    role: 'tenant'
+                };
+                
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    recordTest('User Registration', true);
+                    log(`   User created: ${data.user.email}`, 'success');
+                    
+                    // Test Login
+                    const loginResponse = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: testEmail,
+                            password: 'Password123!'
+                        })
+                    });
+                    
+                    if (loginResponse.ok) {
+                        const loginData = await loginResponse.json();
+                        recordTest('User Login', true);
+                        log(`   Token received: ${loginData.token.substring(0, 20)}...`, 'success');
+                    } else {
+                        recordTest('User Login', false);
+                        log(`   Login failed: ${loginResponse.status}`, 'error');
+                    }
+                } else {
+                    recordTest('User Registration', false);
+                    const errorData = await response.json();
+                    log(`   Error: ${JSON.stringify(errorData)}`, 'error');
+                }
+            } catch (error) {
+                recordTest('Authentication Test', false);
+                log(`   Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testProperties() {
+            log('🏠 Testing properties endpoints...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/properties`);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    recordTest('Get Properties', true);
+                    log(`   Found ${data.data.length} properties`, 'success');
+                    
+                    // Test property details
+                    if (data.data.length > 0) {
+                        const firstProperty = data.data[0];
+                        const detailResponse = await fetch(`${API_URL}/properties/${firstProperty.id}`);
+                        const detailData = await detailResponse.json();
+                        
+                        if (detailResponse.ok) {
+                            recordTest('Get Property Details', true);
+                            log(`   Property: ${detailData.data.title}`, 'success');
+                        } else {
+                            recordTest('Get Property Details', false);
+                        }
+                    }
+                } else {
+                    recordTest('Get Properties', false);
+                }
+            } catch (error) {
+                recordTest('Properties Test', false);
+                log(`   Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAll() {
+            clearResults();
+            log('🚀 Starting comprehensive test suite...', 'info');
+            log('━'.repeat(60), 'info');
+            
+            await testBackend();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testAuth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testProperties();
+            
+            log('━'.repeat(60), 'info');
+            log(`📊 Test Suite Complete!`, 'info');
+            log(`   Success Rate: ${((stats.passed / stats.total) * 100).toFixed(2)}%`, 
+                stats.passed === stats.total ? 'success' : 'warning');
+        }
+
+        // Auto-start tests on page load
+        window.addEventListener('load', () => {
+            log('👋 Console test suite ready!', 'info');
+            log('Click "Run All Tests" to start, or use individual test buttons', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,26 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { bookingsApi, Booking } from '@/lib/api/bookings';
-import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { Header } from '@/components/layout/Header';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import Image from 'next/image';
+import apiClient from '@/lib/api-client';
+import { Booking } from '@/types';
+import { useAuth } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
+import { MainLayout } from '@/components/layouts/main-layout';
+import { BookingListSkeleton } from '@/components/skeletons';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, MapPin, Users, DollarSign, AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { NoBookings } from '@/components/empty-states';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
-export default function MyBookingsPage() {
+export default function BookingsPage() {
+  const t = useTranslations('bookingsPage');
   const router = useRouter();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past' | 'cancelled'>('all');
+  const [cancelingId, setCancelingId] = useState<number | null>(null);
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      const { data } = await apiClient.get('/bookings');
+      setBookings(data.data || []);
+    } catch (error) {
+      toast({
+        title: t('errors.load.title'),
+        description: t('errors.load.description'),
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast, t]);
 
   useEffect(() => {
     if (!user) {
@@ -28,238 +51,276 @@ export default function MyBookingsPage() {
       return;
     }
     fetchBookings();
-  }, [filter, user]);
+  }, [user, router, fetchBookings]);
 
-  const fetchBookings = async () => {
-    setLoading(true);
-    setError('');
-
+  const handleCancelBooking = async (bookingId: number) => {
+    setCancelingId(bookingId);
     try {
-      const params = filter !== 'all' ? { status: filter } : {};
-      const response = await bookingsApi.getMy(params);
-
-      if (response.data.success) {
-        setBookings(response.data.data);
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load bookings');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCancel = async (id: number) => {
-    if (!confirm('Are you sure you want to cancel this booking?')) return;
-
-    try {
-      await bookingsApi.cancel(id);
+      await apiClient.put(`/bookings/${bookingId}/cancel`);
+      toast({
+        title: t('toasts.cancelSuccess.title'),
+        description: t('toasts.cancelSuccess.description'),
+      });
       fetchBookings();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to cancel booking');
+    } catch (error: any) {
+      toast({
+        title: t('toasts.cancelError.title'),
+        description: error.response?.data?.message || t('toasts.cancelError.description'),
+        variant: 'destructive',
+      });
+    } finally { setCancelingId((id) => (id === bookingId ? null : id)); }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return <CheckCircle className="h-5 w-5 text-green-500" aria-label={t('status.confirmed')} />;
+      case 'pending':
+        return <Clock className="h-5 w-5 text-yellow-500" aria-label={t('status.pending')} />;
+      case 'cancelled':
+        return <XCircle className="h-5 w-5 text-red-500" aria-label={t('status.cancelled')} />;
+      default:
+        return <Calendar className="h-5 w-5 text-gray-500" aria-label={t('status.default')} />;
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      pending: 'secondary',
-      confirmed: 'default',
-      cancelled: 'destructive',
-      completed: 'outline',
-    };
-
-    const icons: Record<string, React.ReactNode> = {
-      pending: <Clock className="h-3 w-3 mr-1" />,
-      confirmed: <CheckCircle2 className="h-3 w-3 mr-1" />,
-      cancelled: <AlertCircle className="h-3 w-3 mr-1" />,
-      completed: <CheckCircle2 className="h-3 w-3 mr-1" />,
-    };
-
-    return (
-      <Badge variant={variants[status] || 'default'} className="flex items-center w-fit">
-        {icons[status]}
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const getPaymentBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      unpaid: 'secondary',
-      paid: 'default',
-      refunded: 'outline',
-    };
+  const filteredBookings = bookings.filter((booking) => {
+    if (filter === 'all') return true;
+    if (filter === 'upcoming') {
+      return new Date(booking.check_in) > new Date() && booking.status !== 'cancelled';
+    }
+    if (filter === 'past') {
+      return new Date(booking.check_out) < new Date() || booking.status === 'completed';
+    }
+    if (filter === 'cancelled') {
+      return booking.status === 'cancelled';
+    }
+    return true;
+  });
 
-    return (
-      <Badge variant={variants[status] || 'default'}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  if (!user) {
+    return null;
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-16">
-          <Skeleton className="h-10 w-64 mb-4" />
-          <Skeleton className="h-4 w-96 mb-8" />
-          <div className="grid gap-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <div className="flex gap-6">
-                    <Skeleton className="h-32 w-48 rounded-lg" />
-                    <div className="flex-1 space-y-3">
-                      <Skeleton className="h-6 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-4 w-1/3" />
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+            <p className="text-gray-600">{t('subtitle')}</p>
+          </div>
+          <BookingListSkeleton items={4} />
+        </div>
+      </MainLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
+          <span className="sr-only" aria-live="polite">{t('aria.showing', { count: filteredBookings.length, filter })}</span>
+        </div>
+
+        {/* Confirmation Discount Banner */}
+        {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('confirmed') && (() => {
+          try {
+            const data = JSON.parse(sessionStorage.getItem('last_booking_discounts') || 'null');
+            if (!data) return null;
+            return (
+              <Card className="mb-6 border-green-500">
+                <CardHeader>
+                  <CardTitle className="text-lg">Booking Confirmed</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm space-y-1">
+                  <div className="flex justify-between"><span>Subtotal</span><span>${data.subtotal.toFixed(2)}</span></div>
+                  {data.referral > 0 && <div className="flex justify-between text-green-700"><span>Referral Discount</span><span>-${data.referral.toFixed(2)}</span></div>}
+                  {data.loyalty > 0 && <div className="flex justify-between text-green-700"><span>Loyalty Discount</span><span>-${data.loyalty.toFixed(2)}</span></div>}
+                  <div className="flex justify-between font-semibold border-t pt-2"><span>Total</span><span>${data.total.toFixed(2)}</span></div>
+                </CardContent>
+              </Card>
+            );
+          } catch { return null; }
+        })()}
+
+
+        {/* Filter Tabs */}
+        <TooltipProvider>
+          <div className="flex gap-2 mb-6 overflow-x-auto" role="tablist" aria-label={t('filters.ariaLabel')}>
+            {(['all', 'upcoming', 'past', 'cancelled'] as const).map((tab) => (
+              <Tooltip key={tab}>
+                <TooltipTrigger asChild>
+                  <Button
+                    role="tab"
+                    aria-selected={filter === tab}
+                    variant={filter === tab ? 'default' : 'outline'}
+                    onClick={() => setFilter(tab)}
+                    className="capitalize"
+                  >
+                    {t(`filters.${tab}`)}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('filters.tooltip', { tab: t(`filters.${tab}`) })}</TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
+
+        {/* Bookings List */}
+        {filteredBookings.length === 0 ? (
+          filter === 'all' ? (
+            <NoBookings onCreate={() => router.push('/properties')} />
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Calendar className="h-16 w-16 text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{t('empty.title', { filter: t(`filters.${filter}`) })}</h3>
+                <p className="text-gray-600">{t('empty.description')}</p>
+              </CardContent>
+            </Card>
+          )
+        ) : (
+          <div className="space-y-4">
+            {filteredBookings.map((booking, idx) => (
+              <Card key={booking.id} className="overflow-hidden animate-fade-in-up" style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}>
+                <CardContent className="p-0">
+                  <div className="md:flex">
+                    {/* Property Image */}
+                    <div className="md:w-1/3 h-48 md:h-auto bg-gray-200 relative">
+                      {booking.property?.image_url && (
+                        <Image
+                          src={booking.property.image_url}
+                          alt={t('property.imageAlt', { title: booking.property.title })}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
+
+                    {/* Booking Details */}
+                    <div className="flex-1 p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-xl font-bold mb-1">
+                            {booking.property?.title || t('property.unknown')}
+                          </h3>
+                          <div className="flex items-center text-gray-600 text-sm">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            <span>{booking.property?.address || t('property.noAddress')}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(booking.status)}
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                              booking.status
+                            )}`}
+                          >
+                            {booking.status}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="flex items-center">
+                          <Calendar className="h-5 w-5 mr-2 text-gray-400" />
+                          <div>
+                            <p className="text-xs text-gray-600">{t('fields.checkIn')}</p>
+                            <p className="font-semibold">{formatDate(booking.check_in)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="h-5 w-5 mr-2 text-gray-400" />
+                          <div>
+                            <p className="text-xs text-gray-600">{t('fields.checkOut')}</p>
+                            <p className="font-semibold">{formatDate(booking.check_out)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="h-5 w-5 mr-2 text-gray-400" />
+                          <div>
+                            <p className="text-xs text-gray-600">{t('fields.guests')}</p>
+                            <p className="font-semibold">{booking.guests}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <DollarSign className="h-5 w-5 mr-2 text-gray-400" />
+                          <div>
+                            <p className="text-xs text-gray-600">{t('fields.total')}</p>
+                            <p className="font-semibold">
+                              {formatCurrency(booking.total_price)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Link href={`/bookings/${booking.id}`}>
+                          <Button variant="outline">{t('actions.viewDetails')}</Button>
+                        </Link>
+                        {booking.status === 'pending' || booking.status === 'confirmed' ? (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                aria-busy={cancelingId === booking.id}
+                                disabled={cancelingId === booking.id}
+                              >
+                                {cancelingId === booking.id ? (
+                                  <span className="inline-flex items-center"><svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>{t('actions.canceling')}</span>
+                                ) : t('actions.cancel')}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t('dialog.cancel.title')}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t('dialog.cancel.description', { title: booking.property?.title || t('property.unknown') })}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('dialog.cancel.keep')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleCancelBooking(booking.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                  {t('dialog.cancel.confirm')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        ) : null}
+                        {booking.property && (
+                          <Link href={`/properties/${booking.property.id}`}>
+                            <Button variant="outline">{t('actions.viewProperty')}</Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Bookings</h1>
-          <p className="text-lg text-muted-foreground">View and manage your property bookings</p>
-        </div>
-
-        {/* Filters with Tabs */}
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as any)} className="mb-8">
-          <TabsList className="grid w-full max-w-md grid-cols-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-            <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {/* Error Message */}
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Bookings List */}
-        {bookings.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Calendar className="h-20 w-20 text-muted-foreground mb-4" />
-              <h3 className="text-2xl font-semibold mb-2">No bookings found</h3>
-              <p className="text-muted-foreground mb-6 text-center">You haven't made any bookings yet. Start exploring properties!</p>
-              <Link href="/properties">
-                <Button size="lg">
-                  Browse Properties
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {bookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-lg shadow hover:shadow-md transition p-6">
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Property Image */}
-                  <div className="flex-shrink-0">
-                    {booking.property?.main_image ? (
-                      <img
-                        src={booking.property.main_image}
-                        alt={booking.property.title}
-                        className="w-full md:w-48 h-32 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="w-full md:w-48 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Booking Details */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                          {booking.property?.title || 'Property'}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          {booking.property?.city}, {booking.property?.country}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        {getStatusBadge(booking.status)}
-                        {getPaymentBadge(booking.payment_status)}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                      <div>
-                        <p className="text-sm text-gray-600">Check-in</p>
-                        <p className="font-semibold">{formatDate(booking.check_in)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Check-out</p>
-                        <p className="font-semibold">{formatDate(booking.check_out)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Guests</p>
-                        <p className="font-semibold">{booking.guests} {booking.guests === 1 ? 'guest' : 'guests'}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                      <div>
-                        <p className="text-sm text-gray-600">Total Amount</p>
-                        <p className="text-2xl font-bold text-blue-600">${booking.total_amount.toFixed(2)}</p>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/bookings/${booking.id}`}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-                        >
-                          View Details
-                        </Link>
-
-                        {booking.status === 'pending' && (
-                          <button
-                            onClick={() => handleCancel(booking.id)}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium"
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         )}
       </div>
-    </div>
+    </MainLayout>
   );
 }

@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiVersioningTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_api_v1_endpoint_works()
     {
         $response = $this->getJson('/api/v1/properties');

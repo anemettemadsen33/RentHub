@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\Setting;
+use Filament\Pages\Page;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
+use Filament\Actions\Action;
+
+class Settings extends Page implements HasForms
+{
+    use InteractsWithForms;
+
+    protected static ?int $navigationSort = 100;
+    
+    protected static string $view = 'filament.pages.settings';
+    
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    
+    public ?array $data = [];
+    
+    public static function getNavigationLabel(): string
+    {
+        return 'Setări';
+    }
+    
+    public function getTitle(): string
+    {
+        return 'Setări Aplicație';
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            // General
+            'site_name' => Setting::get('site_name', 'RentHub'),
+            'site_description' => Setting::get('site_description', ''),
+            
+            // Frontend & API
+            'frontend_url' => Setting::get('frontend_url', env('FRONTEND_URL', 'http://localhost:3000')),
+            'api_url' => Setting::get('api_url', env('APP_URL', 'http://localhost:8000')),
+            
+            // Company
+            'company_name' => Setting::get('company_name', 'RentHub'),
+            'company_email' => Setting::get('company_email', env('MAIL_FROM_ADDRESS', 'info@renthub.ro')),
+            
+            // Mail Configuration
+            'mail_mailer' => Setting::get('mail_mailer', env('MAIL_MAILER', 'smtp')),
+            'mail_host' => Setting::get('mail_host', env('MAIL_HOST', 'smtp.mailtrap.io')),
+            'mail_port' => Setting::get('mail_port', env('MAIL_PORT', '2525')),
+            'mail_encryption' => Setting::get('mail_encryption', env('MAIL_ENCRYPTION', 'tls')),
+            'mail_from_address' => Setting::get('mail_from_address', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+            'mail_from_name' => Setting::get('mail_from_name', env('MAIL_FROM_NAME', 'RentHub')),
+        ]);
+    }
+
+
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Tabs::make('Settings')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('General')
+                            ->icon('heroicon-o-cog-6-tooth')
+                            ->schema([
+                                Forms\Components\TextInput::make('site_name')
+                                    ->label('Nume Site')
+                                    ->required(),
+                                Forms\Components\Textarea::make('site_description')
+                                    ->label('Descriere Site')
+                                    ->rows(3),
+                            ]),
+                        
+                        Forms\Components\Tabs\Tab::make('Frontend & API')
+                            ->icon('heroicon-o-globe-alt')
+                            ->schema([
+                                Forms\Components\TextInput::make('frontend_url')
+                                    ->label('URL Frontend')
+                                    ->url()
+                                    ->required(),
+                                Forms\Components\TextInput::make('api_url')
+                                    ->label('URL Backend API')
+                                    ->url()
+                                    ->required(),
+                            ]),
+                        
+                        Forms\Components\Tabs\Tab::make('Email')
+                            ->icon('heroicon-o-envelope')
+                            ->schema([
+                                Forms\Components\Select::make('mail_mailer')
+                                    ->label('Mail Driver')
+                                    ->options([
+                                        'smtp' => 'SMTP',
+                                        'log' => 'Log (Development)',
+                                    ])
+                                    ->required(),
+                                Forms\Components\TextInput::make('mail_host')
+                                    ->label('SMTP Host'),
+                                Forms\Components\TextInput::make('mail_port')
+                                    ->label('SMTP Port')
+                                    ->numeric(),
+                                Forms\Components\Select::make('mail_encryption')
+                                    ->label('Encryption')
+                                    ->options([
+                                        'tls' => 'TLS',
+                                        'ssl' => 'SSL',
+                                        '' => 'None',
+                                    ]),
+                                Forms\Components\TextInput::make('mail_from_address')
+                                    ->label('From Address')
+                                    ->email(),
+                                Forms\Components\TextInput::make('mail_from_name')
+                                    ->label('From Name'),
+                            ])->columns(2),
+                        
+                        Forms\Components\Tabs\Tab::make('Companie')
+                            ->icon('heroicon-o-building-office')
+                            ->schema([
+                                Forms\Components\TextInput::make('company_name')
+                                    ->label('Nume Companie')
+                                    ->required(),
+                                Forms\Components\TextInput::make('company_email')
+                                    ->label('Email Companie')
+                                    ->email(),
+                            ]),
+                    ])
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $data = $this->form->getState();
+        
+        foreach ($data as $key => $value) {
+            Setting::set($key, $value);
+        }
+        
+        Notification::make()
+            ->success()
+            ->title('Setări salvate cu succes!')
+            ->send();
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Salvează Setări')
+                ->submit('save')
+                ->color('primary'),
+        ];
+    }
+}
+

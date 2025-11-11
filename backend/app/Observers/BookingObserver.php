@@ -6,6 +6,9 @@ use App\Models\Booking;
 use App\Models\GoogleCalendarToken;
 use App\Services\GoogleCalendarService;
 use App\Services\InvoiceGenerationService;
+use App\Services\DashboardService;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 
 class BookingObserver
 {
@@ -21,6 +24,7 @@ class BookingObserver
     public function created(Booking $booking): void
     {
         $this->syncToGoogleCalendar($booking);
+        $this->invalidateCaches($booking);
     }
 
     /**
@@ -37,6 +41,8 @@ class BookingObserver
         if ($booking->isDirty(['check_in', 'check_out', 'status'])) {
             $this->syncToGoogleCalendar($booking);
         }
+
+        $this->invalidateCaches($booking);
     }
 
     /**
@@ -45,6 +51,7 @@ class BookingObserver
     public function deleted(Booking $booking): void
     {
         $this->removeFromGoogleCalendar($booking);
+        $this->invalidateCaches($booking);
     }
 
     /**
@@ -97,6 +104,9 @@ class BookingObserver
                 'error' => $e->getMessage(),
             ]);
         }
+
+        // Dispatch notification job (async)
+        \App\Jobs\SendBookingConfirmedNotification::dispatch($booking);
     }
 
     /**
@@ -141,5 +151,17 @@ class BookingObserver
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    private function invalidateCaches(Booking $booking): void
+    {
+        try {
+            Cache::tags(['bookings', 'calendar', 'availability'])->flush();
+        } catch (\Throwable $e) {
+            // ignore if driver doesn't support tags
+        }
+        /** @var DashboardService $dashboard */
+        $dashboard = App::make(DashboardService::class);
+        $dashboard->invalidateUserStats($booking->user_id);
     }
 }

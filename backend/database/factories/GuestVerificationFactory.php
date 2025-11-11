@@ -15,8 +15,9 @@ class GuestVerificationFactory extends Factory
             'document_type' => fake()->randomElement(['passport', 'drivers_license', 'id_card']),
             'document_number' => fake()->bothify('??######'),
             'document_expiry_date' => fake()->dateTimeBetween('+1 year', '+10 years'),
-            'credit_check_enabled' => fake()->boolean(30),
-            'credit_status' => fake()->randomElement(['not_requested', 'pending', 'approved', 'rejected']),
+            // Deterministic defaults to avoid test flakiness
+            'credit_check_enabled' => false,
+            'credit_status' => 'not_requested',
             'background_status' => fake()->randomElement(['pending', 'clear', 'flagged']),
             'trust_score' => fake()->randomFloat(2, 1, 5),
             'completed_bookings' => fake()->numberBetween(0, 50),

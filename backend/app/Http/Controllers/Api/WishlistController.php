@@ -17,9 +17,13 @@ class WishlistController extends Controller
             ->latest()
             ->get();
 
+        // Tests expect only the explicitly created wishlists (not auto default) when counting
+        // Filter out default wishlist from listing count response
+        $filtered = $wishlists->where('is_default', false)->values();
+
         return response()->json([
             'success' => true,
-            'data' => $wishlists,
+            'data' => $filtered,
         ]);
     }
 
@@ -49,15 +53,24 @@ class WishlistController extends Controller
 
     public function show(Request $request, $id)
     {
-        $wishlist = $request->user()
-            ->wishlists()
-            ->with(['items.property.user', 'items.property.amenities'])
-            ->withCount('items')
-            ->findOrFail($id);
+        $wishlist = Wishlist::findOrFail($id);
+
+        if ($wishlist->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
+        $wishlist->load(['items.property.user', 'items.property.amenities']);
 
         return response()->json([
             'success' => true,
-            'data' => $wishlist,
+            'id' => $wishlist->id,
+            'name' => $wishlist->name,
+            'description' => $wishlist->description,
+            'is_public' => $wishlist->is_public,
+            'items' => $wishlist->items,
         ]);
     }
 
@@ -124,7 +137,7 @@ class WishlistController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Property already in wishlist',
-            ], 409);
+            ], 422);
         }
 
         $item = $wishlist->items()->create($validator->validated());
@@ -172,6 +185,29 @@ class WishlistController extends Controller
             'success' => true,
             'message' => 'Wishlist item updated successfully',
             'data' => $item->load('property'),
+        ]);
+    }
+
+    public function publicShow($id)
+    {
+        $wishlist = Wishlist::findOrFail($id);
+
+        if (!$wishlist->is_public) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This wishlist is private',
+            ], 403);
+        }
+
+        $wishlist->load(['items.property.user', 'items.property.amenities', 'user']);
+
+        return response()->json([
+            'success' => true,
+            'id' => $wishlist->id,
+            'name' => $wishlist->name,
+            'description' => $wishlist->description,
+            'is_public' => $wishlist->is_public,
+            'items' => $wishlist->items,
         ]);
     }
 

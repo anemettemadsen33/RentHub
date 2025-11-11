@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\LockActivity;
 use App\Models\SmartLock;
 use App\Notifications\AccessCodeCreatedNotification;
+use App\Notifications\SmartLockLowBatteryNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -77,6 +78,7 @@ class SmartLockService
                     'access_code_id' => $accessCode->id,
                     'user_id' => $booking->user_id,
                     'event_type' => 'code_created',
+                    'action' => 'code_created',
                     'description' => "Access code created for booking #{$booking->id}",
                 ]);
 
@@ -114,6 +116,7 @@ class SmartLockService
                 'access_code_id' => $accessCode->id,
                 'user_id' => auth()->id(),
                 'event_type' => 'code_deleted',
+                'action' => 'code_deleted',
                 'description' => 'Access code revoked',
             ]);
 
@@ -148,7 +151,8 @@ class SmartLockService
 
             // Check for low battery
             if ($lock->needsBatteryReplacement()) {
-                // TODO: Send notification to property owner
+                // Send notification to property owner
+                $lock->property->user->notify(new SmartLockLowBatteryNotification($lock));
                 Log::warning("Low battery for lock {$lock->id}: {$lock->battery_level}%");
             }
 
@@ -183,6 +187,7 @@ class SmartLockService
                     'smart_lock_id' => $lock->id,
                     'user_id' => auth()->id(),
                     'event_type' => 'lock',
+                    'action' => 'lock',
                     'access_method' => 'remote',
                     'description' => 'Lock secured remotely',
                 ]);
@@ -215,6 +220,7 @@ class SmartLockService
                     'smart_lock_id' => $lock->id,
                     'user_id' => auth()->id(),
                     'event_type' => 'unlock',
+                    'action' => 'unlock',
                     'access_method' => 'remote',
                     'description' => 'Lock opened remotely',
                 ]);

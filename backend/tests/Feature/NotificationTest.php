@@ -29,6 +29,8 @@ class NotificationTest extends TestCase
 
     public function test_user_can_view_notification_preferences()
     {
+        // Delete any auto-created preferences and create fresh one
+        NotificationPreference::where('user_id', $this->user->id)->delete();
         NotificationPreference::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -42,6 +44,7 @@ class NotificationTest extends TestCase
 
     public function test_user_can_update_notification_preferences()
     {
+        NotificationPreference::where('user_id', $this->user->id)->delete();
         $preference = NotificationPreference::factory()->create([
             'user_id' => $this->user->id,
             'email_enabled' => true,
@@ -64,7 +67,10 @@ class NotificationTest extends TestCase
 
     public function test_notification_sent_on_booking_creation()
     {
-        $property = Property::factory()->create(['owner_id' => $this->owner->id]);
+        $property = Property::factory()->create([
+            'owner_id' => $this->owner->id,
+            'guests' => 4, // Max capacity
+        ]);
 
         $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/v1/bookings', [
@@ -75,9 +81,7 @@ class NotificationTest extends TestCase
             ]);
 
         // Owner should receive notification
-        Notification::assertSentTo($this->owner, function ($notification) {
-            return $notification instanceof \App\Notifications\NewBookingNotification;
-        });
+        Notification::assertSentTo($this->owner, \App\Notifications\NewBookingNotification::class);
     }
 
     public function test_notification_sent_on_booking_confirmation()
@@ -93,9 +97,7 @@ class NotificationTest extends TestCase
             ->postJson("/api/v1/bookings/{$booking->id}/confirm");
 
         // Guest should receive notification
-        Notification::assertSentTo($this->user, function ($notification) {
-            return $notification instanceof \App\Notifications\BookingConfirmedNotification;
-        });
+        Notification::assertSentTo($this->user, \App\Notifications\BookingConfirmedNotification::class);
     }
 
     public function test_user_can_view_notifications()
@@ -109,9 +111,14 @@ class NotificationTest extends TestCase
 
     public function test_user_can_mark_notification_as_read()
     {
+        // Unfake Notification to allow actual database notifications
+        \Illuminate\Support\Facades\Notification::swap(new \Illuminate\Notifications\ChannelManager(app()));
+        
         // Create a notification for the user
         $this->user->notify(new \App\Notifications\TestNotification);
         $notification = $this->user->notifications()->first();
+
+        $this->assertNotNull($notification, 'Notification should exist in database');
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson("/api/v1/notifications/{$notification->id}/read");
@@ -119,10 +126,16 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertNotNull($notification->fresh()->read_at);
+        
+        // Re-fake Notification for subsequent tests
+        \Illuminate\Support\Facades\Notification::fake();
     }
 
     public function test_user_can_mark_all_notifications_as_read()
     {
+        // Unfake Notification to allow actual database notifications
+        \Illuminate\Support\Facades\Notification::swap(new \Illuminate\Notifications\ChannelManager(app()));
+
         // Create multiple notifications
         $this->user->notify(new \App\Notifications\TestNotification);
         $this->user->notify(new \App\Notifications\TestNotification);
@@ -133,12 +146,20 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(0, $this->user->unreadNotifications()->count());
+        
+        // Re-fake Notification for subsequent tests
+        \Illuminate\Support\Facades\Notification::fake();
     }
 
     public function test_user_can_delete_notification()
     {
+        // Unfake Notification to allow actual database notifications
+        \Illuminate\Support\Facades\Notification::swap(new \Illuminate\Notifications\ChannelManager(app()));
+
         $this->user->notify(new \App\Notifications\TestNotification);
         $notification = $this->user->notifications()->first();
+
+        $this->assertNotNull($notification, 'Notification should exist in database');
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->deleteJson("/api/v1/notifications/{$notification->id}");
@@ -146,10 +167,16 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseMissing('notifications', ['id' => $notification->id]);
+        
+        // Re-fake Notification for subsequent tests
+        \Illuminate\Support\Facades\Notification::fake();
     }
 
     public function test_unread_notification_count()
     {
+        // Unfake Notification to allow actual database notifications
+        \Illuminate\Support\Facades\Notification::swap(new \Illuminate\Notifications\ChannelManager(app()));
+
         $this->user->notify(new \App\Notifications\TestNotification);
         $this->user->notify(new \App\Notifications\TestNotification);
         $this->user->notify(new \App\Notifications\TestNotification);
@@ -159,6 +186,9 @@ class NotificationTest extends TestCase
 
         $response->assertOk()
             ->assertJsonFragment(['count' => 3]);
+            
+        // Re-fake Notification for subsequent tests
+        \Illuminate\Support\Facades\Notification::fake();
     }
 
     public function test_notification_preference_created_on_user_registration()
@@ -174,7 +204,10 @@ class NotificationTest extends TestCase
     public function test_notification_sent_on_payment_received()
     {
         $property = Property::factory()->create(['owner_id' => $this->owner->id]);
-        $booking = Booking::factory()->create([
+        $booking = Booking::factory()->state([
+            'total_amount' => 300.00,
+            'total_price' => 300.00,
+        ])->create([
             'property_id' => $property->id,
             'user_id' => $this->user->id,
         ]);
@@ -187,19 +220,20 @@ class NotificationTest extends TestCase
             ]);
 
         // Owner should receive notification
-        Notification::assertSentTo($this->owner, function ($notification) {
-            return $notification instanceof \App\Notifications\PaymentReceivedNotification;
-        });
+        Notification::assertSentTo($this->owner, \App\Notifications\PaymentReceivedNotification::class);
     }
 
     public function test_notification_categories_can_be_toggled()
     {
-        $preference = NotificationPreference::factory()->create([
-            'user_id' => $this->user->id,
-            'booking_updates' => true,
-            'payment_updates' => true,
-            'message_updates' => true,
-        ]);
+        // Get existing preference created by User boot (not factory)
+        $preference = NotificationPreference::firstOrCreate(
+            ['user_id' => $this->user->id, 'notification_type' => NotificationPreference::TYPE_ACCOUNT],
+            [
+                'booking_updates' => true,
+                'payment_updates' => true,
+                'message_updates' => true,
+            ]
+        );
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->putJson('/api/v1/notification-preferences', [

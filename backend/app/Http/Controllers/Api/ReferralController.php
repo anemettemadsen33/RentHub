@@ -83,31 +83,26 @@ class ReferralController extends Controller
     /**
      * Create referral invitation
      */
-    public function create(Request $request): JsonResponse
+    public function validateReferral(Request $request): JsonResponse
     {
         $request->validate([
-            'email' => 'nullable|email',
-            'expiry_days' => 'nullable|integer|min:1|max:365',
+            'code' => 'required|string',
         ]);
 
-        $user = $request->user();
-        $referral = $this->referralService->createReferral(
-            $user,
-            $request->email,
-            $request->expiry_days ?? 30
-        );
+        $code = $request->code;
+        $isValid = preg_match('/^[A-Z0-9]{6,12}$/', $code) === 1;
 
         return response()->json([
-            'success' => true,
-            'message' => 'Referral created successfully',
-            'data' => $referral,
+            'success' => $isValid,
+            'code' => $code,
+            'message' => $isValid ? 'Referral code is valid' : 'Invalid referral code',
         ]);
     }
 
     /**
      * Validate referral code
      */
-    public function validate(Request $request): JsonResponse
+    public function validateCode(Request $request): JsonResponse
     {
         $request->validate([
             'code' => 'required|string',

@@ -76,7 +76,7 @@ class BlockedDateController extends Controller
             ], 403);
         }
 
-        $blockedDate->delete();
+        $blockedDate->forceDelete();
 
         return response()->json([
             'message' => 'Blocked date removed successfully',

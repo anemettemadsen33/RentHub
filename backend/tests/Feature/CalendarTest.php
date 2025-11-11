@@ -112,7 +112,7 @@ class CalendarTest extends TestCase
 
         $this->assertDatabaseHas('external_calendars', [
             'property_id' => $this->property->id,
-            'provider' => 'airbnb',
+            'platform' => 'airbnb', // schema column is 'platform' not 'provider'
         ]);
     }
 

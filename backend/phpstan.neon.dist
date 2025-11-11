@@ -1,0 +1,18 @@
+includes:
+  - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+  paths:
+    - app
+  level: 4
+  ignoreErrors:
+    - '#Call to an undefined method [^\s]+::whereJsonContains#'
+  checkGenericClassInNonGenericObjectType: false
+  checkMissingIterableValueType: false
+  parallel: true
+
+  # Larastan specific
+  larastan:
+    containerModelPath: app
+    # You can enable this for more strict models checking later
+    # modelPropertiesInference: true

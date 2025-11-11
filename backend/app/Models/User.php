@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * Boot the model.
@@ -26,6 +27,25 @@ class User extends Authenticatable implements MustVerifyEmail
                 'name' => 'Favorites',
                 'is_default' => true,
             ]);
+
+            // Create default notification preference record (single row) for tests
+            try {
+                \App\Models\NotificationPreference::firstOrCreate([
+                    'user_id' => $user->id,
+                    'notification_type' => \App\Models\NotificationPreference::TYPE_ACCOUNT,
+                ], [
+                    'channel_email' => true,
+                    'channel_database' => true,
+                    'email_enabled' => true,
+                    'sms_enabled' => false,
+                    'push_enabled' => false,
+                    'booking_updates' => true,
+                    'payment_updates' => true,
+                    'message_updates' => true,
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('Failed to auto-create notification preferences: '.$e->getMessage());
+            }
         });
     }
 
@@ -240,6 +260,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // Accessors
+    public function getRoleAttribute($value)
+    {
+        // Compatibility: check pivot table first (spatie), fallback to column
+        if ($this->relationLoaded('roles') && $this->roles->isNotEmpty()) {
+            return $this->roles->first()->name;
+        }
+        return $value;
+    }
+
     public function getIsOwnerAttribute()
     {
         return $this->role === 'owner';

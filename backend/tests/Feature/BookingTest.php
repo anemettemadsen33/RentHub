@@ -28,7 +28,8 @@ class BookingTest extends TestCase
         $this->property = Property::factory()->create([
             'owner_id' => $this->owner->id,
             'price' => 100,
-            'status' => 'published',
+            'status' => 'available',
+            'guests' => 4, // Max capacity
         ]);
     }
 
@@ -124,7 +125,7 @@ class BookingTest extends TestCase
         $property = Property::factory()->create([
             'owner_id' => $this->owner->id,
             'price' => 100,
-            'status' => 'published',
+            'status' => 'available',
         ]);
 
         $bookingData = [

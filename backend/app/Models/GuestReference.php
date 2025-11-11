@@ -58,6 +58,14 @@ class GuestReference extends Model
         parent::boot();
 
         static::creating(function ($reference) {
+            // Ensure user_id is set based on linked verification/screening for NOT NULL constraint
+            if (! $reference->user_id) {
+                if ($reference->guest_verification_id && $reference->verification) {
+                    $reference->user_id = $reference->verification->user_id;
+                } elseif ($reference->guest_screening_id && $reference->screening) {
+                    $reference->user_id = $reference->screening->user_id;
+                }
+            }
             if (! $reference->verification_code) {
                 $reference->verification_code = Str::random(32);
             }
@@ -131,5 +139,33 @@ class GuestReference extends Model
     public function scopeResponded($query)
     {
         return $query->where('responded', true);
+    }
+
+    /**
+     * Verify this reference with a rating and optional comments (used by public token endpoint)
+     */
+    public function verify(int $rating, ?string $comments = null): void
+    {
+        $this->rating = $rating;
+        if ($comments !== null) {
+            $this->comments = $comments;
+        }
+        $this->status = 'verified';
+        $this->responded = true;
+        $this->responded_at = now();
+        $this->save();
+
+        // Update linked verification metrics
+        if ($this->verification) {
+            $this->verification->increment('references_verified');
+            $this->verification->updateTrustScore();
+        }
+        // Update linked screening metrics
+        if ($this->screening) {
+            $this->screening->increment('references_verified');
+            $this->screening->screening_score = $this->screening->calculateScreeningScore();
+            $this->screening->risk_level = $this->screening->determineRiskLevel();
+            $this->screening->save();
+        }
     }
 }

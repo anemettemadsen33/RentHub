@@ -1,0 +1,103 @@
+/* Browser Compatibility Fixes */
+
+/* Safari backdrop-filter support */
+[data-nextjs-dialog-backdrop] {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.backdrop-blur {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.backdrop-blur-sm {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Safari user-select support */
+[data-sonner-toast][data-swiped=true] {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.select-text {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Safari appearance support */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Edge mask-image support */
+[data-nextjs-container-errors-pseudo-html-collapse='true'] .nextjs__container_errors__component-stack code {
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, black 10%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, black 10%);
+}
+
+/* Background clip for gradients */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nextjs-container-build-error-version-status > .turbopack-text {
+  background: linear-gradient(
+    to right,
+    var(--color-turbopack-text-red) 0%,
+    var(--color-turbopack-text-blue) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Next.js call stack frame */
+[data-nextjs-call-stack-frame] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  display: block;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: var(--rounded-lg);
+}
+
+/* Safe bottom padding for mobile (notch support) */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Supports backdrop-filter check */
+@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+  .supports-backdrop-blur {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+}

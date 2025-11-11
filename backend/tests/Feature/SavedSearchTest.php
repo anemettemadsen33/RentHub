@@ -110,14 +110,14 @@ class SavedSearchTest extends TestCase
             'type' => 'house',
             'price' => 300,
             'city' => 'Miami',
-            'status' => 'published',
+            'status' => 'available',
         ]);
 
         Property::factory()->create([
             'type' => 'apartment',
             'price' => 150,
             'city' => 'New York',
-            'status' => 'published',
+            'status' => 'available',
         ]);
 
         $savedSearch = SavedSearch::factory()->create([

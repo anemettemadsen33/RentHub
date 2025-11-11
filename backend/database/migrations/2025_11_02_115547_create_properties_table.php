@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('bathrooms')->default(1);
             $table->integer('guests')->default(1);
             $table->decimal('price_per_night', 10, 2);
+            // Backwards compatibility 'price' column expected by legacy tests
+            $table->decimal('price', 10, 2)->nullable();
             $table->decimal('cleaning_fee', 10, 2)->nullable();
             $table->decimal('security_deposit', 10, 2)->nullable();
 
@@ -46,6 +48,8 @@ return new class extends Migration
 
             // Owner
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // For some tests referencing owner_id explicitly
+            $table->unsignedBigInteger('owner_id')->nullable()->index();
 
             $table->timestamps();
 

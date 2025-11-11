@@ -83,6 +83,136 @@ components:
           type: string
           enum: [pending, confirmed, cancelled, completed]
 
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        property_id:
+          type: integer
+        user_id:
+          type: integer
+        booking_id:
+          type: integer
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+        is_approved:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        booking_id:
+          type: integer
+        user_id:
+          type: integer
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+          default: USD
+        payment_method:
+          type: string
+          enum: [credit_card, debit_card, paypal, stripe]
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+        transaction_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        data:
+          type: object
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversation_id:
+          type: integer
+        sender_id:
+          type: integer
+        message:
+          type: string
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Wishlist:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+        is_default:
+          type: boolean
+        is_public:
+          type: boolean
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+
+    GuestVerification:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        identity_verified:
+          type: boolean
+        phone_verified:
+          type: boolean
+        email_verified:
+          type: boolean
+        trust_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        verification_status:
+          type: string
+          enum: [pending, verified, rejected]
+
     Error:
       type: object
       properties:
@@ -295,3 +425,564 @@ paths:
                       $ref: '#/components/schemas/Property'
                   total:
                     type: integer
+
+  /reviews:
+    get:
+      tags:
+        - Reviews
+      summary: List reviews
+      parameters:
+        - in: query
+          name: property_id
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+
+    post:
+      tags:
+        - Reviews
+      summary: Create a review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+                - rating
+              properties:
+                property_id:
+                  type: integer
+                booking_id:
+                  type: integer
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+
+  /reviews/{id}:
+    get:
+      tags:
+        - Reviews
+      summary: Get review details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Review details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+
+    put:
+      tags:
+        - Reviews
+      summary: Update a review
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: integer
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Review updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+
+    delete:
+      tags:
+        - Reviews
+      summary: Delete a review
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Review deleted
+
+  /payments:
+    get:
+      tags:
+        - Payments
+      summary: List user payments
+      responses:
+        '200':
+          description: List of payments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Payment'
+
+    post:
+      tags:
+        - Payments
+      summary: Create a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - booking_id
+                - amount
+                - payment_method
+              properties:
+                booking_id:
+                  type: integer
+                amount:
+                  type: number
+                payment_method:
+                  type: string
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get user notifications
+      parameters:
+        - in: query
+          name: unread_only
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+
+  /notifications/{id}/read:
+    post:
+      tags:
+        - Notifications
+      summary: Mark notification as read
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification marked as read
+
+  /notifications/read-all:
+    post:
+      tags:
+        - Notifications
+      summary: Mark all notifications as read
+      responses:
+        '200':
+          description: All notifications marked as read
+
+  /conversations:
+    get:
+      tags:
+        - Messages
+      summary: List user conversations
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+
+    post:
+      tags:
+        - Messages
+      summary: Start a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+                - message
+              properties:
+                property_id:
+                  type: integer
+                message:
+                  type: string
+      responses:
+        '201':
+          description: Conversation created
+
+  /conversations/{id}/messages:
+    get:
+      tags:
+        - Messages
+      summary: Get conversation messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+
+    post:
+      tags:
+        - Messages
+      summary: Send a message
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+      responses:
+        '201':
+          description: Message sent
+
+  /wishlists:
+    get:
+      tags:
+        - Wishlists
+      summary: Get user wishlists
+      responses:
+        '200':
+          description: List of wishlists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Wishlist'
+
+    post:
+      tags:
+        - Wishlists
+      summary: Create a wishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                is_public:
+                  type: boolean
+      responses:
+        '201':
+          description: Wishlist created
+
+  /wishlists/{id}/properties:
+    post:
+      tags:
+        - Wishlists
+      summary: Add property to wishlist
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+              properties:
+                property_id:
+                  type: integer
+      responses:
+        '201':
+          description: Property added to wishlist
+
+  /guest-verification:
+    get:
+      tags:
+        - Verification
+      summary: Get verification status
+      responses:
+        '200':
+          description: Verification status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestVerification'
+
+    post:
+      tags:
+        - Verification
+      summary: Submit identity documents
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id_type:
+                  type: string
+                  enum: [passport, drivers_license, national_id]
+                id_number:
+                  type: string
+                id_front_image:
+                  type: string
+                  format: binary
+                id_back_image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Documents submitted
+
+  /properties/{id}/calendar:
+    get:
+      tags:
+        - Calendar
+      summary: Get property availability calendar
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: start_date
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: end_date
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Availability calendar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available_dates:
+                    type: array
+                    items:
+                      type: string
+                      format: date
+                  blocked_dates:
+                    type: array
+                    items:
+                      type: string
+                      format: date
+
+  /properties/{id}/blocked-dates:
+    post:
+      tags:
+        - Calendar
+      summary: Block dates for a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - start_date
+                - end_date
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+                reason:
+                  type: string
+      responses:
+        '201':
+          description: Dates blocked
+
+  /dashboard/stats:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard statistics
+      responses:
+        '200':
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      total_properties:
+                        type: integer
+                      active_bookings:
+                        type: integer
+                      total_revenue:
+                        type: number
+                      pending_reviews:
+                        type: integer
+
+  /health:
+    get:
+      tags:
+        - System
+      summary: Health check endpoint
+      security: []
+      responses:
+        '200':
+          description: System health
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                  services:
+                    type: object
+
+  /metrics:
+    get:
+      tags:
+        - System
+      summary: System metrics
+      security: []
+      responses:
+        '200':
+          description: System metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uptime:
+                    type: integer
+                  requests:
+                    type: object
+                  cache:
+                    type: object

@@ -160,7 +160,9 @@ class Review extends Model
 
     public function canBeRespondedBy(User $user): bool
     {
-        return $this->property->user_id === $user->id || $user->role === 'admin';
+        // Allow property owner by either user_id or owner_id (legacy), or admin
+        return ($this->property && ($this->property->user_id === $user->id || $this->property->owner_id === $user->id))
+            || $user->role === 'admin';
     }
 
     public function isVerifiedGuest(): bool

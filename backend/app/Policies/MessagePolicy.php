@@ -46,4 +46,12 @@ class MessagePolicy
     {
         return $user->isAdmin();
     }
+
+    public function markAsRead(User $user, Message $message): bool
+    {
+        $conversation = $message->conversation;
+        return $user->id === $conversation->tenant_id
+            || $user->id === $conversation->owner_id
+            || $user->isAdmin();
+    }
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Register API</title>
+</head>
+<body>
+    <h1>Test Register Endpoint</h1>
+    <button onclick="testRegister()">Test Register</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testRegister() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Testing...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: `test${Date.now()}@example.com`,
+                        password: 'Test1234!',
+                        password_confirmation: 'Test1234!'
+                    })
+                });
+
+                const data = await response.json();
+                
+                resultEl.textContent = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    headers: {
+                        contentType: response.headers.get('content-type'),
+                        cors: response.headers.get('access-control-allow-origin'),
+                    },
+                    data: data
+                }, null, 2);
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message + '\n\n' + error.stack;
+            }
+        }
+    </script>
+</body>
+</html>

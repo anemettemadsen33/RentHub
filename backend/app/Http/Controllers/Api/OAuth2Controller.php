@@ -21,7 +21,7 @@ class OAuth2Controller extends Controller
     /**
      * Authorization endpoint
      */
-    public function authorize(Request $request): JsonResponse
+    public function authorizeClient(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|string',

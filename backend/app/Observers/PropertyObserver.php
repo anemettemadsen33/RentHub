@@ -4,9 +4,17 @@ namespace App\Observers;
 
 use App\Models\Property;
 use App\Notifications\PriceDropNotification;
+use App\Services\DashboardService;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 
 class PropertyObserver
 {
+    public function created(Property $property): void
+    {
+        $this->invalidateCaches($property);
+    }
+
     public function updated(Property $property): void
     {
         if ($property->isDirty('price_per_night')) {
@@ -14,9 +22,17 @@ class PropertyObserver
             $newPrice = $property->price_per_night;
 
             if ($newPrice < $oldPrice) {
-                $this->notifyPriceDrop($property, $oldPrice, $newPrice);
+                // Dispatch job instead of synchronous notification
+                \App\Jobs\SendPriceDropNotifications::dispatch($property, $oldPrice, $newPrice);
             }
         }
+
+        $this->invalidateCaches($property);
+    }
+
+    public function deleted(Property $property): void
+    {
+        $this->invalidateCaches($property);
     }
 
     protected function notifyPriceDrop(Property $property, float $oldPrice, float $newPrice): void
@@ -35,5 +51,17 @@ class PropertyObserver
                     );
                 }
             });
+    }
+
+    protected function invalidateCaches(Property $property): void
+    {
+        try {
+            Cache::tags(['properties'])->flush();
+        } catch (\Throwable $e) {
+            // Driver without tag support – ignore
+        }
+        /** @var DashboardService $dashboard */
+        $dashboard = App::make(DashboardService::class);
+        $dashboard->invalidateUserStats($property->user_id);
     }
 }

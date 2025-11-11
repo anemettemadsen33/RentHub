@@ -40,7 +40,11 @@ class CurrencySeeder extends Seeder
             if ($usd && $toCurrency) {
                 ExchangeRate::updateOrCreate(
                     ['from_currency_id' => $usd->id, 'to_currency_id' => $toCurrency->id],
-                    ['rate' => $rate['rate'], 'source' => 'manual']
+                    [
+                        'rate' => $rate['rate'], 
+                        'source' => 'manual',
+                        'fetched_at' => now(),
+                    ]
                 );
             }
         }

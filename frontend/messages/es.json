@@ -1,0 +1,685 @@
+{
+  "common": {
+    "attachFile": "Adjuntar archivo",
+    "send": "Enviar",
+    "remove": "Eliminar"
+  },
+  "home": {
+    "title": "Bienvenido a RentHub",
+    "subtitle": "Encuentra y reserva tu propiedad de alquiler perfecta"
+  },
+  "filters": {
+    "title": "Filtros",
+    "priceRange": "Rango de precios",
+    "propertyType": "Tipo de propiedad",
+    "rooms": "Habitaciones",
+    "bedrooms": "Dormitorios",
+    "bathrooms": "Baños",
+    "guests": "Huéspedes",
+    "amenities": "Servicios",
+    "apply": "Aplicar",
+    "reset": "Restablecer"
+  },
+  "chat": {
+    "noConversations": "Sin conversaciones",
+    "selectConversation": "Selecciona una conversación",
+    "typing": "Escribiendo...",
+    "online": "En línea",
+    "offline": "Desconectado"
+  },
+  "bookingDetail": {
+    "title": "Detalles de la reserva",
+    "back": "Volver a Reservas",
+    "confirmation": "Confirmación #{{id}}",
+    "statusBannerConfirmedTitle": "Reserva confirmada",
+    "statusBannerConfirmedBody": "¡Todo listo! Revisa tu correo para los detalles de la confirmación.",
+    "propertyInformation": "Información de la propiedad",
+    "viewProperty": "Ver propiedad",
+    "reservationDetails": "Detalles de la reserva",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "afterTime": "Después de {{time}}",
+    "beforeTime": "Antes de {{time}}",
+    "guests": "Número de huéspedes",
+    "totalStay": "Estancia total",
+    "nights": "{{count}} noches",
+    "accessCodes": "Códigos de acceso para self check-in",
+    "accessCodesImportant": "Importante: Usa estos códigos para acceder a la propiedad durante tu estancia. Manténlos seguros y no los compartas.",
+    "validFrom": "Válido desde",
+    "validUntil": "Válido hasta",
+    "oneTimeCodeWarning": "Este es un código de un solo uso",
+    "help": "¿Necesitas ayuda?",
+    "emailSupport": "Soporte por correo",
+    "phoneSupport": "Soporte telefónico",
+    "priceSummary": "Resumen de precios",
+    "serviceFee": "Tarifa de servicio",
+    "taxes": "Impuestos",
+    "total": "Total",
+    "actions": "Acciones",
+    "downloadReceipt": "Descargar recibo",
+    "cancelBooking": "Cancelar reserva",
+    "cancelConfirm": "¿Seguro que quieres cancelar esta reserva?",
+    "bookingNotFound": "Reserva no encontrada",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada",
+      "completed": "Completada"
+    },
+    "timeline": {
+      "pending": "Solicitud enviada",
+      "confirmed": "Confirmada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "invoice": {
+    "title": "Pago e factura",
+    "propertyDetails": "Detalles de la propiedad",
+    "paymentMethod": "Método de pago",
+    "bankTransfer": "Transferencia bancaria",
+    "bankDetails": "Detalles de la transferencia bancaria",
+    "summary": "Resumen de pago",
+    "nights": "{{count}} noches",
+    "subtotal": "Subtotal",
+    "cleaningFee": "Tarifa de limpieza",
+    "serviceFee": "Tarifa de servicio",
+    "tax": "Impuesto",
+    "total": "Total",
+    "confirmAndDownload": "Confirmar y descargar factura",
+    "processing": "Procesando...",
+    "cancel": "Cancelar",
+    "important": "Importante: Incluye el número de factura en la referencia del pago para acelerar el proceso.",
+    "invoiceNumber": "Factura #{{number}}",
+    "download": "Descargar PDF",
+    "preview": "Vista previa PDF",
+    "noInvoice": "Aún no hay factura disponible.",
+    "generate": "Generar factura",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "paid": "Pagado"
+    }
+  },
+  "offline": {
+    "title": "Estás sin conexión",
+    "description": "Parece que no tienes conexión a internet. Puedes seguir navegando por páginas en caché o intentarlo de nuevo cuando vuelvas a estar en línea.",
+    "retry": "Reintentar",
+    "goBack": "Volver"
+  },
+  "chatThread": {
+    "send": "Enviar",
+    "placeholder": "Escribe un mensaje...",
+    "attachments": "Adjuntos",
+    "failed": "Error al enviar. Haz clic para reintentar.",
+    "loading": "Cargando mensajes...",
+    "offlineCached": "Sin conexión: mostrando mensajes en caché",
+    "archive": "Archivar conversación",
+    "unread": "No leído",
+    "typing": "Escribiendo..."
+  },
+  "breadcrumbs": {
+    "home": "Inicio",
+    "properties": "Propiedades",
+    "property": "Propiedad",
+    "reviews": "Reseñas",
+    "smartLocks": "Cerraduras inteligentes",
+    "verification": "Verificación"
+  },
+  "notify": {
+    "success": "Éxito",
+    "error": "Error",
+    "warning": "Advertencia",
+    "info": "Info",
+    "invoice": "Factura",
+    "pdfDownloaded": "PDF descargado.",
+    "failedGenerateInvoice": "Error al generar la factura",
+    "idVerificationSubmitted": "Verificación de identidad enviada",
+    "failedSubmitIdVerification": "Error al enviar la verificación de identidad",
+    "addressVerificationSubmitted": "Verificación de dirección enviada",
+    "failedSubmitAddressVerification": "Error al enviar la verificación de dirección",
+    "errorLoadSavedSearches": "Error al cargar búsquedas guardadas",
+    "searchActivated": "Búsqueda activada",
+    "searchPaused": "Búsqueda en pausa",
+    "errorUpdateSearch": "Error al actualizar la búsqueda",
+    "searchDeleted": "Búsqueda eliminada correctamente",
+    "errorDeleteSearch": "Error al eliminar la búsqueda",
+    "comparisonLoadFallback": "Error al cargar la comparación, usando respaldo.",
+    "propertyRemovedTitle": "Eliminado",
+    "propertyRemoved": "Propiedad eliminada de la comparación",
+    "errorRemoveProperty": "Error al eliminar la propiedad",
+    "comparisonClearedTitle": "Limpiado",
+    "comparisonCleared": "Comparación vaciada",
+    "errorClearComparison": "Error al limpiar la comparación",
+    "addedToComparisonTitle": "Añadido",
+    "addedToComparison": "Propiedad añadida a la comparación",
+    "shareLinkSuccessTitle": "Enlace compartido",
+    "shareLinkSuccessDesc": "¡Gracias por compartir!",
+    "shareLinkErrorTitle": "Error al compartir",
+    "shareLinkErrorDesc": "No se pudo compartir el enlace",
+    "copiedTitle": "Copiado",
+    "copiedCode": "Código copiado al portapapeles"
+  },
+  "compareButton": {
+    "compare": "Comparar",
+    "comparing": "Comparando"
+  },
+  "reviews": {
+    "deleteDialog": {
+      "title": "¿Eliminar reseña?",
+      "description": "Esta acción no se puede deshacer. La reseña se eliminará permanentemente."
+    }
+  },
+  "notificationsPage": {
+    "title": "Notificaciones",
+    "subtitle": "Actualizaciones en tiempo real sobre reservas, pagos, mantenimiento y más.",
+    "actions": {
+      "markAllRead": "Marcar todo como leído",
+      "markRead": "Marcar como leído",
+      "markUnread": "Marcar como no leído",
+      "delete": "Eliminar"
+    },
+    "filters": {
+      "title": "Filtros",
+      "searchPlaceholder": "Buscar notificaciones...",
+      "all": "Todas"
+    },
+    "preferences": {
+      "title": "Preferencias de notificación",
+      "loading": "Cargando preferencias...",
+      "enablePush": "Habilitar notificaciones push",
+      "save": "Guardar preferencias"
+    },
+    "types": {
+      "booking_created": "Reserva creada",
+      "booking_confirmed": "Reserva confirmada",
+      "booking_cancelled": "Reserva cancelada",
+      "payment_received": "Pago recibido",
+      "maintenance": "Mantenimiento",
+      "message": "Mensaje",
+      "system": "Sistema"
+    },
+    "list": {
+      "title": "Notificaciones",
+      "unreadBadge": "{{count}} sin leer",
+      "loading": "Cargando...",
+      "empty": "No hay notificaciones."
+    },
+    "item": {
+      "markRead": "Marcar como leído",
+      "markUnread": "Marcar como no leído",
+      "select": "Seleccionar",
+      "unselect": "Deseleccionar"
+    },
+    "demo": {
+      "title": "Notificaciones (demo)",
+      "description": "Usando datos de ejemplo."
+    },
+    "toasts": {
+      "preferencesSaved": "Preferencias guardadas",
+      "preferencesSaveFailed": "Error al guardar las preferencias",
+      "markAllRead": "Todas las notificaciones marcadas como leídas",
+      "deleted": "{{count}} notificación(es) eliminada(s).",
+      "newBooking": "Nueva reserva",
+      "paymentReceived": "Pago recibido"
+    }
+  },
+  "profilePage": {
+    "title": "Mi perfil",
+    "subtitle": "Gestiona la información y preferencias de tu cuenta",
+    "tabs": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "social": "Redes sociales"
+    },
+    "role": {
+      "host": "Anfitrión",
+      "guest": "Huésped"
+    },
+    "verification": {
+      "status": "Estado de verificación",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "identity": "Identidad",
+      "verifyIdentity": "Verificar identidad"
+    },
+    "personal": {
+      "title": "Información personal",
+      "edit": "Editar",
+      "cancel": "Cancelar",
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "dateOfBirth": "Fecha de nacimiento",
+      "address": "Dirección",
+      "occupation": "Ocupación",
+      "languages": "Idiomas",
+      "bio": "Biografía",
+      "placeholders": {
+        "phone": "+34 123 456 789",
+        "address": "Calle, Ciudad, País",
+        "occupation": "Ingeniero de software",
+        "languages": "Español, Inglés",
+        "bio": "Cuéntanos sobre ti..."
+      },
+      "saveChanges": "Guardar cambios",
+      "saving": "Guardando..."
+    },
+    "social": {
+      "title": "Enlaces de redes sociales",
+      "description": "Conecta tus perfiles para generar confianza con anfitriones y huéspedes",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "website": "Sitio web",
+      "save": "Guardar enlaces",
+      "saving": "Guardando..."
+    },
+    "security": {
+      "changePassword": "Cambiar contraseña",
+      "description": "Actualiza tu contraseña para mantener tu cuenta segura",
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "confirm": "Confirmar nueva contraseña",
+      "update": "Actualizar contraseña",
+      "updating": "Actualizando..."
+    },
+    "danger": {
+      "title": "Zona de peligro",
+      "description": "Acciones de cuenta irreversibles",
+      "deleteTitle": "Eliminar cuenta",
+      "deleteDescription": "Una vez elimines tu cuenta, no hay vuelta atrás. Todos tus datos se borrarán permanentemente.",
+      "dialogTitle": "¿Estás completamente seguro?",
+      "dialogDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y todos tus datos de nuestros servidores.",
+      "confirm": "Sí, eliminar mi cuenta"
+    },
+    "buttons": {
+      "cancel": "Cancelar"
+    },
+    "toasts": {
+      "profileUpdated": "Perfil actualizado con éxito",
+      "updateFailed": "Error al actualizar el perfil",
+      "selectImage": "Selecciona un archivo de imagen",
+      "avatarUploaded": "Avatar subido con éxito",
+      "avatarUploadFailed": "Error al subir el avatar",
+      "passwordsMismatch": "Las contraseñas no coinciden",
+      "passwordUpdated": "Contraseña actualizada con éxito",
+      "passwordUpdateFailed": "Error al actualizar la contraseña",
+      "accountDeletedTitle": "Cuenta eliminada",
+      "accountDeletedDesc": "Tu cuenta ha sido eliminada permanentemente",
+      "accountDeleteFailed": "Error al eliminar la cuenta"
+    }
+  },
+  "wishlists": {
+    "title": "Mis listas de deseos",
+    "subtitle": "Guarda y organiza tus propiedades favoritas",
+    "createNew": "Crear lista",
+    "noWishlists": "Aún no hay listas",
+    "noWishlistsDesc": "Crea listas para guardar y organizar propiedades que te gustan",
+    "defaultWishlist": "Mis Favoritos",
+    "form": {
+      "name": "Nombre de la lista",
+      "namePlaceholder": "p. ej., Vacaciones de verano, Escapadas urbanas",
+      "description": "Descripción",
+      "descriptionPlaceholder": "¿Para qué es esta lista?",
+      "isPublic": "Hacer pública esta lista",
+      "isPublicHelp": "Otros pueden ver tus listas públicas",
+      "create": "Crear lista",
+      "update": "Actualizar lista",
+      "cancel": "Cancelar"
+    },
+    "card": {
+      "properties": "{{count}} propiedades",
+      "public": "Pública",
+      "private": "Privada",
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "share": "Compartir"
+    },
+    "detail": {
+      "backToWishlists": "Volver a listas",
+      "shareTitle": "Compartir lista",
+      "shareDesc": "Cualquiera con este enlace puede ver esta lista",
+      "copyLink": "Copiar enlace",
+      "removeProperty": "Quitar de la lista"
+    },
+    "toasts": {
+      "created": "Lista creada",
+      "updated": "Lista actualizada",
+      "deleted": "Lista eliminada",
+      "propertyAdded": "Añadido a {{name}}",
+      "propertyRemoved": "Eliminado de la lista",
+      "linkCopied": "Enlace copiado al portapapeles",
+      "createFailed": "Error al crear la lista",
+      "updateFailed": "Error al actualizar la lista",
+      "deleteFailed": "Error al eliminar la lista"
+    }
+  },
+  "invoices": {
+    "title": "Facturas y recibos",
+    "subtitle": "Ver y descargar tus facturas de pago",
+    "noInvoices": "Aún no hay facturas",
+    "noInvoicesDesc": "Tus facturas aparecerán aquí después de reservar",
+    "table": {
+      "invoice": "Factura",
+      "date": "Fecha",
+      "property": "Propiedad",
+      "amount": "Importe",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "paid": "Pagada",
+      "pending": "Pendiente",
+      "overdue": "Atrasada",
+      "cancelled": "Cancelada"
+    },
+    "actions": {
+      "download": "Descargar",
+      "view": "Ver",
+      "print": "Imprimir"
+    },
+    "filters": {
+      "all": "Todas las facturas",
+      "paid": "Pagadas",
+      "pending": "Pendientes",
+      "search": "Buscar facturas..."
+    },
+    "toasts": {
+      "downloaded": "Factura descargada",
+      "downloadFailed": "Error al descargar la factura"
+    }
+  },
+  "payments": {
+    "title": "Historial de pagos",
+    "subtitle": "Sigue todas tus transacciones",
+    "noPayments": "Aún no hay pagos",
+    "noPaymentsDesc": "Tu historial de pagos aparecerá aquí",
+    "table": {
+      "date": "Fecha",
+      "description": "Descripción",
+      "method": "Método",
+      "amount": "Importe",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "failed": "Fallido",
+      "refunded": "Reembolsado"
+    },
+    "methods": {
+      "card": "Tarjeta de crédito",
+      "bank_transfer": "Transferencia bancaria",
+      "paypal": "PayPal",
+      "cash": "Efectivo"
+    },
+    "filters": {
+      "all": "Todos los pagos",
+      "completed": "Completados",
+      "pending": "Pendientes",
+      "refunded": "Reembolsados",
+      "search": "Buscar pagos..."
+    },
+    "details": {
+      "title": "Detalles del pago",
+      "transactionId": "ID de transacción",
+      "paymentMethod": "Método de pago",
+      "billingAddress": "Dirección de facturación",
+      "receipt": "Recibo"
+    },
+    "toasts": {
+      "refundRequested": "Reembolso solicitado",
+      "refundFailed": "Error al solicitar reembolso"
+    }
+  },
+  "insurance": {
+    "title": "Seguro de viaje",
+    "subtitle": "Protege tus reservas con cobertura integral",
+    "noInsurance": "Sin seguro activo",
+    "noInsuranceDesc": "Añade seguro a tu próxima reserva para mayor tranquilidad",
+    "plans": {
+      "basic": "Cobertura básica",
+      "premium": "Cobertura premium",
+      "comprehensive": "Cobertura completa"
+    },
+    "coverage": {
+      "title": "Qué está cubierto",
+      "cancellation": "Cancelación de viaje",
+      "interruption": "Interrupción de viaje",
+      "medical": "Emergencia médica",
+      "baggage": "Equipaje perdido",
+      "delays": "Retrasos de viaje"
+    },
+    "addToBooking": "Añadir a la reserva",
+    "viewDetails": "Ver detalles",
+    "claims": {
+      "title": "Presentar reclamación",
+      "submit": "Enviar reclamación",
+      "status": "Estado de la reclamación",
+      "pending": "En revisión",
+      "approved": "Aprobada",
+      "rejected": "Rechazada"
+    },
+    "toasts": {
+      "added": "Seguro añadido a la reserva",
+      "claimSubmitted": "Reclamación enviada correctamente",
+      "claimFailed": "Error al enviar la reclamación"
+    }
+  },
+  "property": {
+    "access": {
+      "title": "Acceso a la propiedad",
+      "subtitle": "Gestiona cerraduras inteligentes y códigos de acceso",
+      "noLocks": "No hay cerraduras inteligentes configuradas",
+      "noLocksDesc": "Añade cerraduras inteligentes para gestionar el acceso digitalmente",
+      "addLock": "Añadir cerradura inteligente",
+      "locks": {
+        "title": "Cerraduras inteligentes",
+        "online": "En línea",
+        "offline": "Sin conexión",
+        "battery": "Batería: {{level}}%",
+        "lowBattery": "Batería baja",
+        "lastSync": "Última sincronización: {{time}}"
+      },
+      "codes": {
+        "title": "Códigos de acceso",
+        "create": "Crear código",
+        "oneTime": "Código de un solo uso",
+        "recurring": "Código recurrente",
+        "validFrom": "Válido desde",
+        "validUntil": "Válido hasta",
+        "status": "Estado",
+        "active": "Activo",
+        "expired": "Expirado",
+        "revoked": "Revocado"
+      },
+      "activity": {
+        "title": "Registro de actividad",
+        "locked": "Cerrado",
+        "unlocked": "Abierto",
+        "codeUsed": "Código usado",
+        "batteryLow": "Batería baja",
+        "offline": "Se desconectó"
+      },
+      "actions": {
+        "lock": "Cerrar",
+        "unlock": "Abrir",
+        "revoke": "Revocar código",
+        "sync": "Sincronizar estado"
+      },
+      "toasts": {
+        "locked": "Puerta cerrada",
+        "unlocked": "Puerta abierta",
+        "codeCreated": "Código de acceso creado",
+        "codeRevoked": "Código de acceso revocado",
+        "syncSuccess": "Estado sincronizado",
+        "actionFailed": "Acción fallida"
+      }
+    },
+    "calendar": {
+      "title": "Calendario de disponibilidad",
+      "subtitle": "Gestiona precios y disponibilidad",
+      "legend": {
+        "available": "Disponible",
+        "booked": "Reservado",
+        "blocked": "Bloqueado",
+        "pending": "Pendiente"
+      },
+      "pricing": {
+        "basePrice": "Precio base",
+        "weekend": "Precio de fin de semana",
+        "special": "Fecha especial",
+        "bulk": "Edición masiva de precios"
+      },
+      "availability": {
+        "blockDates": "Bloquear fechas",
+        "unblockDates": "Desbloquear fechas",
+        "bulkActions": "Acciones masivas",
+        "reason": "Motivo",
+        "maintenance": "Mantenimiento",
+        "personal": "Uso personal",
+        "other": "Otro"
+      },
+      "sync": {
+        "title": "Sincronización de calendario",
+        "import": "Importar calendario",
+        "export": "Exportar calendario",
+        "airbnb": "Sincronizar con Airbnb",
+        "booking": "Sincronizar con Booking.com",
+        "ical": "URL de iCal"
+      },
+      "toasts": {
+        "datesBlocked": "Fechas bloqueadas",
+        "datesUnblocked": "Fechas desbloqueadas",
+        "pricingUpdated": "Precios actualizados",
+        "syncSuccess": "Calendario sincronizado",
+        "actionFailed": "Acción fallida"
+      }
+    }
+  },
+  "security": {
+    "audit": {
+      "title": "Registro de auditoría de seguridad",
+      "subtitle": "Monitorea la actividad de la cuenta y eventos de seguridad",
+      "noLogs": "No hay eventos de seguridad",
+      "noLogsDesc": "Los eventos de seguridad aparecerán aquí",
+      "filters": {
+        "all": "Todos los eventos",
+        "login": "Intentos de inicio de sesión",
+        "password": "Cambios de contraseña",
+        "profile": "Actualizaciones del perfil",
+        "suspicious": "Actividad sospechosa",
+        "search": "Buscar registros..."
+      },
+      "table": {
+        "timestamp": "Marca de tiempo",
+        "event": "Evento",
+        "ipAddress": "Dirección IP",
+        "location": "Ubicación",
+        "device": "Dispositivo",
+        "status": "Estado"
+      },
+      "events": {
+        "login": "Inicio de sesión",
+        "logout": "Cierre de sesión",
+        "passwordChange": "Contraseña cambiada",
+        "profileUpdate": "Perfil actualizado",
+        "2faEnabled": "2FA habilitado",
+        "2faDisabled": "2FA deshabilitado",
+        "failedLogin": "Inicio de sesión fallido",
+        "suspicious": "Actividad sospechosa"
+      },
+      "status": {
+        "success": "Éxito",
+        "failed": "Fallido",
+        "blocked": "Bloqueado"
+      },
+      "details": {
+        "title": "Detalles del evento",
+        "userAgent": "Agente de usuario",
+        "ipAddress": "Dirección IP",
+        "location": "Ubicación",
+        "timestamp": "Marca de tiempo"
+      },
+      "anomaly": {
+        "badge": "Anomalía detectada",
+        "newLocation": "Inicio de sesión desde nueva ubicación",
+        "newDevice": "Inicio de sesión desde nuevo dispositivo",
+        "multipleFailures": "Múltiples intentos fallidos",
+        "unusualTime": "Inicio de sesión en hora inusual"
+      },
+      "toasts": {
+        "exported": "Registro exportado",
+        "exportFailed": "Error al exportar el registro"
+      }
+    }
+  },
+  "verification": {
+    "title": "Verificación de identidad",
+    "subtitle": "Completa la verificación para desbloquear todas las funciones",
+    "status": {
+      "pending": "Pendiente",
+      "verified": "Verificado",
+      "rejected": "Rechazado",
+      "notStarted": "No iniciada"
+    },
+    "steps": {
+      "identity": {
+        "title": "Verificación de identidad",
+        "description": "Sube un documento de identificación emitido por el gobierno",
+        "upload": "Subir documento de identidad",
+        "idType": "Tipo de documento",
+        "types": {
+          "passport": "Pasaporte",
+          "driverLicense": "Licencia de conducir",
+          "nationalId": "Documento nacional de identidad"
+        },
+        "idNumber": "Número de identificación",
+        "front": "Anverso del documento",
+        "back": "Reverso del documento",
+        "submit": "Enviar para verificación"
+      },
+      "address": {
+        "title": "Verificación de dirección",
+        "description": "Sube un comprobante de domicilio",
+        "upload": "Subir documento",
+        "acceptedDocs": "Aceptados: factura de servicios, estado de cuenta bancaria, contrato de arrendamiento",
+        "submit": "Enviar"
+      },
+      "selfie": {
+        "title": "Verificación con selfie",
+        "description": "Tómate una selfie para confirmar tu identidad",
+        "takeSelfie": "Tomar selfie",
+        "retake": "Repetir",
+        "submit": "Enviar"
+      },
+      "background": {
+        "title": "Verificación de antecedentes",
+        "description": "Autoriza una verificación de antecedentes",
+        "consent": "Doy mi consentimiento para una verificación de antecedentes",
+        "request": "Solicitar verificación de antecedentes"
+      }
+    },
+    "trustScore": {
+      "title": "Puntuación de confianza",
+      "outOf": "{{score}} / 100",
+      "factors": {
+        "identity": "Identidad verificada",
+        "address": "Dirección verificada",
+        "background": "Verificación de antecedentes",
+        "references": "Referencias",
+        "reviews": "Reseñas positivas"
+      }
+    },
+    "toasts": {
+      "submitted": "Verificación enviada",
+      "submitFailed": "Error al enviar la verificación",
+      "approved": "Verificación aprobada",
+      "rejected": "Verificación rechazada"
+    }
+  }
+}

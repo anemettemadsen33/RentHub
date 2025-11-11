@@ -21,17 +21,29 @@ class AdminSeeder extends Seeder
             return;
         }
 
-        // Create admin user
-        $admin = User::create([
+        // Dynamically build attributes only for existing columns to avoid errors on slim test schemas
+        $base = [
             'name' => 'Admin RentHub',
             'email' => 'admin@renthub.com',
             'password' => Hash::make('Admin@123456'), // Change this password!
             'role' => 'admin',
+        ];
+        $optional = [
             'phone' => '+1234567890',
             'email_verified_at' => now(),
             'bio' => 'System Administrator',
             'country' => 'US',
-        ]);
+            // legacy / optional columns that may appear in expanded schemas
+            'language' => 'en',
+            'currency' => 'USD',
+            'timezone' => 'UTC',
+        ];
+        foreach ($optional as $column => $value) {
+            if (\Schema::hasColumn('users', $column)) {
+                $base[$column] = $value;
+            }
+        }
+        $admin = User::create($base);
 
         $this->command->info('✅ Admin user created successfully!');
         $this->command->info('📧 Email: admin@renthub.com');

@@ -12,6 +12,7 @@ class LockActivity extends Model
         'access_code_id',
         'user_id',
         'event_type',
+        'action',
         'code_used',
         'access_method',
         'metadata',

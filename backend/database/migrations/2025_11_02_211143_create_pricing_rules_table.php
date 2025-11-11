@@ -22,7 +22,8 @@ return new class extends Migration
                 'last_minute',   // Last-minute discounts
                 'early_bird',    // Early booking discounts
                 'weekly',        // Weekly discount
-                'monthly',        // Monthly discount
+                'monthly',       // Monthly discount
+                'minimum_stay',  // Discount applied when staying >= min_nights
             ]);
             $table->string('name'); // e.g., "Summer Season", "Christmas Holiday"
             $table->text('description')->nullable();

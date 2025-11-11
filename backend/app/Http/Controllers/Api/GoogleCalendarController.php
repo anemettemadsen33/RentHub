@@ -20,7 +20,7 @@ class GoogleCalendarController extends Controller
     /**
      * Get authorization URL
      */
-    public function authorize(Request $request): JsonResponse
+    public function getAuthUrl(Request $request): JsonResponse
     {
         $request->validate([
             'property_id' => 'nullable|exists:properties,id',

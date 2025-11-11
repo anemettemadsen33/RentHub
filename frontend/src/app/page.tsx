@@ -1,211 +1,185 @@
-'use client'
+import { Metadata } from 'next';
+import { MainLayout } from '@/components/layouts/main-layout';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Building2, TrendingUp, Users, Shield, ArrowRight, Star, MapPin, Calendar } from 'lucide-react';
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import { generateHomeMetaTags } from '@/lib/meta-tags';
+import { JsonLd, generateOrganizationJsonLd, generateWebsiteJsonLd } from '@/lib/seo';
+import PartnerLogos from '@/components/partnerships/PartnerLogos';
+import PropertyImportFeature from '@/components/partnerships/PropertyImportFeature';
+import RecommendedProperties from '../components/recommended-properties';
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Header } from '@/components/layout/Header'
-import { 
-  Search, 
-  Shield, 
-  Star, 
-  MapPin, 
-  TrendingUp, 
-  Users,
-  CheckCircle,
-  Sparkles,
-  ArrowRight,
-  Building2
-} from 'lucide-react'
+export const metadata: Metadata = generateHomeMetaTags();
 
-export default function HomePage() {
+export default async function HomePage() {
+  const t = await getTranslations('home');
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://renthub.com';
+  
+  const stats = [
+    { label: 'Active Properties', value: '12,345', icon: Building2, trend: '+20.1%', trendUp: true },
+    { label: 'Happy Tenants', value: '45,678', icon: Users, trend: '+15.3%', trendUp: true },
+    { label: 'Cities Covered', value: '150+', icon: MapPin, trend: '+12.5%', trendUp: true },
+    { label: 'Verified Hosts', value: '8,920', icon: Shield, trend: '+18.2%', trendUp: true },
+  ];
+
   const features = [
     {
-      icon: Search,
-      title: 'Smart Search',
-      description: 'Advanced filters to find your perfect property in seconds'
-    },
-    {
+      title: 'Verified Properties',
+      description: 'Every property is thoroughly verified and inspected for quality and safety.',
       icon: Shield,
-      title: 'Verified Listings',
-      description: 'All properties are verified for authenticity and quality'
     },
     {
-      icon: Star,
-      title: 'Trusted Reviews',
-      description: 'Real reviews from real tenants you can trust'
+      title: 'Instant Booking',
+      description: 'Book your next rental instantly with our streamlined booking process.',
+      icon: Calendar,
     },
     {
-      icon: MapPin,
-      title: 'Prime Locations',
-      description: 'Properties in the best neighborhoods and areas'
-    },
-    {
-      icon: TrendingUp,
       title: 'Best Prices',
-      description: 'Competitive pricing with transparent costs'
+      description: 'Competitive pricing with transparent fees and no hidden charges.',
+      icon: TrendingUp,
     },
     {
-      icon: Users,
-      title: 'Community',
-      description: 'Join thousands of happy tenants and landlords'
-    }
-  ]
-
-  const stats = [
-    { value: '10k+', label: 'Properties' },
-    { value: '50k+', label: 'Happy Tenants' },
-    { value: '4.9', label: 'Average Rating' },
-    { value: '24/7', label: 'Support' }
-  ]
+      title: 'Top Locations',
+      description: 'Properties in prime locations across 150+ cities worldwide.',
+      icon: MapPin,
+    },
+  ];
 
   return (
-    <div className="min-h-screen">
-      <Header />
+    <MainLayout>
+      <JsonLd
+        data={[
+          generateOrganizationJsonLd(baseUrl),
+          generateWebsiteJsonLd(baseUrl),
+        ]}
+      />
       
-      {/* Hero Section - Modern with gradient background */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 via-muted/30 to-background">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,transparent,black)] dark:bg-grid-slate-700/25" />
-        
-        <div className="container relative mx-auto px-4 py-24 md:py-32 lg:py-40">
-          <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
-            {/* Badge */}
-            <Badge variant="secondary" className="px-4 py-1.5 text-sm shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
-              Trusted by 50,000+ users
+      {/* Hero Section */}
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-muted/50 to-background" />
+        <div className="container relative mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center space-y-8 animate-fade-in-up">
+            <Badge variant="secondary" className="mb-4">
+              <Star className="h-3 w-3 mr-1 fill-current" />
+              Trusted by 45,000+ users worldwide
             </Badge>
-            
-            {/* Heading with gradient */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
               Find Your Perfect
-              <br />
-              <span className="bg-gradient-to-r from-primary via-blue-600 to-violet-600 bg-clip-text text-transparent">
-                Rental Home
+              <span className="block bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                Rental Property
               </span>
             </h1>
-            
-            {/* Subheading */}
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl">
-              Discover verified properties, connect with trusted landlords, and find your ideal rental in minutes.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Discover verified properties, connect with trusted hosts, and book your next home in minutes.
             </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/properties">
-                <Button size="lg" className="h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button asChild size="lg" className="group">
+                <Link href="/properties">
                   Browse Properties
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button size="lg" variant="outline" className="h-12 px-8 text-base border-2">
-                  Get Started Free
-                </Button>
-              </Link>
-            </div>
-            
-            {/* Stats - Improved with gradient text */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 pt-16 w-full">
-              {stats.map((stat, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-br from-primary to-violet-600 bg-clip-text text-transparent">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/about">Learn More</Link>
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section - Enhanced cards with better shadows */}
-      <section className="py-24 md:py-32 bg-background">
+      {/* Stats Section */}
+      <section className="py-16 border-y">
         <div className="container mx-auto px-4">
-          {/* Section Header */}
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-              Why Choose RentHub?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to find and rent your perfect property
-            </p>
-          </div>
-
-          {/* Feature Cards - Enhanced with better visual hierarchy */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon
-              return (
-                <Card key={index} className="p-6 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-                  <div className="space-y-4">
-                    {/* Icon with gradient background */}
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                    
-                    {/* Title and Description */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <Card 
+                key={stat.label} 
+                className="animate-fade-in-up hover:shadow-lg transition-shadow"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                      <h3 className="text-xl font-semibold">{feature.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {feature.description}
+                      <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                      <p className="text-3xl font-bold">{stat.value}</p>
+                      <p className={`text-sm font-medium ${stat.trendUp ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {stat.trend} from last month
                       </p>
                     </div>
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <stat.icon className="h-6 w-6 text-primary" />
+                    </div>
                   </div>
-                </Card>
-              )
-            })}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section - Enhanced with gradient border */}
-      <section className="py-24 md:py-32 bg-muted/50">
+      {/* Features Section */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <Card className="border-2 shadow-xl overflow-hidden">
-            <div className="p-12 md:p-16 text-center space-y-6 bg-gradient-to-br from-background via-muted/30 to-background">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-                Ready to Find Your New Home?
-              </h2>
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">Features</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose RentHub?</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to find, book, and manage your perfect rental property.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <Card 
+                key={feature.title} 
+                className="group hover:shadow-lg transition-all hover:scale-105 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardDescription>{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+  {/* Partner Logos Section */}
+  <PartnerLogos />
+
+  {/* Property Import Feature Section */}
+  <PropertyImportFeature />
+
+  {/* Recommended Properties Section */}
+  <RecommendedProperties />
+
+      {/* CTA Section */}
+      <section className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <Card className="border-2 overflow-hidden">
+            <CardContent className="p-12 text-center space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold">Ready to Get Started?</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Join thousands of satisfied tenants who found their perfect rental on RentHub
+                Join thousands of satisfied users and find your perfect rental today.
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-                <Link href="/auth/register">
-                  <Button size="lg" className="h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
-                    <CheckCircle className="mr-2 h-5 w-5" />
-                    Sign Up Now
-                  </Button>
-                </Link>
-                <Link href="/properties">
-                  <Button size="lg" variant="outline" className="h-12 px-8 text-base border-2">
-                    View Properties
-                  </Button>
-                </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <Button asChild size="lg">
+                  <Link href="/auth/register">Create Free Account</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/contact">Contact Sales</Link>
+                </Button>
               </div>
-            </div>
+            </CardContent>
           </Card>
         </div>
       </section>
-
-      {/* Footer - Clean and simple */}
-      <footer className="border-t bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-lg">RentHub</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 RentHub. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  )
+    </MainLayout>
+  );
 }

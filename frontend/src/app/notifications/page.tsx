@@ -1,251 +1,421 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { notificationsApi } from '@/lib/api/notifications';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { MainLayout } from '@/components/layouts/main-layout';
+import { ListSkeleton } from '@/components/skeletons';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import {
+  Bell,
+  Check,
+  X,
+  Filter,
+  Search,
+  Loader2,
+  Trash2,
+  MailOpen,
+  Mail,
+  CheckCheck,
+} from 'lucide-react';
+import apiClient from '@/lib/api-client';
+import { API_ENDPOINTS } from '@/lib/api-endpoints';
+import { AppNotification, NotificationType } from '@/types/extended';
+import { useNotifications } from '@/contexts/notification-context';
+import { io, Socket } from 'socket.io-client';
+import { usePushNotifications } from '@/hooks/use-push-notifications';
 
-interface Notification {
-  id: string;
-  type: string;
-  data: {
-    title: string;
-    message: string;
-    action_url?: string;
-    [key: string]: any;
-  };
-  read_at?: string;
-  created_at: string;
-}
+interface UnreadCountResponse { count: number }
+
+// TYPE_LABELS now resolved via i18n keys
+const TYPE_LABELS: Record<NotificationType, string> = {
+  booking_created: 'notificationsPage.types.booking_created',
+  booking_confirmed: 'notificationsPage.types.booking_confirmed',
+  booking_cancelled: 'notificationsPage.types.booking_cancelled',
+  payment_received: 'notificationsPage.types.payment_received',
+  maintenance: 'notificationsPage.types.maintenance',
+  message: 'notificationsPage.types.message',
+  system: 'notificationsPage.types.system',
+};
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user } = useAuth();
+  const t = useTranslations('notificationsPage');
+  const tNotify = useTranslations('notify');
+  const router = useRouter();
+  const { toast } = useToast();
+  const { showNotification, permission, requestPermission } = usePushNotifications();
+  const { refresh } = useNotifications();
+
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | NotificationType>('all');
+  const [search, setSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [markingAll, setMarkingAll] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [preferences, setPreferences] = useState<any | null>(null);
+  const [savingPrefs, setSavingPrefs] = useState(false);
 
   useEffect(() => {
-    loadNotifications();
-  }, [filter]);
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+  loadNotifications();
+  loadPreferences();
+    if (permission === 'default') requestPermission();
 
-  const loadNotifications = async () => {
+    const s = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'http://localhost:6001', {
+      auth: { token: typeof window !== 'undefined' ? localStorage.getItem('token') : undefined },
+    });
+    setSocket(s);
+
+    s.on('notification', (notification: AppNotification) => {
+      setNotifications(prev => [notification, ...prev]);
+      if (permission === 'granted') {
+        showNotification({
+          title: notification.title,
+          body: notification.body,
+          tag: `notif-${notification.id}`,
+          onClick: () => {
+            router.push('/notifications');
+          },
+        });
+      }
+      refresh();
+    });
+  s.on('booking_created', (payload: any) => toast({ title: t('toasts.newBooking'), description: `#${payload?.reference || payload?.id}` }));
+  s.on('payment_received', (payload: any) => toast({ title: t('toasts.paymentReceived'), description: payload?.amount ? `$${payload.amount}` : '' }));
+
+    return () => { s.disconnect(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, permission, showNotification, router, refresh, toast]);
+
+  const loadNotifications = useCallback(async () => {
+    setLoading(true);
     try {
-      const response: any = await notificationsApi.getAll({
-        unread_only: filter === 'unread',
+      const { data } = await apiClient.get(API_ENDPOINTS.notifications.list);
+      setNotifications(data.data || []);
+    } catch (e) {
+      // fallback demo data
+      setNotifications([
+        {
+          id: '1',
+          type: 'booking_created',
+            title: t('demo.title'),
+            body: 'Booking #RB-2024-1001 was created', // keep body example unlocalized placeholder
+            data: { booking_id: 1001 },
+            is_read: false,
+            created_at: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          type: 'payment_received',
+          title: t('types.payment_received'),
+          body: 'You received $450.00 for booking #RB-2024-0999',
+          is_read: true,
+          created_at: new Date(Date.now() - 3600_000).toISOString(),
+        },
+        {
+          id: '3',
+          type: 'maintenance',
+          title: t('types.maintenance'),
+          body: 'New urgent maintenance request submitted',
+          is_read: false,
+          created_at: new Date(Date.now() - 7200_000).toISOString(),
+        },
+      ]);
+      toast({ title: t('demo.title'), description: t('demo.description') });
+    } finally { setLoading(false); }
+  }, [toast, t]);
+
+  const loadPreferences = async () => {
+    try {
+      const { data } = await apiClient.get(API_ENDPOINTS.notifications.getPreferences);
+      setPreferences(data.data || {});
+    } catch {
+      setPreferences({
+        booking_created: true,
+        booking_confirmed: true,
+        booking_cancelled: true,
+        payment_received: true,
+        maintenance: true,
+        message: true,
+        system: true,
+        push_enabled: true,
       });
-      setNotifications(response.data || []);
-    } catch (error) {
-      console.error('Failed to load notifications:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleMarkAsRead = async (id: string) => {
+  const updatePreference = (key: string, value: boolean) => {
+    setPreferences((prev: any) => ({ ...prev, [key]: value }));
+  };
+
+  const savePreferences = async () => {
+    if (!preferences) return;
+    setSavingPrefs(true);
     try {
-      await notificationsApi.markAsRead(id);
-      setNotifications(notifications.map(n => 
-        n.id === id ? { ...n, read_at: new Date().toISOString() } : n
-      ));
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
-    }
+      await apiClient.post(API_ENDPOINTS.notifications.updatePreferences, preferences);
+      toast({ title: t('toasts.preferencesSaved') });
+    } catch {
+      toast({ title: tNotify('error'), description: t('toasts.preferencesSaveFailed'), variant: 'destructive' });
+    } finally { setSavingPrefs(false); }
   };
 
-  const handleMarkAllAsRead = async () => {
+  const filtered = useMemo(() => notifications.filter(n => {
+    if (activeTab !== 'all' && n.type !== activeTab) return false;
+    if (search && !(`${n.title} ${n.body}`.toLowerCase().includes(search.toLowerCase()))) return false;
+    return true;
+  }), [notifications, activeTab, search]);
+
+  const unreadCount = useMemo(() => filtered.filter(n => !n.is_read).length, [filtered]);
+
+  const toggleSelect = (id: string | number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const markAsRead = async (id: string | number, read = true) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: read } : n));
     try {
-      await notificationsApi.markAllAsRead();
-      setNotifications(notifications.map(n => ({ ...n, read_at: new Date().toISOString() })));
+      if (read) {
+        await apiClient.post(API_ENDPOINTS.notifications.markAsRead(String(id)));
+      } else {
+        await apiClient.post(API_ENDPOINTS.notifications.markAsUnread(String(id)));
+      }
     } catch (error) {
-      console.error('Failed to mark all as read:', error);
+      console.error('Failed to mark notification:', error);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const markSelected = async (read: boolean) => {
+    const ids = Array.from(selectedIds);
+    setNotifications(prev => prev.map(n => ids.includes(n.id) ? { ...n, is_read: read } : n));
+    for (const id of ids) {
+      await markAsRead(id, read);
+    }
+    setSelectedIds(new Set());
+  };
+
+  const markAll = async () => {
+    setMarkingAll(true);
     try {
-      await notificationsApi.delete(id);
-      setNotifications(notifications.filter(n => n.id !== id));
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-    }
+      await apiClient.post(API_ENDPOINTS.notifications.markAllAsRead);
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      toast({ title: t('toasts.markAllRead') });
+    } catch (e) {
+      toast({ title: tNotify('error'), description: t('toasts.markAllRead'), variant: 'destructive' });
+    } finally { setMarkingAll(false); }
   };
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'booking':
-        return (
-          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        );
-      case 'message':
-        return (
-          <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        );
-      case 'payment':
-        return (
-          <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-          </svg>
-        );
-      case 'review':
-        return (
-          <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-        );
-    }
+  const deleteSelected = async () => {
+    const ids = Array.from(selectedIds);
+    setDeleting(true);
+    try {
+      setNotifications(prev => prev.filter(n => !ids.includes(n.id)));
+      for (const id of ids) {
+        try { await apiClient.delete(API_ENDPOINTS.notifications.delete(String(id))); } catch {}
+      }
+      setSelectedIds(new Set());
+      toast({ title: tNotify('success'), description: t('toasts.deleted', { count: ids.length }) });
+    } finally { setDeleting(false); }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
-
-    if (diffInMinutes < 60) {
-      return `${Math.floor(diffInMinutes)}m ago`;
-    } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h ago`;
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
+  const formatTime = (iso: string) => {
+    const date = new Date(iso);
+    return date.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
   };
-
-  const unreadCount = notifications.filter(n => !n.read_at).length;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading notifications...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex items-center justify-between">
+    <MainLayout>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex items-start justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-            <p className="mt-2 text-gray-600">
-              {unreadCount > 0 ? `You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}
-            </p>
+            <h1 className="text-3xl font-bold mb-2 flex items-center gap-2"><Bell className="h-8 w-8 text-primary" />{t('title')}</h1>
+            <p className="text-gray-600">{t('subtitle')}</p>
+            <span className="sr-only" aria-live="polite">{t('list.unreadBadge', { count: unreadCount })}</span>
           </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={handleMarkAllAsRead}
-              className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Mark all as read
-            </button>
-          )}
+          <TooltipProvider>
+            <div className="flex gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" onClick={markAll} disabled={markingAll} aria-live="polite">
+                    {markingAll && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}{t('actions.markAllRead')}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('tooltips.markAll')}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" onClick={() => markSelected(true)} disabled={!selectedIds.size}>{t('actions.markRead')}</Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('tooltips.markSelectedRead')}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" onClick={() => markSelected(false)} disabled={!selectedIds.size}>{t('actions.markUnread')}</Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('tooltips.markSelectedUnread')}</TooltipContent>
+              </Tooltip>
+              <AlertDialog>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm" disabled={!selectedIds.size || deleting} aria-disabled={!selectedIds.size || deleting}>
+                        {deleting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}{t('actions.delete')}
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>{t('tooltips.deleteSelected')}</TooltipContent>
+                </Tooltip>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('confirm.delete.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('confirm.delete.description', { count: selectedIds.size })}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('confirm.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={deleteSelected} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      {deleting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}{t('confirm.delete.action')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </TooltipProvider>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setFilter('all')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                filter === 'all'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter('unread')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                filter === 'unread'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Unread {unreadCount > 0 && `(${unreadCount})`}
-            </button>
-          </nav>
-        </div>
+        <Card className="mb-4">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">{t('filters.title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center gap-4">
+              <div className="relative md:w-72">
+                <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+                <Input placeholder={t('filters.searchPlaceholder')} className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+              </div>
+              <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="w-full md:flex-1">
+                <TabsList className="flex flex-wrap gap-1">
+                  <TabsTrigger value="all">{t('filters.all')}</TabsTrigger>
+                  {Object.entries(TYPE_LABELS).map(([value, label]) => (
+                    <TabsTrigger key={value} value={value}>{t(label as any)}</TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Notifications List */}
-        {notifications.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
-            <p className="mt-2 text-gray-500">You're all caught up!</p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow divide-y divide-gray-200">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-6 hover:bg-gray-50 transition-colors ${!notification.read_at ? 'bg-blue-50' : ''}`}
-              >
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    {getNotificationIcon(notification.type)}
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          {notification.data.title}
-                        </p>
-                        <p className="mt-1 text-sm text-gray-600">
-                          {notification.data.message}
-                        </p>
-                        {notification.data.action_url && (
-                          <a
-                            href={notification.data.action_url}
-                            className="mt-2 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
-                          >
-                            View details →
-                          </a>
-                        )}
-                      </div>
-                      <div className="ml-4 flex-shrink-0 flex items-center space-x-2">
-                        <span className="text-xs text-gray-500">
-                          {formatDate(notification.created_at)}
-                        </span>
-                        {!notification.read_at && (
-                          <button
-                            onClick={() => handleMarkAsRead(notification.id)}
-                            className="text-blue-600 hover:text-blue-700"
-                            title="Mark as read"
-                          >
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(notification.id)}
-                          className="text-gray-400 hover:text-red-600"
-                          title="Delete"
-                        >
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-base">{t('preferences.title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!preferences ? (
+              <p className="text-sm text-muted-foreground">{t('preferences.loading')}</p>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {Object.entries(TYPE_LABELS).map(([key,label]) => (
+                    <div key={key} className="flex items-center justify-between rounded border p-3">
+                      <Label className="text-sm font-medium">{t(label as any)}</Label>
+                      <Switch checked={!!preferences[key]} onCheckedChange={(val) => updatePreference(key, !!val)} />
                     </div>
+                  ))}
+                  <div className="flex items-center justify-between rounded border p-3 md:col-span-3">
+                    <Label className="text-sm font-medium">{t('preferences.enablePush')}</Label>
+                    <Switch checked={!!preferences.push_enabled} onCheckedChange={(val) => updatePreference('push_enabled', !!val)} />
                   </div>
                 </div>
+                <Button onClick={savePreferences} disabled={savingPrefs}>
+                  {savingPrefs && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{t('preferences.save')}
+                </Button>
               </div>
-            ))}
-          </div>
-        )}
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">{t('list.title')} <Badge variant="secondary">{t('list.unreadBadge', { count: unreadCount })}</Badge></CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[60vh]">
+              {loading ? (
+                <div className="p-4"><ListSkeleton items={8} /></div>
+              ) : filtered.length === 0 ? (
+                <div className="p-10 text-center text-gray-500">{t('list.empty')}</div>
+              ) : (
+                <ul className="divide-y" role="list">
+                  {filtered.map((notification, idx) => {
+                    const selected = selectedIds.has(notification.id);
+                    return (
+                      <li
+                        key={notification.id}
+                        className={`flex items-start gap-4 p-4 hover:bg-muted/40 transition cursor-pointer animate-fade-in-up ${!notification.is_read ? 'bg-primary/5' : ''}`}
+                        style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}
+                        onClick={() => markAsRead(notification.id, true)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); markAsRead(notification.id, true); } }}
+                      >
+                        <div className="pt-1">
+                          <Checkbox checked={selected} onCheckedChange={() => toggleSelect(notification.id)} aria-label={t('item.aria.select')} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant={notification.is_read ? 'outline' : 'default'}>{t(TYPE_LABELS[notification.type] as any)}</Badge>
+                            <span className="font-medium">{notification.title}</span>
+                            {!notification.is_read && <span className="inline-block w-2 h-2 rounded-full bg-primary" />}
+                            <span className="ml-auto text-xs text-gray-500">{formatTime(notification.created_at)}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.body}</p>
+                          {notification.data && (
+                            <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-2">
+                              {Object.entries(notification.data).slice(0,4).map(([k,v]) => (
+                                <span key={k} className="bg-muted px-2 py-0.5 rounded">{k}: {String(v)}</span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="mt-2 flex gap-2">
+                            {notification.is_read ? (
+                              <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); markAsRead(notification.id, false); }}>{t('item.markUnread')}</Button>
+                            ) : (
+                              <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); markAsRead(notification.id, true); }}>{t('item.markRead')}</Button>
+                            )}
+                            <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleSelect(notification.id); }}>
+                              {selected ? t('item.unselect') : t('item.select')}
+                            </Button>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </MainLayout>
   );
 }

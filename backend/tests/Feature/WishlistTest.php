@@ -22,7 +22,7 @@ class WishlistTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->property = Property::factory()->create(['status' => 'published']);
+        $this->property = Property::factory()->create(['status' => 'available']);
     }
 
     public function test_user_can_create_wishlist()

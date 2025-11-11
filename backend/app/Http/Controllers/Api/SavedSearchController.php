@@ -55,6 +55,7 @@ class SavedSearchController extends Controller
             'enable_alerts' => 'boolean',
             'alert_frequency' => ['nullable', Rule::in(['instant', 'daily', 'weekly'])],
             'criteria' => 'nullable|array', // Additional custom criteria
+            'filters' => 'nullable|array',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -73,8 +74,8 @@ class SavedSearchController extends Controller
      */
     public function show($id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('view', $savedSearch);
 
         return response()->json([
             'success' => true,
@@ -87,8 +88,8 @@ class SavedSearchController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('update', $savedSearch);
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -109,9 +110,11 @@ class SavedSearchController extends Controller
             'check_in' => 'nullable|date',
             'check_out' => 'nullable|date|after:check_in',
             'enable_alerts' => 'boolean',
+            'notify' => 'boolean',
             'alert_frequency' => ['nullable', Rule::in(['instant', 'daily', 'weekly'])],
             'is_active' => 'boolean',
             'criteria' => 'nullable|array',
+            'filters' => 'nullable|array',
         ]);
 
         $savedSearch->update($validated);
@@ -128,8 +131,8 @@ class SavedSearchController extends Controller
      */
     public function destroy($id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('delete', $savedSearch);
 
         $savedSearch->delete();
 
@@ -144,18 +147,15 @@ class SavedSearchController extends Controller
      */
     public function execute($id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('execute', $savedSearch);
 
         $properties = $savedSearch->executeSearch();
 
+        // Legacy tests expect 'data' to be an array of matched properties only
         return response()->json([
             'success' => true,
-            'data' => [
-                'saved_search' => $savedSearch->fresh(),
-                'properties' => $properties,
-                'count' => $properties->count(),
-            ],
+            'data' => $properties,
         ]);
     }
 
@@ -164,8 +164,8 @@ class SavedSearchController extends Controller
      */
     public function checkNewListings($id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('view', $savedSearch);
 
         $newProperties = $savedSearch->checkNewListings();
 
@@ -185,8 +185,8 @@ class SavedSearchController extends Controller
      */
     public function toggleAlerts($id)
     {
-        $savedSearch = SavedSearch::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $savedSearch = SavedSearch::findOrFail($id);
+        $this->authorize('toggleAlerts', $savedSearch);
 
         $savedSearch->update([
             'enable_alerts' => ! $savedSearch->enable_alerts,

@@ -12,13 +12,13 @@ class UpdatePropertyRequest extends FormRequest
     public function authorize(): bool
     {
         $property = $this->route('property');
-
-        // Admin can update any property
-        if ($this->user()->isAdmin()) {
+        
+    // Admin can update any property
+    if ($this->user()->hasRole('admin')) {
             return true;
         }
-
-        // Owner can only update their own properties
+        
+    // Owner/Host can only update their own properties
         return $property && $property->user_id === $this->user()->id;
     }
 
@@ -55,6 +55,7 @@ class UpdatePropertyRequest extends FormRequest
 
             // Pricing
             'price_per_night' => ['sometimes', 'numeric', 'min:1'],
+            'price' => ['sometimes', 'numeric', 'min:1'],
             'price_per_week' => ['nullable', 'numeric', 'min:1'],
             'price_per_month' => ['nullable', 'numeric', 'min:1'],
             'cleaning_fee' => ['nullable', 'numeric', 'min:0'],
@@ -72,8 +73,8 @@ class UpdatePropertyRequest extends FormRequest
             'blocked_dates.*' => ['date'],
             'custom_pricing' => ['nullable', 'array'],
 
-            // Status
-            'status' => ['sometimes', 'in:draft,published,inactive'],
+            // Status (aligned with updated enum)
+            'status' => ['sometimes', 'in:available,booked,maintenance'],
             'is_active' => ['sometimes', 'boolean'],
             'is_featured' => ['sometimes', 'boolean'],
 

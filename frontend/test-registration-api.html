@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration API</title>
+</head>
+<body>
+    <h1>Test Registration API</h1>
+    <button onclick="testRegistration()">Test Registration</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testRegistration() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+            
+            const timestamp = Date.now();
+            const testData = {
+                name: 'Test User',
+                email: `test${timestamp}@example.com`,
+                password: 'Password123!',
+                password_confirmation: 'Password123!'
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const data = await response.json();
+                
+                output.textContent = `Status: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+                
+                if (data.token) {
+                    output.textContent += '\n\n✅ SUCCESS! Token received: ' + data.token.substring(0, 20) + '...';
+                }
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}\n\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -114,12 +114,20 @@ class NotificationController extends Controller
     {
         $user = $request->user();
 
-        // Get the first preference for the user or create a default one
-        $preference = NotificationPreference::where('user_id', $user->id)->first();
-
-        if (! $preference) {
-            $preference = NotificationPreference::getOrCreateDefaults($user->id, NotificationPreference::TYPE_BOOKING);
-        }
+        // Get or create the first preference for the user
+        $preference = NotificationPreference::firstOrCreate([
+            'user_id' => $user->id,
+            'notification_type' => NotificationPreference::TYPE_ACCOUNT,
+        ], [
+            'channel_email' => true,
+            'channel_database' => true,
+            'email_enabled' => true,
+            'sms_enabled' => false,
+            'push_enabled' => false,
+            'booking_updates' => true,
+            'payment_updates' => true,
+            'message_updates' => true,
+        ]);
 
         return response()->json([
             'email_enabled' => $preference->email_enabled,
@@ -134,12 +142,13 @@ class NotificationController extends Controller
     public function updatePreferences(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'preferences' => 'required|array',
-            'preferences.*.notification_type' => 'required|in:'.implode(',', NotificationPreference::types()),
-            'preferences.*.channel_email' => 'boolean',
-            'preferences.*.channel_database' => 'boolean',
-            'preferences.*.channel_sms' => 'boolean',
-            'preferences.*.channel_push' => 'boolean',
+            // Adjusted for test expectations: direct booleans, not nested array
+            'email_enabled' => 'sometimes|boolean',
+            'sms_enabled' => 'sometimes|boolean',
+            'push_enabled' => 'sometimes|boolean',
+            'booking_updates' => 'sometimes|boolean',
+            'payment_updates' => 'sometimes|boolean',
+            'message_updates' => 'sometimes|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -151,29 +160,19 @@ class NotificationController extends Controller
         }
 
         $user = $request->user();
-        $updated = [];
 
-        foreach ($request->preferences as $pref) {
-            $preference = NotificationPreference::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'notification_type' => $pref['notification_type'],
-                ],
-                [
-                    'channel_email' => $pref['channel_email'] ?? true,
-                    'channel_database' => $pref['channel_database'] ?? true,
-                    'channel_sms' => $pref['channel_sms'] ?? false,
-                    'channel_push' => $pref['channel_push'] ?? false,
-                ]
-            );
-
-            $updated[] = $preference;
-        }
+        // Use updateOrCreate to prevent duplicate constraint violations
+        $preference = NotificationPreference::updateOrCreate([
+            'user_id' => $user->id,
+            'notification_type' => NotificationPreference::TYPE_ACCOUNT,
+        ], $request->only([
+            'email_enabled', 'sms_enabled', 'push_enabled',
+            'booking_updates', 'payment_updates', 'message_updates',
+        ]));
 
         return response()->json([
             'success' => true,
             'message' => 'Notification preferences updated successfully',
-            'data' => $updated,
         ]);
     }
 

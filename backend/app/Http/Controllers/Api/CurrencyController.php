@@ -16,7 +16,7 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        $currencies = Currency::getActive();
+        $currencies = Currency::active()->get();
 
         return response()->json([
             'success' => true,
@@ -50,6 +50,16 @@ class CurrencyController extends Controller
         return response()->json([
             'success' => true,
             'data' => $currency,
+        ]);
+    }
+
+    public function getActive(): JsonResponse
+    {
+        $currencies = Currency::active()->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $currencies,
         ]);
     }
 

@@ -45,6 +45,7 @@ class BookingFactory extends Factory
             'security_deposit' => $securityDeposit,
             'taxes' => $taxes,
             'total_amount' => $totalAmount,
+            'total_price' => $totalAmount,  // Ensure total_price alias is also set
             'status' => 'confirmed',
             'guest_name' => fake()->name(),
             'guest_email' => fake()->safeEmail(),

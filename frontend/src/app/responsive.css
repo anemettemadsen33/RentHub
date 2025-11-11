@@ -1,0 +1,94 @@
+/* Mobile-first responsive utilities */
+
+/* Ensure cards stack properly on mobile */
+@media (max-width: 768px) {
+  .grid {
+    gap: 1rem !important;
+  }
+  
+  /* Reduce padding on mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Make tables scrollable */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Reduce font sizes for better readability */
+  h1 {
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.25rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem;
+  }
+  
+  /* Stack buttons vertically on small screens */
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .button-group > * {
+    width: 100%;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .grid {
+    gap: 1.5rem !important;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+  
+  /* Larger touch targets for icons */
+  .icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Prevent layout shift on mobile */
+@media (max-width: 640px) {
+  /* Hide less important columns in tables */
+  .hide-mobile {
+    display: none;
+  }
+  
+  /* Stack stat cards */
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+  }
+  
+  .card {
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+  }
+}

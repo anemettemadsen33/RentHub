@@ -1,0 +1,876 @@
+{
+  "common": {
+    "attachFile": "Attach file",
+    "send": "Send",
+    "remove": "Remove"
+  },
+  "home": {
+    "title": "Welcome to RentHub",
+    "subtitle": "Find and book your perfect rental property",
+    "cta_browse_tooltip": "Browse all available properties",
+    "cta_learn_tooltip": "Learn more about the platform",
+    "recommended": {
+      "title": "Recommended Properties",
+      "subtitle": "Hand‑picked rentals based on popularity and recent activity",
+      "browseAll": "Browse All",
+      "error": "Could not load recommendations.",
+      "empty": "No recommended properties yet. Check back soon."
+    }
+  },
+  "filters": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "propertyType": "Property Type",
+    "rooms": "Rooms",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "guests": "Guests",
+    "amenities": "Amenities",
+    "apply": "Apply",
+    "reset": "Reset"
+  },
+  "chat": {
+    "noConversations": "No conversations",
+    "selectConversation": "Select a conversation",
+    "typing": "Typing...",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "bookingDetail": {
+    "title": "Booking Details",
+    "back": "Back to Bookings",
+    "confirmation": "Confirmation #{{id}}",
+    "statusBannerConfirmedTitle": "Booking Confirmed",
+    "statusBannerConfirmedBody": "You're all set! Check your email for confirmation details.",
+    "propertyInformation": "Property Information",
+    "viewProperty": "View Property",
+    "reservationDetails": "Reservation Details",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "afterTime": "After {{time}}",
+    "beforeTime": "Before {{time}}",
+    "guests": "Number of Guests",
+    "totalStay": "Total Stay",
+    "nights": "{{count}} nights",
+    "accessCodes": "Access Codes for Self Check-in",
+    "accessCodesImportant": "Important: Use these codes to access the property during your stay. Keep them secure and don't share with others.",
+    "validFrom": "Valid from",
+    "validUntil": "Valid until",
+    "oneTimeCodeWarning": "This is a one-time use code",
+    "help": "Need Help?",
+    "emailSupport": "Email Support",
+    "phoneSupport": "Phone Support",
+    "priceSummary": "Price Summary",
+    "serviceFee": "Service fee",
+    "taxes": "Taxes",
+    "total": "Total",
+    "actions": "Actions",
+    "downloadReceipt": "Download Receipt",
+    "cancelBooking": "Cancel Booking",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
+    "bookingNotFound": "Booking not found",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "timeline": {
+      "pending": "Request Sent",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "invoice": {
+      "title": "Payment & Invoice",
+      "propertyDetails": "Property Details",
+      "paymentMethod": "Payment Method",
+      "bankTransfer": "Bank Transfer",
+      "bankDetails": "Bank Transfer Details",
+      "summary": "Payment Summary",
+      "nights": "{{count}} nights",
+      "subtotal": "Subtotal",
+      "cleaningFee": "Cleaning fee",
+      "serviceFee": "Service fee",
+      "tax": "Tax",
+      "total": "Total",
+      "confirmAndDownload": "Confirm & Download Invoice",
+      "processing": "Processing...",
+      "cancel": "Cancel",
+      "important": "Important: Include the invoice number in the payment reference for faster processing.",
+      "invoiceNumber": "Invoice #{{number}}",
+      "download": "Download PDF",
+      "preview": "Preview PDF",
+      "noInvoice": "No invoice available yet.",
+      "generate": "Generate Invoice",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "paid": "Paid"
+      }
+    },
+  "offline": {
+      "title": "You are offline",
+      "description": "It looks like you have no internet connection. You can continue browsing cached pages or try again when you are back online.",
+      "retry": "Retry",
+      "goBack": "Go Back"
+    },
+  "chatThread": {
+      "send": "Send",
+      "placeholder": "Type a message...",
+      "attachments": "Attachments",
+      "failed": "Failed to send. Click to retry.",
+      "loading": "Loading messages...",
+      "offlineCached": "Offline: showing cached messages",
+      "archive": "Archive conversation",
+      "unread": "Unread",
+      "typing": "Typing..."
+    }
+  ,
+  "breadcrumbs": {
+    "home": "Home",
+    "properties": "Properties",
+    "property": "Property",
+    "reviews": "Reviews",
+    "smartLocks": "Smart Locks",
+    "verification": "Verification"
+  },
+  "navigation": {
+    "home": "Home",
+    "properties": "Properties",
+    "bookings": "Bookings",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "favorites": "Favorites",
+    "profile": "Profile",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "notify": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "invoice": "Invoice",
+    "pdfDownloaded": "PDF downloaded.",
+    "failedGenerateInvoice": "Failed to generate invoice",
+    "idVerificationSubmitted": "ID verification submitted",
+    "failedSubmitIdVerification": "Failed to submit ID verification",
+    "addressVerificationSubmitted": "Address verification submitted",
+    "failedSubmitAddressVerification": "Failed to submit address verification",
+    "errorLoadSavedSearches": "Failed to load saved searches",
+    "searchActivated": "Search activated",
+    "searchPaused": "Search paused",
+    "errorUpdateSearch": "Failed to update search",
+    "searchDeleted": "Search deleted successfully",
+    "errorDeleteSearch": "Failed to delete search",
+    "comparisonLoadFallback": "Failed to load comparison, using fallback.",
+    "propertyRemovedTitle": "Removed",
+    "propertyRemoved": "Property removed from comparison",
+    "errorRemoveProperty": "Failed to remove property",
+    "comparisonClearedTitle": "Cleared",
+    "comparisonCleared": "Comparison cleared",
+    "errorClearComparison": "Failed to clear comparison",
+    "addedToComparisonTitle": "Added",
+    "addedToComparison": "Property added to comparison",
+    "shareLinkSuccessTitle": "Link shared",
+    "shareLinkSuccessDesc": "Thanks for spreading the word!",
+    "shareLinkErrorTitle": "Share failed",
+    "shareLinkErrorDesc": "Could not share link",
+    "copiedTitle": "Copied",
+    "copiedCode": "Code copied to clipboard",
+    "failedLoadVerificationStatus": "Failed to load verification status",
+    "missingIdUpload": "Please upload ID document and selfie",
+    "missingPhone": "Please enter phone number",
+    "failedSendVerificationCode": "Failed to send verification code",
+    "missingVerificationCode": "Please enter verification code",
+    "phoneVerified": "Phone verified",
+    "invalidVerificationCode": "Invalid verification code"
+  },
+  "compareButton": {
+    "compare": "Compare",
+    "comparing": "Comparing"
+  },
+  "properties": {
+    "title": "Find Your Perfect Property",
+    "searchDesc": "Find your perfect rental property",
+    "search": "Search properties...",
+    "searchPlaceholder": "Search by location, property name...",
+    "searchAriaLabel": "Search properties by city, country or title",
+    "filters": "Filters",
+    "sortBy": "Sort by",
+    "viewMode": {
+      "grid": "Grid View",
+      "list": "List View",
+      "map": "Map View"
+    },
+    "sort": {
+      "newest": "Newest",
+      "newestFirst": "Newest First",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "rating": "Highest Rated",
+      "label": "Sort by"
+    },
+    "perNight": "per night",
+    "guests": "{count} guests",
+    "bedrooms": "{count} bedrooms",
+    "bathrooms": "{count} bathrooms",
+    "viewDetails": "View Details",
+    "book": "Book Now",
+    "available": "Available",
+    "notAvailable": "Not Available",
+    "noResults": "No properties found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "availableCount": "{count} properties available",
+    "clearAllFilters": "Clear All Filters",
+    "mapHint": "Move and zoom the map to reload properties in the visible area. (Debounce 600ms)",
+    "updating": "updating...",
+    "titleStub": "Find Your Perfect Stay (Stub)"
+  },
+  "comparison": {
+    "compareNow": "Compare Now",
+    "compare": "Compare",
+    "added": "Added",
+    "itemsCount": "{count, plural, one {# property} other {# properties}}",
+    "pageTitle": "Compare Properties",
+    "clearAll": "Clear All",
+    "addMore": "Add More",
+    "featureHeader": "Feature",
+    "amenitiesHeader": "Amenities & Features",
+    "emptyTitle": "No Properties to Compare",
+    "emptyDesc": "Add properties from the search results to start comparing",
+    "pricePerNight": "Price per night",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "maxGuests": "Max Guests",
+    "area": "Area (sqm)",
+    "location": "Location",
+    "status": "Status"
+  },
+  "reviews": {
+    "deleteDialog": {
+      "title": "Delete review?",
+      "description": "This action cannot be undone. The review will be permanently removed."
+    }
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "subtitle": "Real-time updates about bookings, payments, maintenance, and more.",
+    "actions": {
+      "markAllRead": "Mark all read",
+      "markRead": "Mark read",
+      "markUnread": "Mark unread",
+      "delete": "Delete"
+    },
+    "filters": {
+      "title": "Filters",
+      "searchPlaceholder": "Search notifications...",
+      "all": "All"
+    },
+    "preferences": {
+      "title": "Notification Preferences",
+      "loading": "Loading preferences...",
+      "enablePush": "Enable Push Notifications",
+      "save": "Save Preferences"
+    },
+    "types": {
+      "booking_created": "Booking Created",
+      "booking_confirmed": "Booking Confirmed",
+      "booking_cancelled": "Booking Cancelled",
+      "payment_received": "Payment Received",
+      "maintenance": "Maintenance",
+      "message": "Message",
+      "system": "System"
+    },
+    "list": {
+      "title": "Notifications",
+      "unreadBadge": "{{count}} unread",
+      "loading": "Loading...",
+      "empty": "No notifications."
+    },
+    "item": {
+      "markRead": "Mark read",
+      "markUnread": "Mark unread",
+      "select": "Select",
+      "unselect": "Unselect"
+    },
+    "demo": {
+      "title": "Notifications (demo)",
+      "description": "Using sample data."
+    },
+    "toasts": {
+      "preferencesSaved": "Preferences saved",
+      "preferencesSaveFailed": "Failed to save preferences",
+      "markAllRead": "All notifications marked as read",
+      "deleted": "{{count}} notification(s) removed.",
+      "newBooking": "New booking",
+      "paymentReceived": "Payment received"
+    }
+  },
+  "bookingsPage": {
+    "title": "My Bookings",
+    "subtitle": "Manage your property reservations",
+    "aria": {
+      "showing": "Showing {count} {filter} bookings"
+    },
+    "filters": {
+      "ariaLabel": "Filter bookings",
+      "all": "all",
+      "upcoming": "upcoming",
+      "past": "past",
+      "cancelled": "cancelled",
+      "tooltip": "Show {tab} bookings"
+    },
+    "empty": {
+      "title": "No {filter} bookings",
+      "description": "Try selecting a different filter."
+    },
+    "banner": {
+      "confirmedTitle": "Booking Confirmed",
+      "subtotal": "Subtotal",
+      "referral": "Referral Discount",
+      "loyalty": "Loyalty Discount",
+      "total": "Total"
+    },
+    "property": {
+      "imageAlt": "{title}",
+      "unknown": "Property",
+      "noAddress": "Address unavailable"
+    },
+    "fields": {
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Guests",
+      "total": "Total"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "cancel": "Cancel Booking",
+      "canceling": "Canceling…",
+      "viewProperty": "View Property"
+    },
+    "dialog": {
+      "cancel": {
+        "title": "Cancel this booking?",
+        "description": "This action cannot be undone. We’ll attempt to cancel your reservation for {title}.",
+        "keep": "Keep Booking",
+        "confirm": "Confirm Cancel"
+      }
+    },
+    "toasts": {
+      "cancelSuccess": { "title": "Success", "description": "Booking cancelled successfully" },
+      "cancelError": { "title": "Error", "description": "Failed to cancel booking" }
+    },
+    "errors": {
+      "load": { "title": "Error", "description": "Failed to load bookings" }
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "default": "Scheduled"
+    }
+  },
+  "profilePage": {
+    "title": "My Profile",
+    "subtitle": "Manage your account information and preferences",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "social": "Social Links"
+    },
+    "role": {
+      "host": "Host",
+      "guest": "Guest"
+    },
+    "aria": {
+      "changeAvatar": "Change avatar"
+    },
+    "tooltips": {
+      "changeAvatar": "Change avatar"
+    },
+    "verification": {
+      "status": "Verification Status",
+      "email": "Email",
+      "phone": "Phone",
+      "identity": "Identity",
+      "verifyIdentity": "Verify Identity"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "dateOfBirth": "Date of Birth",
+      "address": "Address",
+      "occupation": "Occupation",
+      "languages": "Languages",
+      "bio": "Bio",
+      "placeholders": {
+        "phone": "+40 123 456 789",
+        "address": "Street, City, Country",
+        "occupation": "Software Engineer",
+        "languages": "English, Romanian",
+        "bio": "Tell us about yourself..."
+      },
+      "saveChanges": "Save Changes",
+      "saving": "Saving..."
+    },
+    "social": {
+      "title": "Social Media Links",
+      "description": "Connect your social profiles to build trust with hosts and guests",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "website": "Website",
+      "save": "Save Social Links",
+      "saving": "Saving..."
+    },
+    "security": {
+      "changePassword": "Change Password",
+      "description": "Update your password to keep your account secure",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "update": "Update Password",
+      "updating": "Updating..."
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "description": "Irreversible account actions",
+      "deleteTitle": "Delete Account",
+      "deleteDescription": "Once you delete your account, there is no going back. All your data will be permanently deleted.",
+      "dialogTitle": "Are you absolutely sure?",
+      "dialogDescription": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
+      "confirm": "Yes, delete my account"
+    },
+    "buttons": {
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "profileUpdated": "Profile updated successfully",
+      "updateFailed": "Failed to update profile",
+      "selectImage": "Please select an image file",
+      "avatarUploaded": "Avatar uploaded successfully",
+      "avatarUploadFailed": "Failed to upload avatar",
+      "passwordsMismatch": "Passwords do not match",
+      "passwordUpdated": "Password updated successfully",
+      "passwordUpdateFailed": "Failed to update password",
+      "accountDeletedTitle": "Account Deleted",
+      "accountDeletedDesc": "Your account has been permanently deleted",
+      "accountDeleteFailed": "Failed to delete account"
+    }
+  },
+  "wishlists": {
+    "title": "My Wishlists",
+    "subtitle": "Save and organize your favorite properties",
+    "createNew": "Create Wishlist",
+    "noWishlists": "No wishlists yet",
+    "noWishlistsDesc": "Create wishlists to save and organize properties you love",
+    "defaultWishlist": "My Favorites",
+    "form": {
+      "name": "Wishlist Name",
+      "namePlaceholder": "e.g., Summer Vacation, City Breaks",
+      "description": "Description",
+      "descriptionPlaceholder": "What's this wishlist for?",
+      "isPublic": "Make this wishlist public",
+      "isPublicHelp": "Others can view your public wishlists",
+      "create": "Create Wishlist",
+      "update": "Update Wishlist",
+      "cancel": "Cancel"
+    },
+    "card": {
+      "properties": "{{count}} properties",
+      "public": "Public",
+      "private": "Private",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "share": "Share"
+    },
+    "detail": {
+      "backToWishlists": "Back to Wishlists",
+      "shareTitle": "Share Wishlist",
+      "shareDesc": "Anyone with this link can view this wishlist",
+      "copyLink": "Copy Link",
+      "removeProperty": "Remove from wishlist"
+    },
+    "toasts": {
+      "created": "Wishlist created",
+      "updated": "Wishlist updated",
+      "deleted": "Wishlist deleted",
+      "propertyAdded": "Added to {{name}}",
+      "propertyRemoved": "Removed from wishlist",
+      "linkCopied": "Link copied to clipboard",
+      "createFailed": "Failed to create wishlist",
+      "updateFailed": "Failed to update wishlist",
+      "deleteFailed": "Failed to delete wishlist"
+    }
+  },
+  "invoices": {
+    "title": "Invoices & Receipts",
+    "subtitle": "View and download your payment invoices",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDesc": "Your invoices will appear here after booking",
+    "table": {
+      "invoice": "Invoice",
+      "date": "Date",
+      "property": "Property",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "actions": {
+      "download": "Download",
+      "view": "View",
+      "print": "Print"
+    },
+    "filters": {
+      "all": "All Invoices",
+      "paid": "Paid",
+      "pending": "Pending",
+      "search": "Search invoices..."
+    },
+    "toasts": {
+      "downloaded": "Invoice downloaded",
+      "downloadFailed": "Failed to download invoice"
+    }
+  },
+  "payments": {
+    "title": "Payment History",
+    "subtitle": "Track all your transactions",
+    "noPayments": "No payments yet",
+    "noPaymentsDesc": "Your payment history will appear here",
+    "table": {
+      "date": "Date",
+      "description": "Description",
+      "method": "Method",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "methods": {
+      "card": "Credit Card",
+      "bank_transfer": "Bank Transfer",
+      "paypal": "PayPal",
+      "cash": "Cash"
+    },
+    "filters": {
+      "all": "All Payments",
+      "completed": "Completed",
+      "pending": "Pending",
+      "refunded": "Refunded",
+      "search": "Search payments..."
+    },
+    "details": {
+      "title": "Payment Details",
+      "transactionId": "Transaction ID",
+      "paymentMethod": "Payment Method",
+      "billingAddress": "Billing Address",
+      "receipt": "Receipt"
+    },
+    "toasts": {
+      "refundRequested": "Refund requested",
+      "refundFailed": "Failed to request refund"
+    }
+  },
+  "insurance": {
+    "title": "Travel Insurance",
+    "subtitle": "Protect your bookings with comprehensive coverage",
+    "noInsurance": "No active insurance",
+    "noInsuranceDesc": "Add insurance to your next booking for peace of mind",
+    "plans": {
+      "basic": "Basic Coverage",
+      "premium": "Premium Coverage",
+      "comprehensive": "Comprehensive Coverage"
+    },
+    "coverage": {
+      "title": "What's Covered",
+      "cancellation": "Trip Cancellation",
+      "interruption": "Trip Interruption",
+      "medical": "Emergency Medical",
+      "baggage": "Lost Baggage",
+      "delays": "Travel Delays"
+    },
+    "addToBooking": "Add to Booking",
+    "viewDetails": "View Details",
+    "claims": {
+      "title": "File a Claim",
+      "submit": "Submit Claim",
+      "status": "Claim Status",
+      "pending": "Pending Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "toasts": {
+      "added": "Insurance added to booking",
+      "claimSubmitted": "Claim submitted successfully",
+      "claimFailed": "Failed to submit claim"
+    }
+  },
+  "property": {
+    "access": {
+      "title": "Property Access",
+      "subtitle": "Manage smart locks and access codes",
+      "noLocks": "No smart locks configured",
+      "noLocksDesc": "Add smart locks to manage property access digitally",
+      "addLock": "Add Smart Lock",
+      "locks": {
+        "title": "Smart Locks",
+        "online": "Online",
+        "offline": "Offline",
+        "battery": "Battery: {{level}}%",
+        "lowBattery": "Low Battery",
+        "lastSync": "Last sync: {{time}}"
+      },
+      "codes": {
+        "title": "Access Codes",
+        "create": "Create Code",
+        "oneTime": "One-time code",
+        "recurring": "Recurring code",
+        "validFrom": "Valid from",
+        "validUntil": "Valid until",
+        "status": "Status",
+        "active": "Active",
+        "expired": "Expired",
+        "revoked": "Revoked"
+      },
+      "activity": {
+        "title": "Activity Log",
+        "locked": "Locked",
+        "unlocked": "Unlocked",
+        "codeUsed": "Code used",
+        "batteryLow": "Battery low",
+        "offline": "Went offline"
+      },
+      "actions": {
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "revoke": "Revoke Code",
+        "sync": "Sync Status"
+      },
+      "toasts": {
+        "locked": "Door locked",
+        "unlocked": "Door unlocked",
+        "codeCreated": "Access code created",
+        "codeRevoked": "Access code revoked",
+        "syncSuccess": "Status synced",
+        "actionFailed": "Action failed"
+      }
+    },
+    "calendar": {
+      "title": "Availability Calendar",
+      "subtitle": "Manage pricing and availability",
+      "legend": {
+        "available": "Available",
+        "booked": "Booked",
+        "blocked": "Blocked",
+        "pending": "Pending"
+      },
+      "pricing": {
+        "basePrice": "Base Price",
+        "weekend": "Weekend Price",
+        "special": "Special Date",
+        "bulk": "Bulk Edit Pricing"
+      },
+      "availability": {
+        "blockDates": "Block Dates",
+        "unblockDates": "Unblock Dates",
+        "bulkActions": "Bulk Actions",
+        "reason": "Reason",
+        "maintenance": "Maintenance",
+        "personal": "Personal Use",
+        "other": "Other"
+      },
+      "sync": {
+        "title": "Calendar Sync",
+        "import": "Import Calendar",
+        "export": "Export Calendar",
+        "airbnb": "Sync with Airbnb",
+        "booking": "Sync with Booking.com",
+        "ical": "iCal URL"
+      },
+      "toasts": {
+        "datesBlocked": "Dates blocked",
+        "datesUnblocked": "Dates unblocked",
+        "pricingUpdated": "Pricing updated",
+        "syncSuccess": "Calendar synced",
+        "actionFailed": "Action failed"
+      }
+    }
+  },
+  "security": {
+    "audit": {
+      "title": "Security Audit Log",
+      "subtitle": "Monitor account activity and security events",
+      "noLogs": "No security events",
+      "noLogsDesc": "Security events will appear here",
+      "filters": {
+        "all": "All Events",
+        "login": "Login Attempts",
+        "password": "Password Changes",
+        "profile": "Profile Updates",
+        "suspicious": "Suspicious Activity",
+        "search": "Search logs..."
+      },
+      "table": {
+        "timestamp": "Timestamp",
+        "event": "Event",
+        "ipAddress": "IP Address",
+        "location": "Location",
+        "device": "Device",
+        "status": "Status"
+      },
+      "events": {
+        "login": "Login",
+        "logout": "Logout",
+        "passwordChange": "Password Changed",
+        "profileUpdate": "Profile Updated",
+        "2faEnabled": "2FA Enabled",
+        "2faDisabled": "2FA Disabled",
+        "failedLogin": "Failed Login",
+        "suspicious": "Suspicious Activity"
+      },
+      "status": {
+        "success": "Success",
+        "failed": "Failed",
+        "blocked": "Blocked"
+      },
+      "details": {
+        "title": "Event Details",
+        "userAgent": "User Agent",
+        "ipAddress": "IP Address",
+        "location": "Location",
+        "timestamp": "Timestamp"
+      },
+      "anomaly": {
+        "badge": "Anomaly Detected",
+        "newLocation": "Login from new location",
+        "newDevice": "Login from new device",
+        "multipleFailures": "Multiple failed attempts",
+        "unusualTime": "Login at unusual time"
+      },
+      "toasts": {
+        "exported": "Audit log exported",
+        "exportFailed": "Failed to export log"
+      }
+    }
+  },
+  "verification": {
+    "title": "Identity Verification",
+    "subtitle": "Complete verification to unlock all features",
+    "status": {
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "notStarted": "Not Started"
+    },
+    "steps": {
+      "identity": {
+        "title": "Identity Verification",
+        "description": "Upload a government-issued ID",
+        "upload": "Upload ID Document",
+        "idType": "ID Type",
+        "types": {
+          "passport": "Passport",
+          "driverLicense": "Driver's License",
+          "nationalId": "National ID"
+        },
+        "idNumber": "ID Number",
+        "front": "Front of ID",
+        "back": "Back of ID",
+        "submit": "Submit for Verification"
+      },
+      "address": {
+        "title": "Address Verification",
+        "description": "Upload proof of address",
+        "upload": "Upload Document",
+        "acceptedDocs": "Accepted: Utility bill, bank statement, lease agreement",
+        "submit": "Submit"
+      },
+      "selfie": {
+        "title": "Selfie Verification",
+        "description": "Take a selfie for identity confirmation",
+        "takeSelfie": "Take Selfie",
+        "retake": "Retake",
+        "submit": "Submit"
+      },
+      "background": {
+        "title": "Background Check",
+        "description": "Authorize a background check",
+        "consent": "I consent to a background check",
+        "request": "Request Background Check"
+      }
+    },
+    "trustScore": {
+      "title": "Trust Score",
+      "outOf": "{{score}} / 100",
+      "factors": {
+        "identity": "Identity Verified",
+        "address": "Address Verified",
+        "background": "Background Check",
+        "references": "References",
+        "reviews": "Positive Reviews"
+      }
+    },
+    "toasts": {
+      "submitted": "Verification submitted",
+      "submitFailed": "Failed to submit verification",
+      "approved": "Verification approved",
+      "rejected": "Verification rejected"
+    }
+  },
+  "partnerships": {
+    "title": "Trusted Partnerships",
+    "subtitle": "We partner with the world's leading rental platforms to bring you the best properties",
+    "booking_description": "Import your listings directly from Booking.com with all details preserved",
+    "airbnb_description": "Seamlessly sync your Airbnb properties to RentHub in one click",
+    "vrbo_description": "Connect your VRBO rentals and manage everything from one dashboard",
+    "verified_partner": "Verified Partner",
+    "import_benefit": "⚡ Import your properties from any platform in seconds!"
+  },
+  "import": {
+    "badge": "Property Import Feature",
+    "title": "Import Your Properties in Seconds",
+    "description": "Already have properties listed on Booking.com, Airbnb, or VRBO? Import them instantly with all details, photos, and descriptions preserved.",
+    "booking_feature": "One-click import with calendar sync",
+    "airbnb_feature": "Automatic pricing and availability sync",
+    "vrbo_feature": "Complete listing migration in minutes",
+    "import_button": "Import Properties Now",
+    "dialog_title": "Import Property from Platform",
+    "dialog_description": "Enter the URL of your property listing from any supported platform",
+    "url_label": "Property URL",
+    "booking_hint": "Example: https://www.booking.com/hotel/ro/property-name.html",
+    "airbnb_hint": "Example: https://www.airbnb.com/rooms/12345678",
+    "vrbo_hint": "Example: https://www.vrbo.com/12345678ha",
+    "info_title": "What gets imported?",
+    "info_description": "We'll import all photos, descriptions, amenities, pricing, and availability. You can review and edit everything before publishing.",
+    "cancel": "Cancel",
+    "import_now": "Import Now",
+    "importing": "Importing...",
+    "footer_note": "Your property data is secure and never shared with third parties",
+    "success_message": "Property imported successfully! You can now review and publish it.",
+    "error_message": "Failed to import property. Please check the URL and try again."
+  }
+}
+

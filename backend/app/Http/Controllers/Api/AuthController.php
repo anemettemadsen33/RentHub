@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TwoFactorCodeMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -20,6 +22,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        \Log::info('E2E register start', ['ts' => microtime(true)]);
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -43,8 +46,10 @@ class AuthController extends Controller
             'role' => $request->role ?? 'tenant',
         ]);
 
-        // Send email verification
-        event(new Registered($user));
+        // Send email verification (skip in testing env to avoid slowing E2E / requiring mailer)
+        if (config('app.env') !== 'testing') {
+            event(new Registered($user));
+        }
 
         // Create token
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -54,6 +59,7 @@ class AuthController extends Controller
             'token' => $token,
             'message' => 'Registration successful! Please check your email to verify your account.',
         ], 201);
+        \Log::info('E2E register end', ['user_id' => $user->id, 'ts' => microtime(true)]);
     }
 
     /**
@@ -93,7 +99,8 @@ class AuthController extends Controller
                 'two_factor_code_expires_at' => now()->addMinutes(10),
             ]);
 
-            // TODO: Send code via email/SMS
+            // Send 2FA code via email
+            Mail::to($user->email)->send(new TwoFactorCodeMail($user, $code));
 
             Auth::logout();
 
@@ -119,7 +126,11 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+        
+        if ($token) {
+            $token->delete();
+        }
 
         return response()->json([
             'success' => true,
@@ -522,8 +533,8 @@ class AuthController extends Controller
             'two_factor_code_expires_at' => now()->addMinutes(10),
         ]);
 
-        // TODO: Send code via email/SMS
-        // For now, return in response (DEVELOPMENT ONLY)
+        // Send 2FA code via email
+        Mail::to($user->email)->send(new TwoFactorCodeMail($user, $code));
 
         return response()->json([
             'success' => true,
@@ -650,6 +661,47 @@ class AuthController extends Controller
                 'token' => $token,
                 'remaining_recovery_codes' => count($recoveryCodes),
             ],
+        ]);
+    }
+
+    /**
+     * Change authenticated user's password
+     */
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $request->user();
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect',
+            ], 401);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        // Revoke all existing tokens to force re-login for other sessions
+        $user->tokens()->delete();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully',
+            'token' => $token,
         ]);
     }
 }

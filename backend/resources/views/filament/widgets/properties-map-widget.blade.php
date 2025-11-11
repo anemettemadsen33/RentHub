@@ -1,6 +1,6 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <div class="relative" x-data="mapWidget(@js($properties))">
+        <div class="relative" x-data="mapWidget(@js($this->getProperties()))">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold">Properties Map View</h3>
                 <div class="flex gap-2">

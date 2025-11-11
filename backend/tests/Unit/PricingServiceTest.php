@@ -175,6 +175,8 @@ class PricingServiceTest extends TestCase
             'adjustment_type' => 'fixed',
             'adjustment_value' => 25,
             'is_active' => true,
+            'start_date' => $date->copy()->subDays(1),
+            'end_date' => $date->copy()->addDays(1),
         ]);
 
         $price = $this->pricingService->calculatePriceForDate($this->property, $date);

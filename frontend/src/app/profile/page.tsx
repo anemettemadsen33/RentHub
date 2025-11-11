@@ -1,60 +1,100 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { profileApi, UserProfile, UserSettings, PrivacySettings } from '@/lib/api/profile';
+import apiClient from '@/lib/api-client';
+import { useAuth } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
+import { MainLayout } from '@/components/layouts/main-layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Shield, 
-  Settings, 
-  Camera,
-  CheckCircle,
-  XCircle,
-  Lock,
-  Bell,
-  Globe,
-  Loader2
-} from 'lucide-react';
-import { Header } from '@/components/layout/Header';
-import toast from 'react-hot-toast';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { User, Mail, Phone, MapPin, Edit, Shield, Camera, Upload, Trash2, CheckCircle, XCircle, Linkedin, Twitter, Facebook, Instagram, Globe, Calendar, Save, X as CloseIcon, Loader2 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CardSkeleton, ListSkeleton } from '@/components/skeletons';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, refreshUser } = useAuth();
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('profilePage');
+  const tNotify = useTranslations('notify');
+  
+  const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [settings, setSettings] = useState<UserSettings | null>(null);
-  const [privacy, setPrivacy] = useState<PrivacySettings | null>(null);
-  const [activeTab, setActiveTab] = useState('profile');
-
-  // Profile form state
-  const [profileForm, setProfileForm] = useState({
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  
+  const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone: '',
+    address: '',
     bio: '',
     date_of_birth: '',
-    gender: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    zip_code: '',
+    occupation: '',
+    languages: '',
   });
+  
+  const [socialLinks, setSocialLinks] = useState({
+    linkedin: '',
+    twitter: '',
+    facebook: '',
+    instagram: '',
+    website: '',
+  });
+  
+  const [passwordData, setPasswordData] = useState({
+    current_password: '',
+    new_password: '',
+    new_password_confirmation: '',
+  });
+  
+  const [verificationStatus, setVerificationStatus] = useState({
+    email_verified: false,
+    phone_verified: false,
+    identity_verified: false,
+  });
+
+  const loadProfile = useCallback(async () => {
+    setFormData({
+      name: user?.name || '',
+      email: user?.email || '',
+      phone: (user as any)?.phone || '',
+      address: (user as any)?.address || '',
+      bio: (user as any)?.bio || '',
+      date_of_birth: (user as any)?.date_of_birth || '',
+      occupation: (user as any)?.occupation || '',
+      languages: (user as any)?.languages || '',
+    });
+    
+    try {
+      const resp = await apiClient.get('/v1/profile').catch(() => null);
+      if (resp?.data) {
+        setAvatarUrl(resp.data.avatar_url || '');
+        setVerificationStatus({
+          email_verified: resp.data.email_verified || false,
+          phone_verified: resp.data.phone_verified || false,
+          identity_verified: resp.data.identity_verified || false,
+        });
+        setSocialLinks(resp.data.social_links || {});
+      }
+    } catch (error) {
+      console.log('Profile data not available, using defaults');
+    } finally {
+      setInitialLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -62,534 +102,536 @@ export default function ProfilePage() {
       return;
     }
     loadProfile();
-  }, [user]);
+  }, [user, router, loadProfile]);
 
-  const loadProfile = async () => {
+  const updateProfile = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const [profileRes, settingsRes, privacyRes] = await Promise.all([
-        profileApi.getProfile(),
-        profileApi.getSettings(),
-        profileApi.getPrivacySettings(),
-      ]);
-
-      if (profileRes.data.data) {
-        setProfile(profileRes.data.data);
-        setProfileForm({
-          name: profileRes.data.data.name || '',
-          phone: profileRes.data.data.phone || '',
-          bio: profileRes.data.data.bio || '',
-          date_of_birth: profileRes.data.data.date_of_birth || '',
-          gender: profileRes.data.data.gender || '',
-          address: profileRes.data.data.address || '',
-          city: profileRes.data.data.city || '',
-          state: profileRes.data.data.state || '',
-          country: profileRes.data.data.country || '',
-          zip_code: profileRes.data.data.zip_code || '',
-        });
-      }
-
-      if (settingsRes.data.data) {
-        setSettings(settingsRes.data.data);
-      }
-
-      if (privacyRes.data.data) {
-        setPrivacy(privacyRes.data.data);
-      }
+      await apiClient.put('/v1/profile', { ...formData, social_links: socialLinks });
+      toast({ title: tNotify('success'), description: t('toasts.profileUpdated') });
+      setEditing(false);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to load profile');
+      toast({
+        title: tNotify('error'),
+        description: error.response?.data?.message || t('toasts.updateFailed'),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      await profileApi.updateProfile(profileForm);
-      toast.success('Profile updated successfully');
-      await refreshUser();
-      loadProfile();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update profile');
-    } finally {
-      setLoading(false);
-    }
+    await updateProfile();
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+    
+    if (!file.type.startsWith('image/')) {
+      toast({ title: tNotify('error'), description: t('toasts.selectImage'), variant: 'destructive' });
+      return;
+    }
+    
+    setUploadingAvatar(true);
     try {
-      setLoading(true);
-      await profileApi.uploadAvatar(file);
-      toast.success('Avatar uploaded successfully');
-      loadProfile();
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const { data } = await apiClient.post('/v1/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setAvatarUrl(data.avatar_url);
+      toast({ title: tNotify('success'), description: t('toasts.avatarUploaded') });
+    } catch (error) {
+      toast({ title: tNotify('error'), description: t('toasts.avatarUploadFailed'), variant: 'destructive' });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordData.new_password !== passwordData.new_password_confirmation) {
+      toast({ title: tNotify('error'), description: t('toasts.passwordsMismatch'), variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      await apiClient.put('/v1/profile/password', passwordData);
+      toast({ title: tNotify('success'), description: t('toasts.passwordUpdated') });
+      setPasswordData({ current_password: '', new_password: '', new_password_confirmation: '' });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to upload avatar');
+      toast({
+        title: tNotify('error'),
+        description: error.response?.data?.message || t('toasts.passwordUpdateFailed'),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateSettings = async (key: keyof UserSettings, value: any) => {
+  const handleDeleteAccount = async () => {
     try {
-      await profileApi.updateSettings({ [key]: value });
-      toast.success('Settings updated');
-      loadProfile();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update settings');
+      await apiClient.delete('/v1/profile');
+      toast({ title: t('toasts.accountDeletedTitle'), description: t('toasts.accountDeletedDesc') });
+      logout();
+      router.push('/');
+    } catch (error) {
+      toast({ title: tNotify('error'), description: t('toasts.accountDeleteFailed'), variant: 'destructive' });
     }
   };
 
-  const handleUpdatePrivacy = async (key: keyof PrivacySettings, value: boolean) => {
-    try {
-      await profileApi.updatePrivacySettings({ [key]: value });
-      toast.success('Privacy settings updated');
-      loadProfile();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update privacy');
-    }
-  };
+  if (!user) return null;
 
-  if (!user || (loading && !profile)) {
+  if (initialLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
+          <div className="mb-2">
+            <div className="h-8 w-48 bg-primary/10 rounded" />
+            <div className="h-4 w-64 bg-primary/10 rounded mt-2" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardSkeleton />
+            <div className="md:col-span-2 space-y-6">
+              <CardSkeleton />
+              <CardSkeleton />
+            </div>
+          </div>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Profile Settings</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your account information and preferences
-          </p>
+    <MainLayout>
+  <div className="container mx-auto px-4 py-8 max-w-6xl animate-fade-in">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-gray-600 text-sm md:text-base">{t('subtitle')}</p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-            <TabsTrigger value="profile">
-              <User className="h-4 w-4 mr-2" />
-              Profile
-            </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </TabsTrigger>
-            <TabsTrigger value="privacy">
-              <Lock className="h-4 w-4 mr-2" />
-              Privacy
-            </TabsTrigger>
-            <TabsTrigger value="security">
-              <Shield className="h-4 w-4 mr-2" />
-              Security
-            </TabsTrigger>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="profile">{t('tabs.profile')}</TabsTrigger>
+            <TabsTrigger value="security">{t('tabs.security')}</TabsTrigger>
+            <TabsTrigger value="social">{t('tabs.social')}</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Personal Information</CardTitle>
-                    <CardDescription>
-                      Update your personal details and profile picture
-                    </CardDescription>
-                  </div>
-                  {profile?.profile_completed_at ? (
-                    <Badge variant="default" className="bg-green-600">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  ) : (
-                    <Badge variant="secondary">
-                      <XCircle className="h-3 w-3 mr-1" />
-                      Incomplete
-                    </Badge>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Avatar Section */}
-                <div className="flex items-center gap-6">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={profile?.avatar} alt={profile?.name} />
-                    <AvatarFallback className="text-2xl">
-                      {profile?.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <Label htmlFor="avatar-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <Button type="button" variant="outline" asChild>
-                          <span>
-                            <Camera className="h-4 w-4 mr-2" />
-                            Change Avatar
-                          </span>
-                        </Button>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="animate-fade-in-up">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="relative">
+                      <Avatar className="w-32 h-32">
+                        <AvatarImage src={avatarUrl} alt={user.name} />
+                        <AvatarFallback className="text-3xl">
+                          {user.name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => fileInputRef.current?.click()}
+                              className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full hover:bg-primary/90 disabled:opacity-50"
+                              disabled={uploadingAvatar}
+                              aria-label={t('aria.changeAvatar') || 'Change avatar'}
+                            >
+                              {uploadingAvatar ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Camera className="h-4 w-4" />
+                              )}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{t('tooltips.changeAvatar') || 'Change avatar'}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <input
-                        id="avatar-upload"
+                        ref={fileInputRef}
                         type="file"
                         accept="image/*"
                         className="hidden"
                         onChange={handleAvatarUpload}
                       />
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      JPG, PNG or GIF. Max size 5MB.
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Profile Form */}
-                <form onSubmit={handleUpdateProfile} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input
-                        id="name"
-                        value={profileForm.name}
-                        onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                        required
-                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-bold">{user.name}</h2>
+                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <Badge variant={user.role === 'landlord' ? 'default' : 'secondary'}>
+                        {user.role === 'landlord' ? t('role.host') : t('role.guest')}
+                      </Badge>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={profile?.email}
-                        disabled
-                        className="bg-muted"
-                      />
-                    </div>
+                    <Separator />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={profileForm.phone}
-                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="date_of_birth">Date of Birth</Label>
-                      <Input
-                        id="date_of_birth"
-                        type="date"
-                        value={profileForm.date_of_birth}
-                        onChange={(e) => setProfileForm({ ...profileForm, date_of_birth: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="gender">Gender</Label>
-                      <select
-                        id="gender"
-                        className="w-full px-3 py-2 border rounded-md"
-                        value={profileForm.gender}
-                        onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                    <div className="w-full space-y-2">
+                      <h3 className="text-sm font-semibold">{t('verification.status')}</h3>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span>{t('verification.email')}</span>
+                          {verificationStatus.email_verified ? (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>{t('verification.phone')}</span>
+                          {verificationStatus.phone_verified ? (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>{t('verification.identity')}</span>
+                          {verificationStatus.identity_verified ? (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => router.push('/verification')}
                       >
-                        <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer_not_to_say">Prefer not to say</option>
-                      </select>
+                        {t('verification.verifyIdentity')}
+                      </Button>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="bio">Bio</Label>
-                    <Textarea
-                      id="bio"
-                      value={profileForm.bio}
-                      onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                      rows={4}
-                      placeholder="Tell us about yourself..."
-                    />
+              <Card className="md:col-span-2 animate-fade-in-up">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t('personal.title')}</CardTitle>
+                    {!editing ? (
+                      <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        {t('personal.edit')}
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+                        <CloseIcon className="h-4 w-4 mr-2" />
+                        {t('personal.cancel')}
+                      </Button>
+                    )}
                   </div>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4" aria-busy={loading} aria-describedby="profile-save-status">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">{t('personal.fullName')}</Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          disabled={!editing}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">{t('personal.email')}</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          disabled={!editing}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                    </div>
 
-                  <Separator />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="phone">{t('personal.phone')}</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          disabled={!editing}
+                          placeholder={t('personal.placeholders.phone')}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="date_of_birth">{t('personal.dateOfBirth')}</Label>
+                        <Input
+                          id="date_of_birth"
+                          type="date"
+                          value={formData.date_of_birth}
+                          onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                          disabled={!editing}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
+                    <div>
+                      <Label htmlFor="address">{t('personal.address')}</Label>
                       <Input
                         id="address"
-                        value={profileForm.address}
-                        onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        disabled={!editing}
+                        placeholder={t('personal.placeholders.address')}
+                        className="h-11 md:h-10"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input
-                        id="city"
-                        value={profileForm.city}
-                        onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="occupation">{t('personal.occupation')}</Label>
+                        <Input
+                          id="occupation"
+                          value={formData.occupation}
+                          onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                          disabled={!editing}
+                          placeholder={t('personal.placeholders.occupation')}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="languages">{t('personal.languages')}</Label>
+                        <Input
+                          id="languages"
+                          value={formData.languages}
+                          onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
+                          disabled={!editing}
+                          placeholder={t('personal.placeholders.languages')}
+                          className="h-11 md:h-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="bio">{t('personal.bio')}</Label>
+                      <Textarea
+                        id="bio"
+                        value={formData.bio}
+                        onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                        disabled={!editing}
+                        placeholder={t('personal.placeholders.bio')}
+                        rows={4}
+                        className="resize-none"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="state">State/Province</Label>
-                      <Input
-                        id="state"
-                        value={profileForm.state}
-                        onChange={(e) => setProfileForm({ ...profileForm, state: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        value={profileForm.country}
-                        onChange={(e) => setProfileForm({ ...profileForm, country: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="zip_code">ZIP/Postal Code</Label>
-                      <Input
-                        id="zip_code"
-                        value={profileForm.zip_code}
-                        onChange={(e) => setProfileForm({ ...profileForm, zip_code: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <Button type="submit" disabled={loading}>
-                      {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      Save Changes
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Preferences</CardTitle>
-                <CardDescription>
-                  Manage your language, currency, and notification preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive email updates about your account
-                      </p>
-                    </div>
-                    <Switch
-                      checked={settings?.email_notifications ?? true}
-                      onCheckedChange={(checked) => handleUpdateSettings('email_notifications', checked)}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Push Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive push notifications on your devices
-                      </p>
-                    </div>
-                    <Switch
-                      checked={settings?.push_notifications ?? false}
-                      onCheckedChange={(checked) => handleUpdateSettings('push_notifications', checked)}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>SMS Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive text messages for important updates
-                      </p>
-                    </div>
-                    <Switch
-                      checked={settings?.sms_notifications ?? false}
-                      onCheckedChange={(checked) => handleUpdateSettings('sms_notifications', checked)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Privacy Tab */}
-          <TabsContent value="privacy" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Privacy Settings</CardTitle>
-                <CardDescription>
-                  Control who can see your information
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Show Profile</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Allow others to view your public profile
-                      </p>
-                    </div>
-                    <Switch
-                      checked={privacy?.show_profile ?? true}
-                      onCheckedChange={(checked) => handleUpdatePrivacy('show_profile', checked)}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Show Email</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Display your email on your public profile
-                      </p>
-                    </div>
-                    <Switch
-                      checked={privacy?.show_email ?? false}
-                      onCheckedChange={(checked) => handleUpdatePrivacy('show_email', checked)}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Show Phone</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Display your phone number on your public profile
-                      </p>
-                    </div>
-                    <Switch
-                      checked={privacy?.show_phone ?? false}
-                      onCheckedChange={(checked) => handleUpdatePrivacy('show_phone', checked)}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Allow Messages</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Let other users send you messages
-                      </p>
-                    </div>
-                    <Switch
-                      checked={privacy?.allow_messages ?? true}
-                      onCheckedChange={(checked) => handleUpdatePrivacy('allow_messages', checked)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    {editing && (
+                      <div className="flex gap-3">
+                        <Button type="submit" disabled={loading} className="h-11 md:h-10">
+                          {loading ? (
+                            <span className="inline-flex items-center"><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('personal.saving')}</span>
+                          ) : (
+                            <span className="inline-flex items-center"><Save className="h-4 w-4 mr-2" />{t('personal.saveChanges')}</span>
+                          )}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setEditing(false)}
+                          className="h-11 md:h-10"
+                        >
+                          {t('buttons.cancel')}
+                        </Button>
+                      </div>
+                    )}
+                    <p id="profile-save-status" className="sr-only" aria-live="polite">{loading ? t('personal.saving') : ''}</p>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Security Tab */}
           <TabsContent value="security" className="space-y-6">
-            <Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    {t('security.changePassword')}
+                  </CardTitle>
+                  <CardDescription>{t('security.description')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    <div>
+                      <Label htmlFor="current_password">{t('security.current')}</Label>
+                      <Input
+                        id="current_password"
+                        type="password"
+                        value={passwordData.current_password}
+                        onChange={(e) => setPasswordData({ ...passwordData, current_password: e.target.value })}
+                        className="h-11 md:h-10"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="new_password">{t('security.new')}</Label>
+                      <Input
+                        id="new_password"
+                        type="password"
+                        value={passwordData.new_password}
+                        onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
+                        className="h-11 md:h-10"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="confirm_password">{t('security.confirm')}</Label>
+                      <Input
+                        id="confirm_password"
+                        type="password"
+                        value={passwordData.new_password_confirmation}
+                        onChange={(e) => setPasswordData({ ...passwordData, new_password_confirmation: e.target.value })}
+                        className="h-11 md:h-10"
+                      />
+                    </div>
+                    <Button type="submit" disabled={loading} className="w-full h-11 md:h-10">
+                      {loading ? t('security.updating') : t('security.update')}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-red-600">{t('danger.title')}</CardTitle>
+                  <CardDescription>{t('danger.description')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                    <h3 className="font-semibold text-red-800 mb-2">{t('danger.deleteTitle')}</h3>
+                    <p className="text-sm text-red-700 mb-4">
+                      {t('danger.deleteDescription')}
+                    </p>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {t('danger.deleteTitle')}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t('danger.dialogTitle')}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {t('danger.dialogDescription')}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700">
+                            {t('danger.confirm')}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Social Links Tab */}
+          <TabsContent value="social" className="space-y-6">
+            <Card className="animate-fade-in-up">
               <CardHeader>
-                <CardTitle>Security</CardTitle>
-                <CardDescription>
-                  Manage your account security and verification
-                </CardDescription>
+                <CardTitle>{t('social.title')}</CardTitle>
+                <CardDescription>{t('social.description')}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Email Verification</p>
-                        <p className="text-sm text-muted-foreground">
-                          {profile?.email_verified_at ? 'Verified' : 'Not verified'}
-                        </p>
-                      </div>
-                    </div>
-                    {profile?.email_verified_at ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <Button variant="outline" size="sm">Verify</Button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Phone Verification</p>
-                        <p className="text-sm text-muted-foreground">
-                          {profile?.phone_verified_at ? 'Verified' : 'Not verified'}
-                        </p>
-                      </div>
-                    </div>
-                    {profile?.phone_verified_at ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <Button variant="outline" size="sm">Verify</Button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Two-Factor Authentication</p>
-                        <p className="text-sm text-muted-foreground">
-                          {profile?.two_factor_enabled ? 'Enabled' : 'Disabled'}
-                        </p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      {profile?.two_factor_enabled ? 'Disable' : 'Enable'}
-                    </Button>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <Button variant="outline" className="w-full">
-                      <Lock className="h-4 w-4 mr-2" />
-                      Change Password
-                    </Button>
-                  </div>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="linkedin" className="flex items-center gap-2">
+                    <Linkedin className="h-4 w-4" />
+                    {t('social.linkedin')}
+                  </Label>
+                  <Input
+                    id="linkedin"
+                    value={socialLinks.linkedin}
+                    onChange={(e) => setSocialLinks({ ...socialLinks, linkedin: e.target.value })}
+                    placeholder="https://linkedin.com/in/username"
+                    className="h-11 md:h-10"
+                  />
                 </div>
+                <div>
+                  <Label htmlFor="twitter" className="flex items-center gap-2">
+                    <Twitter className="h-4 w-4" />
+                    {t('social.twitter')}
+                  </Label>
+                  <Input
+                    id="twitter"
+                    value={socialLinks.twitter}
+                    onChange={(e) => setSocialLinks({ ...socialLinks, twitter: e.target.value })}
+                    placeholder="https://twitter.com/username"
+                    className="h-11 md:h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="facebook" className="flex items-center gap-2">
+                    <Facebook className="h-4 w-4" />
+                    {t('social.facebook')}
+                  </Label>
+                  <Input
+                    id="facebook"
+                    value={socialLinks.facebook}
+                    onChange={(e) => setSocialLinks({ ...socialLinks, facebook: e.target.value })}
+                    placeholder="https://facebook.com/username"
+                    className="h-11 md:h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="instagram" className="flex items-center gap-2">
+                    <Instagram className="h-4 w-4" />
+                    {t('social.instagram')}
+                  </Label>
+                  <Input
+                    id="instagram"
+                    value={socialLinks.instagram}
+                    onChange={(e) => setSocialLinks({ ...socialLinks, instagram: e.target.value })}
+                    placeholder="https://instagram.com/username"
+                    className="h-11 md:h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="website" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    {t('social.website')}
+                  </Label>
+                  <Input
+                    id="website"
+                    value={socialLinks.website}
+                    onChange={(e) => setSocialLinks({ ...socialLinks, website: e.target.value })}
+                    placeholder="https://yourwebsite.com"
+                    className="h-11 md:h-10"
+                  />
+                </div>
+                <Button onClick={updateProfile} disabled={loading} className="w-full h-11 md:h-10">
+                  {loading ? (
+                    <span className="inline-flex items-center"><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('social.saving')}</span>
+                  ) : (
+                    <span className="inline-flex items-center"><Save className="h-4 w-4 mr-2" />{t('social.save')}</span>
+                  )}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </MainLayout>
   );
 }

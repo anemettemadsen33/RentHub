@@ -6,13 +6,35 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePropertyRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            // Map legacy field names to current schema
+            'price_per_night' => $this->input('price_per_night', $this->input('price')),
+            'guests' => $this->input('guests', $this->input('max_guests')),
+            'street_address' => $this->input('street_address', $this->input('address')),
+        ]);
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Only owners and admins can create properties
-        return $this->user() && $this->user()->hasAnyRole(['owner', 'admin']);
+        // Debug log for tests
+        if (app()->environment('testing')) {
+            \Log::debug('StorePropertyRequest authorize', [
+                'user_exists' => $this->user() !== null,
+                'user_id' => $this->user()?->id,
+                'user_roles' => $this->user()?->roles->pluck('name')->toArray() ?? [],
+                'has_owner' => $this->user()?->hasRole('owner') ?? false,
+                'has_host' => $this->user()?->hasRole('host') ?? false,
+                'has_admin' => $this->user()?->hasRole('admin') ?? false,
+                'has_any' => $this->user()?->hasAnyRole(['owner', 'host', 'admin']) ?? false,
+            ]);
+        }
+        
+        // Only owners/hosts and admins can create properties
+        return $this->user() && $this->user()->hasAnyRole(['owner', 'host', 'admin']);
     }
 
     /**
@@ -25,7 +47,7 @@ class StorePropertyRequest extends FormRequest
         return [
             // Basic info
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'min:50'],
+            'description' => ['nullable', 'string', 'min:50'],
             'type' => ['required', 'in:apartment,house,villa,studio,condo,townhouse,loft,guesthouse'],
 
             // Property details
@@ -37,17 +59,19 @@ class StorePropertyRequest extends FormRequest
             'area_sqm' => ['nullable', 'numeric', 'min:1'],
             'built_year' => ['nullable', 'integer', 'min:1800', 'max:'.date('Y')],
 
-            // Address (required for published properties)
+            // Address (required by schema)
             'street_address' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:100'],
-            'state' => ['nullable', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:100'],
             'country' => ['required', 'string', 'max:100'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'postal_code' => ['required', 'string', 'max:20'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
 
             // Pricing
-            'price_per_night' => ['required', 'numeric', 'min:1'],
+            // Legacy tests may send 'price' instead of 'price_per_night'
+            'price_per_night' => ['required_without:price', 'numeric', 'min:1'],
+            'price' => ['required_without:price_per_night', 'numeric', 'min:1'],
             'price_per_week' => ['nullable', 'numeric', 'min:1'],
             'price_per_month' => ['nullable', 'numeric', 'min:1'],
             'cleaning_fee' => ['nullable', 'numeric', 'min:0'],
@@ -65,8 +89,8 @@ class StorePropertyRequest extends FormRequest
             'blocked_dates.*' => ['date'],
             'custom_pricing' => ['nullable', 'array'],
 
-            // Status
-            'status' => ['nullable', 'in:draft,published,inactive'],
+            // Status (aligned with updated enum: available/booked/maintenance)
+            'status' => ['nullable', 'in:available,booked,maintenance'],
             'is_active' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
 

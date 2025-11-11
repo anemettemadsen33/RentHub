@@ -17,6 +17,12 @@ class NotificationPreference extends Model
         'channel_database',
         'channel_sms',
         'channel_push',
+        'email_enabled',
+        'sms_enabled',
+        'push_enabled',
+        'booking_updates',
+        'payment_updates',
+        'message_updates',
     ];
 
     protected $casts = [
@@ -24,6 +30,12 @@ class NotificationPreference extends Model
         'channel_database' => 'boolean',
         'channel_sms' => 'boolean',
         'channel_push' => 'boolean',
+        'email_enabled' => 'boolean',
+        'sms_enabled' => 'boolean',
+        'push_enabled' => 'boolean',
+        'booking_updates' => 'boolean',
+        'payment_updates' => 'boolean',
+        'message_updates' => 'boolean',
     ];
 
     protected $appends = ['email_enabled', 'sms_enabled', 'push_enabled'];
@@ -32,24 +44,33 @@ class NotificationPreference extends Model
     protected function emailEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->channel_email,
-            set: fn ($value) => ['channel_email' => $value]
+            get: fn () => (bool) ($this->attributes['email_enabled'] ?? $this->channel_email),
+            set: fn ($value) => [
+                'channel_email' => (bool) $value,
+                'email_enabled' => (bool) $value,
+            ]
         );
     }
 
     protected function smsEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->channel_sms,
-            set: fn ($value) => ['channel_sms' => $value]
+            get: fn () => (bool) ($this->attributes['sms_enabled'] ?? $this->channel_sms),
+            set: fn ($value) => [
+                'channel_sms' => (bool) $value,
+                'sms_enabled' => (bool) $value,
+            ]
         );
     }
 
     protected function pushEnabled(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->channel_push,
-            set: fn ($value) => ['channel_push' => $value]
+            get: fn () => (bool) ($this->attributes['push_enabled'] ?? $this->channel_push),
+            set: fn ($value) => [
+                'channel_push' => (bool) $value,
+                'push_enabled' => (bool) $value,
+            ]
         );
     }
 

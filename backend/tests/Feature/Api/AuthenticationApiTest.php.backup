@@ -1,0 +1,199 @@
+<?php
+
+namespace Tests\Feature\Api;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use Tests\TestHelper;
+
+class AuthenticationApiTest extends TestCase
+{
+    use RefreshDatabase, TestHelper;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+    }
+
+    /** @test */
+    public function user_can_register()
+    {
+        $userData = [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+        ];
+
+        $response = $this->postJson('/api/v1/register', $userData);
+
+        $response->assertCreated()
+            ->assertJsonStructure([
+                'user' => ['id', 'name', 'email'],
+                'token',
+                'message',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+        ]);
+    }
+
+    /** @test */
+    public function user_can_login_with_valid_credentials()
+    {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertSuccessful()
+            ->assertJsonStructure([
+                'data' => [
+                    'user',
+                    'token',
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function user_cannot_login_with_invalid_credentials()
+    {
+        User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'test@example.com',
+            'password' => 'wrongpassword',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonFragment([
+                'message' => 'Invalid credentials',
+            ]);
+    }
+
+    /** @test */
+    public function authenticated_user_can_logout()
+    {
+        $user = $this->authenticateGuest();
+
+        $response = $this->postJson('/api/v1/logout');
+
+        $response->assertSuccessful();
+        
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+        ]);
+    }
+
+    /** @test */
+    public function authenticated_user_can_get_profile()
+    {
+        $user = $this->authenticateGuest();
+
+        $response = $this->getJson('/api/v1/user');
+
+        $response->assertSuccessful()
+            ->assertJson([
+                'data' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function user_can_update_profile()
+    {
+        $user = $this->authenticateGuest();
+
+        $updateData = [
+            'name' => 'Updated Name',
+            'phone' => '+1234567890',
+        ];
+
+        $response = $this->putJson('/api/v1/user/profile', $updateData);
+
+        $response->assertSuccessful()
+            ->assertJsonFragment(['name' => 'Updated Name']);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'Updated Name',
+        ]);
+    }
+
+    /** @test */
+    public function user_can_change_password()
+    {
+        $user = $this->authenticateGuest([
+            'password' => bcrypt('oldpassword'),
+        ]);
+
+        $response = $this->putJson('/api/v1/user/password', [
+            'current_password' => 'oldpassword',
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ]);
+
+        $response->assertSuccessful();
+
+        // Verify new password works
+        $this->postJson('/api/v1/logout');
+        
+        $loginResponse = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'NewPassword123!',
+        ]);
+
+        $loginResponse->assertSuccessful();
+    }
+
+    /** @test */
+    public function it_validates_email_uniqueness_on_registration()
+    {
+        User::factory()->create(['email' => 'existing@example.com']);
+
+        $response = $this->postJson('/api/v1/register', [
+            'name' => 'Test User',
+            'email' => 'existing@example.com',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('email');
+    }
+
+    /** @test */
+    public function it_validates_password_strength()
+    {
+        $response = $this->postJson('/api/v1/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'weak',
+            'password_confirmation' => 'weak',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('password');
+    }
+
+    /** @test */
+    public function unauthenticated_user_cannot_access_protected_routes()
+    {
+        $response = $this->getJson('/api/v1/user');
+
+        $response->assertStatus(401);
+    }
+}

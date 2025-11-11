@@ -121,12 +121,30 @@ class GuestVerificationController extends Controller
             ], 422);
         }
 
+        $allowedRelationships = [
+            'previous_landlord', 'employer', 'colleague', 'friend', 'family', 'other',
+        ];
+        // Map incoming descriptive relationship text to enum; fallback to reference_type or 'other'
+        $relationshipEnum = $request->reference_type; // primary source
+        if ($request->filled('relationship')) {
+            $candidate = strtolower(str_replace(' ', '_', $request->relationship));
+            if (in_array($candidate, $allowedRelationships, true)) {
+                $relationshipEnum = $candidate;
+            }
+        }
+
+        if (! in_array($relationshipEnum, $allowedRelationships, true)) {
+            $relationshipEnum = 'other';
+        }
+
         $reference = $verification->guestReferences()->create([
+            'user_id' => $user->id,
             'reference_name' => $request->reference_name,
             'reference_email' => $request->reference_email,
             'reference_phone' => $request->reference_phone,
             'reference_type' => $request->reference_type,
-            'relationship' => $request->relationship,
+            'relationship' => $relationshipEnum,
+            'relationship_description' => $request->relationship, // store original descriptive text
             'status' => 'pending',
         ]);
 

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('lock_id')->unique(); // External lock ID from provider
             $table->string('name'); // e.g., "Front Door", "Main Entrance"
             $table->string('location')->nullable(); // Description of location
-            $table->json('credentials')->nullable(); // Encrypted provider credentials
+            // Use TEXT instead of JSON because encrypted payload is not valid JSON
+            $table->text('credentials')->nullable(); // Encrypted provider credentials
             $table->json('settings')->nullable(); // Lock-specific settings
             $table->enum('status', ['active', 'inactive', 'offline', 'error'])->default('active');
             $table->boolean('auto_generate_codes')->default(true); // Auto-generate for bookings

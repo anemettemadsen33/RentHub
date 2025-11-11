@@ -1,94 +1,32 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.com';
-
+// Dynamic sitemap leveraging backend SEO endpoints
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const currentDate = new Date();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
-  // Static routes
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: SITE_URL,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${SITE_URL}/properties`,
-      lastModified: currentDate,
-      changeFrequency: 'hourly',
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/search`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/search/map`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/auth/login`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/auth/register`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
+  // Fetch property URLs (id + updated_at)
+  let properties: { id: number; updated_at: string }[] = [];
+  try {
+    const res = await fetch(`${apiBase}/seo/property-urls`, { next: { revalidate: 600 } });
+    if (res.ok) {
+      properties = await res.json();
+    }
+  } catch {}
+
+  const staticPaths: MetadataRoute.Sitemap = [
+    { url: `${siteUrl}/`, priority: 1.0, lastModified: new Date(), changeFrequency: 'daily' },
+    { url: `${siteUrl}/properties`, priority: 0.9, lastModified: new Date(), changeFrequency: 'daily' },
+    { url: `${siteUrl}/auth/login`, priority: 0.3, lastModified: new Date(), changeFrequency: 'monthly' },
+    { url: `${siteUrl}/bookings`, priority: 0.5, lastModified: new Date(), changeFrequency: 'daily' },
   ];
 
-  // Fetch dynamic property routes
-  let propertyRoutes: MetadataRoute.Sitemap = [];
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const response = await fetch(`${apiUrl}/api/properties?per_page=1000`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      const properties = data.data || data;
-      
-      propertyRoutes = properties.map((property: any) => ({
-        url: `${SITE_URL}/properties/${property.id}`,
-        lastModified: property.updated_at ? new Date(property.updated_at) : currentDate,
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      }));
-    }
-  } catch (error) {
-    console.error('Error fetching properties for sitemap:', error);
-  }
+  const propertyEntries: MetadataRoute.Sitemap = properties.map(p => ({
+    url: `${siteUrl}/properties/${p.id}`,
+    lastModified: new Date(p.updated_at),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
 
-  // Fetch location-based routes
-  let locationRoutes: MetadataRoute.Sitemap = [];
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const response = await fetch(`${apiUrl}/api/properties/locations`, {
-      next: { revalidate: 86400 }, // Revalidate daily
-    });
-    
-    if (response.ok) {
-      const locations = await response.json();
-      
-      locationRoutes = locations.map((location: string) => ({
-        url: `${SITE_URL}/properties?location=${encodeURIComponent(location)}`,
-        lastModified: currentDate,
-        changeFrequency: 'daily' as const,
-        priority: 0.8,
-      }));
-    }
-  } catch (error) {
-    console.error('Error fetching locations for sitemap:', error);
-  }
-
-  return [...staticRoutes, ...propertyRoutes, ...locationRoutes];
+  return [...staticPaths, ...propertyEntries];
 }

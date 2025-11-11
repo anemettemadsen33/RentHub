@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" role="img" aria-label="Airbnb">
+  <title>Airbnb</title>
+  <!-- Bélo symbol -->
+  <path fill="#FF5A5F" d="M30,12 C25,12 21,16 21,21 C21,24 22.2,26.2 23.9,27.9 L30,44 L36.1,27.9 C37.8,26.2 39,24 39,21 C39,16 35,12 30,12 Z M30,24 C28.3,24 27,22.7 27,21 C27,19.3 28.3,18 30,18 C31.7,18 33,19.3 33,21 C33,22.7 31.7,24 30,24 Z"/>
+  <!-- Wordmark -->
+  <text x="52" y="40" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#484848">airbnb</text>
+</svg>

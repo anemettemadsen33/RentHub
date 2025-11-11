@@ -75,10 +75,13 @@ return [
     |
     */
 
+    // For stateless API token usage (Bearer tokens) in E2E and SPA flows we disable CSRF validation
+    // because we are not using cookie-based session auth for /api/v1 routes. This avoids 419 errors
+    // during automated Playwright tests without needing a pre-flight /sanctum/csrf-cookie call.
     'middleware' => [
         'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
         'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
-        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+        // 'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
 ];

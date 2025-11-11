@@ -307,6 +307,27 @@ class ProfileController extends Controller
     }
 
     /**
+     * Get user settings
+     */
+    public function getSettings(Request $request)
+    {
+        $user = $request->user();
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'language' => $user->language ?? 'en',
+                'currency' => $user->currency ?? 'USD',
+                'timezone' => $user->timezone ?? 'UTC',
+                'notifications_email' => $user->notifications_email ?? true,
+                'notifications_sms' => $user->notifications_sms ?? false,
+                'notifications_push' => $user->notifications_push ?? true,
+                'two_factor_enabled' => $user->two_factor_enabled ?? false,
+            ],
+        ]);
+    }
+
+    /**
      * Update user settings
      */
     public function updateSettings(Request $request)

@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  NODE_VERSION: 20
+  PHP_VERSION: 8.2
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: renthub_test
+          POSTGRES_USER: renthub
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, dom, fileinfo, tokenizer
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        working-directory: backend
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install backend dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+        working-directory: backend
+
+      - name: Setup backend environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=pgsql/' .env
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=.*/DB_PORT=5432/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=renthub_test/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=renthub/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
+          sed -i 's/APP_ENV=.*/APP_ENV=testing/' .env
+          sed -i 's/APP_DEBUG=.*/APP_DEBUG=true/' .env
+        working-directory: backend
+
+      - name: Run database migrations
+        run: php artisan migrate --force --seed
+        working-directory: backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: renthub_test
+          DB_USERNAME: renthub
+          DB_PASSWORD: secret
+
+      - name: Start Laravel backend
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          echo $! > backend.pid
+        working-directory: backend
+        env:
+          APP_ENV: testing
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend to start..."
+          timeout 60 bash -c 'until curl -f http://127.0.0.1:8000/api/health 2>/dev/null; do sleep 2; done'
+          echo "Backend is ready!"
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Type check
+        run: npm run type-check
+        working-directory: frontend
+
+      - name: Unit tests with coverage
+        run: npx vitest run --coverage
+        working-directory: frontend
+
+      - name: Upload coverage report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: frontend/coverage
+
+      - name: Install Playwright Browsers (Chromium only)
+        run: npx playwright install chromium --with-deps
+        working-directory: frontend
+
+      - name: E2E Tests (Chromium)
+        env:
+          CI: 'true'
+          NEXT_PUBLIC_API_URL: 'http://127.0.0.1:8000/api'
+        run: npx playwright test --project=chromium --reporter=line
+        working-directory: frontend
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+
+      - name: Stop backend server
+        if: always()
+        run: |
+          if [ -f backend.pid ]; then
+            kill $(cat backend.pid) || true
+            rm backend.pid
+          fi
+        working-directory: backend

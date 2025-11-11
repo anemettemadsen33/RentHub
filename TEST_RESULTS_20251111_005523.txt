@@ -1,0 +1,1837 @@
+[
+  {
+    "Response": {
+      "status": "ok",
+      "timestamp": "2025-11-11T00:49:27-08:00",
+      "environment": "local",
+      "version": "1.0.0",
+      "checks": {
+        "database": {
+          "healthy": true,
+          "latency_ms": 0.61,
+          "connection": "renthub"
+        },
+        "redis": {
+          "healthy": false,
+          "error": "No connection could be made because the target machine actively refused it [tcp://127.0.0.1:6379]"
+        },
+        "cache": {
+          "healthy": true,
+          "latency_ms": 5.64,
+          "driver": "file"
+        },
+        "storage": {
+          "healthy": true,
+          "driver": "local",
+          "disk_usage_percent": 48.36,
+          "free_space_gb": 125.75
+        },
+        "queue": {
+          "healthy": true,
+          "connection": "database",
+          "size": 0,
+          "status": "normal"
+        }
+      },
+      "resources": {
+        "memory": {
+          "current_mb": 64,
+          "peak_mb": 68,
+          "limit_mb": "128M"
+        },
+        "uptime_seconds": 567410
+      },
+      "services": {
+        "database": "ok",
+        "cache": "ok",
+        "queue": "ok"
+      },
+      "overall_health": "unhealthy"
+    },
+    "Status": "PASSED",
+    "Name": "Backend Server Health"
+  },
+  {
+    "Response": {
+      "success": true,
+      "languages": [
+        {
+          "id": 1,
+          "code": "en",
+          "name": "English",
+          "native_name": "English",
+          "is_rtl": false,
+          "is_active": true,
+          "sort_order": 1,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 2,
+          "code": "ro",
+          "name": "Romanian",
+          "native_name": "Română",
+          "is_rtl": false,
+          "is_active": true,
+          "sort_order": 2,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 3,
+          "code": "es",
+          "name": "Spanish",
+          "native_name": "Español",
+          "is_rtl": false,
+          "is_active": true,
+          "sort_order": 3,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 4,
+          "code": "fr",
+          "name": "French",
+          "native_name": "Français",
+          "is_rtl": false,
+          "is_active": true,
+          "sort_order": 4,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 5,
+          "code": "de",
+          "name": "German",
+          "native_name": "Deutsch",
+          "is_rtl": false,
+          "is_active": true,
+          "sort_order": 5,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 6,
+          "code": "ar",
+          "name": "Arabic",
+          "native_name": "العربية",
+          "is_rtl": true,
+          "is_active": true,
+          "sort_order": 6,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        },
+        {
+          "id": 7,
+          "code": "he",
+          "name": "Hebrew",
+          "native_name": "עברית",
+          "is_rtl": true,
+          "is_active": true,
+          "sort_order": 7,
+          "created_at": "2025-11-10T10:04:15Z",
+          "updated_at": "2025-11-10T10:04:15Z"
+        }
+      ]
+    },
+    "Status": "PASSED",
+    "Name": "Get Languages"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [
+        {
+          "id": 1,
+          "code": "USD",
+          "name": "US Dollar",
+          "symbol": "$",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 2,
+          "code": "EUR",
+          "name": "Euro",
+          "symbol": "€",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 3,
+          "code": "GBP",
+          "name": "British Pound",
+          "symbol": "£",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 4,
+          "code": "JPY",
+          "name": "Japanese Yen",
+          "symbol": "¥",
+          "symbol_position": "before",
+          "decimal_places": 0,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 5,
+          "code": "CAD",
+          "name": "Canadian Dollar",
+          "symbol": "C$",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 6,
+          "code": "AUD",
+          "name": "Australian Dollar",
+          "symbol": "A$",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        },
+        {
+          "id": 7,
+          "code": "RON",
+          "name": "Romanian Leu",
+          "symbol": "lei",
+          "symbol_position": "before",
+          "decimal_places": 2,
+          "thousand_separator": ",",
+          "decimal_separator": ".",
+          "is_active": true,
+          "is_default": 0,
+          "sort_order": 0,
+          "created_at": "2025-11-10T10:04:45Z",
+          "updated_at": "2025-11-10T10:04:45Z"
+        }
+      ]
+    },
+    "Status": "PASSED",
+    "Name": "Get Currencies"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Active Currency"
+  },
+  {
+    "Response": {
+      "user": {
+        "name": "Complete Test User",
+        "email": "complete_test_20251111005000@renthub.test",
+        "phone": null,
+        "role": "tenant",
+        "updated_at": "2025-11-11T08:50:01Z",
+        "created_at": "2025-11-11T08:50:01Z",
+        "id": 16
+      },
+      "token": "17|vLzuUPiAtFcSe6CUAQeCEARGwQj07N4bs8wGFDkHba9a200f",
+      "message": "Registration successful! Please check your email to verify your account."
+    },
+    "Status": "PASSED",
+    "Name": "Register New User"
+  },
+  {
+    "Response": {
+      "user": {
+        "id": 16,
+        "name": "Complete Test User",
+        "email": "complete_test_20251111005000@renthub.test",
+        "role": "tenant",
+        "phone": null,
+        "bio": null,
+        "date_of_birth": null,
+        "gender": null,
+        "address": null,
+        "city": null,
+        "state": null,
+        "country": null,
+        "language": "en",
+        "currency": "USD",
+        "timezone": "UTC",
+        "zip_code": null,
+        "avatar": null,
+        "is_verified": false,
+        "verified_at": null,
+        "email_verified_at": null,
+        "phone_verified_at": null,
+        "identity_verified_at": null,
+        "government_id_verified_at": null,
+        "id_type": null,
+        "id_verification_status": "not_submitted",
+        "id_rejection_reason": null,
+        "id_submitted_at": null,
+        "phone_verification_code": null,
+        "phone_verification_code_expires_at": null,
+        "ccpa_do_not_sell": 0,
+        "ccpa_opt_out_date": null,
+        "gdpr_consent": 0,
+        "gdpr_consent_date": null,
+        "password_changed_at": null,
+        "password_history": null,
+        "failed_login_attempts": 0,
+        "deletion_scheduled_at": null,
+        "two_factor_enabled": false,
+        "id_verified": 0,
+        "address_verified": 0,
+        "two_factor_code_expires_at": null,
+        "two_factor_confirmed_at": null,
+        "locked_until": null,
+        "device_fingerprint": null,
+        "referral_code": null,
+        "profile_completed_at": null,
+        "settings": null,
+        "privacy_settings": null,
+        "terms_accepted_at": null,
+        "created_at": "2025-11-11T08:50:01Z",
+        "updated_at": "2025-11-11T08:50:01Z",
+        "privacy_accepted_at": null,
+        "marketing_consent": 0,
+        "data_processing_consent": 0,
+        "consent_updated_at": null,
+        "deletion_requested_at": null,
+        "deletion_reason": null,
+        "last_login_at": null,
+        "last_login_ip": null,
+        "referred_by": null,
+        "total_referrals": 0,
+        "successful_referrals": 0
+      },
+      "token": "18|Wl6bMI5gs779VpyjClfB7TVi92viyPHm22aepQLn0f572f68",
+      "message": "Login successful"
+    },
+    "Status": "PASSED",
+    "Name": "User Login"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "user": {
+          "id": 16,
+          "name": "Complete Test User",
+          "email": "complete_test_20251111005000@renthub.test",
+          "role": "tenant",
+          "phone": null,
+          "bio": null,
+          "date_of_birth": null,
+          "gender": null,
+          "address": null,
+          "city": null,
+          "state": null,
+          "country": null,
+          "language": "en",
+          "currency": "USD",
+          "timezone": "UTC",
+          "zip_code": null,
+          "avatar": null,
+          "is_verified": false,
+          "verified_at": null,
+          "email_verified_at": null,
+          "phone_verified_at": null,
+          "identity_verified_at": null,
+          "government_id_verified_at": null,
+          "id_type": null,
+          "id_verification_status": "not_submitted",
+          "id_rejection_reason": null,
+          "id_submitted_at": null,
+          "phone_verification_code": null,
+          "phone_verification_code_expires_at": null,
+          "ccpa_do_not_sell": 0,
+          "ccpa_opt_out_date": null,
+          "gdpr_consent": 0,
+          "gdpr_consent_date": null,
+          "password_changed_at": null,
+          "password_history": null,
+          "failed_login_attempts": 0,
+          "deletion_scheduled_at": null,
+          "two_factor_enabled": false,
+          "id_verified": 0,
+          "address_verified": 0,
+          "two_factor_code_expires_at": null,
+          "two_factor_confirmed_at": null,
+          "locked_until": null,
+          "device_fingerprint": null,
+          "referral_code": null,
+          "profile_completed_at": null,
+          "settings": null,
+          "privacy_settings": null,
+          "terms_accepted_at": null,
+          "created_at": "2025-11-11T08:50:01Z",
+          "updated_at": "2025-11-11T08:50:01Z",
+          "privacy_accepted_at": null,
+          "marketing_consent": 0,
+          "data_processing_consent": 0,
+          "consent_updated_at": null,
+          "deletion_requested_at": null,
+          "deletion_reason": null,
+          "last_login_at": null,
+          "last_login_ip": null,
+          "referred_by": null,
+          "total_referrals": 0,
+          "successful_referrals": 0
+        },
+        "avatar_url": null,
+        "is_email_verified": false,
+        "is_phone_verified": false,
+        "has_2fa_enabled": false
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get User Profile"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Current User"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [
+        {
+          "id": 1,
+          "title": "Modern Downtown Apartment",
+          "description": "Beautiful modern apartment in the heart of the city with stunning views and all amenities.",
+          "rules": null,
+          "type": "apartment",
+          "furnishing_status": "unfurnished",
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "guests": 4,
+          "min_nights": 1,
+          "max_nights": null,
+          "price_per_night": "150.00",
+          "currency_code": "USD",
+          "price_per_week": null,
+          "price_per_month": null,
+          "price": "150.00",
+          "cleaning_fee": null,
+          "security_deposit": null,
+          "street_address": "123 Main Street",
+          "city": "New York",
+          "state": "NY",
+          "country": "US",
+          "postal_code": "10001",
+          "location": null,
+          "latitude": "40.75800000",
+          "longitude": "-73.98550000",
+          "area_sqm": 86,
+          "square_footage": null,
+          "built_year": null,
+          "floor_number": null,
+          "parking_available": false,
+          "parking_spaces": null,
+          "is_active": true,
+          "status": "available",
+          "is_verified": 0,
+          "verified_at": null,
+          "is_featured": false,
+          "available_from": null,
+          "available_until": null,
+          "blocked_dates": null,
+          "custom_pricing": null,
+          "images": null,
+          "main_image": null,
+          "imported_from": null,
+          "external_id": null,
+          "user_id": 12,
+          "owner_id": 12,
+          "created_at": "2025-11-11T08:11:25Z",
+          "updated_at": "2025-11-11T08:11:25Z",
+          "reviews_count": 0,
+          "average_rating": 0,
+          "amenities": [
+            {
+              "id": 1,
+              "name": "WiFi",
+              "slug": "wifi",
+              "description": null,
+              "icon": "wifi",
+              "category": "internet",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 1
+              }
+            },
+            {
+              "id": 3,
+              "name": "Parking",
+              "slug": "parking",
+              "description": null,
+              "icon": "car",
+              "category": "parking",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 3
+              }
+            },
+            {
+              "id": 4,
+              "name": "Kitchen",
+              "slug": "kitchen",
+              "description": null,
+              "icon": "utensils",
+              "category": "kitchen",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 4
+              }
+            },
+            {
+              "id": 6,
+              "name": "Washer",
+              "slug": "washer",
+              "description": null,
+              "icon": "washing-machine",
+              "category": "laundry",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 6
+              }
+            },
+            {
+              "id": 7,
+              "name": "Gym",
+              "slug": "gym",
+              "description": null,
+              "icon": "dumbbell",
+              "category": "fitness",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 7
+              }
+            },
+            {
+              "id": 8,
+              "name": "Pool",
+              "slug": "pool",
+              "description": null,
+              "icon": "swimming-pool",
+              "category": "recreation",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 1,
+                "amenity_id": 8
+              }
+            }
+          ],
+          "user": {
+            "id": 12,
+            "name": "Test Landlord",
+            "email": "landlord@renthub.test"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Cozy Studio Near University",
+          "description": "Perfect for students! Close to campus with excellent public transport connections.",
+          "rules": null,
+          "type": "studio",
+          "furnishing_status": "unfurnished",
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "guests": 2,
+          "min_nights": 1,
+          "max_nights": null,
+          "price_per_night": "75.00",
+          "currency_code": "USD",
+          "price_per_week": null,
+          "price_per_month": null,
+          "price": "75.00",
+          "cleaning_fee": null,
+          "security_deposit": null,
+          "street_address": "456 College Ave",
+          "city": "Boston",
+          "state": "MA",
+          "country": "US",
+          "postal_code": "02115",
+          "location": null,
+          "latitude": "42.35050000",
+          "longitude": "-71.10540000",
+          "area_sqm": 35,
+          "square_footage": null,
+          "built_year": null,
+          "floor_number": null,
+          "parking_available": false,
+          "parking_spaces": null,
+          "is_active": true,
+          "status": "available",
+          "is_verified": 0,
+          "verified_at": null,
+          "is_featured": false,
+          "available_from": null,
+          "available_until": null,
+          "blocked_dates": null,
+          "custom_pricing": null,
+          "images": null,
+          "main_image": null,
+          "imported_from": null,
+          "external_id": null,
+          "user_id": 12,
+          "owner_id": 12,
+          "created_at": "2025-11-11T08:11:25Z",
+          "updated_at": "2025-11-11T08:11:25Z",
+          "reviews_count": 0,
+          "average_rating": 0,
+          "amenities": [
+            {
+              "id": 1,
+              "name": "WiFi",
+              "slug": "wifi",
+              "description": null,
+              "icon": "wifi",
+              "category": "internet",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 1
+              }
+            },
+            {
+              "id": 2,
+              "name": "Air Conditioning",
+              "slug": "air-conditioning",
+              "description": null,
+              "icon": "snowflake",
+              "category": "comfort",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 2
+              }
+            },
+            {
+              "id": 3,
+              "name": "Parking",
+              "slug": "parking",
+              "description": null,
+              "icon": "car",
+              "category": "parking",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 3
+              }
+            },
+            {
+              "id": 4,
+              "name": "Kitchen",
+              "slug": "kitchen",
+              "description": null,
+              "icon": "utensils",
+              "category": "kitchen",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 4
+              }
+            },
+            {
+              "id": 6,
+              "name": "Washer",
+              "slug": "washer",
+              "description": null,
+              "icon": "washing-machine",
+              "category": "laundry",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 6
+              }
+            },
+            {
+              "id": 8,
+              "name": "Pool",
+              "slug": "pool",
+              "description": null,
+              "icon": "swimming-pool",
+              "category": "recreation",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 2,
+                "amenity_id": 8
+              }
+            }
+          ],
+          "user": {
+            "id": 12,
+            "name": "Test Landlord",
+            "email": "landlord@renthub.test"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Luxury Penthouse with Ocean View",
+          "description": "Spectacular penthouse with panoramic ocean views, private terrace, and premium finishes.",
+          "rules": null,
+          "type": "penthouse",
+          "furnishing_status": "unfurnished",
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "guests": 6,
+          "min_nights": 1,
+          "max_nights": null,
+          "price_per_night": "500.00",
+          "currency_code": "USD",
+          "price_per_week": null,
+          "price_per_month": null,
+          "price": "500.00",
+          "cleaning_fee": null,
+          "security_deposit": null,
+          "street_address": "789 Beach Boulevard",
+          "city": "Miami",
+          "state": "FL",
+          "country": "US",
+          "postal_code": "33139",
+          "location": null,
+          "latitude": "25.79070000",
+          "longitude": "-80.13000000",
+          "area_sqm": 200,
+          "square_footage": null,
+          "built_year": null,
+          "floor_number": null,
+          "parking_available": false,
+          "parking_spaces": null,
+          "is_active": true,
+          "status": "available",
+          "is_verified": 0,
+          "verified_at": null,
+          "is_featured": false,
+          "available_from": null,
+          "available_until": null,
+          "blocked_dates": null,
+          "custom_pricing": null,
+          "images": null,
+          "main_image": null,
+          "imported_from": null,
+          "external_id": null,
+          "user_id": 12,
+          "owner_id": 12,
+          "created_at": "2025-11-11T08:11:25Z",
+          "updated_at": "2025-11-11T08:11:25Z",
+          "reviews_count": 0,
+          "average_rating": 0,
+          "amenities": [
+            {
+              "id": 2,
+              "name": "Air Conditioning",
+              "slug": "air-conditioning",
+              "description": null,
+              "icon": "snowflake",
+              "category": "comfort",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 3,
+                "amenity_id": 2
+              }
+            },
+            {
+              "id": 5,
+              "name": "TV",
+              "slug": "tv",
+              "description": null,
+              "icon": "tv",
+              "category": "entertainment",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 3,
+                "amenity_id": 5
+              }
+            },
+            {
+              "id": 6,
+              "name": "Washer",
+              "slug": "washer",
+              "description": null,
+              "icon": "washing-machine",
+              "category": "laundry",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 3,
+                "amenity_id": 6
+              }
+            }
+          ],
+          "user": {
+            "id": 12,
+            "name": "Test Landlord",
+            "email": "landlord@renthub.test"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Family House in Suburbs",
+          "description": "Spacious family home with garden, perfect for families with children. Quiet neighborhood.",
+          "rules": null,
+          "type": "house",
+          "furnishing_status": "unfurnished",
+          "bedrooms": 4,
+          "bathrooms": 2,
+          "guests": 8,
+          "min_nights": 1,
+          "max_nights": null,
+          "price_per_night": "200.00",
+          "currency_code": "USD",
+          "price_per_week": null,
+          "price_per_month": null,
+          "price": "200.00",
+          "cleaning_fee": null,
+          "security_deposit": null,
+          "street_address": "321 Oak Street",
+          "city": "Austin",
+          "state": "TX",
+          "country": "US",
+          "postal_code": "78701",
+          "location": null,
+          "latitude": "30.27470000",
+          "longitude": "-97.74040000",
+          "area_sqm": 180,
+          "square_footage": null,
+          "built_year": null,
+          "floor_number": null,
+          "parking_available": false,
+          "parking_spaces": null,
+          "is_active": true,
+          "status": "available",
+          "is_verified": 0,
+          "verified_at": null,
+          "is_featured": false,
+          "available_from": null,
+          "available_until": null,
+          "blocked_dates": null,
+          "custom_pricing": null,
+          "images": null,
+          "main_image": null,
+          "imported_from": null,
+          "external_id": null,
+          "user_id": 12,
+          "owner_id": 12,
+          "created_at": "2025-11-11T08:11:25Z",
+          "updated_at": "2025-11-11T08:11:25Z",
+          "reviews_count": 0,
+          "average_rating": 0,
+          "amenities": [
+            {
+              "id": 2,
+              "name": "Air Conditioning",
+              "slug": "air-conditioning",
+              "description": null,
+              "icon": "snowflake",
+              "category": "comfort",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 4,
+                "amenity_id": 2
+              }
+            },
+            {
+              "id": 3,
+              "name": "Parking",
+              "slug": "parking",
+              "description": null,
+              "icon": "car",
+              "category": "parking",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 4,
+                "amenity_id": 3
+              }
+            },
+            {
+              "id": 5,
+              "name": "TV",
+              "slug": "tv",
+              "description": null,
+              "icon": "tv",
+              "category": "entertainment",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 4,
+                "amenity_id": 5
+              }
+            },
+            {
+              "id": 6,
+              "name": "Washer",
+              "slug": "washer",
+              "description": null,
+              "icon": "washing-machine",
+              "category": "laundry",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 4,
+                "amenity_id": 6
+              }
+            },
+            {
+              "id": 7,
+              "name": "Gym",
+              "slug": "gym",
+              "description": null,
+              "icon": "dumbbell",
+              "category": "fitness",
+              "is_popular": false,
+              "sort_order": 0,
+              "created_at": "2025-11-11T08:10:46Z",
+              "updated_at": "2025-11-11T08:10:46Z",
+              "pivot": {
+                "property_id": 4,
+                "amenity_id": 7
+              }
+            }
+          ],
+          "user": {
+            "id": 12,
+            "name": "Test Landlord",
+            "email": "landlord@renthub.test"
+          }
+        }
+      ]
+    },
+    "Status": "PASSED",
+    "Name": "Get All Properties"
+  },
+  {
+    "Error": "Response status code does not indicate success: 500 (Internal Server Error).",
+    "Status": "FAILED",
+    "Name": "Get Featured Properties"
+  },
+  {
+    "Error": "Response status code does not indicate success: 500 (Internal Server Error).",
+    "Status": "FAILED",
+    "Name": "Search Properties"
+  },
+  {
+    "Error": "Response status code does not indicate success: 405 (Method Not Allowed).",
+    "Status": "FAILED",
+    "Name": "Search with Filters"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "id": 1,
+        "title": "Modern Downtown Apartment",
+        "description": "Beautiful modern apartment in the heart of the city with stunning views and all amenities.",
+        "rules": null,
+        "type": "apartment",
+        "furnishing_status": "unfurnished",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "guests": 4,
+        "min_nights": 1,
+        "max_nights": null,
+        "price_per_night": "150.00",
+        "currency_code": "USD",
+        "price_per_week": null,
+        "price_per_month": null,
+        "price": "150.00",
+        "cleaning_fee": null,
+        "security_deposit": null,
+        "street_address": "123 Main Street",
+        "city": "New York",
+        "state": "NY",
+        "country": "US",
+        "postal_code": "10001",
+        "location": null,
+        "latitude": "40.75800000",
+        "longitude": "-73.98550000",
+        "area_sqm": 86,
+        "square_footage": null,
+        "built_year": null,
+        "floor_number": null,
+        "parking_available": false,
+        "parking_spaces": null,
+        "is_active": true,
+        "status": "available",
+        "is_verified": 0,
+        "verified_at": null,
+        "is_featured": false,
+        "available_from": null,
+        "available_until": null,
+        "blocked_dates": null,
+        "custom_pricing": null,
+        "images": null,
+        "main_image": null,
+        "imported_from": null,
+        "external_id": null,
+        "user_id": 12,
+        "owner_id": 12,
+        "created_at": "2025-11-11T08:11:25Z",
+        "updated_at": "2025-11-11T08:11:25Z",
+        "reviews_count": 0,
+        "average_rating": 0,
+        "amenities": [
+          {
+            "id": 8,
+            "name": "Pool",
+            "icon": "swimming-pool",
+            "category": "recreation",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 8
+            }
+          },
+          {
+            "id": 3,
+            "name": "Parking",
+            "icon": "car",
+            "category": "parking",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 3
+            }
+          },
+          {
+            "id": 6,
+            "name": "Washer",
+            "icon": "washing-machine",
+            "category": "laundry",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 6
+            }
+          },
+          {
+            "id": 7,
+            "name": "Gym",
+            "icon": "dumbbell",
+            "category": "fitness",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 7
+            }
+          },
+          {
+            "id": 1,
+            "name": "WiFi",
+            "icon": "wifi",
+            "category": "internet",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 1
+            }
+          },
+          {
+            "id": 4,
+            "name": "Kitchen",
+            "icon": "utensils",
+            "category": "kitchen",
+            "pivot": {
+              "property_id": 1,
+              "amenity_id": 4
+            }
+          }
+        ],
+        "user": {
+          "id": 12,
+          "name": "Test Landlord",
+          "email": "landlord@renthub.test",
+          "phone": null,
+          "bio": null,
+          "avatar": null
+        },
+        "reviews": []
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Property Details (ID: 1)"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get All Amenities"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [],
+      "current_page": 1,
+      "last_page": 1,
+      "per_page": 10,
+      "total": 0,
+      "from": null,
+      "to": null
+    },
+    "Status": "PASSED",
+    "Name": "Get My Bookings"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [],
+      "current_page": 1,
+      "last_page": 1,
+      "per_page": 10,
+      "total": 0,
+      "from": null,
+      "to": null
+    },
+    "Status": "PASSED",
+    "Name": "Get Booking History"
+  },
+  {
+    "Response": {
+      "available_dates": [
+        "2025-11-11",
+        "2025-11-12",
+        "2025-11-13",
+        "2025-11-14",
+        "2025-11-15",
+        "2025-11-16",
+        "2025-11-17",
+        "2025-11-18",
+        "2025-11-19",
+        "2025-11-20",
+        "2025-11-21",
+        "2025-11-22",
+        "2025-11-23",
+        "2025-11-24",
+        "2025-11-25",
+        "2025-11-26",
+        "2025-11-27",
+        "2025-11-28",
+        "2025-11-29",
+        "2025-11-30",
+        "2025-12-01",
+        "2025-12-02",
+        "2025-12-03",
+        "2025-12-04",
+        "2025-12-05",
+        "2025-12-06",
+        "2025-12-07",
+        "2025-12-08",
+        "2025-12-09",
+        "2025-12-10"
+      ],
+      "blocked_dates": []
+    },
+    "Status": "PASSED",
+    "Name": "Check Property Availability"
+  },
+  {
+    "Error": "Response status code does not indicate success: 422 (Unprocessable Content).",
+    "Status": "FAILED",
+    "Name": "Create New Booking"
+  },
+  {
+    "Response": {
+      "data": []
+    },
+    "Status": "PASSED",
+    "Name": "Get Property Reviews (ID: 1)"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "current_page": 1,
+        "data": [],
+        "first_page_url": "http://127.0.0.1:8000/api/v1/reviews?page=1",
+        "from": null,
+        "last_page": 1,
+        "last_page_url": "http://127.0.0.1:8000/api/v1/reviews?page=1",
+        "links": [
+          {
+            "url": null,
+            "label": "&laquo; Previous",
+            "active": false
+          },
+          {
+            "url": "http://127.0.0.1:8000/api/v1/reviews?page=1",
+            "label": "1",
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next &raquo;",
+            "active": false
+          }
+        ],
+        "next_page_url": null,
+        "path": "http://127.0.0.1:8000/api/v1/reviews",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": null,
+        "total": 0
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get All Reviews"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "total_properties": 0,
+        "active_bookings": 0,
+        "total_revenue": 0,
+        "pending_reviews": 0
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Dashboard Stats"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Tenant Dashboard"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "current_page": 1,
+        "data": [],
+        "first_page_url": "http://127.0.0.1:8000/api/v1/notifications?page=1",
+        "from": null,
+        "last_page": 1,
+        "last_page_url": "http://127.0.0.1:8000/api/v1/notifications?page=1",
+        "links": [
+          {
+            "url": null,
+            "label": "&laquo; Previous",
+            "active": false
+          },
+          {
+            "url": "http://127.0.0.1:8000/api/v1/notifications?page=1",
+            "label": "1",
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next &raquo;",
+            "active": false
+          }
+        ],
+        "next_page_url": null,
+        "path": "http://127.0.0.1:8000/api/v1/notifications",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": null,
+        "total": 0
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Notifications"
+  },
+  {
+    "Error": "Response status code does not indicate success: 405 (Method Not Allowed).",
+    "Status": "FAILED",
+    "Name": "Get Unread Notifications Count"
+  },
+  {
+    "Response": {
+      "user_id": 16,
+      "email_verification_status": "pending",
+      "email_verified_at": null,
+      "updated_at": "2025-11-11T08:52:52Z",
+      "created_at": "2025-11-11T08:52:52Z",
+      "id": 3
+    },
+    "Status": "PASSED",
+    "Name": "Get My Verification Status"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "email_verified": false,
+        "phone_verified": false,
+        "identity_verified": false,
+        "verification_badges": {
+          "email": false,
+          "phone": false,
+          "identity": false,
+          "government_id": false
+        }
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Verification Status (Alt)"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "email_verified": false,
+        "phone_verified": false,
+        "identity_verified": false,
+        "government_id_status": "not_submitted",
+        "government_id_verified": false
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Verification Details"
+  },
+  {
+    "Response": {
+      "success": true,
+      "message": "Profile updated successfully",
+      "data": {
+        "id": 16,
+        "name": "Updated Test User",
+        "email": "complete_test_20251111005000@renthub.test",
+        "role": "tenant",
+        "phone": "+1234567890",
+        "bio": "This is a test user profile",
+        "date_of_birth": null,
+        "gender": null,
+        "address": null,
+        "city": null,
+        "state": null,
+        "country": null,
+        "language": "en",
+        "currency": "USD",
+        "timezone": "UTC",
+        "zip_code": null,
+        "avatar": null,
+        "is_verified": false,
+        "verified_at": null,
+        "email_verified_at": null,
+        "phone_verified_at": null,
+        "identity_verified_at": null,
+        "government_id_verified_at": null,
+        "id_type": null,
+        "id_verification_status": "not_submitted",
+        "id_rejection_reason": null,
+        "id_submitted_at": null,
+        "phone_verification_code": null,
+        "phone_verification_code_expires_at": null,
+        "ccpa_do_not_sell": 0,
+        "ccpa_opt_out_date": null,
+        "gdpr_consent": 0,
+        "gdpr_consent_date": null,
+        "password_changed_at": null,
+        "password_history": null,
+        "failed_login_attempts": 0,
+        "deletion_scheduled_at": null,
+        "two_factor_enabled": false,
+        "id_verified": 0,
+        "address_verified": 0,
+        "two_factor_code_expires_at": null,
+        "two_factor_confirmed_at": null,
+        "locked_until": null,
+        "device_fingerprint": null,
+        "referral_code": null,
+        "profile_completed_at": null,
+        "settings": null,
+        "privacy_settings": null,
+        "terms_accepted_at": null,
+        "created_at": "2025-11-11T08:50:01Z",
+        "updated_at": "2025-11-11T08:53:17Z",
+        "privacy_accepted_at": null,
+        "marketing_consent": 0,
+        "data_processing_consent": 0,
+        "consent_updated_at": null,
+        "deletion_requested_at": null,
+        "deletion_reason": null,
+        "last_login_at": null,
+        "last_login_ip": null,
+        "referred_by": null,
+        "total_referrals": 0,
+        "successful_referrals": 0
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Update Profile"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "user": {
+          "id": 16,
+          "name": "Updated Test User",
+          "email": "complete_test_20251111005000@renthub.test",
+          "role": "tenant",
+          "phone": "+1234567890",
+          "bio": "This is a test user profile",
+          "date_of_birth": null,
+          "gender": null,
+          "address": null,
+          "city": null,
+          "state": null,
+          "country": null,
+          "language": "en",
+          "currency": "USD",
+          "timezone": "UTC",
+          "zip_code": null,
+          "avatar": null,
+          "is_verified": false,
+          "verified_at": null,
+          "email_verified_at": null,
+          "phone_verified_at": null,
+          "identity_verified_at": null,
+          "government_id_verified_at": null,
+          "id_type": null,
+          "id_verification_status": "not_submitted",
+          "id_rejection_reason": null,
+          "id_submitted_at": null,
+          "phone_verification_code": null,
+          "phone_verification_code_expires_at": null,
+          "ccpa_do_not_sell": 0,
+          "ccpa_opt_out_date": null,
+          "gdpr_consent": 0,
+          "gdpr_consent_date": null,
+          "password_changed_at": null,
+          "password_history": null,
+          "failed_login_attempts": 0,
+          "deletion_scheduled_at": null,
+          "two_factor_enabled": false,
+          "id_verified": 0,
+          "address_verified": 0,
+          "two_factor_code_expires_at": null,
+          "two_factor_confirmed_at": null,
+          "locked_until": null,
+          "device_fingerprint": null,
+          "referral_code": null,
+          "profile_completed_at": null,
+          "settings": null,
+          "privacy_settings": null,
+          "terms_accepted_at": null,
+          "created_at": "2025-11-11T08:50:01Z",
+          "updated_at": "2025-11-11T08:53:17Z",
+          "privacy_accepted_at": null,
+          "marketing_consent": 0,
+          "data_processing_consent": 0,
+          "consent_updated_at": null,
+          "deletion_requested_at": null,
+          "deletion_reason": null,
+          "last_login_at": null,
+          "last_login_ip": null,
+          "referred_by": null,
+          "total_referrals": 0,
+          "successful_referrals": 0
+        },
+        "avatar_url": null,
+        "is_email_verified": false,
+        "is_phone_verified": false,
+        "has_2fa_enabled": false
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Updated Profile"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get My Favorites"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Add Property to Favorites"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Remove from Favorites"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": []
+    },
+    "Status": "PASSED",
+    "Name": "Get Saved Searches"
+  },
+  {
+    "Response": {
+      "success": true,
+      "message": "Saved search created successfully",
+      "data": {
+        "name": "NYC Apartments",
+        "user_id": 16,
+        "updated_at": "2025-11-11T08:53:52Z",
+        "created_at": "2025-11-11T08:53:52Z",
+        "id": 2
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Create Saved Search"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get My Messages"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [],
+      "meta": {
+        "current_page": 1,
+        "last_page": 1,
+        "per_page": 20,
+        "total": 0
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get Conversations"
+  },
+  {
+    "Error": "Response status code does not indicate success: 405 (Method Not Allowed).",
+    "Status": "FAILED",
+    "Name": "Get Unread Messages Count"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Payment Methods"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Transaction History"
+  },
+  {
+    "Error": "Response status code does not indicate success: 403 (Forbidden).",
+    "Status": "FAILED",
+    "Name": "Get User Settings"
+  },
+  {
+    "Response": {
+      "success": true,
+      "message": "Settings updated successfully",
+      "data": {
+        "language": "en",
+        "currency": "USD"
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Update Settings"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": [
+        {
+          "value": "guest",
+          "label": "Guest",
+          "description": "Can browse properties only",
+          "permissions": [
+            "browse_properties",
+            "view_property_details",
+            "search_properties"
+          ]
+        },
+        {
+          "value": "tenant",
+          "label": "Tenant",
+          "description": "Can book properties and manage bookings",
+          "permissions": [
+            "browse_properties",
+            "view_property_details",
+            "search_properties",
+            "book_properties",
+            "manage_own_bookings",
+            "write_reviews",
+            "send_messages"
+          ]
+        },
+        {
+          "value": "owner",
+          "label": "Owner",
+          "description": "Can list and manage properties",
+          "permissions": [
+            "browse_properties",
+            "view_property_details",
+            "list_properties",
+            "manage_own_properties",
+            "manage_bookings",
+            "view_analytics",
+            "send_messages",
+            "respond_to_reviews"
+          ]
+        },
+        {
+          "value": "admin",
+          "label": "Admin",
+          "description": "Full access to all features",
+          "permissions": [
+            "full_access",
+            "manage_users",
+            "manage_all_properties",
+            "manage_all_bookings",
+            "approve_verifications",
+            "manage_settings",
+            "view_all_analytics",
+            "delete_reviews",
+            "ban_users"
+          ]
+        }
+      ]
+    },
+    "Status": "PASSED",
+    "Name": "Get Available Roles"
+  },
+  {
+    "Response": {
+      "success": true,
+      "data": {
+        "user": {
+          "id": 16,
+          "name": "Updated Test User",
+          "email": "complete_test_20251111005000@renthub.test",
+          "role": "tenant",
+          "phone": "+1234567890",
+          "bio": "This is a test user profile",
+          "date_of_birth": null,
+          "gender": null,
+          "address": null,
+          "city": null,
+          "state": null,
+          "country": null,
+          "language": "en",
+          "currency": "USD",
+          "timezone": "UTC",
+          "zip_code": null,
+          "avatar": null,
+          "is_verified": false,
+          "verified_at": null,
+          "email_verified_at": null,
+          "phone_verified_at": null,
+          "identity_verified_at": null,
+          "government_id_verified_at": null,
+          "id_type": null,
+          "id_verification_status": "not_submitted",
+          "id_rejection_reason": null,
+          "id_submitted_at": null,
+          "phone_verification_code": null,
+          "phone_verification_code_expires_at": null,
+          "ccpa_do_not_sell": 0,
+          "ccpa_opt_out_date": null,
+          "gdpr_consent": 0,
+          "gdpr_consent_date": null,
+          "password_changed_at": null,
+          "password_history": null,
+          "failed_login_attempts": 0,
+          "deletion_scheduled_at": null,
+          "two_factor_enabled": false,
+          "id_verified": 0,
+          "address_verified": 0,
+          "two_factor_code_expires_at": null,
+          "two_factor_confirmed_at": null,
+          "locked_until": null,
+          "device_fingerprint": null,
+          "referral_code": null,
+          "profile_completed_at": null,
+          "settings": {
+            "currency": "USD",
+            "language": "en"
+          },
+          "privacy_settings": null,
+          "terms_accepted_at": null,
+          "created_at": "2025-11-11T08:50:01Z",
+          "updated_at": "2025-11-11T08:54:28Z",
+          "privacy_accepted_at": null,
+          "marketing_consent": 0,
+          "data_processing_consent": 0,
+          "consent_updated_at": null,
+          "deletion_requested_at": null,
+          "deletion_reason": null,
+          "last_login_at": null,
+          "last_login_ip": null,
+          "referred_by": null,
+          "total_referrals": 0,
+          "successful_referrals": 0
+        },
+        "role": {
+          "value": "tenant",
+          "label": "Tenant",
+          "description": "Can book properties and manage bookings",
+          "permissions": [
+            "browse_properties",
+            "view_property_details",
+            "search_properties",
+            "book_properties",
+            "manage_own_bookings",
+            "write_reviews",
+            "send_messages"
+          ]
+        }
+      }
+    },
+    "Status": "PASSED",
+    "Name": "Get My Role"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get User Analytics"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Activity Log"
+  },
+  {
+    "Error": "Response status code does not indicate success: 403 (Forbidden).",
+    "Status": "FAILED",
+    "Name": "Get My Properties (as tenant)"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Owner Dashboard"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get My Documents"
+  },
+  {
+    "Response": {
+      "current_page": 1,
+      "data": [],
+      "first_page_url": "http://127.0.0.1:8000/api/v1/maintenance-requests?page=1",
+      "from": null,
+      "last_page": 1,
+      "last_page_url": "http://127.0.0.1:8000/api/v1/maintenance-requests?page=1",
+      "links": [
+        {
+          "url": null,
+          "label": "&laquo; Previous",
+          "active": false
+        },
+        {
+          "url": "http://127.0.0.1:8000/api/v1/maintenance-requests?page=1",
+          "label": "1",
+          "active": true
+        },
+        {
+          "url": null,
+          "label": "Next &raquo;",
+          "active": false
+        }
+      ],
+      "next_page_url": null,
+      "path": "http://127.0.0.1:8000/api/v1/maintenance-requests",
+      "per_page": 15,
+      "prev_page_url": null,
+      "to": null,
+      "total": 0
+    },
+    "Status": "PASSED",
+    "Name": "Get Maintenance Requests"
+  },
+  {
+    "Error": "Response status code does not indicate success: 404 (Not Found).",
+    "Status": "FAILED",
+    "Name": "Get Insurance Plans"
+  },
+  {
+    "Response": {
+      "success": true,
+      "message": "Logged out successfully"
+    },
+    "Status": "PASSED",
+    "Name": "User Logout"
+  }
+]

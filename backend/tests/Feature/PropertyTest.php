@@ -27,7 +27,7 @@ class PropertyTest extends TestCase
 
     public function test_can_list_properties()
     {
-        Property::factory()->count(5)->create(['status' => 'published']);
+        Property::factory()->count(5)->create(['status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties');
 
@@ -41,7 +41,7 @@ class PropertyTest extends TestCase
 
     public function test_can_view_single_property()
     {
-        $property = Property::factory()->create(['status' => 'published']);
+        $property = Property::factory()->create(['status' => 'available']);
 
         $response = $this->getJson("/api/v1/properties/{$property->id}");
 
@@ -53,7 +53,7 @@ class PropertyTest extends TestCase
     {
         $propertyData = [
             'title' => 'Beautiful Apartment',
-            'description' => 'A lovely place to stay',
+            'description' => 'A lovely place to stay with plenty of light, modern finishes, and close to transit and shops. Perfect for families.',
             'type' => 'apartment',
             'price' => 100,
             'bedrooms' => 2,
@@ -61,7 +61,9 @@ class PropertyTest extends TestCase
             'max_guests' => 4,
             'address' => '123 Main St',
             'city' => 'New York',
+            'state' => 'NY',
             'country' => 'USA',
+            'postal_code' => '10001',
         ];
 
         $response = $this->actingAs($this->owner, 'sanctum')
@@ -112,13 +114,13 @@ class PropertyTest extends TestCase
         Property::factory()->create([
             'title' => 'Beachfront Villa',
             'city' => 'Miami',
-            'status' => 'published',
+            'status' => 'available',
         ]);
 
         Property::factory()->create([
             'title' => 'Mountain Cabin',
             'city' => 'Denver',
-            'status' => 'published',
+            'status' => 'available',
         ]);
 
         $response = $this->getJson('/api/v1/properties?search=beach');
@@ -129,9 +131,9 @@ class PropertyTest extends TestCase
 
     public function test_can_filter_properties_by_price()
     {
-        Property::factory()->create(['price' => 50, 'status' => 'published']);
-        Property::factory()->create(['price' => 150, 'status' => 'published']);
-        Property::factory()->create(['price' => 250, 'status' => 'published']);
+        Property::factory()->create(['price' => 50, 'status' => 'available']);
+        Property::factory()->create(['price' => 150, 'status' => 'available']);
+        Property::factory()->create(['price' => 250, 'status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties?min_price=100&max_price=200');
 
@@ -141,8 +143,8 @@ class PropertyTest extends TestCase
 
     public function test_can_filter_properties_by_type()
     {
-        Property::factory()->create(['type' => 'apartment', 'status' => 'published']);
-        Property::factory()->create(['type' => 'house', 'status' => 'published']);
+    Property::factory()->create(['type' => 'apartment', 'status' => 'available']);
+    Property::factory()->create(['type' => 'house', 'status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties?type=apartment');
 
@@ -152,9 +154,9 @@ class PropertyTest extends TestCase
 
     public function test_can_sort_properties()
     {
-        Property::factory()->create(['price' => 100, 'status' => 'published']);
-        Property::factory()->create(['price' => 200, 'status' => 'published']);
-        Property::factory()->create(['price' => 50, 'status' => 'published']);
+    Property::factory()->create(['price' => 100, 'price_per_night' => 100, 'status' => 'available']);
+    Property::factory()->create(['price' => 200, 'price_per_night' => 200, 'status' => 'available']);
+    Property::factory()->create(['price' => 50, 'price_per_night' => 50, 'status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties?sort=price&order=asc');
 

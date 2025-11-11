@@ -1,0 +1,44 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "404" [level=1] [ref=e8]
+      - heading "Page Not Found" [level=2] [ref=e9]
+      - paragraph [ref=e10]: The page you're looking for doesn't exist or has been moved.
+    - generic [ref=e11]:
+      - link "Go Home" [ref=e12] [cursor=pointer]:
+        - /url: /
+        - button "Go Home" [ref=e13]:
+          - img
+          - text: Go Home
+      - link "Browse Properties" [ref=e14] [cursor=pointer]:
+        - /url: /properties
+        - button "Browse Properties" [ref=e15]:
+          - img
+          - text: Browse Properties
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - checkbox "Analytics" [checked] [ref=e22]
+          - text: Analytics
+        - generic [ref=e23]:
+          - checkbox "Performance" [checked] [ref=e24]
+          - text: Performance
+        - generic [ref=e25]:
+          - checkbox "Marketing (optional)" [ref=e26]
+          - text: Marketing (optional)
+    - generic [ref=e27]:
+      - button "Decline" [ref=e28] [cursor=pointer]
+      - button "Accept" [ref=e29] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e35] [cursor=pointer]:
+    - img [ref=e36]
+  - alert [ref=e39]
+```

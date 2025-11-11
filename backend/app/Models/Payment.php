@@ -5,8 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Payment extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'payment_number',
         'booking_id',
@@ -58,19 +61,13 @@ class Payment extends Model
     // Generate unique payment number
     public static function generatePaymentNumber(): string
     {
-        $date = now()->format('Ym');
-        $lastPayment = static::whereRaw('payment_number LIKE ?', [$date.'%'])
-            ->orderBy('payment_number', 'desc')
-            ->first();
+        $prefix = 'PAY'.now()->format('Ym');
+        do {
+            $suffix = str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+            $number = $prefix.$suffix;
+        } while (static::where('payment_number', $number)->exists());
 
-        if ($lastPayment) {
-            $lastNumber = (int) substr($lastPayment->payment_number, -4);
-            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '0001';
-        }
-
-        return 'PAY'.$date.$newNumber;
+        return $number;
     }
 
     // Mark as completed

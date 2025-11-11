@@ -1,0 +1,734 @@
+{
+  "common": {
+    "attachFile": "Atașează fișier",
+    "send": "Trimite",
+    "remove": "Șterge"
+  },
+  "home": {
+    "title": "Bine ai venit la RentHub",
+    "subtitle": "Găsește și rezervă proprietatea perfectă pentru tine",
+    "recommended": {
+      "title": "Recomandate pentru tine",
+      "subtitle": "Selecție de proprietăți populare și active recent",
+      "browseAll": "Vezi toate",
+      "error": "Nu am putut încărca recomandările.",
+      "empty": "Momentan nu avem recomandări. Revino curând."
+    }
+  },
+  "filters": {
+    "title": "Filtre",
+    "priceRange": "Interval de preț",
+    "propertyType": "Tip proprietate",
+    "rooms": "Camere",
+    "bedrooms": "Dormitoare",
+    "bathrooms": "Băi",
+    "guests": "Oaspeți",
+    "amenities": "Facilități",
+    "apply": "Aplică",
+    "reset": "Resetează"
+  },
+  "chat": {
+    "noConversations": "Nicio conversație",
+    "selectConversation": "Selectează o conversație",
+    "typing": "Scrie...",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "bookingDetail": {
+    "title": "Detalii Rezervare",
+    "back": "Înapoi la Rezervări",
+    "confirmation": "Confirmare #{{id}}",
+    "statusBannerConfirmedTitle": "Rezervare Confirmată",
+    "statusBannerConfirmedBody": "Totul este în regulă! Verifică emailul pentru detalii.",
+    "propertyInformation": "Informații Proprietate",
+    "viewProperty": "Vezi Proprietatea",
+    "reservationDetails": "Detalii Rezervare",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "afterTime": "După {{time}}",
+    "beforeTime": "Înainte de {{time}}",
+    "guests": "Număr Oaspeți",
+    "totalStay": "Ședere Totală",
+    "nights": "{{count}} nopți",
+    "accessCodes": "Coduri de Acces pentru Self Check-in",
+    "accessCodesImportant": "Important: Folosește aceste coduri pentru a accesa proprietatea în timpul șederii. Păstrează-le în siguranță și nu le distribui.",
+    "validFrom": "Valabil de la",
+    "validUntil": "Valabil până la",
+    "oneTimeCodeWarning": "Acesta este un cod de o singură utilizare",
+    "help": "Ai nevoie de ajutor?",
+    "emailSupport": "Suport Email",
+    "phoneSupport": "Suport Telefon",
+    "priceSummary": "Sumar Preț",
+    "serviceFee": "Taxă serviciu",
+    "taxes": "Taxe",
+    "total": "Total",
+    "actions": "Acțiuni",
+    "downloadReceipt": "Descarcă Chitanța",
+    "cancelBooking": "Anulează Rezervarea",
+    "cancelConfirm": "Sigur doriți să anulați această rezervare?",
+    "bookingNotFound": "Rezervare inexistentă",
+    "status": {
+      "pending": "În așteptare",
+      "confirmed": "Confirmată",
+      "cancelled": "Anulată",
+      "completed": "Finalizată"
+    },
+    "timeline": {
+      "pending": "Cerere Trimisa",
+      "confirmed": "Confirmată",
+      "completed": "Finalizată",
+      "cancelled": "Anulată"
+    }
+  },
+  "invoice": {
+      "title": "Plată & Factură",
+      "propertyDetails": "Detalii Proprietate",
+      "paymentMethod": "Metodă de Plată",
+      "bankTransfer": "Transfer Bancar",
+      "bankDetails": "Detalii Transfer Bancar",
+      "summary": "Sumar Plată",
+      "nights": "{{count}} nopți",
+      "subtotal": "Subtotal",
+      "cleaningFee": "Taxă curățenie",
+      "serviceFee": "Taxă serviciu",
+      "tax": "Taxe",
+      "total": "Total",
+      "confirmAndDownload": "Confirmă & Descarcă Factura",
+      "processing": "Se procesează...",
+      "cancel": "Anulează",
+      "important": "Important: Includeți numărul facturii în referința plății pentru procesare rapidă.",
+      "invoiceNumber": "Factura #{{number}}",
+      "download": "Descarcă PDF",
+      "preview": "Previzualizare PDF",
+      "noInvoice": "Nicio factură disponibilă încă.",
+      "generate": "Generează Factură",
+      "status": {
+        "pending": "În așteptare",
+        "confirmed": "Confirmată",
+        "paid": "Plătită"
+      }
+    },
+  "offline": {
+      "title": "Ești offline",
+      "description": "Se pare că nu ai conexiune la internet. Poți continua să vizualizezi paginile salvate sau încearcă din nou când revii online.",
+      "retry": "Reîncearcă",
+      "goBack": "Înapoi"
+    },
+  "chatThread": {
+      "send": "Trimite",
+      "placeholder": "Tastează un mesaj...",
+      "attachments": "Atașamente",
+      "failed": "Trimitere eșuată. Click pentru retry.",
+      "loading": "Se încarcă mesajele...",
+      "offlineCached": "Offline: afișăm mesaje din cache",
+      "archive": "Arhivează conversația",
+      "unread": "Necitite",
+      "typing": "Scrie..."
+    }
+  ,
+  "breadcrumbs": {
+    "home": "Acasă",
+    "properties": "Proprietăți",
+    "property": "Proprietate",
+    "reviews": "Recenzii",
+    "smartLocks": "Smart Locks",
+    "verification": "Verificare"
+  },
+  "notify": {
+    "success": "Succes",
+    "error": "Eroare",
+    "warning": "Avertisment",
+    "info": "Informație",
+    "invoice": "Factură",
+    "pdfDownloaded": "PDF descărcat.",
+    "failedGenerateInvoice": "Eroare la generarea facturii",
+    "idVerificationSubmitted": "Verificare identitate trimisă",
+    "failedSubmitIdVerification": "Eroare la trimiterea verificării identității",
+    "addressVerificationSubmitted": "Verificare adresă trimisă",
+    "failedSubmitAddressVerification": "Eroare la trimiterea verificării adresei",
+    "errorLoadSavedSearches": "Încărcarea căutărilor salvate a eșuat",
+    "searchActivated": "Căutare activată",
+    "searchPaused": "Căutare întreruptă",
+    "errorUpdateSearch": "Actualizarea căutării a eșuat",
+    "searchDeleted": "Căutare ștearsă cu succes",
+    "errorDeleteSearch": "Ștergerea căutării a eșuat",
+    "comparisonLoadFallback": "Încărcarea comparației a eșuat, folosim date de rezervă.",
+    "propertyRemovedTitle": "Eliminat",
+    "propertyRemoved": "Proprietate eliminată din comparație",
+    "errorRemoveProperty": "Eliminarea proprietății a eșuat",
+    "comparisonClearedTitle": "Golire",
+    "comparisonCleared": "Comparația a fost golită",
+    "errorClearComparison": "Golirea comparației a eșuat",
+    "addedToComparisonTitle": "Adăugat",
+    "addedToComparison": "Proprietate adăugată la comparație",
+    "shareLinkSuccessTitle": "Link distribuit",
+    "shareLinkSuccessDesc": "Mulțumim că dai mai departe!",
+    "shareLinkErrorTitle": "Distribuire eșuată",
+    "shareLinkErrorDesc": "Nu s-a putut distribui linkul",
+    "copiedTitle": "Copiat",
+    "copiedCode": "Cod copiat în clipboard",
+    "failedLoadVerificationStatus": "Încărcarea statusului verificării a eșuat",
+    "missingIdUpload": "Te rugăm să încarci documentul de identitate și selfie",
+    "missingPhone": "Te rugăm să introduci numărul de telefon",
+    "failedSendVerificationCode": "Trimiterea codului de verificare a eșuat",
+    "missingVerificationCode": "Te rugăm să introduci codul de verificare",
+    "phoneVerified": "Telefon verificat",
+    "invalidVerificationCode": "Cod de verificare invalid"
+  },
+  "compareButton": {
+    "compare": "Compară",
+    "comparing": "În comparație"
+  },
+  "reviews": {
+    "deleteDialog": {
+      "title": "Ștergi recenzia?",
+      "description": "Această acțiune nu poate fi anulată. Recenzia va fi ștearsă permanent."
+    }
+  },
+  "notificationsPage": {
+    "title": "Notificări",
+    "subtitle": "Actualizări în timp real despre rezervări, plăți, mentenanță și altele.",
+    "actions": {
+      "markAllRead": "Marchează toate ca citite",
+      "markRead": "Marchează citit",
+      "markUnread": "Marchează necitit",
+      "delete": "Șterge"
+    },
+    "filters": {
+      "title": "Filtre",
+      "searchPlaceholder": "Caută notificări...",
+      "all": "Toate"
+    },
+    "preferences": {
+      "title": "Preferințe Notificări",
+      "loading": "Se încarcă preferințele...",
+      "enablePush": "Activează notificările push",
+      "save": "Salvează Preferințele"
+    },
+    "types": {
+      "booking_created": "Rezervare creată",
+      "booking_confirmed": "Rezervare confirmată",
+      "booking_cancelled": "Rezervare anulată",
+      "payment_received": "Plată primită",
+      "maintenance": "Mentenanță",
+      "message": "Mesaj",
+      "system": "Sistem"
+    },
+    "list": {
+      "title": "Notificări",
+      "unreadBadge": "{{count}} necitite",
+      "loading": "Se încarcă...",
+      "empty": "Nu există notificări."
+    },
+    "item": {
+      "markRead": "Marchează citit",
+      "markUnread": "Marchează necitit",
+      "select": "Selectează",
+      "unselect": "Deselectează"
+    },
+    "demo": {
+      "title": "Notificări (demo)",
+      "description": "Folosim date de exemplu."
+    },
+    "toasts": {
+      "preferencesSaved": "Preferințe salvate",
+      "preferencesSaveFailed": "Salvarea preferințelor a eșuat",
+      "markAllRead": "Toate notificările marcate ca citite",
+      "deleted": "{{count}} notificare(i) ștearsă(e).",
+      "newBooking": "Rezervare nouă",
+      "paymentReceived": "Plată primită"
+    }
+  },
+  "profilePage": {
+    "title": "Profilul Meu",
+    "subtitle": "Gestionează informațiile contului și preferințele",
+    "aria": { "changeAvatar": "Schimbă avatarul" },
+    "tooltips": { "changeAvatar": "Schimbă avatarul" },
+    "tabs": {
+      "profile": "Profil",
+      "security": "Securitate",
+      "social": "Linkuri Social Media"
+    },
+    "role": {
+      "host": "Gazdă",
+      "guest": "Oaspete"
+    },
+    "verification": {
+      "status": "Stare Verificare",
+      "email": "Email",
+      "phone": "Telefon",
+      "identity": "Identitate",
+      "verifyIdentity": "Verifică identitatea"
+    },
+    "personal": {
+      "title": "Informații Personale",
+      "edit": "Editează",
+      "cancel": "Renunță",
+      "fullName": "Nume complet",
+      "email": "Email",
+      "phone": "Telefon",
+      "dateOfBirth": "Data nașterii",
+      "address": "Adresă",
+      "occupation": "Ocupație",
+      "languages": "Limbi",
+      "bio": "Bio",
+      "placeholders": {
+        "phone": "+40 123 456 789",
+        "address": "Stradă, Oraș, Țară",
+        "occupation": "Inginer software",
+        "languages": "Engleză, Română",
+        "bio": "Spune-ne despre tine..."
+      },
+      "saveChanges": "Salvează modificările",
+      "saving": "Se salvează..."
+    },
+    "social": {
+      "title": "Linkuri Social Media",
+      "description": "Conectează-ți profilele sociale pentru a construi încredere cu gazdele și oaspeții",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "website": "Website",
+      "save": "Salvează linkurile sociale",
+      "saving": "Se salvează..."
+    },
+    "security": {
+      "changePassword": "Schimbă parola",
+      "description": "Actualizează parola pentru a-ți proteja contul",
+      "current": "Parola curentă",
+      "new": "Parolă nouă",
+      "confirm": "Confirmă parola nouă",
+      "update": "Actualizează parola",
+      "updating": "Se actualizează..."
+    },
+    "danger": {
+      "title": "Zonă periculoasă",
+      "description": "Acțiuni ireversibile ale contului",
+      "deleteTitle": "Șterge contul",
+      "deleteDescription": "Odată ce îți ștergi contul, nu mai există cale de întoarcere. Toate datele tale vor fi șterse permanent.",
+      "dialogTitle": "Ești absolut sigur?",
+      "dialogDescription": "Această acțiune nu poate fi anulată. Îți va șterge definitiv contul și toate datele de pe serverele noastre.",
+      "confirm": "Da, șterge-mi contul"
+    },
+    "buttons": {
+      "cancel": "Renunță"
+    },
+    "toasts": {
+      "profileUpdated": "Profil actualizat cu succes",
+      "updateFailed": "Actualizarea profilului a eșuat",
+      "selectImage": "Te rugăm să selectezi un fișier imagine",
+      "avatarUploaded": "Avatar încărcat cu succes",
+      "avatarUploadFailed": "Încărcarea avatarului a eșuat",
+      "passwordsMismatch": "Parolele nu coincid",
+      "passwordUpdated": "Parola a fost actualizată cu succes",
+      "passwordUpdateFailed": "Actualizarea parolei a eșuat",
+      "accountDeletedTitle": "Cont șters",
+      "accountDeletedDesc": "Contul tău a fost șters permanent",
+      "accountDeleteFailed": "Ștergerea contului a eșuat"
+    }
+  },
+  "wishlists": {
+    "title": "Listele mele de dorințe",
+    "subtitle": "Salvează și organizează proprietățile tale favorite",
+    "createNew": "Creează listă",
+    "noWishlists": "Nicio listă încă",
+    "noWishlistsDesc": "Creează liste pentru a salva și organiza proprietățile pe care le iubești",
+    "defaultWishlist": "Favorite",
+    "form": {
+      "name": "Nume listă",
+      "namePlaceholder": "ex., Vacanță de vară, City breaks",
+      "description": "Descriere",
+      "descriptionPlaceholder": "Pentru ce este această listă?",
+      "isPublic": "Fă această listă publică",
+      "isPublicHelp": "Alții pot vedea listele tale publice",
+      "create": "Creează listă",
+      "update": "Actualizează listă",
+      "cancel": "Anulează"
+    },
+    "card": {
+      "properties": "{{count}} proprietăți",
+      "public": "Publică",
+      "private": "Privată",
+      "view": "Vezi",
+      "edit": "Editează",
+      "delete": "Șterge",
+      "share": "Distribuie"
+    },
+    "detail": {
+      "backToWishlists": "Înapoi la liste",
+      "shareTitle": "Distribuie lista",
+      "shareDesc": "Oricine cu acest link poate vedea această listă",
+      "copyLink": "Copiază linkul",
+      "removeProperty": "Elimină din listă"
+    },
+    "toasts": {
+      "created": "Listă creată",
+      "updated": "Listă actualizată",
+      "deleted": "Listă ștearsă",
+      "propertyAdded": "Adăugat în {{name}}",
+      "propertyRemoved": "Eliminat din listă",
+      "linkCopied": "Link copiat",
+      "createFailed": "Crearea listei a eșuat",
+      "updateFailed": "Actualizarea listei a eșuat",
+      "deleteFailed": "Ștergerea listei a eșuat"
+    }
+  },
+  "invoices": {
+    "title": "Facturi și chitanțe",
+    "subtitle": "Vezi și descarcă facturile de plată",
+    "noInvoices": "Nicio factură încă",
+    "noInvoicesDesc": "Facturile tale vor apărea aici după rezervare",
+    "table": {
+      "invoice": "Factură",
+      "date": "Dată",
+      "property": "Proprietate",
+      "amount": "Sumă",
+      "status": "Status",
+      "actions": "Acțiuni"
+    },
+    "status": {
+      "paid": "Plătit",
+      "pending": "În așteptare",
+      "overdue": "Întârziat",
+      "cancelled": "Anulat"
+    },
+    "actions": {
+      "download": "Descarcă",
+      "view": "Vezi",
+      "print": "Printează"
+    },
+    "filters": {
+      "all": "Toate facturile",
+      "paid": "Plătite",
+      "pending": "În așteptare",
+      "search": "Caută facturi..."
+    },
+    "toasts": {
+      "downloaded": "Factură descărcată",
+      "downloadFailed": "Descărcarea facturii a eșuat"
+    }
+  },
+  "payments": {
+    "title": "Istoric plăți",
+    "subtitle": "Urmărește toate tranzacțiile tale",
+    "noPayments": "Nicio plată încă",
+    "noPaymentsDesc": "Istoricul plăților va apărea aici",
+    "table": {
+      "date": "Dată",
+      "description": "Descriere",
+      "method": "Metodă",
+      "amount": "Sumă",
+      "status": "Status",
+      "actions": "Acțiuni"
+    },
+    "status": {
+      "completed": "Finalizat",
+      "pending": "În așteptare",
+      "failed": "Eșuat",
+      "refunded": "Rambursat"
+    },
+    "methods": {
+      "card": "Card de credit",
+      "bank_transfer": "Transfer bancar",
+      "paypal": "PayPal",
+      "cash": "Numerar"
+    },
+    "filters": {
+      "all": "Toate plățile",
+      "completed": "Finalizate",
+      "pending": "În așteptare",
+      "refunded": "Rambursate",
+      "search": "Caută plăți..."
+    },
+    "details": {
+      "title": "Detalii plată",
+      "transactionId": "ID tranzacție",
+      "paymentMethod": "Metodă de plată",
+      "billingAddress": "Adresă de facturare",
+      "receipt": "Chitanță"
+    },
+    "toasts": {
+      "refundRequested": "Rambursare solicitată",
+      "refundFailed": "Solicitarea rambursării a eșuat"
+    }
+  },
+  "insurance": {
+    "title": "Asigurare de călătorie",
+    "subtitle": "Protejează-ți rezervările cu acoperire completă",
+    "noInsurance": "Nicio asigurare activă",
+    "noInsuranceDesc": "Adaugă asigurare la următoarea rezervare pentru liniște sufletească",
+    "plans": {
+      "basic": "Acoperire de bază",
+      "premium": "Acoperire premium",
+      "comprehensive": "Acoperire completă"
+    },
+    "coverage": {
+      "title": "Ce este acoperit",
+      "cancellation": "Anulare călătorie",
+      "interruption": "Întrerupere călătorie",
+      "medical": "Urgențe medicale",
+      "baggage": "Bagaje pierdute",
+      "delays": "Întârzieri călătorie"
+    },
+    "addToBooking": "Adaugă la rezervare",
+    "viewDetails": "Vezi detalii",
+    "claims": {
+      "title": "Depune o cerere",
+      "submit": "Trimite cerere",
+      "status": "Status cerere",
+      "pending": "În verificare",
+      "approved": "Aprobat",
+      "rejected": "Respins"
+    },
+    "toasts": {
+      "added": "Asigurare adăugată la rezervare",
+      "claimSubmitted": "Cerere trimisă cu succes",
+      "claimFailed": "Trimiterea cererii a eșuat"
+    }
+  },
+  "property": {
+    "access": {
+      "title": "Acces proprietate",
+      "subtitle": "Gestionează încuietori inteligente și coduri de acces",
+      "noLocks": "Niciun încuietori inteligente configurate",
+      "noLocksDesc": "Adaugă încuietori inteligente pentru a gestiona accesul digital la proprietate",
+      "addLock": "Adaugă încuietoare inteligentă",
+      "locks": {
+        "title": "Încuietori inteligente",
+        "online": "Online",
+        "offline": "Offline",
+        "battery": "Baterie: {{level}}%",
+        "lowBattery": "Baterie slabă",
+        "lastSync": "Ultima sincronizare: {{time}}"
+      },
+      "codes": {
+        "title": "Coduri de acces",
+        "create": "Creează cod",
+        "oneTime": "Cod o singură utilizare",
+        "recurring": "Cod recurent",
+        "validFrom": "Valabil de la",
+        "validUntil": "Valabil până la",
+        "status": "Status",
+        "active": "Activ",
+        "expired": "Expirat",
+        "revoked": "Revocat"
+      },
+      "activity": {
+        "title": "Jurnal activitate",
+        "locked": "Încuiat",
+        "unlocked": "Descuiat",
+        "codeUsed": "Cod folosit",
+        "batteryLow": "Baterie slabă",
+        "offline": "S-a deconectat"
+      },
+      "actions": {
+        "lock": "Încuie",
+        "unlock": "Descuie",
+        "revoke": "Revocă codul",
+        "sync": "Sincronizează status"
+      },
+      "toasts": {
+        "locked": "Ușă încuiată",
+        "unlocked": "Ușă descuiată",
+        "codeCreated": "Cod de acces creat",
+        "codeRevoked": "Cod de acces revocat",
+        "syncSuccess": "Status sincronizat",
+        "actionFailed": "Acțiunea a eșuat"
+      }
+    },
+    "calendar": {
+      "title": "Calendar disponibilitate",
+      "subtitle": "Gestionează prețuri și disponibilitate",
+      "legend": {
+        "available": "Disponibil",
+        "booked": "Rezervat",
+        "blocked": "Blocat",
+        "pending": "În așteptare"
+      },
+      "pricing": {
+        "basePrice": "Preț de bază",
+        "weekend": "Preț weekend",
+        "special": "Dată specială",
+        "bulk": "Editare în masă prețuri"
+      },
+      "availability": {
+        "blockDates": "Blochează date",
+        "unblockDates": "Deblochează date",
+        "bulkActions": "Acțiuni în masă",
+        "reason": "Motiv",
+        "maintenance": "Întreținere",
+        "personal": "Uz personal",
+        "other": "Altele"
+      },
+      "sync": {
+        "title": "Sincronizare calendar",
+        "import": "Importă calendar",
+        "export": "Exportă calendar",
+        "airbnb": "Sincronizează cu Airbnb",
+        "booking": "Sincronizează cu Booking.com",
+        "ical": "URL iCal"
+      },
+      "toasts": {
+        "datesBlocked": "Date blocate",
+        "datesUnblocked": "Date deblocate",
+        "pricingUpdated": "Prețuri actualizate",
+        "syncSuccess": "Calendar sincronizat",
+        "actionFailed": "Acțiunea a eșuat"
+      }
+    }
+  },
+  "security": {
+    "audit": {
+      "title": "Jurnal audit securitate",
+      "subtitle": "Monitorizează activitatea contului și evenimentele de securitate",
+      "noLogs": "Niciun eveniment de securitate",
+      "noLogsDesc": "Evenimentele de securitate vor apărea aici",
+      "filters": {
+        "all": "Toate evenimentele",
+        "login": "Încercări de autentificare",
+        "password": "Schimbări de parolă",
+        "profile": "Actualizări profil",
+        "suspicious": "Activitate suspectă",
+        "search": "Caută în jurnale..."
+      },
+      "table": {
+        "timestamp": "Dată/Oră",
+        "event": "Eveniment",
+        "ipAddress": "Adresă IP",
+        "location": "Locație",
+        "device": "Dispozitiv",
+        "status": "Status"
+      },
+      "events": {
+        "login": "Autentificare",
+        "logout": "Deconectare",
+        "passwordChange": "Parolă schimbată",
+        "profileUpdate": "Profil actualizat",
+        "2faEnabled": "2FA activat",
+        "2faDisabled": "2FA dezactivat",
+        "failedLogin": "Autentificare eșuată",
+        "suspicious": "Activitate suspectă"
+      },
+      "status": {
+        "success": "Succes",
+        "failed": "Eșuat",
+        "blocked": "Blocat"
+      },
+      "details": {
+        "title": "Detalii eveniment",
+        "userAgent": "User Agent",
+        "ipAddress": "Adresă IP",
+        "location": "Locație",
+        "timestamp": "Dată/Oră"
+      },
+      "anomaly": {
+        "badge": "Anomalie detectată",
+        "newLocation": "Autentificare din locație nouă",
+        "newDevice": "Autentificare de pe dispozitiv nou",
+        "multipleFailures": "Multiple încercări eșuate",
+        "unusualTime": "Autentificare la oră neobișnuită"
+      },
+      "toasts": {
+        "exported": "Jurnal audit exportat",
+        "exportFailed": "Exportarea jurnalului a eșuat"
+      }
+    }
+  },
+  "verification": {
+    "title": "Verificare identitate",
+    "subtitle": "Completează verificarea pentru a debloca toate funcțiile",
+    "status": {
+      "pending": "În așteptare",
+      "verified": "Verificat",
+      "rejected": "Respins",
+      "notStarted": "Neînceput"
+    },
+    "steps": {
+      "identity": {
+        "title": "Verificare identitate",
+        "description": "Încarcă un act de identitate emis de guvern",
+        "upload": "Încarcă act de identitate",
+        "idType": "Tip act",
+        "types": {
+          "passport": "Pașaport",
+          "driverLicense": "Permis de conducere",
+          "nationalId": "Carte de identitate"
+        },
+        "idNumber": "Număr act",
+        "front": "Față act",
+        "back": "Spate act",
+        "submit": "Trimite pentru verificare"
+      },
+      "address": {
+        "title": "Verificare adresă",
+        "description": "Încarcă dovadă de domiciliu",
+        "upload": "Încarcă document",
+        "acceptedDocs": "Acceptat: Factură utilități, extras bancar, contract închiriere",
+        "submit": "Trimite"
+      },
+      "selfie": {
+        "title": "Verificare selfie",
+        "description": "Fă un selfie pentru confirmarea identității",
+        "takeSelfie": "Fă selfie",
+        "retake": "Refă",
+        "submit": "Trimite"
+      },
+      "background": {
+        "title": "Verificare antecedente",
+        "description": "Autorizează o verificare a antecedentelor",
+        "consent": "Sunt de acord cu verificarea antecedentelor",
+        "request": "Solicită verificare"
+      }
+    },
+    "trustScore": {
+      "title": "Scor încredere",
+      "outOf": "{{score}} / 100",
+      "factors": {
+        "identity": "Identitate verificată",
+        "address": "Adresă verificată",
+        "background": "Verificare antecedente",
+        "references": "Referințe",
+        "reviews": "Recenzii pozitive"
+      }
+    },
+    "toasts": {
+      "submitted": "Verificare trimisă",
+      "submitFailed": "Trimiterea verificării a eșuat",
+      "approved": "Verificare aprobată",
+      "rejected": "Verificare respinsă"
+    }
+  },
+  "partnerships": {
+    "title": "Parteneriate de încredere",
+    "subtitle": "Colaborăm cu cele mai importante platforme de închirieri din lume pentru a vă oferi cele mai bune proprietăți",
+    "booking_description": "Importați listele direct din Booking.com cu toate detaliile păstrate",
+    "airbnb_description": "Sincronizați proprietățile Airbnb cu RentHub într-un singur click",
+    "vrbo_description": "Conectați proprietățile VRBO și gestionați totul dintr-un singur dashboard",
+    "verified_partner": "Partener Verificat",
+    "import_benefit": "⚡ Importați proprietățile din orice platformă în câteva secunde!"
+  },
+  "import": {
+    "badge": "Funcție Import Proprietăți",
+    "title": "Importați Proprietățile în Secunde",
+    "description": "Aveți deja proprietăți listate pe Booking.com, Airbnb sau VRBO? Importați-le instant cu toate detaliile, fotografiile și descrierile păstrate.",
+    "booking_feature": "Import cu un click și sincronizare calendar",
+    "airbnb_feature": "Sincronizare automată a prețurilor și disponibilității",
+    "vrbo_feature": "Migrare completă a listei în câteva minute",
+    "import_button": "Importă Proprietăți Acum",
+    "dialog_title": "Importă Proprietate de pe Platformă",
+    "dialog_description": "Introduceți URL-ul proprietății de pe orice platformă suportată",
+    "url_label": "URL Proprietate",
+    "booking_hint": "Exemplu: https://www.booking.com/hotel/ro/nume-proprietate.html",
+    "airbnb_hint": "Exemplu: https://www.airbnb.com/rooms/12345678",
+    "vrbo_hint": "Exemplu: https://www.vrbo.com/12345678ha",
+    "info_title": "Ce se importă?",
+    "info_description": "Vom importa toate fotografiile, descrierile, facilitățile, prețurile și disponibilitatea. Puteți revizui și edita totul înainte de publicare.",
+    "cancel": "Anulează",
+    "import_now": "Importă Acum",
+    "importing": "Se importă...",
+    "footer_note": "Datele proprietății dvs. sunt securizate și nu sunt niciodată partajate cu terți",
+    "success_message": "Proprietatea a fost importată cu succes! Acum o puteți revizui și publica.",
+    "error_message": "Importul proprietății a eșuat. Vă rugăm să verificați URL-ul și să încercați din nou."
+  }
+}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\ConciergeBooking;
 use App\Models\ConciergeService;
+use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -204,12 +205,22 @@ class ConciergeBookingController extends Controller
 
         $booking->cancel($request->reason);
 
-        // TODO: Process refund if payment was made
+        // Process refund if payment was made
+        $payment = Payment::where('concierge_booking_id', $booking->id)
+            ->where('status', 'completed')
+            ->first();
+
+        if ($payment) {
+            $payment->notes = trim(($payment->notes ? ($payment->notes."\n") : '') . 'Refund reason: Concierge booking cancelled - ' . $request->reason);
+            $payment->save();
+            $payment->markAsRefunded();
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Booking cancelled successfully',
-            'data' => $booking,
+            'data' => $booking->fresh(),
+            'refunded' => $payment ? true : false,
         ]);
     }
 

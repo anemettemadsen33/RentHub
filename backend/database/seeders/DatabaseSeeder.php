@@ -13,8 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed admin user first
+        // Seed essential data first
         $this->call([
+            RolePermissionSeeder::class, // Must be first!
+            LanguageSeeder::class,
+            CurrencySeeder::class,
             AdminSeeder::class,
         ]);
 

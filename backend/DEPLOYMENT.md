@@ -53,6 +53,21 @@ MAIL_PASSWORD=                    # Your SMTP password
 
 After updating, click "Save" button.
 
+### Pusher Beams (Web Push)
+
+To enable web push notifications via Pusher Beams, add the following variables in your environment:
+
+```env
+PUSHER_BEAMS_INSTANCE_ID=           # e.g. 0223b504-a3c5-40f5-a2d2-110c12c80fb4
+PUSHER_BEAMS_SECRET_KEY=            # The Primary/Secret key from Pusher Beams dashboard
+```
+
+Verification (server):
+
+```bash
+php artisan beams:test --interest=broadcast --title="Deployed" --body="Beams is configured"
+```
+
 ## Step 5: Update Deployment Script
 
 In Forge Dashboard → Apps → Deploy Script:

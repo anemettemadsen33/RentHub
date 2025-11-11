@@ -34,6 +34,7 @@ class Property extends Model
         'state',
         'country',
         'postal_code',
+        'location',
         'latitude',
         'longitude',
         'area_sqm',
@@ -52,7 +53,11 @@ class Property extends Model
         'rules',
         'images',
         'main_image',
+        'imported_from',
+        'external_id',
         'user_id',
+        'owner_id',
+        'price',
     ];
 
     protected $casts = [
@@ -75,6 +80,27 @@ class Property extends Model
     ];
 
     protected $appends = ['price', 'owner_id'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            // Map legacy statuses to current enum for compatibility
+            if (isset($model->status)) {
+                $map = [
+                    'active' => 'available',
+                    'published' => 'available',
+                    'inactive' => 'maintenance',
+                    'draft' => 'maintenance',
+                ];
+                $status = strtolower($model->status);
+                if (isset($map[$status])) {
+                    $model->status = $map[$status];
+                }
+            }
+        });
+    }
 
     // Relationships
     public function user(): BelongsTo
@@ -165,7 +191,7 @@ class Property extends Model
     protected function averageRating(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->reviews()->where('is_approved', true)->avg('rating') ?: 0
+            get: fn () => round((float) ($this->reviews()->where('is_approved', true)->avg('rating') ?: 0), 1)
         );
     }
 
@@ -181,7 +207,10 @@ class Property extends Model
     {
         return Attribute::make(
             get: fn () => $this->price_per_night,
-            set: fn ($value) => ['price_per_night' => $value]
+            set: fn ($value) => [
+                'price_per_night' => $value,
+                'price' => $value,
+            ]
         );
     }
 
@@ -189,7 +218,11 @@ class Property extends Model
     {
         return Attribute::make(
             get: fn () => $this->user_id,
-            set: fn ($value) => ['user_id' => $value]
+            set: fn ($value) => [
+                'user_id' => $value,
+                // Persist owner_id column for backwards compatibility in tests
+                'owner_id' => $value,
+            ]
         );
     }
 

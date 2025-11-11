@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CORS & Register</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>RentHub API Tests</h1>
+    
+    <h2>1. Test CORS (Simple Request)</h2>
+    <button onclick="testCORS()">Test Health Endpoint</button>
+    <pre id="cors-result">Not tested yet</pre>
+
+    <h2>2. Test Register Endpoint</h2>
+    <button onclick="testRegister()">Test Register</button>
+    <pre id="register-result">Not tested yet</pre>
+
+    <h2>3. Current Configuration</h2>
+    <pre id="config"></pre>
+
+    <script>
+        // Show current config
+        document.getElementById('config').textContent = JSON.stringify({
+            currentOrigin: window.location.origin,
+            protocol: window.location.protocol,
+            backendURL: 'http://127.0.0.1:8000',
+            frontendURL: 'http://localhost:3000',
+        }, null, 2);
+
+        async function testCORS() {
+            const resultEl = document.getElementById('cors-result');
+            resultEl.textContent = 'Testing CORS...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/health', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+                
+                resultEl.innerHTML = `<span class="success">✅ CORS Working!</span>\n\n` + JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    corsHeaders: {
+                        'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                        'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+                    },
+                    data: data
+                }, null, 2);
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">❌ CORS Failed!</span>\n\n` + 
+                    'Error: ' + error.message + '\n\n' +
+                    'This usually means:\n' +
+                    '1. Backend is not running on http://127.0.0.1:8000\n' +
+                    '2. CORS is not configured to allow file:// protocol\n' +
+                    '3. Network connection issue\n\n' +
+                    'Try opening this file through Next.js dev server instead.';
+            }
+        }
+
+        async function testRegister() {
+            const resultEl = document.getElementById('register-result');
+            resultEl.textContent = 'Testing registration...';
+
+            const testEmail = `test${Date.now()}@example.com`;
+            const payload = {
+                name: 'Test User',
+                email: testEmail,
+                password: 'Test1234!',
+                password_confirmation: 'Test1234!'
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                let data;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+                
+                if (response.ok) {
+                    resultEl.innerHTML = `<span class="success">✅ Registration Successful!</span>\n\n` + JSON.stringify({
+                        status: response.status,
+                        email: testEmail,
+                        response: data
+                    }, null, 2);
+                } else {
+                    resultEl.innerHTML = `<span class="error">❌ Registration Failed</span>\n\n` + JSON.stringify({
+                        status: response.status,
+                        statusText: response.statusText,
+                        errors: data
+                    }, null, 2);
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">❌ Request Failed!</span>\n\n` + 
+                    'Error: ' + error.message + '\n\n' +
+                    'Stack: ' + error.stack;
+            }
+        }
+
+        // Auto-run CORS test on load
+        window.addEventListener('load', () => {
+            setTimeout(testCORS, 500);
+        });
+    </script>
+</body>
+</html>

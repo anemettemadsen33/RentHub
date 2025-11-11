@@ -53,4 +53,9 @@ class ConversationPolicy
         return $user->id === $conversation->tenant_id
             || $user->id === $conversation->owner_id;
     }
+
+    public function unarchive(User $user, Conversation $conversation): bool
+    {
+        return $this->archive($user, $conversation);
+    }
 }

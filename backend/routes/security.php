@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 // OAuth 2.0 Routes
 Route::prefix('oauth')->group(function () {
-    Route::post('/authorize', [OAuth2Controller::class, 'authorize'])->middleware('auth:sanctum');
+    Route::post('/authorize', [OAuth2Controller::class, 'authorizeClient'])->middleware('auth:sanctum');
     Route::post('/token', [OAuth2Controller::class, 'token']);
     Route::post('/revoke', [OAuth2Controller::class, 'revoke'])->middleware('auth:sanctum');
     Route::post('/introspect', [OAuth2Controller::class, 'introspect'])->middleware('auth:sanctum');

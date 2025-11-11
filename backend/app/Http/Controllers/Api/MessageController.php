@@ -184,4 +184,52 @@ class MessageController extends Controller
             ],
         ]);
     }
+
+    public function myMessages(Request $request)
+    {
+        $user = $request->user();
+
+        $conversations = Conversation::where(function ($query) use ($user) {
+            $query->where('tenant_id', $user->id)
+                ->orWhere('owner_id', $user->id);
+        })
+            ->with(['latestMessage', 'tenant:id,name,avatar', 'owner:id,name,avatar'])
+            ->withCount(['messages as unread_count' => function ($query) use ($user) {
+                $query->where('sender_id', '!=', $user->id)
+                    ->where('is_read', false);
+            }])
+            ->orderBy('updated_at', 'desc')
+            ->paginate($request->per_page ?? 20);
+
+        return response()->json([
+            'success' => true,
+            'data' => $conversations->items(),
+        ]);
+    }
+
+    public function unreadCount(Request $request)
+    {
+        $user = $request->user();
+
+        try {
+            $count = Message::whereHas('conversation', function ($query) use ($user) {
+                $query->where('tenant_id', $user->id)
+                    ->orWhere('owner_id', $user->id);
+            })
+                ->where('sender_id', '!=', $user->id)
+                ->where('is_read', false)
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => ['count' => $count],
+            ]);
+        } catch (\Exception $e) {
+            // Return 0 if there's an error (likely no conversations)
+            return response()->json([
+                'success' => true,
+                'data' => ['count' => 0],
+            ]);
+        }
+    }
 }
