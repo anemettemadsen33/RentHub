@@ -132,7 +132,7 @@ class ReviewController extends Controller
                 ->first();
             if (! $booking || $booking->status !== 'completed') {
                 return response()->json([
-                    'message' => 'You must complete the booking before reviewing this property.'
+                    'message' => 'You must complete the booking before reviewing this property.',
                 ], 422);
             }
         } else {
@@ -143,7 +143,7 @@ class ReviewController extends Controller
                 ->first();
             if (! $booking) {
                 return response()->json([
-                    'message' => 'You must have a completed booking for this property before reviewing.'
+                    'message' => 'You must have a completed booking for this property before reviewing.',
                 ], 422);
             }
             $bookingId = $booking->id;
@@ -155,7 +155,7 @@ class ReviewController extends Controller
             ->first();
         if ($existingPropertyReview) {
             return response()->json([
-                'message' => 'You have already reviewed this property.'
+                'message' => 'You have already reviewed this property.',
             ], 422);
         }
 

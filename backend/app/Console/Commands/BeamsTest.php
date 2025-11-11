@@ -13,8 +13,9 @@ class BeamsTest extends Command
 
     public function handle(BeamsClient $beams)
     {
-        if (!$beams->isConfigured()) {
+        if (! $beams->isConfigured()) {
             $this->error('Pusher Beams is not configured. Set PUSHER_BEAMS_INSTANCE_ID and PUSHER_BEAMS_SECRET_KEY.');
+
             return self::FAILURE;
         }
 
@@ -26,10 +27,12 @@ class BeamsTest extends Command
 
         if ($result['ok'] ?? false) {
             $this->info("Beams notification sent to interest '{$interest}'.");
+
             return self::SUCCESS;
         }
 
-        $this->error('Failed to send Beams notification: ' . ($result['error'] ?? 'unknown error'));
+        $this->error('Failed to send Beams notification: '.($result['error'] ?? 'unknown error'));
+
         return self::FAILURE;
     }
 }

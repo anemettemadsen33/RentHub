@@ -19,7 +19,7 @@ class DashboardServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new DashboardService();
+        $this->service = new DashboardService;
     }
 
     public function test_stats_are_computed_and_cached()

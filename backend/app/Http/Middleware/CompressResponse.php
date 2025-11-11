@@ -22,7 +22,7 @@ class CompressResponse
 
         // Check if client accepts compression
         $acceptEncoding = $request->header('Accept-Encoding', '');
-        
+
         // Check if response should be compressed
         if (! $this->shouldCompress($response)) {
             return $response;
@@ -30,7 +30,7 @@ class CompressResponse
 
         // Determine compression method
         $method = $this->determineCompressionMethod($acceptEncoding);
-        
+
         if (! $method) {
             return $response;
         }
@@ -44,7 +44,7 @@ class CompressResponse
     private function shouldCompress(Response $response): bool
     {
         $content = $response->getContent();
-        
+
         // Don't compress empty responses
         if (empty($content)) {
             return false;

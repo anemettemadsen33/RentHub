@@ -18,8 +18,7 @@ class CompressResponseTest extends TestCase
         // Request with Accept-Encoding: gzip
         $response = $this->withHeaders(['Accept-Encoding' => 'gzip'])
             ->getJson('/api/v1/dashboard/stats');
-    $response->assertOk();
-
+        $response->assertOk();
 
         // Check if response is compressed
         if ($response->headers->has('Content-Encoding')) {

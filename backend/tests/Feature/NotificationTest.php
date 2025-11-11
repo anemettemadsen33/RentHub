@@ -113,7 +113,7 @@ class NotificationTest extends TestCase
     {
         // Unfake Notification to allow actual database notifications
         \Illuminate\Support\Facades\Notification::swap(new \Illuminate\Notifications\ChannelManager(app()));
-        
+
         // Create a notification for the user
         $this->user->notify(new \App\Notifications\TestNotification);
         $notification = $this->user->notifications()->first();
@@ -126,7 +126,7 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertNotNull($notification->fresh()->read_at);
-        
+
         // Re-fake Notification for subsequent tests
         \Illuminate\Support\Facades\Notification::fake();
     }
@@ -146,7 +146,7 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(0, $this->user->unreadNotifications()->count());
-        
+
         // Re-fake Notification for subsequent tests
         \Illuminate\Support\Facades\Notification::fake();
     }
@@ -167,7 +167,7 @@ class NotificationTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseMissing('notifications', ['id' => $notification->id]);
-        
+
         // Re-fake Notification for subsequent tests
         \Illuminate\Support\Facades\Notification::fake();
     }
@@ -186,7 +186,7 @@ class NotificationTest extends TestCase
 
         $response->assertOk()
             ->assertJsonFragment(['count' => 3]);
-            
+
         // Re-fake Notification for subsequent tests
         \Illuminate\Support\Facades\Notification::fake();
     }

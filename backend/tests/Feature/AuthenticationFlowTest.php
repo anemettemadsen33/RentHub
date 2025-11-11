@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class AuthenticationFlowTest extends TestCase
 {
@@ -24,18 +24,18 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure([
-                     'user' => ['id', 'name', 'email', 'role', 'created_at'],
-                     'token',
-                     'message',
-                 ])
-                 ->assertJson([
-                     'user' => [
-                         'name' => 'John Doe',
-                         'email' => 'john@example.com',
-                         'role' => 'tenant',
-                     ],
-                 ]);
+            ->assertJsonStructure([
+                'user' => ['id', 'name', 'email', 'role', 'created_at'],
+                'token',
+                'message',
+            ])
+            ->assertJson([
+                'user' => [
+                    'name' => 'John Doe',
+                    'email' => 'john@example.com',
+                    'role' => 'tenant',
+                ],
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -57,11 +57,11 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJson([
-                     'user' => [
-                         'role' => 'owner',
-                     ],
-                 ]);
+            ->assertJson([
+                'user' => [
+                    'role' => 'owner',
+                ],
+            ]);
     }
 
     /**
@@ -77,7 +77,7 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -95,7 +95,7 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -111,7 +111,7 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['password']);
+            ->assertJsonValidationErrors(['password']);
     }
 
     /**
@@ -130,11 +130,11 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'user',
-                     'token',
-                     'message',
-                 ]);
+            ->assertJsonStructure([
+                'user',
+                'token',
+                'message',
+            ]);
     }
 
     /**
@@ -163,17 +163,17 @@ class AuthenticationFlowTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->getJson('/api/v1/me');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/me');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'success' => true,
-                     'data' => [
-                         'id' => $user->id,
-                         'email' => $user->email,
-                     ],
-                 ]);
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                ],
+            ]);
     }
 
     /**
@@ -184,8 +184,8 @@ class AuthenticationFlowTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->postJson('/api/v1/logout');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/v1/logout');
 
         $response->assertStatus(200);
 
@@ -212,23 +212,23 @@ class AuthenticationFlowTest extends TestCase
     public function test_token_is_revoked_after_logout(): void
     {
         $user = User::factory()->create();
-        
+
         // First request should succeed
         $token = $user->createToken('test-token')->plainTextToken;
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->getJson('/api/v1/me');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/me');
         $response->assertStatus(200);
 
         // Logout (this revokes ALL tokens for the user)
-        $this->withHeader('Authorization', 'Bearer ' . $token)
-             ->postJson('/api/v1/logout');
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/v1/logout');
 
         // Create new token to test - original token should be revoked
         $newToken = $user->createToken('new-token')->plainTextToken;
-        
+
         // Verify user can login with new token
-        $response = $this->withHeader('Authorization', 'Bearer ' . $newToken)
-                         ->getJson('/api/v1/me');
+        $response = $this->withHeader('Authorization', 'Bearer '.$newToken)
+            ->getJson('/api/v1/me');
         $response->assertStatus(200);
     }
 
@@ -238,7 +238,7 @@ class AuthenticationFlowTest extends TestCase
     public function test_password_is_hashed_in_database(): void
     {
         $password = 'Password123!';
-        
+
         $this->postJson('/api/v1/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
@@ -247,7 +247,7 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $user = User::where('email', 'john@example.com')->first();
-        
+
         $this->assertNotEquals($password, $user->password);
         $this->assertTrue(Hash::check($password, $user->password));
     }
@@ -266,18 +266,18 @@ class AuthenticationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure([
-                     'user' => [
-                         'id',
-                         'name',
-                         'email',
-                         'phone',
-                         'role',
-                         'created_at',
-                         'updated_at',
-                     ],
-                     'token',
-                     'message',
-                 ]);
+            ->assertJsonStructure([
+                'user' => [
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'role',
+                    'created_at',
+                    'updated_at',
+                ],
+                'token',
+                'message',
+            ]);
     }
 }

@@ -80,10 +80,10 @@ class PropertyImportTest extends TestCase
             'url' => 'https://www.booking.com/hotel/ro/beautiful-apartment.html',
         ]);
 
-            // Debug: See what error we get
-            if ($response->status() !== 200) {
-                dump($response->json());
-            }
+        // Debug: See what error we get
+        if ($response->status() !== 200) {
+            dump($response->json());
+        }
 
         $response->assertStatus(200)
             ->assertJson([
@@ -108,8 +108,8 @@ class PropertyImportTest extends TestCase
         $this->assertDatabaseHas('properties', [
             'user_id' => $this->user->id,
             'imported_from' => 'booking',
-                'status' => 'maintenance',
-                'is_active' => false,
+            'status' => 'maintenance',
+            'is_active' => false,
         ]);
     }
 
@@ -219,7 +219,7 @@ class PropertyImportTest extends TestCase
     }
 
     /** @test */
-        public function imported_properties_start_as_maintenance(): void
+    public function imported_properties_start_as_maintenance(): void
     {
         Sanctum::actingAs($this->user);
 
@@ -230,8 +230,8 @@ class PropertyImportTest extends TestCase
 
         $property = Property::where('user_id', $this->user->id)->first();
 
-            $this->assertEquals('maintenance', $property->status);
-            $this->assertFalse($property->is_active);
+        $this->assertEquals('maintenance', $property->status);
+        $this->assertFalse($property->is_active);
         $this->assertEquals('booking', $property->imported_from);
         $this->assertNotNull($property->external_id);
     }

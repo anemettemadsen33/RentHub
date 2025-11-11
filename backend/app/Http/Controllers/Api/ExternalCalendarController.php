@@ -80,6 +80,7 @@ class ExternalCalendarController extends Controller
         // During tests, avoid external HTTP: just mark last_synced_at
         if (app()->environment('testing')) {
             $externalCalendar->update(['last_synced_at' => now(), 'sync_error' => null]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Calendar synced successfully',

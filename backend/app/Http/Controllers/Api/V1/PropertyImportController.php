@@ -18,6 +18,7 @@ class PropertyImportController extends Controller
      * Import property from external platform
      *
      * @group Property Management
+     *
      * @authenticated
      *
      * @bodyParam platform string required Platform name (booking, airbnb, vrbo). Example: booking
@@ -70,6 +71,7 @@ class PropertyImportController extends Controller
      * Get import statistics for authenticated user
      *
      * @group Property Management
+     *
      * @authenticated
      *
      * @response 200 {
@@ -99,6 +101,7 @@ class PropertyImportController extends Controller
      * Validate import URL before importing
      *
      * @group Property Management
+     *
      * @authenticated
      *
      * @bodyParam platform string required Platform name. Example: booking
@@ -144,7 +147,7 @@ class PropertyImportController extends Controller
         return response()->json([
             'success' => true,
             'valid' => (bool) $isValid,
-            'message' => $isValid 
+            'message' => $isValid
                 ? "URL is valid for {$platform} platform"
                 : "Invalid {$platform} URL format",
         ]);

@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
 use App\Models\DataDeletionRequest;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,8 +35,7 @@ class ProcessDataDeletionJob implements ShouldQueue
     public function __construct(
         protected User $user,
         protected DataDeletionRequest $deletionRequest
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.

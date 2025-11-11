@@ -24,7 +24,7 @@ class PaymentApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $property = Property::factory()->create(['status' => 'available', 'price' => 100]);
-        
+
         $booking = Booking::factory()->create([
             'user_id' => $guest->id,
             'property_id' => $property->id,
@@ -123,7 +123,7 @@ class PaymentApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $booking = Booking::factory()->create(['user_id' => $guest->id]);
-        
+
         Payment::factory()->count(3)->create([
             'booking_id' => $booking->id,
             'user_id' => $guest->id,

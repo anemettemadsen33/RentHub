@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -17,11 +17,11 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create roles
-    $tenant = Role::firstOrCreate(['name' => 'tenant', 'guard_name' => 'web']);
-    $guest = Role::firstOrCreate(['name' => 'guest', 'guard_name' => 'web']); // Alias for tenant
-    $owner = Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
-    $host = Role::firstOrCreate(['name' => 'host', 'guard_name' => 'web']); // Alias for owner
-    $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $tenant = Role::firstOrCreate(['name' => 'tenant', 'guard_name' => 'web']);
+        $guest = Role::firstOrCreate(['name' => 'guest', 'guard_name' => 'web']); // Alias for tenant
+        $owner = Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
+        $host = Role::firstOrCreate(['name' => 'host', 'guard_name' => 'web']); // Alias for owner
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
 
         // Create permissions
         $permissions = [
@@ -30,17 +30,17 @@ class RolePermissionSeeder extends Seeder
             'create properties',
             'edit properties',
             'delete properties',
-            
+
             // Booking permissions
             'view bookings',
             'create bookings',
             'cancel bookings',
             'manage bookings',
-            
+
             // User permissions
             'manage users',
             'view users',
-            
+
             // Payment permissions
             'process payments',
             'refund payments',
@@ -52,19 +52,19 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Assign permissions to roles
-          // Tenant permissions (same as guest)
-          $tenantPermissions = [
+        // Tenant permissions (same as guest)
+        $tenantPermissions = [
             'view properties',
             'view bookings',
             'create bookings',
             'cancel bookings',
             'view payments',
-          ];
-          $tenant->givePermissionTo($tenantPermissions);
-          $guest->givePermissionTo($tenantPermissions);
+        ];
+        $tenant->givePermissionTo($tenantPermissions);
+        $guest->givePermissionTo($tenantPermissions);
 
-          // Owner permissions (same as host)
-          $ownerPermissions = [
+        // Owner permissions (same as host)
+        $ownerPermissions = [
             'view properties',
             'create properties',
             'edit properties',
@@ -73,15 +73,15 @@ class RolePermissionSeeder extends Seeder
             'manage bookings',
             'process payments',
             'view payments',
-          ];
-          $owner->givePermissionTo($ownerPermissions);
-          $host->givePermissionTo($ownerPermissions);
+        ];
+        $owner->givePermissionTo($ownerPermissions);
+        $host->givePermissionTo($ownerPermissions);
 
         $admin->givePermissionTo(Permission::all());
 
         $this->command->info('✅ Roles and permissions created successfully!');
-    $this->command->info('   - tenant/guest: Basic user permissions');
-    $this->command->info('   - owner/host: Property management permissions');
-    $this->command->info('   - admin: All permissions');
+        $this->command->info('   - tenant/guest: Basic user permissions');
+        $this->command->info('   - owner/host: Property management permissions');
+        $this->command->info('   - admin: All permissions');
     }
 }

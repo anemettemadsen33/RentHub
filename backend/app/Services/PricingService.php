@@ -69,6 +69,7 @@ class PricingService
         $totalWithCleaning = $totalPrice + $cleaningFee;
 
         $nightlySubtotal = $totalPrice; // excludes cleaning fee
+
         return [
             'base_price' => $property->price_per_night,
             'daily_prices' => $dailyPrices,

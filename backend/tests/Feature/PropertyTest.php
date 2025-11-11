@@ -143,8 +143,8 @@ class PropertyTest extends TestCase
 
     public function test_can_filter_properties_by_type()
     {
-    Property::factory()->create(['type' => 'apartment', 'status' => 'available']);
-    Property::factory()->create(['type' => 'house', 'status' => 'available']);
+        Property::factory()->create(['type' => 'apartment', 'status' => 'available']);
+        Property::factory()->create(['type' => 'house', 'status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties?type=apartment');
 
@@ -154,9 +154,9 @@ class PropertyTest extends TestCase
 
     public function test_can_sort_properties()
     {
-    Property::factory()->create(['price' => 100, 'price_per_night' => 100, 'status' => 'available']);
-    Property::factory()->create(['price' => 200, 'price_per_night' => 200, 'status' => 'available']);
-    Property::factory()->create(['price' => 50, 'price_per_night' => 50, 'status' => 'available']);
+        Property::factory()->create(['price' => 100, 'price_per_night' => 100, 'status' => 'available']);
+        Property::factory()->create(['price' => 200, 'price_per_night' => 200, 'status' => 'available']);
+        Property::factory()->create(['price' => 50, 'price_per_night' => 50, 'status' => 'available']);
 
         $response = $this->getJson('/api/v1/properties?sort=price&order=asc');
 

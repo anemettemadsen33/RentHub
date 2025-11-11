@@ -23,13 +23,13 @@ class PaymentProcessedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Plată Procesată #' . $this->payment->id)
+            ->subject('Plată Procesată #'.$this->payment->id)
             ->greeting('Bună ziua!')
             ->line('Plata dumneavoastră a fost procesată cu succes.')
-            ->line('Sumă: ' . number_format($this->payment->amount, 2) . ' RON')
-            ->line('Metodă: ' . ucfirst($this->payment->payment_method))
-            ->line('Data: ' . $this->payment->created_at->format('d.m.Y H:i'))
-            ->action('Vezi Detalii', url('/admin/payments/' . $this->payment->id))
+            ->line('Sumă: '.number_format($this->payment->amount, 2).' RON')
+            ->line('Metodă: '.ucfirst($this->payment->payment_method))
+            ->line('Data: '.$this->payment->created_at->format('d.m.Y H:i'))
+            ->action('Vezi Detalii', url('/admin/payments/'.$this->payment->id))
             ->line('Vă mulțumim!');
     }
 
@@ -39,7 +39,7 @@ class PaymentProcessedNotification extends Notification
             'payment_id' => $this->payment->id,
             'amount' => $this->payment->amount,
             'payment_method' => $this->payment->payment_method,
-            'message' => 'Plată procesată: ' . number_format($this->payment->amount, 2) . ' RON',
+            'message' => 'Plată procesată: '.number_format($this->payment->amount, 2).' RON',
         ];
     }
 }

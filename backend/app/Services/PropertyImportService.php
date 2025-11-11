@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Property;
 use App\Models\User;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -13,10 +12,7 @@ class PropertyImportService
     /**
      * Import property from external platform
      *
-     * @param string $platform ('booking', 'airbnb', 'vrbo')
-     * @param string $url
-     * @param User $user
-     * @return array
+     * @param  string  $platform  ('booking', 'airbnb', 'vrbo')
      */
     public function importProperty(string $platform, string $url, User $user): array
     {
@@ -39,7 +35,7 @@ class PropertyImportService
                 'success' => true,
                 'property_id' => $property->id,
                 'message' => 'Property imported successfully',
-                    'data' => $property->load(['amenities']),
+                'data' => $property->load(['amenities']),
             ];
         } catch (\Exception $e) {
             Log::error('Property import failed', [
@@ -66,7 +62,7 @@ class PropertyImportService
             'vrbo' => '/^https?:\/\/(www\.)?vrbo\.com\/.+/',
         ];
 
-        if (!preg_match($patterns[$platform], $url)) {
+        if (! preg_match($patterns[$platform], $url)) {
             throw new \InvalidArgumentException("Invalid {$platform} URL format");
         }
     }
@@ -78,7 +74,7 @@ class PropertyImportService
     {
         // TODO: Implement actual Booking.com API integration
         // For now, return mock data structure
-        
+
         // Extract property ID from URL
         preg_match('/hotel\/[a-z]+\/([^\.]+)/', $url, $matches);
         $propertySlug = $matches[1] ?? 'property';
@@ -115,7 +111,7 @@ class PropertyImportService
     private function importFromAirbnb(string $url): array
     {
         // TODO: Implement actual Airbnb API integration
-        
+
         // Extract room ID from URL
         preg_match('/rooms\/(\d+)/', $url, $matches);
         $roomId = $matches[1] ?? '12345';
@@ -123,7 +119,7 @@ class PropertyImportService
         return [
             'platform' => 'airbnb',
             'external_id' => $roomId,
-            'title' => 'Airbnb Imported Property #' . $roomId,
+            'title' => 'Airbnb Imported Property #'.$roomId,
             'description' => 'Imported from Airbnb - Cozy and modern space perfect for your stay.',
             'type' => 'house',
             'furnishing_status' => 'furnished',
@@ -153,7 +149,7 @@ class PropertyImportService
     private function importFromVrbo(string $url): array
     {
         // TODO: Implement actual VRBO API integration
-        
+
         // Extract property ID from URL
         preg_match('/\/(\d+)/', $url, $matches);
         $propertyId = $matches[1] ?? '67890';
@@ -161,7 +157,7 @@ class PropertyImportService
         return [
             'platform' => 'vrbo',
             'external_id' => $propertyId,
-            'title' => 'VRBO Vacation Rental #' . $propertyId,
+            'title' => 'VRBO Vacation Rental #'.$propertyId,
             'description' => 'Imported from VRBO - Spacious vacation rental with stunning views.',
             'type' => 'villa',
             'furnishing_status' => 'furnished',
@@ -209,22 +205,22 @@ class PropertyImportService
             'postal_code' => $data['postal_code'],
             'latitude' => $data['latitude'] ?? null,
             'longitude' => $data['longitude'] ?? null,
-                'status' => 'maintenance', // Starts as maintenance for owner review
-                'is_active' => false, // Not active until owner reviews and publishes
+            'status' => 'maintenance', // Starts as maintenance for owner review
+            'is_active' => false, // Not active until owner reviews and publishes
             'imported_from' => $data['platform'],
             'external_id' => $data['external_id'],
         ]);
 
         // Attach amenities if they exist
-        if (!empty($data['amenities'])) {
+        if (! empty($data['amenities'])) {
             $this->attachAmenities($property, $data['amenities']);
         }
 
         // Create photo records if they exist
-            // TODO: Uncomment when Property model has photos() relationship
-            // if (!empty($data['photos'])) {
-            //     $this->attachPhotos($property, $data['photos']);
-            // }
+        // TODO: Uncomment when Property model has photos() relationship
+        // if (!empty($data['photos'])) {
+        //     $this->attachPhotos($property, $data['photos']);
+        // }
 
         return $property;
     }

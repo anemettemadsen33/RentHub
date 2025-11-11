@@ -14,7 +14,7 @@ class E2ESeeder extends Seeder
         // Create test user if Users table exists
         if ($this->tableExists('users')) {
             $user = DB::table('users')->where('email', 'test@example.com')->first();
-            if (!$user) {
+            if (! $user) {
                 DB::table('users')->insert([
                     'name' => 'Test User',
                     'email' => 'test@example.com',
@@ -38,7 +38,7 @@ class E2ESeeder extends Seeder
         // Create a sample property
         if ($this->tableExists('properties')) {
             $property = DB::table('properties')->first();
-            if (!$property) {
+            if (! $property) {
                 DB::table('properties')->insert([
                     'title' => 'E2E Test Property',
                     'slug' => 'e2e-test-property',
@@ -57,7 +57,7 @@ class E2ESeeder extends Seeder
             $userId = DB::table('users')->where('email', 'test@example.com')->value('id');
             $propertyId = DB::table('properties')->value('id');
             $booking = DB::table('bookings')->where('user_id', $userId)->where('property_id', $propertyId)->first();
-            if (!$booking) {
+            if (! $booking) {
                 DB::table('bookings')->insert([
                     'user_id' => $userId,
                     'property_id' => $propertyId,
@@ -88,7 +88,7 @@ class E2ESeeder extends Seeder
             $userId = DB::table('users')->where('email', 'test@example.com')->value('id');
             $propertyId = DB::table('properties')->value('id');
             $invoice = DB::table('invoices')->where('booking_id', $bookingId)->first();
-            if (!$invoice) {
+            if (! $invoice) {
                 DB::table('invoices')->insert([
                     'invoice_number' => 'E2E-INV-'.Str::upper(Str::random(6)),
                     'booking_id' => $bookingId,

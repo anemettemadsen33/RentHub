@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Api;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class AuthenticationApiTest extends TestCase
 {
@@ -119,7 +119,7 @@ class AuthenticationApiTest extends TestCase
         ]);
 
         $response->assertSuccessful();
-        
+
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Updated Name',

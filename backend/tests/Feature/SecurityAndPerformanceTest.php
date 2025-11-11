@@ -39,7 +39,7 @@ class SecurityAndPerformanceTest extends TestCase
 
         // OPTIONS might return 204 (No Content) or 200
         $this->assertContains($response->getStatusCode(), [200, 204, 404]);
-        
+
         // CORS middleware exists and is properly configured
         $this->assertTrue(true);
     }
@@ -62,12 +62,12 @@ class SecurityAndPerformanceTest extends TestCase
 
         // Attempt SQL injection in search parameter
         $maliciousInput = "'; DROP TABLE users; --";
-        
-        $response = $this->getJson('/api/v1/properties?search=' . urlencode($maliciousInput));
+
+        $response = $this->getJson('/api/v1/properties?search='.urlencode($maliciousInput));
 
         // Should not cause error, should return empty or filtered results
         $response->assertStatus(200);
-        
+
         // Verify users table still exists
         $this->assertDatabaseHas('users', ['id' => $user->id]);
     }
@@ -81,7 +81,7 @@ class SecurityAndPerformanceTest extends TestCase
 
         // Attempt XSS injection in property title
         $xssScript = '<script>alert("XSS")</script>';
-        
+
         $response = $this->postJson('/api/v1/properties', [
             'title' => $xssScript,
             'description' => 'Test property',
@@ -102,7 +102,7 @@ class SecurityAndPerformanceTest extends TestCase
             // If created, verify the XSS is escaped/sanitized
             $propertyId = $response->json('id');
             $this->assertDatabaseHas('properties', ['id' => $propertyId]);
-            
+
             // The actual XSS script should not execute when rendered
             // This is more of a frontend concern, but backend should store safely
             $this->assertTrue(true);
@@ -116,7 +116,7 @@ class SecurityAndPerformanceTest extends TestCase
     public function rate_limiting_blocks_excessive_requests()
     {
         RateLimiter::clear('test-rate-limit-key');
-        
+
         $user = User::factory()->create();
         $this->actingAs($user, 'sanctum');
 
@@ -126,7 +126,7 @@ class SecurityAndPerformanceTest extends TestCase
 
         for ($i = 0; $i < 70; $i++) {
             $response = $this->getJson('/api/v1/properties');
-            
+
             if ($response->status() === 200) {
                 $successCount++;
             } elseif ($response->status() === 429) {
@@ -166,7 +166,7 @@ class SecurityAndPerformanceTest extends TestCase
 
         // Try to update someone else's property
         $this->actingAs($otherUser, 'sanctum');
-        
+
         $response = $this->putJson("/api/v1/properties/{$property->id}", [
             'title' => 'Hacked Title',
         ]);
@@ -178,7 +178,7 @@ class SecurityAndPerformanceTest extends TestCase
     public function password_hashing_is_secure()
     {
         $password = 'SecurePassword123!';
-        
+
         $user = User::factory()->create([
             'password' => bcrypt($password),
         ]);
@@ -233,7 +233,7 @@ class SecurityAndPerformanceTest extends TestCase
     {
         // Check that /api/v1 prefix is used
         $response = $this->getJson('/api/v1/properties');
-        
+
         // Should respond (might be 401 if auth required, but route exists)
         $this->assertContains($response->status(), [200, 401]);
     }
@@ -245,12 +245,12 @@ class SecurityAndPerformanceTest extends TestCase
         $response = $this->getJson('/api/v1/nonexistent-endpoint');
 
         $response->assertStatus(404);
-        
+
         // In production (APP_DEBUG=false), error messages should not expose internals
         // In testing/development (APP_DEBUG=true), detailed errors are shown
         // This test verifies production config should have APP_DEBUG=false
         $isDebugMode = config('app.debug');
-        
+
         if ($isDebugMode) {
             // In debug mode, detailed errors are expected (for development)
             $this->assertTrue(true);
@@ -268,7 +268,7 @@ class SecurityAndPerformanceTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/v1/profile');
 
         $response->assertStatus(200);
@@ -280,10 +280,10 @@ class SecurityAndPerformanceTest extends TestCase
         // This is enforced by Laravel's query builder
         // Test that we're using Eloquent/Query Builder, not raw queries
         $user = User::factory()->create();
-        
+
         // This uses prepared statements under the hood
         $found = User::where('email', $user->email)->first();
-        
+
         $this->assertEquals($user->id, $found->id);
     }
 }

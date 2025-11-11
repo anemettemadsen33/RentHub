@@ -23,7 +23,7 @@ class SendBookingConfirmedNotificationTest extends TestCase
         $owner = User::factory()->create();
         $guest = User::factory()->create();
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $booking = Booking::factory()->create([
             'property_id' => $property->id,
             'user_id' => $guest->id,
@@ -48,7 +48,7 @@ class SendBookingConfirmedNotificationTest extends TestCase
         $owner = User::factory()->create();
         $guest = User::factory()->create();
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $booking = Booking::factory()->create([
             'property_id' => $property->id,
             'user_id' => $guest->id,

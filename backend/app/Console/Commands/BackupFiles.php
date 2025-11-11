@@ -9,24 +9,26 @@ use ZipArchive;
 class BackupFiles extends Command
 {
     protected $signature = 'backup:files';
+
     protected $description = 'Backup uploaded files';
 
     public function handle(): int
     {
         $this->info('Starting files backup...');
 
-        $filename = 'files-backup-' . now()->format('Y-m-d-His') . '.zip';
-        $path = storage_path('app/backups/' . $filename);
+        $filename = 'files-backup-'.now()->format('Y-m-d-His').'.zip';
+        $path = storage_path('app/backups/'.$filename);
 
         // Create backups directory if it doesn't exist
-        if (!file_exists(dirname($path))) {
+        if (! file_exists(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             $this->error('Could not create zip file!');
+
             return self::FAILURE;
         }
 
@@ -44,8 +46,8 @@ class BackupFiles extends Command
 
         $zip->close();
 
-        $this->info('Files backed up to: ' . $path);
-        $this->info('Backup size: ' . $this->formatBytes(filesize($path)));
+        $this->info('Files backed up to: '.$path);
+        $this->info('Backup size: '.$this->formatBytes(filesize($path)));
 
         return self::SUCCESS;
     }
@@ -58,9 +60,9 @@ class BackupFiles extends Command
         );
 
         foreach ($files as $file) {
-            if (!$file->isDir()) {
+            if (! $file->isDir()) {
                 $filePath = $file->getRealPath();
-                $relativePath = $localPath . '/' . substr($filePath, strlen($directory) + 1);
+                $relativePath = $localPath.'/'.substr($filePath, strlen($directory) + 1);
                 $zip->addFile($filePath, $relativePath);
                 $this->output->write('.');
             }
@@ -76,6 +78,6 @@ class BackupFiles extends Command
             $bytes /= 1024;
         }
 
-        return round($bytes, $precision) . ' ' . $units[$i];
+        return round($bytes, $precision).' '.$units[$i];
     }
 }

@@ -21,7 +21,7 @@ class PropertyAvailabilityController extends Controller
 
         for ($i = 0; $i < 30; $i++) {
             $date = $start->copy()->addDays($i)->format('Y-m-d');
-            if (!in_array($date, $blockedDates)) {
+            if (! in_array($date, $blockedDates)) {
                 $availableDates[] = $date;
             }
         }

@@ -211,7 +211,7 @@ class ConciergeBookingController extends Controller
             ->first();
 
         if ($payment) {
-            $payment->notes = trim(($payment->notes ? ($payment->notes."\n") : '') . 'Refund reason: Concierge booking cancelled - ' . $request->reason);
+            $payment->notes = trim(($payment->notes ? ($payment->notes."\n") : '').'Refund reason: Concierge booking cancelled - '.$request->reason);
             $payment->save();
             $payment->markAsRefunded();
         }

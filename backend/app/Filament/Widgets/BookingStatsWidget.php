@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Models\Booking;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\DB;
 
 class BookingStatsWidget extends BaseWidget
 {
@@ -16,13 +15,13 @@ class BookingStatsWidget extends BaseWidget
         $today = now()->startOfDay();
         $thisMonth = now()->startOfMonth();
         $lastMonth = now()->subMonth()->startOfMonth();
-        
+
         // Total Bookings
         $totalBookings = Booking::count();
         $bookingsThisMonth = Booking::where('created_at', '>=', $thisMonth)->count();
         $bookingsLastMonth = Booking::whereBetween('created_at', [$lastMonth, $thisMonth])->count();
-        $bookingsChange = $bookingsLastMonth > 0 
-            ? (($bookingsThisMonth - $bookingsLastMonth) / $bookingsLastMonth) * 100 
+        $bookingsChange = $bookingsLastMonth > 0
+            ? (($bookingsThisMonth - $bookingsLastMonth) / $bookingsLastMonth) * 100
             : 0;
 
         // Active Bookings

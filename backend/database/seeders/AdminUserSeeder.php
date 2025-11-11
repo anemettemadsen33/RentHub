@@ -12,10 +12,11 @@ class AdminUserSeeder extends Seeder
     {
         // Check if admin already exists
         $existing = User::where('email', 'admin@renthub.com')->first();
-        
+
         if ($existing) {
             $this->command->info('Admin user already exists!');
-            $this->command->info('Email: ' . $existing->email);
+            $this->command->info('Email: '.$existing->email);
+
             return;
         }
 
@@ -31,6 +32,6 @@ class AdminUserSeeder extends Seeder
         $this->command->info('✓ Admin user created successfully!');
         $this->command->info('Email: admin@renthub.com');
         $this->command->info('Password: admin123');
-        $this->command->info('ID: ' . $admin->id);
+        $this->command->info('ID: '.$admin->id);
     }
 }

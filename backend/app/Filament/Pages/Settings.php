@@ -3,40 +3,40 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
-use Filament\Pages\Page;
+use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Actions\Action;
+use Filament\Pages\Page;
 use UnitEnum;
-use BackedEnum;
 
 class Settings extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?int $navigationSort = 100;
-    
+
     protected string $view = 'filament.pages.settings';
-    
+
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
-    
+
     protected static UnitEnum|string|null $navigationGroup = 'Administrare';
-    
+
     public ?array $data = [];
-    
+
     public static function getNavigationLabel(): string
     {
         return 'Setări Aplicație';
     }
-    
+
     public function getTitle(): string
     {
         return 'Setări Generale RentHub';
     }
-    
+
     public static function canAccess(): bool
     {
         return auth()->user()?->hasRole('admin') ?? false;
@@ -48,15 +48,15 @@ class Settings extends Page implements HasForms
             // General
             'site_name' => Setting::get('site_name', 'RentHub'),
             'site_description' => Setting::get('site_description', ''),
-            
+
             // Frontend & API
             'frontend_url' => Setting::get('frontend_url', env('FRONTEND_URL', 'http://localhost:3000')),
             'api_url' => Setting::get('api_url', env('APP_URL', 'http://localhost:8000')),
-            
+
             // Company
             'company_name' => Setting::get('company_name', 'RentHub'),
             'company_email' => Setting::get('company_email', env('MAIL_FROM_ADDRESS', 'info@renthub.ro')),
-            
+
             // Mail Configuration
             'mail_mailer' => Setting::get('mail_mailer', env('MAIL_MAILER', 'smtp')),
             'mail_host' => Setting::get('mail_host', env('MAIL_HOST', 'smtp.mailtrap.io')),
@@ -66,8 +66,6 @@ class Settings extends Page implements HasForms
             'mail_from_name' => Setting::get('mail_from_name', env('MAIL_FROM_NAME', 'RentHub')),
         ]);
     }
-
-
 
     public function form(Form $form): Form
     {
@@ -85,7 +83,7 @@ class Settings extends Page implements HasForms
                                     ->label('Descriere Site')
                                     ->rows(3),
                             ]),
-                        
+
                         Forms\Components\Tabs\Tab::make('Frontend & API')
                             ->icon('heroicon-o-globe-alt')
                             ->schema([
@@ -98,7 +96,7 @@ class Settings extends Page implements HasForms
                                     ->url()
                                     ->required(),
                             ]),
-                        
+
                         Forms\Components\Tabs\Tab::make('Email')
                             ->icon('heroicon-o-envelope')
                             ->schema([
@@ -127,7 +125,7 @@ class Settings extends Page implements HasForms
                                 Forms\Components\TextInput::make('mail_from_name')
                                     ->label('From Name'),
                             ])->columns(2),
-                        
+
                         Forms\Components\Tabs\Tab::make('Companie')
                             ->icon('heroicon-o-building-office')
                             ->schema([
@@ -138,7 +136,7 @@ class Settings extends Page implements HasForms
                                     ->label('Email Companie')
                                     ->email(),
                             ]),
-                    ])
+                    ]),
             ])
             ->statePath('data');
     }
@@ -146,11 +144,11 @@ class Settings extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-        
+
         foreach ($data as $key => $value) {
             Setting::set($key, $value);
         }
-        
+
         Notification::make()
             ->success()
             ->title('Setări salvate cu succes!')
@@ -167,4 +165,3 @@ class Settings extends Page implements HasForms
         ];
     }
 }
-

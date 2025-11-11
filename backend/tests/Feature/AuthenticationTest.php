@@ -106,7 +106,6 @@ class AuthenticationTest extends TestCase
             'password' => Hash::make('oldpassword'),
         ]);
 
-
         $response = $this->actingAs($user, 'sanctum')
             ->putJson('/api/v1/profile/password', [
                 'current_password' => 'oldpassword',
@@ -176,7 +175,6 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create(['email' => 'test@example.com']);
 
-
         $response = $this->postJson('/api/v1/forgot-password', [
             'email' => 'test@example.com',
         ]);
@@ -187,7 +185,7 @@ class AuthenticationTest extends TestCase
     public function test_user_can_verify_email()
     {
         $user = User::factory()->create(['email_verified_at' => null]);
-        
+
         // Generate verification URL
         $hash = sha1($user->email);
 

@@ -30,7 +30,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -62,7 +62,7 @@ class MessageApiTest extends TestCase
         $stranger->assignRole('tenant');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -87,7 +87,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -132,7 +132,7 @@ class MessageApiTest extends TestCase
         $stranger->assignRole('tenant');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -155,7 +155,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -190,7 +190,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -221,7 +221,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -253,7 +253,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -282,7 +282,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
@@ -304,7 +304,7 @@ class MessageApiTest extends TestCase
         $this->assertDatabaseHas('messages', [
             'id' => $message->id,
         ]);
-        
+
         $message->refresh();
         $this->assertNotNull($message->read_at);
     }
@@ -318,7 +318,7 @@ class MessageApiTest extends TestCase
         $owner->assignRole('owner');
 
         $property = Property::factory()->create(['user_id' => $owner->id]);
-        
+
         $conversation = Conversation::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,

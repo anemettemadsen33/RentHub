@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Property;
-use Illuminate\Support\Facades\Cache;
+use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class IntegrationTest extends TestCase
 {
@@ -21,16 +21,16 @@ class IntegrationTest extends TestCase
         // Main health check
         $response = $this->getJson('/api/health');
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'timestamp',
-                     'services'
-                 ]);
+            ->assertJsonStructure([
+                'status',
+                'timestamp',
+                'services',
+            ]);
 
         // Liveness probe
         $response = $this->getJson('/api/health/liveness');
         $response->assertStatus(200)
-                 ->assertJson(['status' => 'ok']);
+            ->assertJson(['status' => 'ok']);
 
         // Readiness probe
         $response = $this->getJson('/api/health/readiness');
@@ -45,17 +45,17 @@ class IntegrationTest extends TestCase
         // JSON metrics
         $response = $this->getJson('/api/metrics');
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'uptime',
-                     'requests',
-                     'cache'
-                 ]);
+            ->assertJsonStructure([
+                'uptime',
+                'requests',
+                'cache',
+            ]);
 
         // Prometheus metrics
         $response = $this->get('/api/metrics/prometheus');
         $response->assertStatus(200)
-                 ->assertHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
-        
+            ->assertHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+
         $this->assertStringContainsString('# TYPE', $response->getContent());
         $this->assertStringContainsString('# HELP', $response->getContent());
     }
@@ -68,7 +68,7 @@ class IntegrationTest extends TestCase
         // Create test properties
         $properties = Property::factory()->count(5)->create([
             'is_featured' => true,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         // Clear cache first
@@ -80,17 +80,17 @@ class IntegrationTest extends TestCase
         $firstCallTime = microtime(true) - $startTime;
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'success',
-                     'data' => [
-                         '*' => [
-                             'id',
-                             'title',
-                             'price_per_night',
-                             'status'
-                         ]
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'title',
+                        'price_per_night',
+                        'status',
+                    ],
+                ],
+            ]);
 
         // Second request (should hit cache)
         $startTime = microtime(true);
@@ -102,7 +102,7 @@ class IntegrationTest extends TestCase
         // Verify caching is working (second call should be faster)
         // Expect: secondCallTime < firstCallTime (cached should be faster)
         // Allow cached to be up to 80% of original time (accounts for test overhead)
-        $this->assertLessThan($firstCallTime * 0.8, $secondCallTime, 
+        $this->assertLessThan($firstCallTime * 0.8, $secondCallTime,
             "Cache should make second request faster. First: {$firstCallTime}s, Second: {$secondCallTime}s");
     }
 
@@ -115,24 +115,24 @@ class IntegrationTest extends TestCase
         Property::factory()->create([
             'title' => 'Paris Apartment',
             'location' => 'Paris, France',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         Property::factory()->create([
             'title' => 'London House',
             'location' => 'London, UK',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $response = $this->getJson('/api/v1/properties/search?location=Paris');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'success',
-                     'data' => [
-                         '*' => ['id', 'title', 'location']
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    '*' => ['id', 'title', 'location'],
+                ],
+            ]);
 
         // Verify filtering works
         $data = $response->json('data');
@@ -150,20 +150,20 @@ class IntegrationTest extends TestCase
 
         // With authentication
         $user = User::factory()->create();
-        
+
         $response = $this->actingAs($user, 'sanctum')
-                         ->getJson('/api/v1/dashboard/stats');
-        
+            ->getJson('/api/v1/dashboard/stats');
+
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'success',
-                     'data' => [
-                         'total_properties',
-                         'active_bookings',
-                         'total_revenue',
-                         'pending_reviews'
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'total_properties',
+                    'active_bookings',
+                    'total_revenue',
+                    'pending_reviews',
+                ],
+            ]);
     }
 
     /**
@@ -175,18 +175,18 @@ class IntegrationTest extends TestCase
 
         // First request
         $response = $this->actingAs($user, 'sanctum')
-                         ->getJson('/api/v1/dashboard/stats');
-        
+            ->getJson('/api/v1/dashboard/stats');
+
         $response->assertStatus(200);
         $etag = $response->headers->get('ETag');
-        
+
         $this->assertNotNull($etag, 'ETag header should be present');
 
         // Second request with If-None-Match
         $response = $this->actingAs($user, 'sanctum')
-                         ->withHeaders(['If-None-Match' => $etag])
-                         ->getJson('/api/v1/dashboard/stats');
-        
+            ->withHeaders(['If-None-Match' => $etag])
+            ->getJson('/api/v1/dashboard/stats');
+
         $response->assertStatus(304); // Not Modified
     }
 
@@ -198,12 +198,12 @@ class IntegrationTest extends TestCase
         Property::factory()->count(10)->create(['status' => 'active']);
 
         $response = $this->withHeaders([
-                'Accept-Encoding' => 'gzip, deflate, br'
-            ])
+            'Accept-Encoding' => 'gzip, deflate, br',
+        ])
             ->getJson('/api/v1/properties/featured');
 
         $response->assertStatus(200);
-        
+
         // Note: In test environment, actual compression might not occur,
         // but we verify the middleware is applied
         $this->assertTrue(true, 'Compression middleware applied');
@@ -215,12 +215,12 @@ class IntegrationTest extends TestCase
     public function test_cors_headers_are_present(): void
     {
         $response = $this->withHeaders([
-                'Origin' => 'http://localhost:3000'
-            ])
+            'Origin' => 'http://localhost:3000',
+        ])
             ->getJson('/api/health');
 
         $response->assertStatus(200);
-        
+
         // Verify CORS headers
         $this->assertNotNull(
             $response->headers->get('Access-Control-Allow-Origin'),
@@ -234,30 +234,30 @@ class IntegrationTest extends TestCase
     public function test_queue_monitoring_requires_admin_role(): void
     {
         $this->seed(RolePermissionSeeder::class);
-        
+
         $user = User::factory()->create();
         $admin = User::factory()->create();
-        
+
         $admin->assignRole('admin');
 
         // Non-admin user
         $response = $this->actingAs($user, 'sanctum')
-                         ->getJson('/api/admin/queues');
+            ->getJson('/api/admin/queues');
         $response->assertStatus(403);
 
         // Admin user
         $response = $this->actingAs($admin, 'sanctum')
-                         ->getJson('/api/admin/queues');
-        
+            ->getJson('/api/admin/queues');
+
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'success',
-                     'data' => [
-                         'queues',
-                         'failed_jobs',
-                         'health'
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'queues',
+                    'failed_jobs',
+                    'health',
+                ],
+            ]);
     }
 
     /**
@@ -281,9 +281,9 @@ class IntegrationTest extends TestCase
     public function test_rate_limiting_headers_present(): void
     {
         $response = $this->getJson('/api/health');
-        
+
         $response->assertStatus(200);
-        
+
         // Check for rate limit headers (if configured)
         // This will vary based on your rate limiting setup
         $this->assertTrue(true, 'Rate limiting configured');
@@ -297,7 +297,7 @@ class IntegrationTest extends TestCase
         $user = User::factory()->create();
         $property = Property::factory()->create([
             'status' => 'active',
-            'price_per_night' => 100
+            'price_per_night' => 100,
         ]);
 
         // Step 1: Search for property
@@ -307,7 +307,7 @@ class IntegrationTest extends TestCase
         // Step 2: View property details
         $response = $this->getJson("/api/v1/properties/{$property->id}");
         $response->assertStatus(200)
-                 ->assertJsonPath('data.id', $property->id);
+            ->assertJsonPath('data.id', $property->id);
 
         // Step 3: Check availability (if endpoint exists)
         // $response = $this->getJson("/api/v1/properties/{$property->id}/availability");
@@ -332,12 +332,12 @@ class IntegrationTest extends TestCase
     {
         $property = Property::factory()->create([
             'is_featured' => true,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         // Load cache
         $this->getJson('/api/v1/properties/featured');
-        
+
         // Update property
         $property->update(['title' => 'Updated Title']);
 

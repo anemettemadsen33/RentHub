@@ -4,7 +4,6 @@ namespace Tests\Feature\Api;
 
 use App\Models\Booking;
 use App\Models\Property;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -193,7 +192,7 @@ class BookingApiTest extends TestCase
     public function guest_can_view_own_bookings()
     {
         $guest = $this->authenticateGuest();
-        
+
         Booking::factory()->count(3)->create(['user_id' => $guest->id]);
         Booking::factory()->count(2)->create();
 
@@ -208,7 +207,7 @@ class BookingApiTest extends TestCase
     {
         $host = $this->authenticateHost();
         $property = Property::factory()->create(['user_id' => $host->id]);
-        
+
         Booking::factory()->count(5)->create(['property_id' => $property->id]);
         Booking::factory()->count(3)->create();
 

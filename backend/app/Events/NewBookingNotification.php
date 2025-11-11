@@ -15,6 +15,7 @@ class NewBookingNotification implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Booking $booking;
+
     public string $message;
 
     public function __construct(Booking $booking, string $message = 'New booking received')
@@ -26,7 +27,7 @@ class NewBookingNotification implements ShouldBroadcast
     public function broadcastOn(): Channel
     {
         // Broadcast to property owner
-        return new PrivateChannel('user.' . $this->booking->property->user_id);
+        return new PrivateChannel('user.'.$this->booking->property->user_id);
     }
 
     public function broadcastAs(): string

@@ -268,7 +268,7 @@ class SmartLockController extends Controller
         Gate::authorize('view', $property);
 
         // Map device_id to lock_id for backward compatibility
-        if (isset($validated['device_id']) && !isset($validated['lock_id'])) {
+        if (isset($validated['device_id']) && ! isset($validated['lock_id'])) {
             $validated['lock_id'] = $validated['device_id'];
         }
         unset($validated['device_id']);

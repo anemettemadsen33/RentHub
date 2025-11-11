@@ -6,7 +6,6 @@ use App\Models\Amenity;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TestDataSeeder extends Seeder
 {
@@ -137,6 +136,6 @@ class TestDataSeeder extends Seeder
         $this->command->info('');
         $this->command->info('Test data seeding completed!');
         $this->command->info('Landlord: landlord@renthub.test / landlord123');
-        $this->command->info('Properties created: ' . count($properties));
+        $this->command->info('Properties created: '.count($properties));
     }
 }

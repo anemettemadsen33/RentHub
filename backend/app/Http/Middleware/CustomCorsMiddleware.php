@@ -41,7 +41,7 @@ class CustomCorsMiddleware
     private function getAllowedOrigin(Request $request): string
     {
         $origin = $request->header('Origin');
-        
+
         $allowedOrigins = [
             'http://localhost:3000',
             'http://127.0.0.1:3000',

@@ -98,7 +98,7 @@ class PrometheusMetricsService
     protected function getCounters(string $prefix): array
     {
         $counters = [];
-        
+
         try {
             $keys = Redis::keys("metrics:counter:{$prefix}:*");
 
@@ -123,7 +123,7 @@ class PrometheusMetricsService
     protected function getHistograms(string $prefix): array
     {
         $lines = [];
-        
+
         try {
             $keys = Redis::keys("metrics:histogram:{$prefix}:*");
 

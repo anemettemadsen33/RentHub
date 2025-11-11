@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * Boot the model.
@@ -266,6 +266,7 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($this->relationLoaded('roles') && $this->roles->isNotEmpty()) {
             return $this->roles->first()->name;
         }
+
         return $value;
     }
 

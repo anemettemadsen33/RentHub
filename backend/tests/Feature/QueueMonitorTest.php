@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 
@@ -27,21 +26,21 @@ class QueueMonitorTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                    'success',
-                    'data' => [
-                        'queues' => [
-                            '*' => ['name', 'size', 'status'],
-                        ],
-                        'failed_jobs' => [
-                            'total',
-                            'last_hour',
-                            'last_24_hours',
-                        ],
-                        'health' => [
-                            'status',
-                            'total_queued',
-                        ],
+                'success',
+                'data' => [
+                    'queues' => [
+                        '*' => ['name', 'size', 'status'],
                     ],
+                    'failed_jobs' => [
+                        'total',
+                        'last_hour',
+                        'last_24_hours',
+                    ],
+                    'health' => [
+                        'status',
+                        'total_queued',
+                    ],
+                ],
             ]);
     }
 

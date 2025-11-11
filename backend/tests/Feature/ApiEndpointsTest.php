@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ApiEndpointsTest extends TestCase
 {
@@ -19,7 +19,7 @@ class ApiEndpointsTest extends TestCase
 
         // May return 503 if services not configured, but structure should be valid
         $this->assertContains($response->status(), [200, 503]);
-        
+
         $response->assertJsonStructure([
             'status',
             'timestamp',
@@ -34,7 +34,7 @@ class ApiEndpointsTest extends TestCase
         $response = $this->getJson('/api/health/liveness');
 
         $response->assertStatus(200)
-                 ->assertJson(['status' => 'ok']); // Updated to match current implementation
+            ->assertJson(['status' => 'ok']); // Updated to match current implementation
     }
 
     /**
@@ -55,11 +55,11 @@ class ApiEndpointsTest extends TestCase
         $response = $this->getJson('/api/metrics');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'uptime',
-                     'requests',
-                     'cache',
-                 ]);
+            ->assertJsonStructure([
+                'uptime',
+                'requests',
+                'cache',
+            ]);
     }
 
     /**
@@ -70,7 +70,7 @@ class ApiEndpointsTest extends TestCase
         $response = $this->get('/api/metrics/prometheus');
 
         $response->assertStatus(200)
-                 ->assertHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+            ->assertHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
 
         $content = $response->getContent();
         $this->assertStringContainsString('# TYPE', $content);
@@ -85,7 +85,7 @@ class ApiEndpointsTest extends TestCase
         $response = $this->getJson('/api/v1/languages');
 
         $response->assertStatus(200);
-        
+
         // Verify it's an array or collection
         $data = $response->json();
         $this->assertIsArray($data);
@@ -179,8 +179,8 @@ class ApiEndpointsTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->getJson('/api/admin/queues');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/admin/queues');
 
         $response->assertStatus(403); // Forbidden - not admin
     }
@@ -221,9 +221,9 @@ class ApiEndpointsTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'success',
-                     'errors',
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'errors',
+            ]);
     }
 }

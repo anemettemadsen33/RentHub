@@ -10,10 +10,10 @@ class AnalyticsEventArchive extends Model
     use HasFactory;
 
     protected $fillable = [
-        'day', 'type', 'count'
+        'day', 'type', 'count',
     ];
 
     protected $casts = [
-        'day' => 'date'
+        'day' => 'date',
     ];
 }

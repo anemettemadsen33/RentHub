@@ -5,45 +5,45 @@ namespace App\Filament\Pages;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Property;
-use Filament\Pages\Page;
+use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Actions\Action;
+use Filament\Pages\Page;
 use UnitEnum;
-use BackedEnum;
 
 class Reports extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?int $navigationSort = 90;
-    
+
     protected string $view = 'filament.pages.reports';
-    
+
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-chart-bar';
-    
+
     protected static UnitEnum|string|null $navigationGroup = 'Rapoarte & Statistici';
-    
+
     public ?array $data = [];
-    
+
     public static function getNavigationLabel(): string
     {
         return 'Rapoarte';
     }
-    
+
     public function getTitle(): string
     {
         return 'Rapoarte Închirieri';
     }
-    
+
     public static function canAccess(): bool
     {
         return auth()->user()?->hasAnyRole(['admin', 'manager']) ?? false;
     }
-    
+
     public function mount(): void
     {
         $this->form->fill([
@@ -72,17 +72,17 @@ class Reports extends Page implements HasForms
                             ])
                             ->required()
                             ->live(),
-                        
+
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Data Început')
                             ->required()
                             ->default(now()->startOfMonth()),
-                        
+
                         Forms\Components\DatePicker::make('end_date')
                             ->label('Data Sfârșit')
                             ->required()
                             ->default(now()->endOfMonth()),
-                        
+
                         Forms\Components\Select::make('format')
                             ->label('Format Export')
                             ->options([
@@ -112,7 +112,7 @@ class Reports extends Page implements HasForms
     public function generateReport(): void
     {
         $data = $this->form->getState();
-        
+
         $reportType = $data['report_type'];
         $startDate = $data['start_date'];
         $endDate = $data['end_date'];
@@ -155,7 +155,7 @@ class Reports extends Page implements HasForms
 
         $data = [
             'title' => 'Raport Rezervări',
-            'period' => $startDate . ' - ' . $endDate,
+            'period' => $startDate.' - '.$endDate,
             'bookings' => $bookings,
             'total' => $bookings->sum('total_price'),
             'count' => $bookings->count(),
@@ -163,7 +163,7 @@ class Reports extends Page implements HasForms
 
         // For Excel/CSV implementation
         Notification::make()
-            ->title('Raport rezervări generat: ' . $bookings->count() . ' rezervări')
+            ->title('Raport rezervări generat: '.$bookings->count().' rezervări')
             ->success()
             ->send();
     }
@@ -177,7 +177,7 @@ class Reports extends Page implements HasForms
 
         $data = [
             'title' => 'Raport Venituri',
-            'period' => $startDate . ' - ' . $endDate,
+            'period' => $startDate.' - '.$endDate,
             'payments' => $payments,
             'total' => $payments->sum('amount'),
             'count' => $payments->count(),

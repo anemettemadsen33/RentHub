@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Booking;
-use App\Models\Property;
 use App\Models\User;
 use App\Services\MetricsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,7 +27,7 @@ class MetricsServiceTest extends TestCase
         $this->service->incrementCounter('test_counter', 3);
 
         $metrics = $this->service->getMetrics();
-        
+
         $this->assertArrayHasKey('counters', $metrics);
         // Note: In test environment without Redis properly configured, counters may be empty
         // This test validates the API structure more than specific values
@@ -43,7 +41,7 @@ class MetricsServiceTest extends TestCase
         $this->service->recordHistogram('test_latency', 150.7);
 
         $metrics = $this->service->getMetrics();
-        
+
         $this->assertArrayHasKey('histograms', $metrics);
         $this->assertIsArray($metrics['histograms']);
     }

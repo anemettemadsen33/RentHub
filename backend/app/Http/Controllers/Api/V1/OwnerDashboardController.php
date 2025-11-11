@@ -51,7 +51,8 @@ class OwnerDashboardController extends Controller
                 'data' => $stats,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Owner dashboard error: ' . $e->getMessage());
+            \Log::error('Owner dashboard error: '.$e->getMessage());
+
             return response()->json([
                 'success' => true,
                 'data' => [

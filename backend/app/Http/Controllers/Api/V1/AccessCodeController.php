@@ -311,8 +311,8 @@ class AccessCodeController extends Controller
             // Ignore provider failure
         }
 
-    // Hard delete to satisfy API expectation in tests
-    $code->forceDelete();
+        // Hard delete to satisfy API expectation in tests
+        $code->forceDelete();
 
         return response()->json([
             'success' => true,

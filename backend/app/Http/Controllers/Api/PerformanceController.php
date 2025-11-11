@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnalyticsEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Models\AnalyticsEvent;
 
 class PerformanceController extends Controller
 {
@@ -74,10 +74,12 @@ class PerformanceController extends Controller
                 $evtClientId = $event['payload']['clientId'] ?? $clientId;
                 $evtType = $event['type'] ?? 'unknown';
                 if ($evtClientId) {
-                    $cur = 0; $cap = 0;
+                    $cur = 0;
+                    $cap = 0;
                     $allowed = $this->allowClientEvent($evtClientId, (string) $evtType, $cur, $cap);
-                    if (!$allowed) {
+                    if (! $allowed) {
                         $limited++;
+
                         continue; // skip storing limited event
                     }
                 }
@@ -85,19 +87,22 @@ class PerformanceController extends Controller
                 $stored++;
             }
             Log::info('PWA Batch Events stored', ['countStored' => $stored, 'countLimited' => $limited]);
+
             return response()->json(['status' => 'batch_logged', 'countStored' => $stored, 'countLimited' => $limited]);
         }
 
         // Single event fallback
         if ($clientId) {
-            $cur = 0; $cap = 0;
+            $cur = 0;
+            $cap = 0;
             $allowed = $this->allowClientEvent($clientId, (string) ($data['type'] ?? 'unknown'), $cur, $cap);
-            if (!$allowed) {
+            if (! $allowed) {
                 return response()->json(['status' => 'rate_limited'], 429);
             }
         }
         $this->storeAnalyticsEventSafely($data);
         Log::info('PWA Event', $data);
+
         return response()->json(['status' => 'logged']);
     }
 
@@ -162,10 +167,12 @@ class PerformanceController extends Controller
                 // Set expiry ~65 seconds (cover the minute + drift)
                 Cache::put($key, $current, now()->addSeconds(65));
             }
+
             return $current <= $limit;
         } catch (\Throwable $e) {
             // Fail open if rate limiter storage fails
             Log::warning('Rate limiter failure', ['clientId' => $clientId, 'error' => $e->getMessage()]);
+
             return true;
         }
     }
@@ -176,7 +183,7 @@ class PerformanceController extends Controller
     public function getRateLimiterUsage(Request $request): JsonResponse
     {
         $clientId = $request->query('clientId');
-        if (!$clientId) {
+        if (! $clientId) {
             return response()->json(['error' => 'clientId is required'], 422);
         }
 
@@ -433,7 +440,9 @@ class PerformanceController extends Controller
                 if (! empty($chunk)) {
                     $events = array_merge($events, $chunk);
                 }
-                if (count($events) >= $limit) break;
+                if (count($events) >= $limit) {
+                    break;
+                }
             }
         }
 
@@ -480,6 +489,7 @@ class PerformanceController extends Controller
             ]);
         }
         $csv = implode("\n", $lines);
+
         return response($csv, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="analytics_events.csv"',
@@ -503,9 +513,12 @@ class PerformanceController extends Controller
         $result = [];
         foreach ($raw as $row) {
             $day = $row->day;
-            if (!isset($result[$day])) $result[$day] = [];
+            if (! isset($result[$day])) {
+                $result[$day] = [];
+            }
             $result[$day][$row->type] = (int) $row->cnt;
         }
+
         return response()->json(['summary' => $result]);
     }
 }

@@ -28,7 +28,7 @@ class SmartLockLowBatteryNotification extends Notification implements ShouldQueu
 
         return (new MailMessage)
             ->subject('⚠️ Low Battery Alert - Smart Lock Requires Attention')
-            ->greeting('Hello ' . $notifiable->name)
+            ->greeting('Hello '.$notifiable->name)
             ->line('Your smart lock battery is running low and requires replacement soon.')
             ->line("**Property:** {$property->title}")
             ->line("**Lock Name:** {$this->lock->name}")

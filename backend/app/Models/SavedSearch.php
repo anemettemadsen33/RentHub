@@ -154,6 +154,7 @@ class SavedSearch extends Model
 
         $results = $query->get();
         $this->update(['last_executed_at' => now()]);
+
         return $results;
     }
 

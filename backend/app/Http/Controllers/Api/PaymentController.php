@@ -116,14 +116,15 @@ class PaymentController extends Controller
                     }
                 }
             } catch (\Throwable $e) {
-                \Log::warning('Failed to send payment received notification: ' . $e->getMessage());
+                \Log::warning('Failed to send payment received notification: '.$e->getMessage());
             }
 
             DB::commit();
 
             // Flatten response object to match test expectation (return payment root fields)
             $payment->refresh();
-            return response()->json($payment->only(['id','booking_id','amount','status','payment_method','type']) + ['created_at' => $payment->created_at], 201);
+
+            return response()->json($payment->only(['id', 'booking_id', 'amount', 'status', 'payment_method', 'type']) + ['created_at' => $payment->created_at], 201);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -185,6 +186,7 @@ class PaymentController extends Controller
         }
 
         $payment->markAsCompleted();
+
         return response()->json($payment->fresh());
     }
 
@@ -196,11 +198,12 @@ class PaymentController extends Controller
         }
 
         if ($request->filled('reason')) {
-            $payment->notes = trim(($payment->notes ? ($payment->notes."\n") : '') . 'Refund reason: ' . $request->reason);
+            $payment->notes = trim(($payment->notes ? ($payment->notes."\n") : '').'Refund reason: '.$request->reason);
             $payment->save();
         }
 
         $payment->markAsRefunded();
+
         return response()->json($payment->fresh());
     }
 

@@ -15,6 +15,7 @@ class StorePropertyRequest extends FormRequest
             'street_address' => $this->input('street_address', $this->input('address')),
         ]);
     }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -32,7 +33,7 @@ class StorePropertyRequest extends FormRequest
                 'has_any' => $this->user()?->hasAnyRole(['owner', 'host', 'admin']) ?? false,
             ]);
         }
-        
+
         // Only owners/hosts and admins can create properties
         return $this->user() && $this->user()->hasAnyRole(['owner', 'host', 'admin']);
     }

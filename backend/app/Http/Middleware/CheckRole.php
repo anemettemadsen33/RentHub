@@ -40,6 +40,7 @@ class CheckRole
                     'user_roles' => $request->user()->roles->pluck('name')->toArray(),
                 ]);
             }
+
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Required role: '.implode(' or ', $roles),

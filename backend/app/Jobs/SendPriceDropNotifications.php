@@ -15,6 +15,7 @@ class SendPriceDropNotifications implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $backoff = [60, 300, 900];
 
     /**

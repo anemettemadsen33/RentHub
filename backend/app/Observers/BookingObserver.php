@@ -4,9 +4,9 @@ namespace App\Observers;
 
 use App\Models\Booking;
 use App\Models\GoogleCalendarToken;
+use App\Services\DashboardService;
 use App\Services\GoogleCalendarService;
 use App\Services\InvoiceGenerationService;
-use App\Services\DashboardService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 

@@ -35,7 +35,7 @@ class PropertyApiTest extends TestCase
                         'description',
                         'price',
                         'status',
-                    ]
+                    ],
                 ],
             ])
             ->assertJson(['success' => true])
@@ -54,14 +54,14 @@ class PropertyApiTest extends TestCase
                 'data' => [
                     'id' => $property->id,
                     'title' => $property->title,
-                ]
+                ],
             ]);
     }
 
     /** @test */
     public function it_can_create_property_as_host()
     {
-    $host = $this->authenticateUser('owner');
+        $host = $this->authenticateUser('owner');
 
         $propertyData = [
             'title' => 'Test Property',
@@ -113,7 +113,7 @@ class PropertyApiTest extends TestCase
     /** @test */
     public function it_can_update_own_property()
     {
-    $host = $this->authenticateUser('owner');
+        $host = $this->authenticateUser('owner');
         $property = Property::factory()->create(['user_id' => $host->id]);
 
         $updateData = [
@@ -135,9 +135,9 @@ class PropertyApiTest extends TestCase
     /** @test */
     public function it_cannot_update_other_host_property()
     {
-    $this->authenticateUser('owner');
+        $this->authenticateUser('owner');
         $otherHost = User::factory()->create();
-    $otherHost->assignRole('owner');
+        $otherHost->assignRole('owner');
         $property = Property::factory()->create(['user_id' => $otherHost->id]);
 
         $updateData = ['title' => 'Hacked Title'];
@@ -150,7 +150,7 @@ class PropertyApiTest extends TestCase
     /** @test */
     public function it_can_delete_own_property()
     {
-    $host = $this->authenticateUser('owner');
+        $host = $this->authenticateUser('owner');
         $property = Property::factory()->create(['user_id' => $host->id]);
 
         $response = $this->deleteJson("/api/v1/properties/{$property->id}");
@@ -171,7 +171,7 @@ class PropertyApiTest extends TestCase
             'city' => 'New York',
             'status' => 'active',
         ]);
-        
+
         Property::factory()->create([
             'city' => 'Los Angeles',
             'status' => 'active',
@@ -201,7 +201,7 @@ class PropertyApiTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_property()
     {
-    $this->authenticateUser('owner');
+        $this->authenticateUser('owner');
 
         $response = $this->postJson('/api/v1/properties', []);
         $response->assertStatus(422)

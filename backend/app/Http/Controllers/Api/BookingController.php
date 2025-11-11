@@ -51,7 +51,7 @@ class BookingController extends Controller
         $user = Auth::user();
 
         // Support both 'message' and 'special_requests' for backward compatibility
-        if ($request->has('message') && !$request->has('special_requests')) {
+        if ($request->has('message') && ! $request->has('special_requests')) {
             $request->merge(['special_requests' => $request->message]);
         }
 
@@ -70,8 +70,9 @@ class BookingController extends Controller
         if ($validator->fails()) {
             \Log::error('Booking validation failed', [
                 'errors' => $validator->errors()->toArray(),
-                'data' => $request->all()
+                'data' => $request->all(),
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -80,10 +81,11 @@ class BookingController extends Controller
         }
 
         $property = Property::find($request->property_id);
-        
-        if (!$property) {
+
+        if (! $property) {
             // For testing purposes, return a mock booking
             \Log::warning('Property not found, returning mock booking', ['property_id' => $request->property_id]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Booking created successfully (mock)',
@@ -107,6 +109,7 @@ class BookingController extends Controller
                 'requested_guests' => $request->guests,
                 'property_id' => $property->id,
             ]);
+
             return response()->json([
                 'message' => 'The given data was invalid.',
                 'errors' => [
@@ -137,6 +140,7 @@ class BookingController extends Controller
                 'check_in' => $request->check_in,
                 'check_out' => $request->check_out,
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Property is not available for the selected dates',
@@ -164,6 +168,7 @@ class BookingController extends Controller
                 'check_in' => $request->check_in,
                 'check_out' => $request->check_out,
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Property is not available for the selected dates',
@@ -174,14 +179,14 @@ class BookingController extends Controller
         }
 
         // Calculate pricing
-    $nights = $checkIn->diffInDays($checkOut);
-    // Legacy contract expected by tests: total = nights * base price (no fees/taxes)
-    $basePrice = $property->price ?? $property->price_per_night ?? 0;
-    $subtotal = $nights * $basePrice;
-    $cleaningFee = 0; // exclude from legacy total
-    $securityDeposit = 0; // exclude from legacy total
-    $taxes = 0; // exclude from legacy total
-    $totalAmount = $subtotal;
+        $nights = $checkIn->diffInDays($checkOut);
+        // Legacy contract expected by tests: total = nights * base price (no fees/taxes)
+        $basePrice = $property->price ?? $property->price_per_night ?? 0;
+        $subtotal = $nights * $basePrice;
+        $cleaningFee = 0; // exclude from legacy total
+        $securityDeposit = 0; // exclude from legacy total
+        $taxes = 0; // exclude from legacy total
+        $totalAmount = $subtotal;
 
         $booking = Booking::create([
             'property_id' => $property->id,
@@ -310,7 +315,7 @@ class BookingController extends Controller
         }
 
         // Allow cancelling if booking is pending or confirmed
-        if (!in_array($booking->status, ['pending', 'confirmed'], true)) {
+        if (! in_array($booking->status, ['pending', 'confirmed'], true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only pending or confirmed bookings can be cancelled',
@@ -341,7 +346,7 @@ class BookingController extends Controller
         }
 
         // Allow cancelling if booking is pending or confirmed
-        if (!in_array($booking->status, ['pending', 'confirmed'], true)) {
+        if (! in_array($booking->status, ['pending', 'confirmed'], true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only pending or confirmed bookings can be cancelled',
@@ -363,14 +368,14 @@ class BookingController extends Controller
     public function confirm(string $id)
     {
         $booking = Booking::findOrFail($id);
-        
+
         // Check permissions
         $user = Auth::user();
         $isAdmin = $user->role === 'admin';
-        $isOwner = $user->role === 'owner' && $booking->property && 
+        $isOwner = $user->role === 'owner' && $booking->property &&
                    ($booking->property->user_id === $user->id || $booking->property->owner_id === $user->id);
 
-        if (!$isAdmin && !$isOwner) {
+        if (! $isAdmin && ! $isOwner) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -402,7 +407,7 @@ class BookingController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to send booking confirmation notification: ' . $e->getMessage());
+            \Log::warning('Failed to send booking confirmation notification: '.$e->getMessage());
         }
 
         // Generate access code if smart lock exists
@@ -410,7 +415,7 @@ class BookingController extends Controller
             $smartLockService = app(\App\Services\SmartLock\SmartLockService::class);
             $smartLockService->createAccessCodeForBooking($booking);
         } catch (\Exception $e) {
-            \Log::warning('Failed to create access code: ' . $e->getMessage());
+            \Log::warning('Failed to create access code: '.$e->getMessage());
         }
 
         $booking->load(['property', 'user']);

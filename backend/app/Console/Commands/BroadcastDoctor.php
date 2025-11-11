@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 class BroadcastDoctor extends Command
 {
     protected $signature = 'broadcast:doctor';
+
     protected $description = 'Diagnose Laravel broadcasting (Pusher Channels) configuration and connectivity';
 
     public function handle(): int
@@ -27,16 +28,18 @@ class BroadcastDoctor extends Command
         $scheme = data_get(config('broadcasting.connections.pusher.options'), 'scheme');
         $port = data_get(config('broadcasting.connections.pusher.options'), 'port');
 
-        $this->line("App ID: <info>" . ($appId ?: '[missing]') . "</info>");
-        $this->line("Key: <info>" . ($key ?: '[missing]') . "</info>");
-        $this->line("Cluster: <info>" . ($cluster ?: '[mt1 default]') . "</info>");
-        $this->line("Host: <info>" . ($host ?: '[pusher default]') . "</info>");
-        $this->line("Scheme: <info>" . ($scheme ?: 'https') . "</info>");
-        $this->line("Port: <info>" . ($port ?: 443) . "</info>");
+        $this->line('App ID: <info>'.($appId ?: '[missing]').'</info>');
+        $this->line('Key: <info>'.($key ?: '[missing]').'</info>');
+        $this->line('Cluster: <info>'.($cluster ?: '[mt1 default]').'</info>');
+        $this->line('Host: <info>'.($host ?: '[pusher default]').'</info>');
+        $this->line('Scheme: <info>'.($scheme ?: 'https').'</info>');
+        $this->line('Port: <info>'.($port ?: 443).'</info>');
 
         $missing = [];
-        foreach (['PUSHER_APP_ID','PUSHER_APP_KEY','PUSHER_APP_SECRET'] as $envKey) {
-            if (! env($envKey)) $missing[] = $envKey;
+        foreach (['PUSHER_APP_ID', 'PUSHER_APP_KEY', 'PUSHER_APP_SECRET'] as $envKey) {
+            if (! env($envKey)) {
+                $missing[] = $envKey;
+            }
         }
         if ($missing) {
             $this->error('Missing env vars: '.implode(', ', $missing));
@@ -68,6 +71,7 @@ class BroadcastDoctor extends Command
         $this->line('Ensure frontend sends Authorization: Bearer <token>.');
 
         $this->info('Done.');
+
         return self::SUCCESS;
     }
 }

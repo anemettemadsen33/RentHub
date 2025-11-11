@@ -63,10 +63,11 @@ class PricingRule extends Model
         }
 
         // Percentage or fixed application helper
-        $applyAdjustment = function(float $price) {
+        $applyAdjustment = function (float $price) {
             if ($this->adjustment_type === 'percentage') {
                 return $price + ($price * ($this->adjustment_value / 100));
             }
+
             return $price + $this->adjustment_value;
         };
 

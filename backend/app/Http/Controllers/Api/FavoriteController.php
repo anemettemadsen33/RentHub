@@ -62,7 +62,7 @@ class FavoriteController extends Controller
             ->where('property_id', $propertyId)
             ->delete();
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'message' => 'Favorite not found',

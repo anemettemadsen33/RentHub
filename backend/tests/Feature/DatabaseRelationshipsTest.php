@@ -32,8 +32,8 @@ class DatabaseRelationshipsTest extends TestCase
         ]);
 
         $this->assertCount(3, $user->properties);
-        $this->assertEquals($properties->pluck('id')->sort()->values(), 
-                          $user->properties->pluck('id')->sort()->values());
+        $this->assertEquals($properties->pluck('id')->sort()->values(),
+            $user->properties->pluck('id')->sort()->values());
     }
 
     /** @test */
@@ -65,8 +65,8 @@ class DatabaseRelationshipsTest extends TestCase
         ]);
 
         $this->assertCount(2, $user->bookings);
-        $this->assertEquals($bookings->pluck('id')->sort()->values(), 
-                          $user->bookings->pluck('id')->sort()->values());
+        $this->assertEquals($bookings->pluck('id')->sort()->values(),
+            $user->bookings->pluck('id')->sort()->values());
     }
 
     /** @test */
@@ -97,8 +97,8 @@ class DatabaseRelationshipsTest extends TestCase
         ]);
 
         $this->assertCount(3, $property->bookings);
-        $this->assertEquals($bookings->pluck('id')->sort()->values(), 
-                          $property->bookings->pluck('id')->sort()->values());
+        $this->assertEquals($bookings->pluck('id')->sort()->values(),
+            $property->bookings->pluck('id')->sort()->values());
     }
 
     /** @test */
@@ -125,8 +125,8 @@ class DatabaseRelationshipsTest extends TestCase
         ]);
 
         $this->assertCount(2, $booking->payments);
-        $this->assertEquals($payments->pluck('id')->sort()->values(), 
-                          $booking->payments->pluck('id')->sort()->values());
+        $this->assertEquals($payments->pluck('id')->sort()->values(),
+            $booking->payments->pluck('id')->sort()->values());
     }
 
     /** @test */
@@ -207,7 +207,7 @@ class DatabaseRelationshipsTest extends TestCase
 
         // Verify property is deleted
         $this->assertDatabaseMissing('properties', ['id' => $propertyId]);
-        
+
         // Test passes - cascade behavior is working as configured
         // Payments cascade with bookings in this schema
         $this->assertTrue(true);
@@ -234,10 +234,10 @@ class DatabaseRelationshipsTest extends TestCase
 
         // Test the full chain: User -> Booking -> Property -> User (owner)
         $this->assertEquals($owner->id, $tenant->bookings->first()->property->user->id);
-        
+
         // Test reverse chain: Property -> Bookings -> Payments
         $this->assertEquals($payment->id, $property->bookings->first()->payments->first()->id);
-        
+
         // Test payment to property owner through booking
         $this->assertEquals($owner->id, $payment->booking->property->user->id);
     }
@@ -255,15 +255,15 @@ class DatabaseRelationshipsTest extends TestCase
         // Without eager loading - this would cause N+1
         // With eager loading - should be efficient
         \DB::enableQueryLog();
-        
+
         $properties = Property::with('user')->get();
-        
+
         $queries = \DB::getQueryLog();
-        
+
         // Should be approximately 2 queries: 1 for properties, 1 for users
         // Not 7 queries (1 for properties + 6 for each user)
         $this->assertLessThanOrEqual(3, count($queries));
-        
+
         \DB::disableQueryLog();
 
         // Verify data is loaded correctly

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AmenityController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
@@ -18,12 +18,12 @@ use App\Http\Controllers\Api\GuestVerificationController;
 use App\Http\Controllers\Api\HealthCheckController;
 use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\MapSearchController;
-use App\Http\Controllers\Api\PropertyAvailabilityController;
-use App\Http\Controllers\Api\QueueMonitorController;
 use App\Http\Controllers\Api\OAuth2Controller;
 use App\Http\Controllers\Api\PerformanceController;
+use App\Http\Controllers\Api\PropertyAvailabilityController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyVerificationController;
+use App\Http\Controllers\Api\QueueMonitorController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SecurityAuditController;
 use App\Http\Controllers\Api\SeoController;
@@ -49,6 +49,7 @@ Route::get('/properties', function () {
     if ($version !== 'v1') {
         return response()->json(['error' => 'Unsupported API version'], 400);
     }
+
     // Delegate to v1 controller logic
     return app(\App\Http\Controllers\Api\PropertyController::class)->index(request());
 });
@@ -59,6 +60,7 @@ Route::get('/v{version}/properties', function ($version) {
     if ($version !== '1') {
         return response()->json(['error' => 'Unsupported API version'], 400);
     }
+
     return app(\App\Http\Controllers\Api\PropertyController::class)->index(request());
 })->where('version', '[0-9]+');
 
@@ -73,7 +75,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 Route::prefix('v1')->group(function () {
     // Public Settings - poate fi accesat fără autentificare
     Route::get('/settings/public', [SettingsController::class, 'public']);
-    
+
     // Languages
     Route::get('/languages', [LanguageController::class, 'index']);
     Route::get('/languages/default', [LanguageController::class, 'getDefault']);
@@ -121,7 +123,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/properties/{property}/reviews', [ReviewController::class, 'propertyReviews']);
     // Property availability (public read)
     Route::get('/properties/{property}/availability', [PropertyAvailabilityController::class, 'show']);
-    
+
     // Amenities
     Route::get('/amenities', [AmenityController::class, 'index']);
     Route::get('/amenities/{id}', [AmenityController::class, 'show']);
@@ -245,7 +247,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         }
 
         return response()->json($stats)
-            ->header('Cache-Control', 'public, max-age=' . (int) config('cache-strategy.strategies.database_queries.ttl', 600))
+            ->header('Cache-Control', 'public, max-age='.(int) config('cache-strategy.strategies.database_queries.ttl', 600))
             ->header('ETag', $etag);
     });
 
@@ -270,14 +272,22 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/profile/password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
 
     // Analytics & Activity
-    Route::get('/analytics', function() { return response()->json(['success' => true, 'data' => []]); });
-    Route::get('/activity-log', function() { return response()->json(['success' => true, 'data' => []]); });
-    
+    Route::get('/analytics', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
+    Route::get('/activity-log', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
+
     // Documents
-    Route::get('/documents', function() { return response()->json(['success' => true, 'data' => []]); });
-    
+    Route::get('/documents', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
+
     // Insurance
-    Route::get('/insurance/plans', function() { return response()->json(['success' => true, 'data' => []]); });
+    Route::get('/insurance/plans', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
 
     // Verification Status
     Route::get('/verification-status', [\App\Http\Controllers\Api\ProfileController::class, 'getVerificationStatus']);
@@ -343,7 +353,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/properties/import/validate', [PropertyImportController::class, 'validateUrl'])->middleware('auth:sanctum');
     Route::get('/properties/import/stats', [PropertyImportController::class, 'stats'])->middleware('auth:sanctum');
 
-
     // Unscoped external calendar endpoints (for tests expecting direct routes)
     Route::post('/external-calendars', [ExternalCalendarController::class, 'storeUnscoped'])->middleware('role:owner,admin');
     Route::delete('/external-calendars/{externalCalendar}', [ExternalCalendarController::class, 'destroyUnscoped'])->middleware('role:owner,admin');
@@ -385,7 +394,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/reviews/{id}/helpful', [ReviewController::class, 'vote']);
 
     // Payments
-    Route::get('/payment-methods', function() { return response()->json(['success' => true, 'data' => []]); });
+    Route::get('/payment-methods', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
     Route::get('/transactions', [\App\Http\Controllers\Api\PaymentController::class, 'index']); // Alias for payment history
     Route::get('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store'])->middleware('role:tenant,owner,admin');
@@ -393,7 +404,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{payment}/status', [\App\Http\Controllers\Api\PaymentController::class, 'updateStatus']);
     Route::post('/payments/{payment}/confirm', [\App\Http\Controllers\Api\PaymentController::class, 'confirm']);
     Route::post('/payments/{payment}/refund', [\App\Http\Controllers\Api\PaymentController::class, 'refund']);
-    Route::get('/payouts', function() { return response()->json(['success' => true, 'data' => []]); });
+    Route::get('/payouts', function () {
+        return response()->json(['success' => true, 'data' => []]);
+    });
 
     // Invoices
     Route::get('/invoices', [\App\Http\Controllers\Api\InvoiceController::class, 'index']);
@@ -470,7 +483,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/saved-searches/{id}', [\App\Http\Controllers\Api\SavedSearchController::class, 'show']);
     Route::put('/saved-searches/{id}', [\App\Http\Controllers\Api\SavedSearchController::class, 'update']);
     Route::delete('/saved-searches/{id}', [\App\Http\Controllers\Api\SavedSearchController::class, 'destroy']);
-    Route::match(['GET','POST'], '/saved-searches/{id}/execute', [\App\Http\Controllers\Api\SavedSearchController::class, 'execute']);
+    Route::match(['GET', 'POST'], '/saved-searches/{id}/execute', [\App\Http\Controllers\Api\SavedSearchController::class, 'execute']);
     Route::get('/saved-searches/{id}/new-listings', [\App\Http\Controllers\Api\SavedSearchController::class, 'checkNewListings']);
     Route::post('/saved-searches/{id}/toggle-alerts', [\App\Http\Controllers\Api\SavedSearchController::class, 'toggleAlerts']);
 

@@ -14,11 +14,11 @@ class PropertyComparisonController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = $request->user()->id ?? 'guest_' . $request->ip();
+        $userId = $request->user()->id ?? 'guest_'.$request->ip();
         $cacheKey = "property_comparison:{$userId}";
-        
+
         $propertyIds = Cache::get($cacheKey, []);
-        
+
         $properties = Property::with(['reviews', 'amenities'])
             ->whereIn('id', $propertyIds)
             ->where('status', 'available')
@@ -64,11 +64,11 @@ class PropertyComparisonController extends Controller
             'property_id' => 'sometimes|exists:properties,id',
         ]);
 
-        $userId = $request->user()->id ?? 'guest_' . $request->ip();
+        $userId = $request->user()->id ?? 'guest_'.$request->ip();
         $cacheKey = "property_comparison:{$userId}";
-        
+
         $propertyIds = Cache::get($cacheKey, []);
-        
+
         // Limit to 4 properties
         if (count($propertyIds) >= 4) {
             return response()->json([
@@ -77,7 +77,7 @@ class PropertyComparisonController extends Controller
         }
 
         // Add if not already in list
-        if (!in_array($propertyId, $propertyIds)) {
+        if (! in_array($propertyId, $propertyIds)) {
             $propertyIds[] = (int) $propertyId;
             Cache::put($cacheKey, $propertyIds, now()->addDays(7));
         }
@@ -93,12 +93,12 @@ class PropertyComparisonController extends Controller
      */
     public function remove(Request $request, $propertyId)
     {
-        $userId = $request->user()->id ?? 'guest_' . $request->ip();
+        $userId = $request->user()->id ?? 'guest_'.$request->ip();
         $cacheKey = "property_comparison:{$userId}";
-        
+
         $propertyIds = Cache::get($cacheKey, []);
-        $propertyIds = array_values(array_filter($propertyIds, fn($id) => $id != $propertyId));
-        
+        $propertyIds = array_values(array_filter($propertyIds, fn ($id) => $id != $propertyId));
+
         Cache::put($cacheKey, $propertyIds, now()->addDays(7));
 
         return response()->json([
@@ -112,9 +112,9 @@ class PropertyComparisonController extends Controller
      */
     public function clear(Request $request)
     {
-        $userId = $request->user()->id ?? 'guest_' . $request->ip();
+        $userId = $request->user()->id ?? 'guest_'.$request->ip();
         $cacheKey = "property_comparison:{$userId}";
-        
+
         Cache::forget($cacheKey);
 
         return response()->json([
@@ -127,9 +127,9 @@ class PropertyComparisonController extends Controller
      */
     public function count(Request $request)
     {
-        $userId = $request->user()->id ?? 'guest_' . $request->ip();
+        $userId = $request->user()->id ?? 'guest_'.$request->ip();
         $cacheKey = "property_comparison:{$userId}";
-        
+
         $propertyIds = Cache::get($cacheKey, []);
 
         return response()->json([

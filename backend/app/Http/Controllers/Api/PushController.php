@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class PushController extends Controller
 {
@@ -39,7 +38,7 @@ class PushController extends Controller
     public function unsubscribe(Request $request)
     {
         $endpoint = $request->input('endpoint');
-        if (!$endpoint) {
+        if (! $endpoint) {
             return response()->json(['message' => 'endpoint required'], 422);
         }
 

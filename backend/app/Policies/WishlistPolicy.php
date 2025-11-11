@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Wishlist;
 use App\Models\User;
+use App\Models\Wishlist;
 
 class WishlistPolicy
 {

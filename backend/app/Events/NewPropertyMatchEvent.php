@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Property;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -15,7 +14,9 @@ class NewPropertyMatchEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int $userId;
+
     public array $properties;
+
     public string $searchName;
 
     public function __construct(int $userId, array $properties, string $searchName)
@@ -27,7 +28,7 @@ class NewPropertyMatchEvent implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new PrivateChannel('user.' . $this->userId);
+        return new PrivateChannel('user.'.$this->userId);
     }
 
     public function broadcastAs(): string

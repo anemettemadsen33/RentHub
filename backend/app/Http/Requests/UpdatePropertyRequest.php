@@ -12,13 +12,13 @@ class UpdatePropertyRequest extends FormRequest
     public function authorize(): bool
     {
         $property = $this->route('property');
-        
-    // Admin can update any property
-    if ($this->user()->hasRole('admin')) {
+
+        // Admin can update any property
+        if ($this->user()->hasRole('admin')) {
             return true;
         }
-        
-    // Owner/Host can only update their own properties
+
+        // Owner/Host can only update their own properties
         return $property && $property->user_id === $this->user()->id;
     }
 

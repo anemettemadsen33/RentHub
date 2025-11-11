@@ -29,11 +29,11 @@ Broadcast::channel('property.{propertyId}', function (User $user, int $propertyI
 // Conversation/messaging channel (participants only)
 Broadcast::channel('conversation.{conversationId}', function (User $user, int $conversationId) {
     $conversation = \App\Models\Conversation::find($conversationId);
-    
-    if (!$conversation) {
+
+    if (! $conversation) {
         return false;
     }
-    
+
     return $conversation->participants()
         ->where('user_id', $user->id)
         ->exists();
@@ -42,12 +42,12 @@ Broadcast::channel('conversation.{conversationId}', function (User $user, int $c
 // Booking updates channel (property owner or guest)
 Broadcast::channel('booking.{bookingId}', function (User $user, int $bookingId) {
     $booking = \App\Models\Booking::find($bookingId);
-    
-    if (!$booking) {
+
+    if (! $booking) {
         return false;
     }
-    
-    return $booking->guest_id === $user->id || 
+
+    return $booking->guest_id === $user->id ||
            $booking->property->owner_id === $user->id;
 });
 

@@ -30,18 +30,18 @@ class ApiMetricsMiddleware
         try {
             /** @var MetricsService $metrics */
             $metrics = App::make(MetricsService::class);
-            
+
             $route = $request->route() ? $request->route()->getName() ?? $request->path() : $request->path();
             $method = $request->method();
             $status = (string) $response->getStatusCode();
-            
+
             // Counter: total requests by route, method, status
             $metrics->incrementCounter('http_requests_total', 1, [
                 'route' => $route,
                 'method' => $method,
                 'status' => $status,
             ]);
-            
+
             // Histogram: request duration by route
             $metrics->recordHistogram('http_request_duration_ms', $durationMs, [
                 'route' => $route,
@@ -53,6 +53,7 @@ class ApiMetricsMiddleware
         }
 
         $response->headers->set('X-Response-Time-ms', (string) (int) round($durationMs));
+
         return $response;
     }
 }

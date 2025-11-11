@@ -14,6 +14,7 @@ class NewPropertyMatchNotification extends Notification implements ShouldQueue
     use Queueable;
 
     protected SavedSearch $savedSearch;
+
     protected array $properties;
 
     /**
@@ -50,7 +51,7 @@ class NewPropertyMatchNotification extends Notification implements ShouldQueue
         $message = (new MailMessage)
             ->subject("New Properties Match Your Saved Search: {$searchName}")
             ->greeting("Hello {$notifiable->name}!")
-            ->line("We found {$count} new " . ($count === 1 ? 'property' : 'properties') . " matching your saved search \"{$searchName}\".");
+            ->line("We found {$count} new ".($count === 1 ? 'property' : 'properties')." matching your saved search \"{$searchName}\".");
 
         // Add property details
         foreach (array_slice($this->properties, 0, 5) as $property) {
@@ -64,7 +65,7 @@ class NewPropertyMatchNotification extends Notification implements ShouldQueue
 
         if ($count > 5) {
             $remaining = $count - 5;
-            $message->line("...and {$remaining} more " . ($remaining === 1 ? 'property' : 'properties'));
+            $message->line("...and {$remaining} more ".($remaining === 1 ? 'property' : 'properties'));
         }
 
         $message->line('Visit your saved searches to manage your preferences.')

@@ -20,7 +20,7 @@ class GuestReferenceFactory extends Factory
             'reference_phone' => fake()->phoneNumber(),
             'reference_type' => fake()->randomElement(['previous_landlord', 'employer', 'personal', 'other']),
             // Use enum-friendly relationship values
-            'relationship' => fake()->randomElement(['previous_landlord','employer','colleague','friend','family','other']),
+            'relationship' => fake()->randomElement(['previous_landlord', 'employer', 'colleague', 'friend', 'family', 'other']),
             'status' => 'pending',
             'verification_token' => Str::random(64),
         ];

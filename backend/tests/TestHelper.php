@@ -48,7 +48,7 @@ trait TestHelper
 
     protected function getValidToken($user = null)
     {
-        if (!$user) {
+        if (! $user) {
             $user = User::factory()->create();
         }
 
@@ -64,7 +64,7 @@ trait TestHelper
     protected function assertSuccessResponse($response, $message = null)
     {
         $response->assertSuccessful();
-        
+
         if ($message) {
             $response->assertJson(['message' => $message]);
         }

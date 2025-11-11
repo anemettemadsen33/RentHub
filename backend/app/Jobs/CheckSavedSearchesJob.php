@@ -20,6 +20,7 @@ class CheckSavedSearchesJob implements ShouldQueue
     public $timeout = 300; // 5 minutes
 
     protected ?int $propertyId;
+
     protected ?int $savedSearchId;
 
     /**
@@ -60,7 +61,7 @@ class CheckSavedSearchesJob implements ShouldQueue
     {
         $savedSearch = SavedSearch::with('user')->find($savedSearchId);
 
-        if (!$savedSearch || !$savedSearch->is_active) {
+        if (! $savedSearch || ! $savedSearch->is_active) {
             return;
         }
 
@@ -73,7 +74,7 @@ class CheckSavedSearchesJob implements ShouldQueue
                 ->where('property_id', $property->id)
                 ->first();
 
-            if (!$existingMatch) {
+            if (! $existingMatch) {
                 // Create new match
                 $match = SavedSearchMatch::create([
                     'saved_search_id' => $savedSearch->id,
@@ -86,7 +87,7 @@ class CheckSavedSearchesJob implements ShouldQueue
         }
 
         // Send notification if there are new matches
-        if (!empty($newMatches) && $savedSearch->email_notifications) {
+        if (! empty($newMatches) && $savedSearch->email_notifications) {
             $this->sendNotification($savedSearch, $newMatches);
         }
     }
@@ -98,7 +99,7 @@ class CheckSavedSearchesJob implements ShouldQueue
     {
         $property = Property::with('amenities')->find($propertyId);
 
-        if (!$property || $property->status !== 'available') {
+        if (! $property || $property->status !== 'available') {
             return;
         }
 
@@ -113,7 +114,7 @@ class CheckSavedSearchesJob implements ShouldQueue
                     ->where('property_id', $property->id)
                     ->first();
 
-                if (!$existingMatch) {
+                if (! $existingMatch) {
                     // Create match
                     SavedSearchMatch::create([
                         'saved_search_id' => $savedSearch->id,
@@ -141,7 +142,7 @@ class CheckSavedSearchesJob implements ShouldQueue
 
         foreach ($savedSearches as $savedSearch) {
             // Check frequency
-            if (!$this->shouldNotify($savedSearch)) {
+            if (! $this->shouldNotify($savedSearch)) {
                 continue;
             }
 
@@ -177,7 +178,7 @@ class CheckSavedSearchesJob implements ShouldQueue
             return true;
         }
 
-        if (!$savedSearch->last_notified_at) {
+        if (! $savedSearch->last_notified_at) {
             return true;
         }
 

@@ -14,6 +14,7 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         $booking = Booking::factory()->create();
+
         return [
             'payment_number' => Payment::generatePaymentNumber(),
             'booking_id' => $booking->id,
@@ -30,7 +31,7 @@ class PaymentFactory extends Factory
 
     public function completed(): self
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'status' => 'completed',
             'completed_at' => now(),
         ]);
@@ -38,7 +39,7 @@ class PaymentFactory extends Factory
 
     public function refunded(): self
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'status' => 'refunded',
             'refunded_at' => now(),
         ]);

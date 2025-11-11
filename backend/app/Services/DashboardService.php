@@ -33,6 +33,7 @@ class DashboardService
                 ->get()
                 ->reduce(function ($carry, $b) {
                     $nights = $b->check_in && $b->check_out ? $b->check_in->diffInDays($b->check_out) : ($b->nights ?? 1);
+
                     return $carry + (float) ($b->price_per_night ?? 0) * max((int) $nights, 1);
                 }, 0.0);
 

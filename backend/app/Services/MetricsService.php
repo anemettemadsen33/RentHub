@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redis;
 class MetricsService
 {
     private const CACHE_PREFIX = 'metrics:';
+
     private const TTL = 3600; // 1 hour
 
     /**
@@ -16,7 +17,7 @@ class MetricsService
     public function incrementCounter(string $name, int $value = 1, array $labels = []): void
     {
         $key = $this->buildKey('counter', $name, $labels);
-        
+
         try {
             Redis::incrby($key, $value);
             Redis::expire($key, self::TTL);
@@ -33,7 +34,7 @@ class MetricsService
     public function recordHistogram(string $name, float $value, array $labels = []): void
     {
         $key = $this->buildKey('histogram', $name, $labels);
-        
+
         try {
             // Store in a sorted set for percentile calculations
             Redis::zadd($key, [$value => microtime(true)]);
@@ -65,11 +66,11 @@ class MetricsService
     private function getCounters(): array
     {
         $counters = [];
-        
+
         try {
-            $pattern = self::CACHE_PREFIX . 'counter:*';
+            $pattern = self::CACHE_PREFIX.'counter:*';
             $keys = Redis::keys($pattern);
-            
+
             foreach ($keys as $key) {
                 $name = $this->extractNameFromKey($key);
                 $counters[$name] = (int) Redis::get($key);
@@ -89,15 +90,15 @@ class MetricsService
     private function getHistograms(): array
     {
         $histograms = [];
-        
+
         try {
-            $pattern = self::CACHE_PREFIX . 'histogram:*';
+            $pattern = self::CACHE_PREFIX.'histogram:*';
             $keys = Redis::keys($pattern);
-            
+
             foreach ($keys as $key) {
                 $name = $this->extractNameFromKey($key);
                 $values = Redis::zrange($key, 0, -1, ['WITHSCORES' => false]);
-                
+
                 if (! empty($values)) {
                     $values = array_map('floatval', $values);
                     $histograms[$name] = [
@@ -123,8 +124,9 @@ class MetricsService
      */
     private function buildKey(string $type, string $name, array $labels = []): string
     {
-        $labelStr = empty($labels) ? '' : ':' . http_build_query($labels, '', ':');
-        return self::CACHE_PREFIX . "{$type}:{$name}{$labelStr}";
+        $labelStr = empty($labels) ? '' : ':'.http_build_query($labels, '', ':');
+
+        return self::CACHE_PREFIX."{$type}:{$name}{$labelStr}";
     }
 
     /**
@@ -133,6 +135,7 @@ class MetricsService
     private function extractNameFromKey(string $key): string
     {
         $parts = explode(':', str_replace(self::CACHE_PREFIX, '', $key));
+
         return implode(':', array_slice($parts, 1));
     }
 
@@ -143,6 +146,7 @@ class MetricsService
     {
         sort($values);
         $index = (int) ceil((count($values) * $percentile / 100)) - 1;
+
         return $values[max(0, $index)] ?? 0.0;
     }
 
@@ -152,9 +156,9 @@ class MetricsService
     public function reset(): void
     {
         try {
-            $pattern = self::CACHE_PREFIX . '*';
+            $pattern = self::CACHE_PREFIX.'*';
             $keys = Redis::keys($pattern);
-            
+
             if (! empty($keys)) {
                 Redis::del($keys);
             }

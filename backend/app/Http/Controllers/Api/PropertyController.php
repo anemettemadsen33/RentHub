@@ -8,7 +8,6 @@ use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
@@ -68,9 +67,9 @@ class PropertyController extends Controller
         }
 
         // Sorting
-    // Support legacy param names `sort` and `order`
-    $sortBy = $request->get('sort_by', $request->get('sort', 'created_at'));
-    $sortOrder = $request->get('sort_order', $request->get('order', 'desc'));
+        // Support legacy param names `sort` and `order`
+        $sortBy = $request->get('sort_by', $request->get('sort', 'created_at'));
+        $sortOrder = $request->get('sort_order', $request->get('order', 'desc'));
 
         if ($sortBy === 'price') {
             $query->orderBy('price_per_night', $sortOrder);
@@ -124,17 +123,17 @@ class PropertyController extends Controller
         $data = $request->validated();
 
         // Backwards compatibility: tests may send 'price' instead of 'price_per_night'
-        if (isset($data['price']) && !isset($data['price_per_night'])) {
+        if (isset($data['price']) && ! isset($data['price_per_night'])) {
             $data['price_per_night'] = $data['price'];
         }
-        if (isset($data['price_per_night']) && !isset($data['price'])) {
+        if (isset($data['price_per_night']) && ! isset($data['price'])) {
             $data['price'] = $data['price_per_night'];
         }
 
-    // Set default values
-    $data['user_id'] = auth()->id();
-    // Maintain owner_id for tests expecting this column
-    $data['owner_id'] = auth()->id();
+        // Set default values
+        $data['user_id'] = auth()->id();
+        // Maintain owner_id for tests expecting this column
+        $data['owner_id'] = auth()->id();
         // Align with enum: available/booked/maintenance
         $data['status'] = $data['status'] ?? 'available';
         // Consider available as active by default
@@ -162,10 +161,10 @@ class PropertyController extends Controller
         $data = $request->validated();
 
         // Backwards compatibility for price field
-        if (isset($data['price']) && !isset($data['price_per_night'])) {
+        if (isset($data['price']) && ! isset($data['price_per_night'])) {
             $data['price_per_night'] = $data['price'];
         }
-        if (isset($data['price_per_night']) && !isset($data['price'])) {
+        if (isset($data['price_per_night']) && ! isset($data['price'])) {
             $data['price'] = $data['price_per_night'];
         }
 
@@ -219,7 +218,7 @@ class PropertyController extends Controller
                         'title' => $property->title,
                         'price_per_night' => (float) $property->price_per_night,
                         'status' => $property->status,
-                        'location' => $property->city . ', ' . $property->country,
+                        'location' => $property->city.', '.$property->country,
                         'image' => $property->images->first()?->image_path,
                     ];
                 });
@@ -231,7 +230,7 @@ class PropertyController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch featured properties: ' . $e->getMessage(),
+                'message' => 'Failed to fetch featured properties: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -284,12 +283,13 @@ class PropertyController extends Controller
                 'data' => $properties,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Property search failed: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            \Log::error('Property search failed: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Search failed: ' . $e->getMessage(),
+                'message' => 'Search failed: '.$e->getMessage(),
             ], 500);
         }
     }

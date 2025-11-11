@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\App\Models\SavedSearch::class, \App\Policies\SavedSearchPolicy::class);
         Gate::policy(\App\Models\NotificationPreference::class, \App\Policies\NotificationPreferencePolicy::class);
         Gate::policy(\App\Models\Wishlist::class, \App\Policies\WishlistPolicy::class);
-    Gate::policy(Property::class, \App\Policies\PropertyPolicy::class);
+        Gate::policy(Property::class, \App\Policies\PropertyPolicy::class);
 
         // Register gates for dashboard access
         Gate::define('view-owner-dashboard', [\App\Policies\DashboardPolicy::class, 'viewOwnerDashboard']);
@@ -91,11 +91,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Stricter limits for authentication endpoints
         RateLimiter::for('auth', function (Request $request) {
-            $key = md5(strtolower((string) $request->input('email')) . '|' . $request->ip());
+            $key = md5(strtolower((string) $request->input('email')).'|'.$request->ip());
+
             return [
                 Limit::perMinute(20)->by($key)->response(function () {
                     return response()->json([
-                        'message' => 'Too many authentication attempts. Please try again later.'
+                        'message' => 'Too many authentication attempts. Please try again later.',
                     ], 429);
                 }),
             ];

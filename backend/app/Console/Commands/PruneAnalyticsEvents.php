@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AnalyticsEvent;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Models\AnalyticsEvent;
 
 class PruneAnalyticsEvents extends Command
 {
@@ -36,8 +36,9 @@ class PruneAnalyticsEvents extends Command
 
         if ($dry) {
             $this->warn('DRY RUN - no deletion performed');
-            $this->table(['Day', 'Type', 'Count'], $archiveRows->map(fn($r) => [$r->day, $r->type, $r->cnt])->toArray());
+            $this->table(['Day', 'Type', 'Count'], $archiveRows->map(fn ($r) => [$r->day, $r->type, $r->cnt])->toArray());
             $this->info("Events eligible for deletion: {$totalEventsToDelete}");
+
             return Command::SUCCESS;
         }
 
@@ -55,7 +56,7 @@ class PruneAnalyticsEvents extends Command
                 'updated_at' => now(),
             ];
         }
-        if (!empty($insertBatches)) {
+        if (! empty($insertBatches)) {
             // Upsert (ignore duplicates if re-run) - requires unique index we'll add in migration.
             DB::table('analytics_event_archives')->upsert($insertBatches, ['day', 'type'], ['count', 'updated_at']);
         }
@@ -79,7 +80,7 @@ class PruneAnalyticsEvents extends Command
 
     private function ensureArchiveTable(): void
     {
-        if (!DB::getSchemaBuilder()->hasTable('analytics_event_archives')) {
+        if (! DB::getSchemaBuilder()->hasTable('analytics_event_archives')) {
             DB::getSchemaBuilder()->create('analytics_event_archives', function ($table) {
                 $table->bigIncrements('id');
                 $table->date('day');

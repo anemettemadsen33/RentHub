@@ -312,7 +312,7 @@ class ProfileController extends Controller
     public function getSettings(Request $request)
     {
         $user = $request->user();
-        
+
         return response()->json([
             'success' => true,
             'data' => [

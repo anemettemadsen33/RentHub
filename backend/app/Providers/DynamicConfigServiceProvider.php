@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Setting;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 
 class DynamicConfigServiceProvider extends ServiceProvider
 {
@@ -23,7 +22,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Skip during composer install or if database doesn't exist
-        if (app()->runningInConsole() && !app()->runningUnitTests()) {
+        if (app()->runningInConsole() && ! app()->runningUnitTests()) {
             return;
         }
 
@@ -91,7 +90,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 Config::set('mail.from.name', $mailFromName);
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load email settings: ' . $e->getMessage());
+            \Log::warning('Failed to load email settings: '.$e->getMessage());
         }
     }
 
@@ -107,29 +106,29 @@ class DynamicConfigServiceProvider extends ServiceProvider
 
             if ($frontendUrl) {
                 Config::set('app.frontend_url', $frontendUrl);
-                
+
                 // Update CORS allowed origins
                 $currentOrigins = Config::get('cors.allowed_origins', []);
-                if (!in_array($frontendUrl, $currentOrigins)) {
+                if (! in_array($frontendUrl, $currentOrigins)) {
                     $currentOrigins[] = $frontendUrl;
                     Config::set('cors.allowed_origins', $currentOrigins);
                 }
             }
-            
+
             if ($apiUrl) {
                 Config::set('app.api_url', $apiUrl);
             }
-            
+
             if ($websocketUrl) {
                 Config::set('app.websocket_url', $websocketUrl);
             }
-            
+
             // Reverb settings
             if (setting('use_reverb') === '1') {
                 $reverbHost = setting('reverb_host');
                 $reverbPort = setting('reverb_port');
                 $reverbScheme = setting('reverb_scheme');
-                
+
                 if ($reverbHost) {
                     Config::set('reverb.host', $reverbHost);
                 }
@@ -141,7 +140,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 }
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load frontend settings: ' . $e->getMessage());
+            \Log::warning('Failed to load frontend settings: '.$e->getMessage());
         }
     }
 
@@ -163,7 +162,7 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 Config::set('services.stripe.enabled', false);
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load payment settings: ' . $e->getMessage());
+            \Log::warning('Failed to load payment settings: '.$e->getMessage());
         }
     }
 
@@ -187,10 +186,10 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 Config::set('services.twilio.enabled', false);
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load SMS settings: ' . $e->getMessage());
+            \Log::warning('Failed to load SMS settings: '.$e->getMessage());
         }
     }
-    
+
     /**
      * Load social login settings
      */
@@ -201,32 +200,32 @@ class DynamicConfigServiceProvider extends ServiceProvider
             if (setting('enable_google_login') === '1') {
                 $googleClientId = setting('google_client_id');
                 $googleClientSecret = setting('google_client_secret');
-                
+
                 if ($googleClientId && $googleClientSecret) {
                     Config::set('services.google.enabled', true);
                     Config::set('services.google.client_id', $googleClientId);
                     Config::set('services.google.client_secret', $googleClientSecret);
-                    Config::set('services.google.redirect', config('app.url') . '/api/v1/auth/google/callback');
+                    Config::set('services.google.redirect', config('app.url').'/api/v1/auth/google/callback');
                 }
             }
-            
+
             // Facebook OAuth
             if (setting('enable_facebook_login') === '1') {
                 $facebookClientId = setting('facebook_client_id');
                 $facebookClientSecret = setting('facebook_client_secret');
-                
+
                 if ($facebookClientId && $facebookClientSecret) {
                     Config::set('services.facebook.enabled', true);
                     Config::set('services.facebook.client_id', $facebookClientId);
                     Config::set('services.facebook.client_secret', $facebookClientSecret);
-                    Config::set('services.facebook.redirect', config('app.url') . '/api/v1/auth/facebook/callback');
+                    Config::set('services.facebook.redirect', config('app.url').'/api/v1/auth/facebook/callback');
                 }
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load social login settings: ' . $e->getMessage());
+            \Log::warning('Failed to load social login settings: '.$e->getMessage());
         }
     }
-    
+
     /**
      * Load map settings
      */
@@ -236,23 +235,23 @@ class DynamicConfigServiceProvider extends ServiceProvider
             $mapboxToken = setting('mapbox_token');
             $googleMapsKey = setting('google_maps_api_key');
             $ipstackKey = setting('ipstack_api_key');
-            
+
             if ($mapboxToken) {
                 Config::set('services.mapbox.token', $mapboxToken);
             }
-            
+
             if ($googleMapsKey) {
                 Config::set('services.google_maps.api_key', $googleMapsKey);
             }
-            
+
             if ($ipstackKey) {
                 Config::set('services.ipstack.api_key', $ipstackKey);
             }
-            
+
             // Default map center
             $defaultLat = setting('default_map_center_lat');
             $defaultLng = setting('default_map_center_lng');
-            
+
             if ($defaultLat && $defaultLng) {
                 Config::set('app.default_map_center', [
                     'lat' => (float) $defaultLat,
@@ -260,10 +259,10 @@ class DynamicConfigServiceProvider extends ServiceProvider
                 ]);
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load map settings: ' . $e->getMessage());
+            \Log::warning('Failed to load map settings: '.$e->getMessage());
         }
     }
-    
+
     /**
      * Load analytics settings
      */
@@ -273,17 +272,17 @@ class DynamicConfigServiceProvider extends ServiceProvider
             if (setting('enable_analytics') === '1') {
                 $googleAnalyticsId = setting('google_analytics_id');
                 $facebookPixelId = setting('facebook_pixel_id');
-                
+
                 if ($googleAnalyticsId) {
                     Config::set('services.google_analytics.tracking_id', $googleAnalyticsId);
                 }
-                
+
                 if ($facebookPixelId) {
                     Config::set('services.facebook_pixel.pixel_id', $facebookPixelId);
                 }
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to load analytics settings: ' . $e->getMessage());
+            \Log::warning('Failed to load analytics settings: '.$e->getMessage());
         }
     }
 }

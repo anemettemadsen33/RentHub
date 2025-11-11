@@ -15,22 +15,22 @@ class PlatformStatsWidget extends BaseWidget
     {
         $thisMonth = now()->startOfMonth();
         $lastMonth = now()->subMonth()->startOfMonth();
-        
+
         // Properties
         $totalProperties = Property::count();
         $activeProperties = Property::where('status', 'active')->count();
         $propertiesThisMonth = Property::where('created_at', '>=', $thisMonth)->count();
         $propertiesLastMonth = Property::whereBetween('created_at', [$lastMonth, $thisMonth])->count();
-        $propertiesChange = $propertiesLastMonth > 0 
-            ? (($propertiesThisMonth - $propertiesLastMonth) / $propertiesLastMonth) * 100 
+        $propertiesChange = $propertiesLastMonth > 0
+            ? (($propertiesThisMonth - $propertiesLastMonth) / $propertiesLastMonth) * 100
             : 0;
 
         // Users
         $totalUsers = User::count();
         $usersThisMonth = User::where('created_at', '>=', $thisMonth)->count();
         $usersLastMonth = User::whereBetween('created_at', [$lastMonth, $thisMonth])->count();
-        $usersChange = $usersLastMonth > 0 
-            ? (($usersThisMonth - $usersLastMonth) / $usersLastMonth) * 100 
+        $usersChange = $usersLastMonth > 0
+            ? (($usersThisMonth - $usersLastMonth) / $usersLastMonth) * 100
             : 0;
 
         // Verified Users
@@ -38,7 +38,7 @@ class PlatformStatsWidget extends BaseWidget
         $verificationRate = $totalUsers > 0 ? ($verifiedUsers / $totalUsers) * 100 : 0;
 
         return [
-            Stat::make('Proprietăți Active', $activeProperties . ' / ' . $totalProperties)
+            Stat::make('Proprietăți Active', $activeProperties.' / '.$totalProperties)
                 ->description($propertiesChange >= 0 ? "+{$propertiesChange}% proprietăți noi luna aceasta" : "{$propertiesChange}% luna aceasta")
                 ->descriptionIcon('heroicon-m-home')
                 ->color('success')
@@ -51,7 +51,7 @@ class PlatformStatsWidget extends BaseWidget
                 ->chart([15, 18, 22, 28, 35, 42, 48]),
 
             Stat::make('Utilizatori Verificați', $verifiedUsers)
-                ->description(number_format($verificationRate, 1) . '% rată de verificare')
+                ->description(number_format($verificationRate, 1).'% rată de verificare')
                 ->descriptionIcon('heroicon-m-shield-check')
                 ->color('info'),
 

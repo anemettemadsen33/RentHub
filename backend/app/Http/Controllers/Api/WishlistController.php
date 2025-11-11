@@ -192,7 +192,7 @@ class WishlistController extends Controller
     {
         $wishlist = Wishlist::findOrFail($id);
 
-        if (!$wishlist->is_public) {
+        if (! $wishlist->is_public) {
             return response()->json([
                 'success' => false,
                 'message' => 'This wishlist is private',

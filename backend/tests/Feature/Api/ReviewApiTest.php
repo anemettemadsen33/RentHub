@@ -24,7 +24,7 @@ class ReviewApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $property = Property::factory()->create(['status' => 'available']);
-        
+
         $booking = Booking::factory()->create([
             'user_id' => $guest->id,
             'property_id' => $property->id,
@@ -59,7 +59,7 @@ class ReviewApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $property = Property::factory()->create(['status' => 'available']);
-        
+
         $booking = Booking::factory()->create([
             'user_id' => $guest->id,
             'property_id' => $property->id,
@@ -83,7 +83,7 @@ class ReviewApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $property = Property::factory()->create(['status' => 'available']);
-        
+
         $booking = Booking::factory()->create([
             'user_id' => $guest->id,
             'property_id' => $property->id,
@@ -147,7 +147,7 @@ class ReviewApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $otherUser = $this->authenticateUser('tenant');
-        
+
         $review = Review::factory()->create([
             'user_id' => $otherUser->id,
         ]);
@@ -184,7 +184,7 @@ class ReviewApiTest extends TestCase
     {
         $guest = $this->authenticateGuest();
         $property = Property::factory()->create(['status' => 'available']);
-        
+
         $booking = Booking::factory()->create([
             'user_id' => $guest->id,
             'property_id' => $property->id,
@@ -208,12 +208,12 @@ class ReviewApiTest extends TestCase
     public function it_can_list_approved_reviews_for_property()
     {
         $property = Property::factory()->create();
-        
+
         Review::factory()->count(3)->create([
             'property_id' => $property->id,
             'is_approved' => true,
         ]);
-        
+
         Review::factory()->count(2)->create([
             'property_id' => $property->id,
             'is_approved' => false,
@@ -222,7 +222,7 @@ class ReviewApiTest extends TestCase
         $response = $this->getJson("/api/v1/reviews?property_id={$property->id}");
 
         $response->assertSuccessful();
-        
+
         $data = $response->json('data.data');
         $this->assertCount(3, $data);
     }
@@ -231,14 +231,14 @@ class ReviewApiTest extends TestCase
     public function guest_can_view_own_reviews()
     {
         $guest = $this->authenticateGuest();
-        
+
         Review::factory()->count(5)->create(['user_id' => $guest->id]);
         Review::factory()->count(3)->create(); // Other reviews
 
         $response = $this->getJson('/api/v1/my-reviews');
 
         $response->assertSuccessful();
-        
+
         $data = $response->json('data.data');
         $this->assertCount(5, $data);
     }

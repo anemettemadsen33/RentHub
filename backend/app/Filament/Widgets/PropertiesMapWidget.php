@@ -8,7 +8,7 @@ use Filament\Widgets\Widget;
 class PropertiesMapWidget extends Widget
 {
     protected string $view = 'filament.widgets.properties-map-widget';
-    
+
     protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 1;
