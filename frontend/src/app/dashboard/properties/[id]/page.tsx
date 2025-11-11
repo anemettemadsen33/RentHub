@@ -768,10 +768,83 @@ export default function PropertyDetailsPage() {
               <CardTitle>Property Settings</CardTitle>
               <CardDescription>Advanced settings and integrations</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <Settings className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Settings feature coming soon</p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="space-y-0.5">
+                    <h4 className="text-sm font-medium">Publication Status</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Control whether this property is visible to guests
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={property?.status === 'published' ? 'default' : 'secondary'}>
+                      {property?.status || 'draft'}
+                    </Badge>
+                    {property?.status === 'published' ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handlePublish(false)}
+                      >
+                        Unpublish
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={() => handlePublish(true)}
+                      >
+                        Publish
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-lg space-y-3">
+                  <h4 className="text-sm font-medium">Property Details</h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Type:</span>{' '}
+                      <span className="font-medium capitalize">{property?.property_type}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Max Guests:</span>{' '}
+                      <span className="font-medium">{property?.max_guests}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Bedrooms:</span>{' '}
+                      <span className="font-medium">{property?.bedrooms}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Bathrooms:</span>{' '}
+                      <span className="font-medium">{property?.bathrooms}</span>
+                    </div>
+                  </div>
+                  <Link href={`/dashboard/properties/${property?.id}/edit`}>
+                    <Button size="sm" variant="outline" className="w-full">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Property Details
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="p-4 border rounded-lg space-y-3">
+                  <h4 className="text-sm font-medium">Quick Actions</h4>
+                  <div className="flex flex-col gap-2">
+                    <Link href={`/properties/${property?.slug || property?.id}`} target="_blank">
+                      <Button size="sm" variant="outline" className="w-full justify-start">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview Public Listing
+                      </Button>
+                    </Link>
+                    <Link href={`/dashboard/properties/${property?.id}/edit`}>
+                      <Button size="sm" variant="outline" className="w-full justify-start">
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Property
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
