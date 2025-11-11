@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -590,3 +590,4 @@ class AiRecommendationController extends Controller
         return array_slice($factorCounts, 0, 5, true);
     }
 }
+

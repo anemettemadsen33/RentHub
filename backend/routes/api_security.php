@@ -43,3 +43,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // Public health check endpoint
 Route::get('/health', [PerformanceController::class, 'getHealth']);
+
+

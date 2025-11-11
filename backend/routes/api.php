@@ -952,3 +952,5 @@ Route::prefix('currency')->group(function () {
     Route::get('/rates', [App\Http\Controllers\Api\MultiCurrencyController::class, 'rates']);
     Route::post('/convert', [App\Http\Controllers\Api\MultiCurrencyController::class, 'convert']);
 });
+
+

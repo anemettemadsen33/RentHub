@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
@@ -74,3 +74,4 @@ class InvoiceController extends Controller
         return response()->json(['error' => 'Failed to resend invoice'], 500);
     }
 }
+

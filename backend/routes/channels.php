@@ -69,3 +69,4 @@ Broadcast::channel('property.viewing.{propertyId}', function (User $user, int $p
         'type' => $user->role,
     ];
 });
+

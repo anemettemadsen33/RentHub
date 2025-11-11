@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PushSubscription;
@@ -47,3 +47,4 @@ class PushController extends Controller
         return response()->json(['status' => 'unsubscribed', 'deleted' => $deleted]);
     }
 }
+

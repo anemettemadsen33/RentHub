@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Mail\TwoFactorCodeMail;
@@ -705,3 +705,4 @@ class AuthController extends Controller
         ]);
     }
 }
+

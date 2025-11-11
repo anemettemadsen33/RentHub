@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\API\Security\APIKeyController;
-use App\Http\Controllers\API\Security\GDPRController;
-use App\Http\Controllers\API\Security\OAuth2Controller;
-use App\Http\Controllers\API\Security\SecurityAuditController;
+use App\Http\Controllers\Api\Security\APIKeyController;
+use App\Http\Controllers\Api\Security\GDPRController;
+use App\Http\Controllers\Api\Security\OAuth2Controller;
+use App\Http\Controllers\Api\Security\SecurityAuditController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,3 +46,5 @@ Route::prefix('security')->middleware('auth:sanctum')->group(function () {
     Route::post('/scan', [SecurityAuditController::class, 'runVulnerabilityScan']);
     Route::get('/report', [SecurityAuditController::class, 'getSecurityReport']);
 });
+
+

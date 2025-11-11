@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Security;
+namespace App\\Http\\Controllers\\Api\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\SecurityAuditService;
@@ -54,3 +54,4 @@ class SecurityAuditController extends Controller
         return response()->json(['report' => $report]);
     }
 }
+

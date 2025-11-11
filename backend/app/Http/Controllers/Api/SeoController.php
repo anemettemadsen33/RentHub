@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
@@ -161,3 +161,4 @@ class SeoController extends Controller
         return response()->json(['message' => 'SEO cache cleared successfully']);
     }
 }
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\OAuthClient;
@@ -184,3 +184,4 @@ class OAuth2Controller extends Controller
         ]);
     }
 }
+

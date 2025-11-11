@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\AuditLogService;
@@ -125,3 +125,4 @@ class SecurityController extends Controller
         return $recommendations;
     }
 }
+

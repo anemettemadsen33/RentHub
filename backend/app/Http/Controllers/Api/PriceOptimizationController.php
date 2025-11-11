@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -909,3 +909,4 @@ class PriceOptimizationController extends Controller
         return 'Lowering price may improve occupancy rate and overall revenue';
     }
 }
+

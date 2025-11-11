@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\\Http\\Controllers\\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\PricePrediction;
@@ -174,3 +174,4 @@ class PriceOptimizationController extends Controller
         ]);
     }
 }
+

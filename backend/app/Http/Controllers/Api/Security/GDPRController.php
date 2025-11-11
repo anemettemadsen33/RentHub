@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Security;
+namespace App\\Http\\Controllers\\Api\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\GDPRService;
@@ -91,3 +91,4 @@ class GDPRController extends Controller
         return response()->json(['message' => 'Consent revoked successfully']);
     }
 }
+

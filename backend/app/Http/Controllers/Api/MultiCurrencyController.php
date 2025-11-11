@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\ExchangeRateService;
@@ -59,3 +59,4 @@ class MultiCurrencyController extends Controller
         return response()->json($result);
     }
 }
+

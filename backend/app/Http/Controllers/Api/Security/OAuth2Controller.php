@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Security;
+namespace App\\Http\\Controllers\\Api\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\OAuth2Service;
@@ -113,3 +113,4 @@ class OAuth2Controller extends Controller
         return response()->json($info);
     }
 }
+

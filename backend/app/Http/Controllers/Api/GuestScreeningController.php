@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\\Http\\Controllers\\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\GuestScreening;
@@ -239,3 +239,4 @@ class GuestScreeningController extends Controller
         return response()->json($screening);
     }
 }
+

@@ -21,3 +21,5 @@ Route::post('/iot-devices/{device}/light', [IoTDeviceController::class, 'control
 
 // Camera Access
 Route::get('/iot-devices/{device}/camera/stream', [IoTDeviceController::class, 'getCameraStream']);
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Security;
+namespace App\\Http\\Controllers\\Api\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\APIKeyService;
@@ -72,3 +72,4 @@ class APIKeyController extends Controller
         ]);
     }
 }
+
