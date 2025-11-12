@@ -113,7 +113,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={validLocale} messages={messages}>
+          <NextIntlClientProvider locale={locale} messages={messages}>
             <Providers>
               {/* Main application layout/content */}
               {children}
