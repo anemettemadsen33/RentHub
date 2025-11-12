@@ -12,7 +12,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { LanguageSwitcher } from '@/components/language-switcher';
+// TEMP DISABLED: next-intl causing build errors
+// import { LanguageSwitcher } from '@/components/language-switcher';
 import { BottomNavItem } from '@/components/bottom-nav-item';
 
 export function Navbar() {
@@ -49,8 +50,9 @@ export function Navbar() {
             <div className="flex items-center gap-2 md:gap-3">
               <div className="flex items-center gap-2">
                 <ThemeToggle />
-                <div className="h-6 w-px bg-border hidden md:block" />
-                <LanguageSwitcher />
+                {/* TEMP DISABLED: next-intl causing build errors */}
+                {/* <div className="h-6 w-px bg-border hidden md:block" /> */}
+                {/* <LanguageSwitcher /> */}
               </div>
               {isAuthenticated ? (
                 <>
@@ -142,9 +144,10 @@ export function Navbar() {
                         <SheetTitle>Menu</SheetTitle>
                       </SheetHeader>
                       <div className="mt-6 space-y-4">
-                        <div className="px-3 py-2">
+                        {/* TEMP DISABLED: next-intl causing build errors */}
+                        {/* <div className="px-3 py-2">
                           <LanguageSwitcher />
-                        </div>
+                        </div> */}
                         
                         <Separator />
                         
@@ -240,9 +243,10 @@ export function Navbar() {
                         <SheetTitle>Menu</SheetTitle>
                       </SheetHeader>
                       <div className="mt-6 space-y-1">
-                        <div className="px-3 py-2">
+                        {/* TEMP DISABLED: next-intl causing build errors */}
+                        {/* <div className="px-3 py-2">
                           <LanguageSwitcher />
-                        </div>
+                        </div> */}
                         
                         <Separator className="my-4" />
                         

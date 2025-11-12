@@ -15,8 +15,9 @@ import { SWUpdatePrompt } from '@/components/pwa/sw-update-prompt';
 import { OrganizationSchema } from '@/components/seo/organization-schema';
 import WebVitalsReporter from '@/components/analytics/web-vitals';
 import { ConsentBanner } from '@/components/consent-banner';
-import { LocaleAutoDetect } from '@/components/locale-auto-detect';
-import { LocaleDetectionNotification } from '@/components/locale-detection-notification';
+// TEMP DISABLED: next-intl components causing build errors
+// import { LocaleAutoDetect } from '@/components/locale-auto-detect';
+// import { LocaleDetectionNotification } from '@/components/locale-detection-notification';
 import { OfflineIndicator } from '@/components/offline-indicator';
 import { AppReady } from '@/components/app-ready';
 import { FocusVisibleDetector } from '@/components/accessibility/focus-manager';
@@ -127,8 +128,9 @@ export default async function RootLayout({
               <WebVitalsReporter />
               {/* Compliance & locale utilities */}
               <ConsentBanner />
-              <LocaleAutoDetect />
-              <LocaleDetectionNotification />
+              {/* TEMP DISABLED: next-intl components causing build errors */}
+              {/* <LocaleAutoDetect /> */}
+              {/* <LocaleDetectionNotification /> */}
               <OfflineIndicator />
               {/* Hydration readiness marker for E2E determinism */}
               <AppReady />
