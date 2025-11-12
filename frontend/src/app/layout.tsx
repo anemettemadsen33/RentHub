@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 // Static message imports as a resilient fallback when getMessages() fails under Turbopack or test web server
 import enMessages from '../../messages/en.json';
-import roMessages from '../../messages/ro.json';
-import { locales } from '@/i18n/config';
-import { cookies } from 'next/headers';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import './responsive.css';
@@ -89,38 +85,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get locale from cookie or default to 'en'
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en';
-  
-  // Validate locale
-  const validLocale = locales.includes(locale as any) ? (locale as any) : 'en';
-  // Load messages with safe fallback to 'en' to avoid hard errors causing blank page
-  let messages: any;
-  try {
-    messages = await getMessages({ locale: validLocale });
-  } catch (e) {
-    // Fail open to fallback below
-    messages = undefined;
-  }
-  // Fallback chain: primary locale -> English -> static imports
-  if (!messages || !('home' in messages)) {
-    // Attempt to load English fallback via next-intl
-    try {
-      const en = await getMessages({ locale: 'en' });
-      messages = en;
-    } catch {
-      // ignore and fall through to static
-    }
-    // If still missing required namespace, use static JSON bundles
-    if (!messages || !('home' in messages)) {
-      const staticMap: Record<string, any> = { en: enMessages, ro: roMessages };
-      messages = staticMap[validLocale] || enMessages;
-    }
-  }
+  // Simplified - use English by default, no next-intl for now
+  const locale = 'en';
+  const messages = enMessages;
 
   return (
-  <html lang={validLocale} suppressHydrationWarning={true}>
+  <html lang={locale} suppressHydrationWarning={true}>
       <body
         className={inter.className}
   suppressHydrationWarning={true}

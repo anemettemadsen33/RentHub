@@ -1,26 +1,13 @@
-// next-intl middleware with safe wrapper and adjusted matcher to exclude root '/'
+// Simplified middleware - bypass next-intl for now to fix 404 issues
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import createMiddleware from 'next-intl/middleware';
-import { locales } from './i18n/config';
-
-const intlMiddleware = createMiddleware({
-  locales,
-  defaultLocale: 'en',
-  localePrefix: 'never',
-  localeDetection: true,
-});
 
 export default function middleware(request: NextRequest) {
-  try {
-    return intlMiddleware(request);
-  } catch {
-    // Fail open to avoid breaking routes
-    return NextResponse.next();
-  }
+  // Just pass through - let Next.js handle routing
+  return NextResponse.next();
 }
 
 export const config = {
-  // Exclude API, Next internals, static assets, and the root path '/'
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).+)'],
+  // Match all paths except static files and Next.js internals
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)).*)', '/'],
 };

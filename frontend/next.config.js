@@ -30,8 +30,4 @@ const nextConfig = {
   },
 };
 
-// Integrate next-intl plugin so that useTranslations() can resolve the locales
-// from next-intl.config.ts during dev, build and test (Playwright) runs.
-const withNextIntl = require('next-intl/plugin')();
-
-module.exports = withNextIntl(nextConfig);
+module.exports = nextConfig;
