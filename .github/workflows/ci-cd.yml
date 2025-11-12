@@ -5,6 +5,7 @@ on:
     branches: [master, develop]
   pull_request:
     branches: [master, develop]
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '20.x'
@@ -248,13 +249,15 @@ jobs:
   deploy-backend:
     name: 🚀 Deploy Backend to Forge
     needs: [backend-lint, backend-test, security-scan]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && secrets.FORGE_DEPLOY_WEBHOOK != ''
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    # Secrets are referenced directly in steps to avoid expression lint warnings
     
     steps:
       - uses: actions/checkout@v4
       
       - name: Deploy to Laravel Forge
+        if: ${{ secrets.FORGE_DEPLOY_WEBHOOK != '' }}
         run: |
           echo "🚀 Triggering Forge deployment..."
           curl -X POST "${{ secrets.FORGE_DEPLOY_WEBHOOK }}"
@@ -263,7 +266,7 @@ jobs:
         run: sleep 30
       
       - name: Run migrations on Forge
-        if: secrets.FORGE_HOST != '' && secrets.FORGE_SSH_KEY != ''
+        if: ${{ secrets.FORGE_HOST != '' && secrets.FORGE_SSH_KEY != '' }}
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.FORGE_HOST }}
@@ -292,13 +295,15 @@ jobs:
   deploy-frontend:
     name: 🚀 Deploy Frontend to Vercel
     needs: [frontend-lint, frontend-test, frontend-build]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    # Secrets referenced directly in steps
     
     steps:
       - uses: actions/checkout@v4
       
       - name: Deploy to Vercel
+        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
