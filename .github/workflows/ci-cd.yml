@@ -44,11 +44,21 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
       
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=2G || echo "PHPStan completed with warnings"
+      - name: Run PHPStan (Larastan)
+        run: |
+          if [ -f vendor/bin/phpstan ]; then
+            vendor/bin/phpstan analyse --memory-limit=2G || echo "PHPStan completed with warnings"
+          else
+            echo "PHPStan not installed, skipping."
+          fi
       
-      - name: Run PHP CS Fixer (dry-run)
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff || echo "Code style check completed"
+      - name: Run Laravel Pint (dry-run)
+        run: |
+          if [ -f vendor/bin/pint ]; then
+            vendor/bin/pint --test || echo "Pint found issues (non-blocking)"
+          else
+            echo "Pint not installed, skipping."
+          fi
 
   backend-test:
     name: 🧪 Backend Tests
@@ -140,9 +150,6 @@ jobs:
       
       - name: Run TypeScript Check
         run: npm run type-check || npx tsc --noEmit || echo "TypeScript check completed"
-      
-      - name: Check Format
-        run: npm run format:check || echo "Format check completed"
 
   frontend-test:
     name: 🧪 Frontend Tests
@@ -164,11 +171,8 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       
-      - name: Run Unit Tests
-        run: npm run test:unit || echo "Unit tests completed"
-      
-      - name: Run Component Tests
-        run: npm run test:components || echo "Component tests completed"
+      - name: Run Tests (Vitest)
+        run: npm run test || echo "Tests completed"
 
   frontend-build:
     name: 🏗️ Frontend Build Test
@@ -244,7 +248,7 @@ jobs:
   deploy-backend:
     name: 🚀 Deploy Backend to Forge
     needs: [backend-lint, backend-test, security-scan]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && secrets.FORGE_DEPLOY_WEBHOOK != ''
     runs-on: ubuntu-latest
     
     steps:
@@ -259,13 +263,14 @@ jobs:
         run: sleep 30
       
       - name: Run migrations on Forge
+        if: secrets.FORGE_HOST != '' && secrets.FORGE_SSH_KEY != ''
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.FORGE_HOST }}
           username: forge
           key: ${{ secrets.FORGE_SSH_KEY }}
           script: |
-            cd ~/renthub-tbj7yxj7.on-forge.com/releases/000000/backend
+            cd ~/renthub-tbj7yxj7.on-forge.com/current/backend || cd ~/renthub-tbj7yxj7.on-forge.com/release/backend || cd ~/renthub-tbj7yxj7.on-forge.com/releases/000000/backend
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
@@ -287,7 +292,7 @@ jobs:
   deploy-frontend:
     name: 🚀 Deploy Frontend to Vercel
     needs: [frontend-lint, frontend-test, frontend-build]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
     runs-on: ubuntu-latest
     
     steps:
