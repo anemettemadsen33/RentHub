@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
+import apiClient from '@/lib/api-client';
 // REMOVED: type { Metadata } - not used in client components
 import { MainLayout } from '@/components/layouts/main-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,22 +53,49 @@ export default function OwnerDashboardPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    // Mock data - replace with API calls
-    setProperties([
-      { id: 1, title: 'Downtown Apartment', status: 'active', bookings: 12, revenue: 5400 },
-      { id: 2, title: 'Lake House', status: 'active', bookings: 8, revenue: 3200 },
-      { id: 3, title: 'City Studio', status: 'inactive', bookings: 0, revenue: 0 },
-    ]);
-    setRevenue([
-      { month: 'Jun', amount: 3200 },
-      { month: 'Jul', amount: 4100 },
-      { month: 'Aug', amount: 3800 },
-      { month: 'Sep', amount: 4500 },
-      { month: 'Oct', amount: 4000 },
-      { month: 'Nov', amount: 4350 },
-    ]);
-    setStats({ totalProperties: 3, totalBookings: 20, totalRevenue: 8600, activeGuests: 4 });
-    setLoading(false);
+    
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch properties
+        const propertiesRes = await apiClient.get('/my-properties');
+        const propertiesData = propertiesRes.data.data || [];
+        setProperties(propertiesData.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          status: p.status,
+          bookings: p.bookings_count || 0,
+          revenue: p.total_revenue || 0
+        })));
+
+        // Fetch analytics summary
+        const analyticsRes = await apiClient.get('/analytics/summary?range=180');
+        const analyticsData = analyticsRes.data;
+        
+        if (analyticsData.revenue?.months) {
+          setRevenue(analyticsData.revenue.months.slice(-6).map((m: any) => ({
+            month: m.month,
+            amount: m.amount || 0
+          })));
+        }
+
+        setStats({
+          totalProperties: propertiesData.length,
+          totalBookings: analyticsData.bookings?.total || 0,
+          totalRevenue: analyticsData.revenue?.total || 0,
+          activeGuests: analyticsData.bookings?.active || 0
+        });
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+        // Fallback to empty data
+        setProperties([]);
+        setRevenue([]);
+        setStats({ totalProperties: 0, totalBookings: 0, totalRevenue: 0, activeGuests: 0 });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, [isAuthenticated]);
 
   if (isLoading) {
