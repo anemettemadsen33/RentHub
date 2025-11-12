@@ -59,8 +59,8 @@
   ],
   "rewrites": [
     {
-      "source": "/backend-api/:path*",
-      "destination": "https://your-backend-domain.com/api/:path*"
+      "source": "/api/:path*",
+      "destination": "https://renthub-tbj7yxj7.on-forge.com/api/:path*"
     }
   ],
   "crons": []
