@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import type { Invoice } from '@/lib/schemas/invoice';
 import { listInvoices, downloadInvoice, resendInvoice } from '../api';
 import { usePrivateChannel } from '@/hooks/use-echo';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import type { VerificationStatus } from '@/lib/schemas/verification';
 import {
   getVerificationStatus,

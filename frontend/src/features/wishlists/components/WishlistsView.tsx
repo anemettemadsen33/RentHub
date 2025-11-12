@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { type Wishlist } from '@/lib/schemas';
 import { usePrivateChannel } from '@/hooks/use-echo';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import type { SmartLock, AccessCode, LockActivity } from '@/lib/schemas/smart-lock';
 import { usePrivateChannel } from '@/hooks/use-echo';
 import {

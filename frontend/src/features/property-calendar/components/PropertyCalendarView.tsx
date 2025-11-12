@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import type { BlockedDate } from '@/lib/schemas/calendar';
 import { getBlockedDates, blockDates, unblockDates } from '../api';
 import { usePrivateChannel } from '@/hooks/use-echo';
