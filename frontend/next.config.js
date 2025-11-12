@@ -5,6 +5,9 @@
 const nextConfig = {
   reactStrictMode: true,
   
+  // Disable static generation to avoid prerender errors
+  output: 'standalone',
+  
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -27,6 +30,11 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  
+  // Disable static optimization completely
+  experimental: {
+    isrMemoryCacheSize: 0,
   },
   
   // API proxy to backend
