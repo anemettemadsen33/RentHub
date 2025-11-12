@@ -5,9 +5,6 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Disable static generation to avoid prerender errors
-  output: 'standalone',
-  
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -24,17 +21,12 @@ const nextConfig = {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://renthub-tbj7yxj7.on-forge.com/api/v1',
   },
   
-  // Ignore build errors temporarily
+  // Ignore build errors - allow deployment
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  
-  // Disable static optimization completely
-  experimental: {
-    isrMemoryCacheSize: 0,
   },
   
   // API proxy to backend
