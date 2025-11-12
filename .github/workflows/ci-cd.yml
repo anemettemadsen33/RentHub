@@ -9,7 +9,11 @@ on:
 
 env:
   NODE_VERSION: '20.x'
-  PHP_VERSION: '8.2'
+  PHP_VERSION: '8.3'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # ==================== BACKEND JOBS ====================
@@ -255,18 +259,34 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check Forge secrets
+        id: check_forge
+        env:
+          FORGE_DEPLOY_WEBHOOK: ${{ secrets.FORGE_DEPLOY_WEBHOOK }}
+          FORGE_HOST: ${{ secrets.FORGE_HOST }}
+          FORGE_SSH_KEY: ${{ secrets.FORGE_SSH_KEY }}
+        run: |
+          has_webhook=false
+          has_ssh=false
+          if [ -n "$FORGE_DEPLOY_WEBHOOK" ]; then has_webhook=true; fi
+          if [ -n "$FORGE_HOST" ] && [ -n "$FORGE_SSH_KEY" ]; then has_ssh=true; fi
+          echo "deploy_webhook_present=$has_webhook" >> $GITHUB_OUTPUT
+          echo "ssh_present=$has_ssh" >> $GITHUB_OUTPUT
       
       - name: Deploy to Laravel Forge
-        if: ${{ secrets.FORGE_DEPLOY_WEBHOOK != '' }}
+        if: steps.check_forge.outputs.deploy_webhook_present == 'true'
+        env:
+          FORGE_DEPLOY_WEBHOOK: ${{ secrets.FORGE_DEPLOY_WEBHOOK }}
         run: |
           echo "🚀 Triggering Forge deployment..."
-          curl -X POST "${{ secrets.FORGE_DEPLOY_WEBHOOK }}"
+          curl -X POST "$FORGE_DEPLOY_WEBHOOK"
       
       - name: Wait for deployment
         run: sleep 30
       
       - name: Run migrations on Forge
-        if: ${{ secrets.FORGE_HOST != '' && secrets.FORGE_SSH_KEY != '' }}
+        if: steps.check_forge.outputs.ssh_present == 'true'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.FORGE_HOST }}
@@ -301,9 +321,20 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check Vercel secrets
+        id: check_vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          ready=false
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then ready=true; fi
+          echo "vercel_ready=$ready" >> $GITHUB_OUTPUT
       
       - name: Deploy to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
+        if: steps.check_vercel.outputs.vercel_ready == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
