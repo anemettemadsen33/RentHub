@@ -134,6 +134,10 @@ jobs:
           DB_DATABASE: renthub_test
           DB_USERNAME: root
           DB_PASSWORD: password
+          CACHE_DRIVER: array
+          QUEUE_CONNECTION: sync
+          SESSION_DRIVER: array
+          BROADCAST_DRIVER: log
       
       - name: Run Tests
         run: php artisan test --coverage --min=80 || echo "Tests completed"
@@ -144,6 +148,10 @@ jobs:
           DB_DATABASE: renthub_test
           DB_USERNAME: root
           DB_PASSWORD: password
+          CACHE_DRIVER: array
+          QUEUE_CONNECTION: sync
+          SESSION_DRIVER: array
+          BROADCAST_DRIVER: log
 
   # ==================== FRONTEND JOBS ====================
   
