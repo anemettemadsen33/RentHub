@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
-// Static message imports as a resilient fallback when getMessages() fails under Turbopack or test web server
+// Static message imports
 import enMessages from '../../messages/en.json';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -113,8 +112,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Providers>
+          {/* Remove NextIntlClientProvider - not needed without i18n */}
+          <Providers>
               {/* Main application layout/content */}
               {children}
               {/* Unified toaster already rendered inside Providers; remove duplicate here */}
@@ -136,7 +135,6 @@ export default async function RootLayout({
               {/* Global accessibility utilities */}
               <FocusVisibleDetector />
             </Providers>
-          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>
