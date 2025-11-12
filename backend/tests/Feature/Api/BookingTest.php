@@ -37,14 +37,11 @@ class BookingTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'success',
-                'data' => [
-                    'id',
-                    'property_id',
-                    'check_in',
-                    'check_out',
-                    'total_amount',
-                ],
+                'id',
+                'property_id',
+                'check_in',
+                'check_out',
+                'total_price',
             ]);
     }
 
@@ -86,7 +83,7 @@ class BookingTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->putJson("/api/v1/bookings/{$booking->id}/cancel");
+        ])->postJson("/api/v1/bookings/{$booking->id}/cancel");
 
         $response->assertStatus(200);
 

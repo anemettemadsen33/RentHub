@@ -59,14 +59,15 @@ class PropertyTest extends TestCase
      */
     public function test_authenticated_user_can_create_property(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'host']);
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->postJson('/api/v1/properties', [
             'title' => 'Test Property',
-            'description' => 'A beautiful test property',
+            'description' => 'A beautiful test property with amazing views and great amenities for your perfect vacation stay',
+            'type' => 'apartment',
             'price_per_night' => 100.00,
             'bedrooms' => 2,
             'bathrooms' => 1,
@@ -100,7 +101,7 @@ class PropertyTest extends TestCase
      */
     public function test_owner_can_update_their_property(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'host']);
         $property = Property::factory()->create(['user_id' => $user->id]);
         $token = $user->createToken('test-token')->plainTextToken;
 
