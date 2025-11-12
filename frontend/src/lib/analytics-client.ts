@@ -24,7 +24,9 @@ export async function sendWebVital(metric: WebVitalMetric) {
   // Respect consent: require overall consent AND performance category
   if (!analyticsConsentGranted || !consentCategories.performance) return;
   try {
-    await fetch(`${API_BASE}/analytics/web-vitals`, {
+    // Note: web-vitals endpoint is outside v1 group on backend
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    await fetch(`${apiBase}/analytics/web-vitals`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...metric, clientId: getOrCreateClientId() }),
