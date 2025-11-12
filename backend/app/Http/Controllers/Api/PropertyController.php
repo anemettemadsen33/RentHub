@@ -8,109 +8,130 @@ use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Property::with(['amenities', 'user:id,name,email'])
-            ->where('status', 'available')
-            ->withCount('reviews')
-            ->withAvg('reviews as average_rating', 'rating');
-
-        // Search filters
-        if ($request->filled('search')) {
-            $search = $request->get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('city', 'like', "%{$search}%")
-                    ->orWhere('country', 'like', "%{$search}%");
-            });
+        // Create cache key from request parameters
+        $cacheKey = 'properties_' . md5(json_encode($request->all()));
+        
+        // Cache search results for 5 minutes (300 seconds)
+        $cacheTTL = 300;
+        
+        // For simple listing without filters, cache longer (30 minutes)
+        if (!$request->hasAny(['search', 'city', 'country', 'min_price', 'max_price', 'check_in', 'check_out', 'amenities'])) {
+            $cacheTTL = 1800;
         }
+        
+        $result = Cache::tags(['properties'])->remember($cacheKey, $cacheTTL, function () use ($request) {
+            $query = Property::with(['amenities', 'user:id,name,email'])
+                ->where('status', 'available')
+                ->withCount('reviews')
+                ->withAvg('reviews as average_rating', 'rating');
 
-        if ($request->filled('city')) {
-            $query->byLocation($request->get('city'));
-        }
+            // Search filters
+            if ($request->filled('search')) {
+                $search = $request->get('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('country', 'like', "%{$search}%");
+                });
+            }
 
-        if ($request->filled('country')) {
-            $query->byLocation(null, $request->get('country'));
-        }
+            if ($request->filled('city')) {
+                $query->byLocation($request->get('city'));
+            }
 
-        if ($request->filled('min_price') || $request->filled('max_price')) {
-            $query->priceBetween($request->get('min_price'), $request->get('max_price'));
-        }
+            if ($request->filled('country')) {
+                $query->byLocation(null, $request->get('country'));
+            }
 
-        // Filter by type
-        if ($request->filled('type')) {
-            $query->where('type', $request->get('type'));
-        }
+            if ($request->filled('min_price') || $request->filled('max_price')) {
+                $query->priceBetween($request->get('min_price'), $request->get('max_price'));
+            }
 
-        if ($request->filled('guests')) {
-            $query->where('guests', '>=', $request->get('guests'));
-        }
+            // Filter by type
+            if ($request->filled('type')) {
+                $query->where('type', $request->get('type'));
+            }
 
-        if ($request->filled('bedrooms')) {
-            $query->where('bedrooms', '>=', $request->get('bedrooms'));
-        }
+            if ($request->filled('guests')) {
+                $query->where('guests', '>=', $request->get('guests'));
+            }
 
-        if ($request->filled('check_in') && $request->filled('check_out')) {
-            $query->available($request->get('check_in'), $request->get('check_out'));
-        }
+            if ($request->filled('bedrooms')) {
+                $query->where('bedrooms', '>=', $request->get('bedrooms'));
+            }
 
-        if ($request->filled('amenities')) {
-            $amenityIds = explode(',', $request->get('amenities'));
-            $query->whereHas('amenities', function ($q) use ($amenityIds) {
-                $q->whereIn('amenities.id', $amenityIds);
-            });
-        }
+            if ($request->filled('check_in') && $request->filled('check_out')) {
+                $query->available($request->get('check_in'), $request->get('check_out'));
+            }
 
-        // Sorting
-        // Support legacy param names `sort` and `order`
-        $sortBy = $request->get('sort_by', $request->get('sort', 'created_at'));
-        $sortOrder = $request->get('sort_order', $request->get('order', 'desc'));
+            if ($request->filled('amenities')) {
+                $amenityIds = explode(',', $request->get('amenities'));
+                $query->whereHas('amenities', function ($q) use ($amenityIds) {
+                    $q->whereIn('amenities.id', $amenityIds);
+                });
+            }
 
-        if ($sortBy === 'price') {
-            $query->orderBy('price_per_night', $sortOrder);
-        } elseif ($sortBy === 'rating') {
-            $query->orderBy('average_rating', $sortOrder);
-        } else {
-            $query->orderBy($sortBy, $sortOrder);
-        }
+            // Sorting
+            // Support legacy param names `sort` and `order`
+            $sortBy = $request->get('sort_by', $request->get('sort', 'created_at'));
+            $sortOrder = $request->get('sort_order', $request->get('order', 'desc'));
 
-        // Pagination (return only items array for legacy tests)
-        $perPage = min($request->get('per_page', 15), 50);
-        $paginator = $query->paginate($perPage);
+            if ($sortBy === 'price') {
+                $query->orderBy('price_per_night', $sortOrder);
+            } elseif ($sortBy === 'rating') {
+                $query->orderBy('average_rating', $sortOrder);
+            } else {
+                $query->orderBy($sortBy, $sortOrder);
+            }
+
+            // Pagination (return only items array for legacy tests)
+            $perPage = min($request->get('per_page', 15), 50);
+            return $query->paginate($perPage);
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $paginator->items(),
+            'data' => $result->items(),
         ]);
     }
 
     public function show(Property $property): JsonResponse
     {
-        $property->load([
-            'amenities:id,name,icon,category',
-            'user:id,name,email,phone,bio,avatar',
-            'reviews' => function ($query) {
-                $query->where('is_approved', true)
-                    ->with('user:id,name,avatar')
-                    ->orderBy('created_at', 'desc')
-                    ->take(10);
-            },
-        ]);
+        // Cache individual property for 30 minutes
+        $cacheKey = "property_{$property->id}";
+        
+        $property = Cache::tags(['properties'])->remember($cacheKey, 1800, function () use ($property) {
+            $property->load([
+                'amenities:id,name,icon,category',
+                'user:id,name,email,phone,bio,avatar',
+                'reviews' => function ($query) {
+                    $query->where('is_approved', true)
+                        ->with('user:id,name,avatar')
+                        ->orderBy('created_at', 'desc')
+                        ->take(10);
+                },
+            ]);
 
-        $property->loadCount('reviews');
-        $property->loadAvg('reviews as average_rating', 'rating');
+            $property->loadCount('reviews');
+            $property->loadAvg('reviews as average_rating', 'rating');
 
-        // Ensure numeric float for average_rating as expected by tests (not string)
-        if (isset($property->average_rating)) {
-            $property->average_rating = round((float) $property->average_rating, 1);
-        } else {
-            $property->average_rating = 0.0;
-        }
+            // Ensure numeric float for average_rating as expected by tests (not string)
+            if (isset($property->average_rating)) {
+                $property->average_rating = round((float) $property->average_rating, 1);
+            } else {
+                $property->average_rating = 0.0;
+            }
+            
+            return $property;
+        });
 
         return response()->json([
             'success' => true,

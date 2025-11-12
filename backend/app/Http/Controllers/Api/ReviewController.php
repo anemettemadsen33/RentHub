@@ -9,6 +9,7 @@ use App\Models\Review;
 use App\Models\ReviewHelpfulVote;
 use App\Models\ReviewResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,54 +20,60 @@ class ReviewController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Review::with(['user', 'booking', 'responses.user', 'helpfulVotes'])
-            ->approved();
+        // Create cache key from request parameters
+        $cacheKey = 'reviews_' . md5(json_encode($request->all()));
+        
+        // Cache reviews for 10 minutes (they change less frequently than properties)
+        $result = Cache::tags(['reviews'])->remember($cacheKey, 600, function () use ($request) {
+            $query = Review::with(['user', 'booking', 'responses.user', 'helpfulVotes'])
+                ->approved();
 
-        // Filter by property
-        if ($request->has('property_id')) {
-            $query->where('property_id', $request->property_id);
-        }
-
-        // Filter by rating
-        if ($request->has('min_rating')) {
-            $query->where('rating', '>=', $request->min_rating);
-        }
-
-        if ($request->has('max_rating')) {
-            $query->where('rating', '<=', $request->max_rating);
-        }
-
-        // Filter by verified guests only
-        if ($request->boolean('verified_only')) {
-            $query->verifiedGuest();
-        }
-
-        // Filter by has owner response
-        if ($request->has('has_response')) {
-            if ($request->boolean('has_response')) {
-                $query->withResponse();
-            } else {
-                $query->withoutResponse();
+            // Filter by property
+            if ($request->has('property_id')) {
+                $query->where('property_id', $request->property_id);
             }
-        }
 
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+            // Filter by rating
+            if ($request->has('min_rating')) {
+                $query->where('rating', '>=', $request->min_rating);
+            }
 
-        if ($sortBy === 'helpful') {
-            $query->orderBy('helpful_count', $sortOrder);
-        } elseif ($sortBy === 'rating') {
-            $query->orderBy('rating', $sortOrder);
-        } else {
-            $query->orderBy('created_at', $sortOrder);
-        }
+            if ($request->has('max_rating')) {
+                $query->where('rating', '<=', $request->max_rating);
+            }
 
-        $reviews = $query->paginate($request->get('per_page', 15));
+            // Filter by verified guests only
+            if ($request->boolean('verified_only')) {
+                $query->verifiedGuest();
+            }
+
+            // Filter by has owner response
+            if ($request->has('has_response')) {
+                if ($request->boolean('has_response')) {
+                    $query->withResponse();
+                } else {
+                    $query->withoutResponse();
+                }
+            }
+
+            // Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+
+            if ($sortBy === 'helpful') {
+                $query->orderBy('helpful_count', $sortOrder);
+            } elseif ($sortBy === 'rating') {
+                $query->orderBy('rating', $sortOrder);
+            } else {
+                $query->orderBy('created_at', $sortOrder);
+            }
+
+            return $query->paginate($request->get('per_page', 15));
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $reviews,
+            'data' => $result,
         ]);
     }
 
