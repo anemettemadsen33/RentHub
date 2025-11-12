@@ -17,7 +17,7 @@ import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/api-endpoints';
 import type { Conversation, Message } from '@/types/extended';
 import { ArrowLeft, Download, Image as ImageIcon, Paperclip, Send, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 export default function MessageThreadPage() {
   const router = useRouter();

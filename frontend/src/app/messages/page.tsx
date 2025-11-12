@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { notify } from '@/lib/notify';
@@ -57,9 +57,11 @@ import { io, Socket } from 'socket.io-client';
 import { usePushNotifications } from '@/hooks/use-push-notifications';
 import { useChat } from '@/hooks/use-chat';
 import { announceToScreenReader } from '@/lib/a11y-utils';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
-export default function MessagesPage() {
+export const dynamic = 'force-dynamic';
+
+function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -911,5 +913,13 @@ export default function MessagesPage() {
         </div>
       </div>
     </MainLayout>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <MessagesContent />
+    </Suspense>
   );
 }

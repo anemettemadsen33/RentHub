@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { useRouter } from 'next/navigation';
 import { MainLayout } from '@/components/layouts/main-layout';
 import { ListSkeleton } from '@/components/skeletons';
