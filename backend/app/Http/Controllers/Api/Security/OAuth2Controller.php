@@ -1,6 +1,6 @@
 <?php
 
-namespace App\\Http\\Controllers\\Api\Security;
+namespace App\Http\\Controllers\\Api\Security;
 
 use App\Http\Controllers\Controller;
 use App\Services\Security\OAuth2Service;

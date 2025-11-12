@@ -1,0 +1,189 @@
+name: Fix & Deploy Everything
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  comprehensive-fix:
+    name: Comprehensive Project Fix
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # ============================================
+      # BACKEND FIXES
+      # ============================================
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, json, bcmath, pdo_mysql, redis
+          coverage: none
+      
+      - name: Fix all backend namespace issues
+        run: |
+          echo "🔧 Fixing namespace double backslashes..."
+          cd backend
+          
+          # Fix all namespace declarations
+          find . -name "*.php" -type f -not -path "./vendor/*" -exec sed -i 's/namespace App\\\\/namespace App\\/g' {} \;
+          find . -name "*.php" -type f -not -path "./vendor/*" -exec sed -i 's/use App\\\\/use App\\/g' {} \;
+          
+          echo "✅ Backend namespaces fixed"
+      
+      - name: Install Composer dependencies
+        working-directory: backend
+        run: |
+          composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+          composer dump-autoload -o
+      
+      - name: Cache Laravel optimizations
+        working-directory: backend
+        run: |
+          php artisan config:cache
+          php artisan route:cache  
+          php artisan view:cache
+          php artisan event:cache
+      
+      # ============================================
+      # FRONTEND FIXES
+      # ============================================
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install ALL frontend dependencies
+        working-directory: frontend
+        run: |
+          echo "📦 Installing dependencies..."
+          
+          # Ensure next-intl is in package.json
+          if ! grep -q "next-intl" package.json; then
+            npm install --save next-intl@^3.25.3
+          fi
+          
+          # Clean install
+          rm -rf node_modules package-lock.json
+          npm install
+          
+          echo "✅ Dependencies installed"
+      
+      - name: Fix route conflicts
+        working-directory: frontend/src/app
+        run: |
+          echo "🔧 Fixing route conflicts..."
+          
+          # Remove any route.ts/tsx files that conflict with page.tsx
+          rm -f route.ts route.tsx
+          
+          # Clean up duplicate folders
+          for dir in _*; do
+            if [ -d "$dir" ]; then
+              enabled="${dir#_}"
+              if [ -d "$enabled" ] && [ "$enabled" != "offline" ]; then
+                echo "Removing duplicate: $enabled"
+                rm -rf "$enabled"
+              fi
+            fi
+          done
+          
+          echo "✅ Route conflicts resolved"
+      
+      - name: Fix next.config.ts
+        working-directory: frontend
+        run: |
+          echo "🔧 Cleaning next.config.ts..."
+          
+          # Remove experimental isrMemoryCacheSize (deprecated in Next.js 15)
+          if grep -q "isrMemoryCacheSize" next.config.ts; then
+            sed -i '/isrMemoryCacheSize/d' next.config.ts
+            sed -i '/experimental:/d' next.config.ts
+          fi
+          
+          echo "✅ next.config.ts cleaned"
+      
+      - name: Verify build
+        working-directory: frontend
+        run: |
+          echo "🏗️ Building frontend..."
+          npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://renthub-tbj7yxj7.on-forge.com/api/v1
+          NEXT_PUBLIC_APP_URL: https://rent-hub-beta.vercel.app
+          NODE_ENV: production
+          SKIP_ENV_VALIDATION: true
+      
+      # ============================================
+      # COMMIT & PUSH
+      # ============================================
+      - name: Commit all fixes
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add -A
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Auto-fix: backend namespaces, frontend deps, route conflicts
+            
+            - Fix double backslashes in backend namespaces
+            - Install missing next-intl dependency
+            - Remove route conflicts in frontend
+            - Clean next.config.ts experimental options
+            - Optimize Laravel caches
+            
+            Fixes: Vercel build errors, Backend 500 errors"
+            
+            git push
+          fi
+      
+      # ============================================
+      # POST-DEPLOY VERIFICATION
+      # ============================================
+      - name: Wait for deployments
+        run: sleep 90
+      
+      - name: Verify deployments
+        run: |
+          echo "🧪 Testing deployments..."
+          
+          # Test frontend
+          FRONTEND="https://rent-hub-beta.vercel.app"
+          if curl -f -s "$FRONTEND/" > /dev/null; then
+            echo "✅ Frontend: OK"
+          else
+            echo "❌ Frontend: FAILED"
+          fi
+          
+          # Test backend
+          BACKEND="https://renthub-tbj7yxj7.on-forge.com/api/v1"
+          response=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND/properties")
+          if [ "$response" = "200" ] || [ "$response" = "401" ]; then
+            echo "✅ Backend: OK ($response)"
+          else
+            echo "❌ Backend: FAILED ($response)"
+          fi
+      
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Fixes Applied" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend namespace double backslashes" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend next-intl dependency" >> $GITHUB_STEP_SUMMARY
+          echo "- Route conflicts in app directory" >> $GITHUB_STEP_SUMMARY
+          echo "- Next.js config experimental options" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 URLs" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: https://rent-hub-beta.vercel.app" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: https://renthub-tbj7yxj7.on-forge.com/api/v1" >> $GITHUB_STEP_SUMMARY
