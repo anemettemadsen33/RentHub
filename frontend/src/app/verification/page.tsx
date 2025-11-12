@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { useAuth } from '@/contexts/auth-context';
 import { MainLayout } from '@/components/layouts/main-layout';
 import { TooltipProvider } from '@/components/ui/tooltip';

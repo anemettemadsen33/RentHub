@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { notify } from '@/lib/notify';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import apiClient from '@/lib/api-client';
 import { Bell, BellOff, Trash2, Search, Clock, Calendar } from 'lucide-react';
 import { formatDate } from '@/lib/utils';

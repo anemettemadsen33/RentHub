@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { useRouter } from 'next/navigation';
 import apiClient from '@/lib/api-client';
 import { useAuth } from '@/contexts/auth-context';

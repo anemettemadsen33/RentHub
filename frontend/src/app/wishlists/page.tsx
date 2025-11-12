@@ -1,7 +1,7 @@
 'use client';
 
 import { MainLayout } from '@/components/layouts/main-layout';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import dynamic from 'next/dynamic';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
