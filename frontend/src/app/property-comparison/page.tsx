@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { X, ArrowRight, Check, Minus } from 'lucide-react';
 import { notify } from '@/lib/notify';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import apiClient from '@/lib/api-client';
 import { Property } from '@/types';
 import { formatCurrency } from '@/lib/utils';
