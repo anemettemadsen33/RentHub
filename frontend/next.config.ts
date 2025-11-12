@@ -4,7 +4,7 @@ import withPWAInit from 'next-pwa';
 import { withSentryConfig } from '@sentry/nextjs';
 
 // Re-enable i18n with proper configuration
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 const withPWA = withPWAInit({
   dest: 'public',
   register: false,
