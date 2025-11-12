@@ -46,14 +46,25 @@ class CustomCorsMiddleware
             'http://localhost:3000',
             'http://127.0.0.1:3000',
             'http://localhost:8000',
+            'https://rent-hub-beta.vercel.app',
             'https://rent-hub-six.vercel.app',
         ];
+
+        // Allow any Vercel deployment
+        if ($origin && preg_match('/^https:\/\/[\w-]+\.vercel\.app$/', $origin)) {
+            return $origin;
+        }
+
+        // Allow any Forge deployment
+        if ($origin && preg_match('/^https:\/\/[\w-]+\.on-forge\.com$/', $origin)) {
+            return $origin;
+        }
 
         if (in_array($origin, $allowedOrigins)) {
             return $origin;
         }
 
-        // Default to frontend URL
+        // Default to frontend URL from config
         return config('app.frontend_url', 'http://localhost:3000');
     }
 }
