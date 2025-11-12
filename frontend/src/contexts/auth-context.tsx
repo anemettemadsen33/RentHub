@@ -17,6 +17,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
+  loading: boolean; // Alias for isLoading
   refreshUser: () => Promise<void>;
 }
 
@@ -150,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isAuthenticated: !!user,
         isLoading,
+        loading: isLoading, // Alias
         refreshUser,
       }}
     >

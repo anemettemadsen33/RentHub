@@ -27,11 +27,40 @@ import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { toast } from 'sonner';
 
+interface Property {
+  id: number;
+  title: string;
+  description: string;
+  images: string[];
+  status: 'active' | 'inactive';
+  views: number;
+  rating: number;
+}
+
+interface HostStats {
+  totalEarnings: number;
+  earningsGrowth: number;
+  activeProperties: number;
+  totalProperties: number;
+  upcomingBookings: number;
+  totalBookings: number;
+  averageRating: number;
+  totalReviews: number;
+  recentBookings?: Array<{
+    id: number;
+    propertyTitle: string;
+    guestName: string;
+    checkIn: string;
+    checkOut: string;
+    total: number;
+  }>;
+}
+
 export default function HostDashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [properties, setProperties] = useState([]);
-  const [stats, setStats] = useState(null);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [stats, setStats] = useState<HostStats | null>(null);
   const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
@@ -54,41 +83,10 @@ export default function HostDashboardPage() {
 
       setProperties(propertiesData.data || []);
       setStats(statsData.data || {});
-
-      interface Property {
-        id: number;
-        title: string;
-        description: string;
-        images: string[];
-        status: 'active' | 'inactive';
-        views: number;
-        rating: number;
-      }
-
-      interface HostStats {
-        totalEarnings: number;
-        earningsGrowth: number;
-        activeProperties: number;
-        totalProperties: number;
-        upcomingBookings: number;
-        totalBookings: number;
-        averageRating: number;
-        totalReviews: number;
-        recentBookings?: Array<{
-          id: number;
-          propertyTitle: string;
-          guestName: string;
-          checkIn: string;
-          checkOut: string;
-          total: number;
-        }>;
-      }
-
     } catch (error) {
-        const { user, isLoading: loading } = useAuth();
       toast.error('Failed to load dashboard data');
-        const [properties, setProperties] = useState<Property[]>([]);
-        const [stats, setStats] = useState<HostStats | null>(null);
+    } finally {
+      setLoadingData(false);
     }
   };
 
