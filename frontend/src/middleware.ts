@@ -12,10 +12,6 @@ const intlMiddleware = createMiddleware({
 });
 
 export default function middleware(request: NextRequest) {
-  // Bypass i18n middleware entirely in development to avoid Turbopack 404s
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
-  }
   try {
     return intlMiddleware(request);
   } catch {

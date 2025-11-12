@@ -6,12 +6,11 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["iad1"],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "functions": {
     "app/**/*.ts": {
       "maxDuration": 30
-    },
-    "app/api/**/*.ts": {
-      "maxDuration": 10
     }
   },
   "headers": [
