@@ -23,7 +23,7 @@ import apiClient from '@/lib/api-client';
 import { Review, ReviewImage } from '@/types/extended';
 import { Star, Camera, Loader2, ThumbsUp, MessageSquare, Image as ImageIcon, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 interface RatingBreakdown { label: string; value: number }
 

@@ -5,7 +5,8 @@ import { cache } from 'react';
 import { MainLayout } from '@/components/layouts/main-layout';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { breadcrumbSets } from '@/lib/breadcrumbs';
-import { useTranslations } from 'next-intl';
+// TEMP: Using simple wrapper instead of next-intl
+import { useTranslations } from '@/lib/i18n-temp';
 import PropertyDetailClient from '@/app/properties/[id]/property-client';
 
 // --- SEO DATA FETCHING (server side) ---

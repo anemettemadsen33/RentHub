@@ -38,7 +38,8 @@ import { debounce } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils';
 import { mockProperties } from '@/lib/mock-data';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+// TEMP: Using simple wrapper instead of next-intl
+import { useTranslations } from '@/lib/i18n-temp';
 
 const isStubE2E = process.env.NEXT_PUBLIC_E2E === 'true';
 const initialStub = isStubE2E ? mockProperties.slice(0, 6) : [];

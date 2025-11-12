@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { breadcrumbI18nKey, BreadcrumbKey } from '@/lib/breadcrumbs';
 import {
   Breadcrumb,

@@ -4,7 +4,7 @@ import { propertiesService, type Property as ApiProperty } from '@/lib/api-servi
 import { Property } from '@/types';
 import { MemoizedPropertyCard } from '@/components/memoized-property-card';
 import { PropertyCardSkeleton } from '@/components/skeletons';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

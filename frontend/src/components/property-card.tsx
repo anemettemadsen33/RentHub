@@ -12,7 +12,7 @@ import { PropertyImage } from '@/components/ui/smart-image';
 import { useState } from 'react';
 import { trackMarketingEvent } from '@/lib/analytics-client';
 import { notify } from '@/lib/notify';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 interface PropertyCardProps {
   property: Property;

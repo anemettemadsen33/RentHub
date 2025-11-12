@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { HostPropertiesView } from '@/features/host/components/host-properties-view';
+import { Metadata } from 'next';
+// TEMP: Using simple wrapper instead of next-intl
+import { useTranslations } from '@/lib/i18n-temp';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

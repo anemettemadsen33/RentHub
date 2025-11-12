@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { X, Scale, ArrowRight } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { notify } from '@/lib/notify';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { cn } from '@/lib/utils';
 
 interface ComparisonBarProps {

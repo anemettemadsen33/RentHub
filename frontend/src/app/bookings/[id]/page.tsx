@@ -7,7 +7,7 @@ import Image from 'next/image';
 import apiClient from '@/lib/api-client';
 import { Booking } from '@/types';
 import { BookingStatusTimeline } from '@/components/booking/booking-status-timeline';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import { useAuth } from '@/contexts/auth-context';
 import { notify } from '@/lib/notify';
 import { MainLayout } from '@/components/layouts/main-layout';

@@ -21,7 +21,7 @@ import {
   Flame,
   Home,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 interface FilterPanelProps {
   onFilterChange: (filters: FilterOptions) => void;

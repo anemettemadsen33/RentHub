@@ -17,7 +17,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { mockBookings } from '@/lib/mock-data';
+import { Metadata } from 'next';
+// TEMP: Using simple wrapper instead of next-intl
+import { useTranslations } from '@/lib/i18n-temp';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 export default function BookingsPage() {

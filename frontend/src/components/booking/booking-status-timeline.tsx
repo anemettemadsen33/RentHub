@@ -1,6 +1,6 @@
 "use client";
 import { getBookingStatusSteps, bookingStatusColor, BookingStatus } from '@/lib/booking-status';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 export interface BookingStatusTimelineProps {
   status: BookingStatus;

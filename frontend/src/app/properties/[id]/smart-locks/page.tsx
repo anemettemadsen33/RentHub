@@ -57,7 +57,7 @@ import { notify } from '@/lib/notify';
 import { smartLocksService } from '@/lib/api-service';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/api-endpoints';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 
 interface SmartLock {
   id: number;

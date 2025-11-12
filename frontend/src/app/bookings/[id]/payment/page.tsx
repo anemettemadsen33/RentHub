@@ -12,7 +12,7 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { generateInvoicePDF, previewInvoicePDF } from '@/lib/invoice-generator';
 import { bookingsService, invoicesService } from '@/lib/api-service';
 import { formatCurrency } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-temp';
 import {
   Building2,
   Calendar,
