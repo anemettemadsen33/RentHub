@@ -30,9 +30,18 @@ jobs:
           echo "🔧 Fixing namespace double backslashes..."
           cd backend
           
-          # Fix all namespace declarations
-          find . -name "*.php" -type f -not -path "./vendor/*" -exec sed -i 's/namespace App\\\\/namespace App\\/g' {} \;
-          find . -name "*.php" -type f -not -path "./vendor/*" -exec sed -i 's/use App\\\\/use App\\/g' {} \;
+          # Fix all namespace declarations (double backslash to single)
+          find . -name "*.php" -type f -not -path "./vendor/*" | while read file; do
+            sed -i 's/namespace App\\\\/namespace App\\/g' "$file"
+            sed -i 's/use App\\\\/use App\\/g' "$file"
+          done
+          
+          # Verify fixes
+          echo "✅ Checking for remaining issues..."
+          if grep -r "namespace App\\\\\\\\" --include="*.php" --exclude-dir=vendor .; then
+            echo "❌ Still have double backslashes!"
+            exit 1
+          fi
           
           echo "✅ Backend namespaces fixed"
       
@@ -65,50 +74,42 @@ jobs:
         run: |
           echo "📦 Installing dependencies..."
           
-          # Ensure next-intl is in package.json
-          if ! grep -q "next-intl" package.json; then
+          # Ensure next-intl is installed
+          if ! npm list next-intl >/dev/null 2>&1; then
+            echo "Installing next-intl..."
             npm install --save next-intl@^3.25.3
           fi
           
-          # Clean install
-          rm -rf node_modules package-lock.json
-          npm install
+          # Install all dependencies
+          npm ci
           
           echo "✅ Dependencies installed"
       
       - name: Fix route conflicts
         working-directory: frontend/src/app
         run: |
-          echo "🔧 Fixing route conflicts..."
+          echo "🔧 Checking for route conflicts..."
           
-          # Remove any route.ts/tsx files that conflict with page.tsx
-          rm -f route.ts route.tsx
+          # Remove any route.ts/tsx files in root (conflicts with page.tsx)
+          if [ -f "route.ts" ] || [ -f "route.tsx" ]; then
+            rm -f route.ts route.tsx
+            echo "✅ Removed conflicting route files"
+          fi
           
-          # Clean up duplicate folders
-          for dir in _*; do
-            if [ -d "$dir" ]; then
-              enabled="${dir#_}"
-              if [ -d "$enabled" ] && [ "$enabled" != "offline" ]; then
-                echo "Removing duplicate: $enabled"
-                rm -rf "$enabled"
-              fi
-            fi
-          done
-          
-          echo "✅ Route conflicts resolved"
+          echo "✅ No route conflicts"
       
       - name: Fix next.config.ts
         working-directory: frontend
         run: |
-          echo "🔧 Cleaning next.config.ts..."
+          echo "🔧 Verifying next.config.ts..."
           
-          # Remove experimental isrMemoryCacheSize (deprecated in Next.js 15)
-          if grep -q "isrMemoryCacheSize" next.config.ts; then
-            sed -i '/isrMemoryCacheSize/d' next.config.ts
-            sed -i '/experimental:/d' next.config.ts
+          # Check that i18n path is correct
+          if grep -q "src/i18n/request.ts" next.config.ts; then
+            echo "❌ Wrong i18n path detected, fixing..."
+            sed -i "s|'./src/i18n/request.ts'|'./i18n.ts'|g" next.config.ts
           fi
           
-          echo "✅ next.config.ts cleaned"
+          echo "✅ next.config.ts is correct"
       
       - name: Verify build
         working-directory: frontend
