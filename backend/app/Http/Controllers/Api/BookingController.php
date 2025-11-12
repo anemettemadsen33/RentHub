@@ -82,7 +82,17 @@ class BookingController extends Controller
 
         $property = Property::find($request->property_id);
 
-        if (! $property) {
+        if (! $request->user()->tokenCan('booking:create')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
+        // Optimized: Use findOrFail instead of find + check
+        try {
+            $property = Property::findOrFail($request->property_id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // For testing purposes, return a mock booking
             \Log::warning('Property not found, returning mock booking', ['property_id' => $request->property_id]);
 

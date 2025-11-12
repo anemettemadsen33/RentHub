@@ -7,6 +7,7 @@ use App\Models\Currency;
 use App\Services\ExchangeRateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CurrencyController extends Controller
 {
@@ -16,7 +17,9 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        $currencies = Currency::active()->get();
+        $currencies = Cache::tags(['currencies'])->remember('active_currencies', 86400, function () {
+            return Currency::active()->get();
+        });
 
         return response()->json([
             'success' => true,
@@ -26,9 +29,11 @@ class CurrencyController extends Controller
 
     public function show(string $code): JsonResponse
     {
-        $currency = Currency::where('code', $code)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $currency = Cache::tags(['currencies'])->remember("currency_{$code}", 86400, function () use ($code) {
+            return Currency::where('code', $code)
+                ->where('is_active', true)
+                ->firstOrFail();
+        });
 
         return response()->json([
             'success' => true,
@@ -38,7 +43,9 @@ class CurrencyController extends Controller
 
     public function getDefault(): JsonResponse
     {
-        $currency = Currency::getDefault();
+        $currency = Cache::tags(['currencies'])->remember('default_currency', 86400, function () {
+            return Currency::getDefault();
+        });
 
         if (! $currency) {
             return response()->json([
@@ -55,12 +62,8 @@ class CurrencyController extends Controller
 
     public function getActive(): JsonResponse
     {
-        $currencies = Currency::active()->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $currencies,
-        ]);
+        // Same as index for backward compatibility
+        return $this->index();
     }
 
     public function convert(Request $request): JsonResponse
