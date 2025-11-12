@@ -21,6 +21,14 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
         ]);
 
+        // Seed test data for development
+        if (app()->environment(['local', 'development', 'staging'])) {
+            $this->call([
+                AmenitySeeder::class,
+                TestPropertiesSeeder::class,
+            ]);
+        }
+
         // Uncomment to create test users
         // User::factory(10)->create();
 
