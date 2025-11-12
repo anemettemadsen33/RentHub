@@ -6,8 +6,6 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "cleanUrls": true,
-  "trailingSlash": false,
   "functions": {
     "app/**/*.ts": {
       "maxDuration": 30
@@ -61,7 +59,6 @@
       "source": "/api/:path*",
       "destination": "https://renthub-tbj7yxj7.on-forge.com/api/:path*"
     }
-  ],
-  "crons": []
+  ]
 }
 

@@ -5,17 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Building2, TrendingUp, Users, Shield, ArrowRight, Star, MapPin, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
-import { generateHomeMetaTags } from '@/lib/meta-tags';
 import { JsonLd, generateOrganizationJsonLd, generateWebsiteJsonLd } from '@/lib/seo';
 import PartnerLogos from '@/components/partnerships/PartnerLogos';
 import PropertyImportFeature from '@/components/partnerships/PropertyImportFeature';
 import RecommendedProperties from '../components/recommended-properties';
 
-export const metadata: Metadata = generateHomeMetaTags();
+export const metadata: Metadata = {
+  title: 'RentHub - Modern Property Rental Platform',
+  description: 'Find and book your perfect rental property',
+};
 
 export default async function HomePage() {
-  const t = await getTranslations('home');
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://renthub.com';
   
   const stats = [
