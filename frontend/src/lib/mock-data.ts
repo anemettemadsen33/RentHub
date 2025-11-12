@@ -1,4 +1,4 @@
-import { Property } from '@/types';
+import { Property, Booking } from '@/types';
 
 export const mockProperties: Property[] = [
   {
@@ -184,3 +184,5 @@ export const mockProperties: Property[] = [
     updated_at: '2024-11-06T12:30:00Z',
   },
 ];
+
+export const mockBookings: Booking[] = [];

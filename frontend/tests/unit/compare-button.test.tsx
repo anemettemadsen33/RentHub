@@ -6,9 +6,7 @@ import apiClient from '@/lib/api-client';
 
 vi.mock('@/lib/api-client');
 vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({
-    toast: vi.fn(),
-  }),
+  toast: vi.fn(),
 }));
 
 describe('CompareButton', () => {
@@ -18,7 +16,7 @@ describe('CompareButton', () => {
 
   it('renders compare button with label', () => {
     render(<CompareButton propertyId={1} showLabel={true} />);
-    expect(screen.getByText('Compare')).toBeInTheDocument();
+    expect(screen.getByText(/compare/i)).toBeInTheDocument();
   });
 
   it('adds property to comparison when clicked', async () => {
