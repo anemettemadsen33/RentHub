@@ -194,6 +194,9 @@ class ReviewController extends Controller
 
         $review->load(['user', 'property']);
 
+        // Invalidate review cache
+        Cache::tags(['reviews'])->flush();
+
         // Return flat structure expected by tests
         return response()->json([
             'id' => $review->id,
@@ -307,6 +310,9 @@ class ReviewController extends Controller
         }
 
         $review->delete();
+
+        // Invalidate review cache
+        Cache::tags(['reviews'])->flush();
 
         return response()->json([
             'success' => true,

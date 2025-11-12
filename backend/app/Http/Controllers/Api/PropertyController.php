@@ -170,6 +170,9 @@ class PropertyController extends Controller
 
         $property->load(['amenities', 'user:id,name,email,avatar']);
 
+        // Invalidate property cache
+        Cache::tags(['properties'])->flush();
+
         return response()->json([
             'success' => true,
             'message' => 'Property created successfully',
@@ -203,6 +206,9 @@ class PropertyController extends Controller
 
         $property->load(['amenities', 'user:id,name,email,avatar']);
 
+        // Invalidate property cache
+        Cache::tags(['properties'])->flush();
+
         return response()->json([
             'success' => true,
             'message' => 'Property updated successfully',
@@ -215,6 +221,9 @@ class PropertyController extends Controller
         $this->authorize('delete', $property);
 
         $property->delete();
+
+        // Invalidate property cache
+        Cache::tags(['properties'])->flush();
 
         return response()->json([
             'success' => true,
