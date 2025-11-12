@@ -219,6 +219,28 @@ class GDPRController extends Controller
     }
 
     /**
+     * Get data protection policy
+     */
+    public function dataProtection()
+    {
+        return response()->json([
+            'version' => '1.0',
+            'last_updated' => '2024-11-07',
+            'policies' => [
+                'data_collection' => 'We collect only necessary personal data for service provision',
+                'data_storage' => 'Data is stored securely with encryption at rest and in transit',
+                'data_retention' => 'Personal data is retained as long as necessary for service provision',
+                'data_rights' => 'Users have rights to access, rectify, delete, and port their data',
+                'contact' => 'privacy@renthub.com',
+            ],
+            'compliance' => [
+                'gdpr' => true,
+                'ccpa' => true,
+            ],
+        ]);
+    }
+
+    /**
      * Download terms of service
      */
     public function termsOfService(Request $request)

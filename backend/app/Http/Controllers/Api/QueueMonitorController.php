@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Redis;
 
 class QueueMonitorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth:sanctum', 'role:admin']);
+    }
+
     /**
      * Get queue statistics and health
      */

@@ -565,6 +565,7 @@ export default function PropertyDetailsPage() {
                           variant="ghost"
                           className="h-6 w-6"
                           onClick={() => handleRemoveBlockedDate(date)}
+                          aria-label={`Remove blocked date ${new Date(date).toLocaleDateString()}`}
                         >
                           <XCircle className="h-4 w-4" />
                         </Button>

@@ -3,9 +3,12 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Concerns\PropertyRuleSets;
 
 class StorePropertyRequest extends FormRequest
 {
+    use PropertyRuleSets;
+
     protected function prepareForValidation(): void
     {
         $this->merge([
@@ -45,60 +48,16 @@ class StorePropertyRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            // Basic info
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'min:50'],
-            'type' => ['required', 'in:apartment,house,villa,studio,condo,townhouse,loft,guesthouse'],
-
-            // Property details
-            'bedrooms' => ['required', 'integer', 'min:0', 'max:50'],
-            'bathrooms' => ['required', 'integer', 'min:1', 'max:50'],
-            'guests' => ['required', 'integer', 'min:1', 'max:50'],
-            'min_nights' => ['nullable', 'integer', 'min:1', 'max:365'],
-            'max_nights' => ['nullable', 'integer', 'min:1', 'max:365', 'gte:min_nights'],
-            'area_sqm' => ['nullable', 'numeric', 'min:1'],
-            'built_year' => ['nullable', 'integer', 'min:1800', 'max:'.date('Y')],
-
-            // Address (required by schema)
-            'street_address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:100'],
-            'country' => ['required', 'string', 'max:100'],
-            'postal_code' => ['required', 'string', 'max:20'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-
-            // Pricing
-            // Legacy tests may send 'price' instead of 'price_per_night'
-            'price_per_night' => ['required_without:price', 'numeric', 'min:1'],
-            'price' => ['required_without:price_per_night', 'numeric', 'min:1'],
-            'price_per_week' => ['nullable', 'numeric', 'min:1'],
-            'price_per_month' => ['nullable', 'numeric', 'min:1'],
-            'cleaning_fee' => ['nullable', 'numeric', 'min:0'],
-            'security_deposit' => ['nullable', 'numeric', 'min:0'],
-
-            // Property rules
-            'rules' => ['nullable', 'array'],
-            'rules.*.title' => ['required', 'string'],
-            'rules.*.description' => ['nullable', 'string'],
-
-            // Availability
-            'available_from' => ['nullable', 'date', 'after_or_equal:today'],
-            'available_until' => ['nullable', 'date', 'after:available_from'],
-            'blocked_dates' => ['nullable', 'array'],
-            'blocked_dates.*' => ['date'],
-            'custom_pricing' => ['nullable', 'array'],
-
-            // Status (aligned with updated enum: available/booked/maintenance)
-            'status' => ['nullable', 'in:available,booked,maintenance'],
-            'is_active' => ['nullable', 'boolean'],
-            'is_featured' => ['nullable', 'boolean'],
-
-            // Amenities
-            'amenities' => ['nullable', 'array'],
-            'amenities.*' => ['exists:amenities,id'],
-        ];
+        return array_merge(
+            $this->baseInfoRules(false),
+            $this->detailsRules(false),
+            $this->addressRules(false),
+            $this->pricingRules(false),
+            $this->rulesRules(),
+            $this->availabilityRules(),
+            $this->statusRules(false),
+            $this->amenitiesRules(),
+        );
     }
 
     /**

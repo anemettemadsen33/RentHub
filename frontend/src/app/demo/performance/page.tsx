@@ -242,6 +242,7 @@ export default function PerformanceDemoPage() {
                       } ${isFavOptimistic(id) ? 'animate-pulse' : ''}`}
                       onClick={() => toggleFavorite(id)}
                       disabled={isFavOptimistic(id)}
+                      aria-label={isFavorite(id) ? 'Remove from favorites' : 'Add to favorites'}
                     >
                       <Heart 
                         className={`h-4 w-4 transition-colors ${

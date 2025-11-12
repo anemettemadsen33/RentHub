@@ -57,39 +57,44 @@ class SeoController extends Controller
      */
     public function popularSearches(): JsonResponse
     {
-        $searches = Cache::remember('seo.popular_searches', 3600, function () {
-            // Get most common location searches
-            $locationSearches = Property::select('city', DB::raw('COUNT(*) as count'))
-                ->where('status', 'active')
-                ->groupBy('city')
-                ->orderByDesc('count')
-                ->limit(20)
-                ->get()
-                ->map(fn ($item) => [
-                    'query' => $item->city,
-                    'type' => 'location',
-                    'count' => $item->count,
-                ])
-                ->toArray();
+        try {
+            $searches = Cache::remember('seo.popular_searches', 3600, function () {
+                // Get most common location searches
+                $locationSearches = Property::select('city', DB::raw('COUNT(*) as count'))
+                    ->where('status', 'active')
+                    ->groupBy('city')
+                    ->orderByDesc('count')
+                    ->limit(20)
+                    ->get()
+                    ->map(fn ($item) => [
+                        'query' => $item->city,
+                        'type' => 'location',
+                        'count' => $item->count,
+                    ])
+                    ->toArray();
 
-            // Get property type searches
-            $typeSearches = Property::select('property_type', DB::raw('COUNT(*) as count'))
-                ->where('status', 'active')
-                ->whereNotNull('property_type')
-                ->groupBy('property_type')
-                ->orderByDesc('count')
-                ->get()
-                ->map(fn ($item) => [
-                    'query' => $item->property_type,
-                    'type' => 'property_type',
-                    'count' => $item->count,
-                ])
-                ->toArray();
+                // Get property type searches
+                $typeSearches = Property::select('property_type', DB::raw('COUNT(*) as count'))
+                    ->where('status', 'active')
+                    ->whereNotNull('property_type')
+                    ->groupBy('property_type')
+                    ->orderByDesc('count')
+                    ->get()
+                    ->map(fn ($item) => [
+                        'query' => $item->property_type,
+                        'type' => 'property_type',
+                        'count' => $item->count,
+                    ])
+                    ->toArray();
 
-            return array_merge($locationSearches, $typeSearches);
-        });
+                return array_merge($locationSearches, $typeSearches);
+            });
 
-        return response()->json($searches);
+            return response()->json($searches);
+        } catch (\Exception $e) {
+            // Return empty array if database query fails
+            return response()->json([]);
+        }
     }
 
     /**
