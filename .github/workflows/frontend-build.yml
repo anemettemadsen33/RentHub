@@ -1,0 +1,51 @@
+name: Fix Frontend Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  fix-and-build:
+    name: Fix Frontend Issues
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Ensure next-intl is installed
+        working-directory: frontend
+        run: |
+          if ! grep -q '"next-intl"' package.json; then
+            echo "Installing next-intl..."
+            npm install next-intl@^3.25.3
+          fi
+      
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://renthub-tbj7yxj7.on-forge.com/api/v1
+          NEXT_PUBLIC_APP_URL: https://rent-hub-beta.vercel.app
+          NODE_ENV: production
+      
+      - name: Build success summary
+        run: |
+          echo "## ✅ Frontend Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Vercel will deploy automatically." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 https://rent-hub-beta.vercel.app" >> $GITHUB_STEP_SUMMARY
