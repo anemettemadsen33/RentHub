@@ -1,0 +1,83 @@
+
+========================================
+  ?? RentHub Page Verification Test
+========================================
+
+Testing 63 routes...
+
+? Homepage                            [/]
+? Login                               [/auth/login]
+? Register                            [/auth/register]
+? Properties Listing                  [/properties]
+? Property Details                    FAILED - Response status code does not indicate success: 404 (Not Found).
+? Property Reviews                    [/properties/1/reviews]
+? Property Analytics                  [/properties/1/analytics]
+? Property Calendar                   [/properties/1/calendar]
+? Property Maintenance                [/properties/1/maintenance]
+? Smart Locks                         [/properties/1/smart-locks]
+? Property Access                     [/properties/1/access]
+? Bookings List                       [/bookings]
+? Booking Details                     [/bookings/1]
+? Booking Payment                     [/bookings/1/payment]
+? Main Dashboard                      [/dashboard]
+? Owner Dashboard                     [/dashboard/owner]
+? Dashboard Properties                [/dashboard/properties]
+? Edit Property                       [/dashboard/properties/1]
+? New Property                        [/dashboard/properties/new]
+? Dashboard Settings                  [/dashboard/settings]
+? New Dashboard                       [/dashboard-new]
+? Messages                            [/messages]
+? Message Thread                      [/messages/1]
+? Notifications                       [/notifications]
+? Profile                             [/profile]
+? Profile Verification                [/profile/verification]
+? Favorites                           [/favorites]
+? Wishlists                           [/wishlists]
+? Saved Searches                      [/saved-searches]
+? Verification                        [/verification]
+? Payments                            [/payments]
+? Payment History                     [/payments/history]
+? Invoices                            [/invoices]
+? Analytics                           [/analytics]
+? Admin Settings                      [/admin/settings]
+? Host Properties                     [/host/properties]
+? New Host Property                   [/host/properties/new]
+? Host Ratings                        [/host/ratings]
+? Property Comparison                 [/property-comparison]
+? Loyalty Program                     [/loyalty]
+? Referrals                           [/referrals]
+? Insurance                           [/insurance]
+? Screening                           [/screening]
+? Security Audit                      [/security/audit]
+? Calendar Sync                       [/calendar-sync]
+? Help                                [/help]
+? FAQ                                 [/faq]
+? Contact                             [/contact]
+? About                               [/about]
+? Careers                             [/careers]
+? Press                               [/press]
+? Privacy Policy                      [/privacy]
+? Terms of Service                    [/terms]
+? Cookie Policy                       [/cookies]
+? Settings                            [/settings]
+? Demo: Accessibility                 [/demo/accessibility]
+? Demo: Form Validation               [/demo/form-validation]
+? Demo: i18n                          [/demo/i18n]
+? Demo: Images                        [/demo/image-optimization]
+? Demo: Logger                        [/demo/logger]
+? Demo: Optimistic UI                 [/demo/optimistic-ui]
+? Demo: Performance                   [/demo/performance]
+? Offline Page                        [/offline-page]
+
+========================================
+  ?? Test Results
+========================================
+
+Total Routes: 63
+Passed:       62 (98.41%)
+Warnings:     0
+Failed:       1
+
+??  MOSTLY WORKING - Minor issues found
+========================================
+
