@@ -1,8 +1,11 @@
 /********
- * Next.js configuration
+ * Next.js configuration - Simplified for Vercel
  */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -13,16 +16,21 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.cloudfront.net' },
     ],
   },
+  
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://renthub-tbj7yxj7.on-forge.com/api',
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://renthub-tbj7yxj7.on-forge.com/api/v1',
   },
+  
+  // Ignore build errors temporarily
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
   },
+  
+  // API proxy to backend
   async rewrites() {
     return [
       {
@@ -31,11 +39,6 @@ const nextConfig = {
       },
     ];
   },
-  experimental: {
-    optimizeCss: true,
-  },
 };
 
-const withNextIntl = require('next-intl/plugin')('./src/i18n.ts');
-
-module.exports = withNextIntl(nextConfig);
+module.exports = nextConfig;
