@@ -1,0 +1,269 @@
+name: Scheduled Health Monitor
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  PRODUCTION_FRONTEND_URL: https://rent-hub-beta.vercel.app
+  PRODUCTION_BACKEND_URL: https://renthub-tbj7yxj7.on-forge.com
+
+jobs:
+  # ==================== PRODUCTION HEALTH CHECK ====================
+  
+  production-health:
+    name: 🏥 Production Health Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check Frontend Health
+        id: frontend-health
+        run: |
+          echo "Checking frontend health..."
+          
+          # Check if frontend is accessible
+          status=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.PRODUCTION_FRONTEND_URL }})
+          
+          if [ "$status" = "200" ]; then
+            echo "frontend_status=✅ UP ($status)" >> $GITHUB_OUTPUT
+            echo "frontend_healthy=true" >> $GITHUB_OUTPUT
+          else
+            echo "frontend_status=❌ DOWN ($status)" >> $GITHUB_OUTPUT
+            echo "frontend_healthy=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Check Backend API Health
+        id: backend-health
+        run: |
+          echo "Checking backend health..."
+          
+          # Check health endpoint
+          status=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.PRODUCTION_BACKEND_URL }}/api/health)
+          
+          if [ "$status" = "200" ]; then
+            echo "backend_status=✅ UP ($status)" >> $GITHUB_OUTPUT
+            echo "backend_healthy=true" >> $GITHUB_OUTPUT
+          else
+            echo "backend_status=❌ DOWN ($status)" >> $GITHUB_OUTPUT
+            echo "backend_healthy=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Check Response Times
+        run: |
+          echo "## ⏱️ Response Times" >> $GITHUB_STEP_SUMMARY
+          
+          # Frontend response time
+          frontend_time=$(curl -o /dev/null -s -w '%{time_total}' ${{ env.PRODUCTION_FRONTEND_URL }})
+          echo "- Frontend: ${frontend_time}s" >> $GITHUB_STEP_SUMMARY
+          
+          # Backend response time
+          backend_time=$(curl -o /dev/null -s -w '%{time_total}' ${{ env.PRODUCTION_BACKEND_URL }}/api/health)
+          echo "- Backend: ${backend_time}s" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for slow responses
+          if (( $(echo "$frontend_time > 3.0" | bc -l) )); then
+            echo "⚠️ Frontend response time is slow (>3s)" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if (( $(echo "$backend_time > 2.0" | bc -l) )); then
+            echo "⚠️ Backend response time is slow (>2s)" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Test Critical Endpoints
+        id: endpoint-tests
+        run: |
+          echo "## 🔍 Critical Endpoint Tests" >> $GITHUB_STEP_SUMMARY
+          
+          failed=0
+          
+          # Test critical API endpoints
+          endpoints=(
+            "/api/v1/properties"
+            "/api/v1/amenities"
+          )
+          
+          for endpoint in "${endpoints[@]}"; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.PRODUCTION_BACKEND_URL }}$endpoint")
+            if [ "$status" = "200" ] || [ "$status" = "401" ]; then
+              echo "✅ $endpoint: $status" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ $endpoint: $status" >> $GITHUB_STEP_SUMMARY
+              failed=$((failed + 1))
+            fi
+          done
+          
+          echo "endpoint_failures=$failed" >> $GITHUB_OUTPUT
+      
+      - name: Update Health Log
+        run: |
+          mkdir -p .github/health-logs
+          
+          cat > .github/health-logs/latest.json << EOF
+          {
+            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "frontend": {
+              "status": "${{ steps.frontend-health.outputs.frontend_status }}",
+              "healthy": ${{ steps.frontend-health.outputs.frontend_healthy }}
+            },
+            "backend": {
+              "status": "${{ steps.backend-health.outputs.backend_status }}",
+              "healthy": ${{ steps.backend-health.outputs.backend_healthy }}
+            },
+            "endpoint_failures": ${{ steps.endpoint-tests.outputs.endpoint_failures }}
+          }
+          EOF
+          
+          # Append to history
+          cat .github/health-logs/latest.json >> .github/health-logs/history.jsonl
+      
+      - name: Commit Health Log
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .github/health-logs/
+          git diff --staged --quiet || git commit -m "chore: update health logs [skip ci]"
+          git push || echo "No changes to push"
+      
+      - name: Create Alert Issue if Unhealthy
+        if: steps.frontend-health.outputs.frontend_healthy == 'false' || steps.backend-health.outputs.backend_healthy == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[ALERT] Production Health Check Failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `## 🚨 Production Health Alert
+            
+            **Timestamp:** ${new Date().toISOString()}
+            **Workflow Run:** [#${context.runNumber}](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            
+            ### Status
+            - Frontend: ${{ steps.frontend-health.outputs.frontend_status }}
+            - Backend: ${{ steps.backend-health.outputs.backend_status }}
+            
+            ### Details
+            One or more production services are not responding correctly.
+            
+            ### Immediate Actions Required
+            1. Check server logs
+            2. Verify deployment status
+            3. Check for recent changes
+            4. Monitor error rates
+            
+            [View Health Check Details](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            
+            ---
+            *This alert was automatically created by the Scheduled Health Monitor*`;
+            
+            // Check if similar issue exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'production-alert'
+            });
+            
+            const existingIssue = issues.data.find(issue => 
+              issue.title.includes('Production Health Check Failed') &&
+              new Date(issue.created_at) > new Date(Date.now() - 3600000) // Within last hour
+            );
+            
+            if (!existingIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['production-alert', 'automated-qa', 'critical']
+              });
+            } else {
+              // Add comment to existing issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `### Another failure detected at ${new Date().toISOString()}\n\nServices still unhealthy. [View details](${context.payload.repository.html_url}/actions/runs/${context.runId})`
+              });
+            }
+
+  # ==================== DATABASE BACKUP STATUS ====================
+  
+  check-backup-status:
+    name: 💾 Verify Backup Status
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check Backup Configuration
+        run: |
+          echo "## 💾 Backup Status" >> $GITHUB_STEP_SUMMARY
+          echo "Checking backup configuration..." >> $GITHUB_STEP_SUMMARY
+          
+          # This would typically check your backup service
+          # For now, we'll create a placeholder
+          echo "⚠️ Manual verification required" >> $GITHUB_STEP_SUMMARY
+
+  # ==================== SSL CERTIFICATE CHECK ====================
+  
+  ssl-certificate-check:
+    name: 🔐 SSL Certificate Expiry Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check Frontend SSL
+        run: |
+          echo "## 🔐 SSL Certificate Status" >> $GITHUB_STEP_SUMMARY
+          
+          # Check frontend certificate
+          frontend_expiry=$(echo | openssl s_client -servername rent-hub-beta.vercel.app -connect rent-hub-beta.vercel.app:443 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+          
+          if [ ! -z "$frontend_expiry" ]; then
+            echo "### Frontend Certificate" >> $GITHUB_STEP_SUMMARY
+            echo "- Expires: $frontend_expiry" >> $GITHUB_STEP_SUMMARY
+            
+            # Calculate days until expiry
+            expiry_epoch=$(date -d "$frontend_expiry" +%s)
+            now_epoch=$(date +%s)
+            days_left=$(( ($expiry_epoch - $now_epoch) / 86400 ))
+            
+            echo "- Days remaining: $days_left" >> $GITHUB_STEP_SUMMARY
+            
+            if [ $days_left -lt 30 ]; then
+              echo "⚠️ Certificate expires soon!" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ Certificate valid" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Could not verify certificate" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Check Backend SSL
+        run: |
+          # Check backend certificate
+          backend_expiry=$(echo | openssl s_client -servername renthub-tbj7yxj7.on-forge.com -connect renthub-tbj7yxj7.on-forge.com:443 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+          
+          if [ ! -z "$backend_expiry" ]; then
+            echo "### Backend Certificate" >> $GITHUB_STEP_SUMMARY
+            echo "- Expires: $backend_expiry" >> $GITHUB_STEP_SUMMARY
+            
+            expiry_epoch=$(date -d "$backend_expiry" +%s)
+            now_epoch=$(date +%s)
+            days_left=$(( ($expiry_epoch - $now_epoch) / 86400 ))
+            
+            echo "- Days remaining: $days_left" >> $GITHUB_STEP_SUMMARY
+            
+            if [ $days_left -lt 30 ]; then
+              echo "⚠️ Certificate expires soon!" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ Certificate valid" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Could not verify certificate" >> $GITHUB_STEP_SUMMARY
+          fi

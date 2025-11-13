@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-11-13T12:38:00Z",
+  "frontend": {
+    "status": "⏳ Not Yet Checked",
+    "healthy": null
+  },
+  "backend": {
+    "status": "⏳ Not Yet Checked",
+    "healthy": null
+  },
+  "endpoint_failures": 0,
+  "note": "Initial placeholder - will be updated by first health check run"
+}

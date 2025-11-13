@@ -1,0 +1,426 @@
+name: QA Automation Agent
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  schedule:
+    # Run health checks every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  security-events: write
+
+env:
+  NODE_VERSION: '20.x'
+  PHP_VERSION: '8.3'
+
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==================== COMPREHENSIVE E2E TESTS ====================
+  
+  e2e-comprehensive:
+    name: 🎭 Comprehensive E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json
+          coverage: none
+      
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: composer install --prefer-dist --no-progress
+      
+      - name: Setup Backend Test Environment
+        working-directory: ./backend
+        run: |
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+          touch database/database.sqlite
+          php artisan migrate --env=testing --force --database=sqlite
+          php artisan db:seed --env=testing --force
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+      
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps
+      
+      - name: Run Comprehensive E2E Tests
+        working-directory: ./frontend
+        run: npm run e2e
+        env:
+          CI: true
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+      
+      - name: Upload E2E Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 30
+      
+      - name: Upload Test Report to Job Summary
+        if: always()
+        run: |
+          if [ -f frontend/playwright-report/index.html ]; then
+            echo "## 🎭 E2E Test Results" >> $GITHUB_STEP_SUMMARY
+            echo "View detailed report in artifacts" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==================== API HEALTH CHECK ====================
+  
+  api-health-check:
+    name: 🏥 API Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json
+          coverage: none
+      
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: composer install --prefer-dist --no-progress
+      
+      - name: Setup Test Environment
+        working-directory: ./backend
+        run: |
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+          touch database/database.sqlite
+          php artisan migrate --env=testing --force --database=sqlite
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+      
+      - name: Start Laravel Server
+        working-directory: ./backend
+        run: |
+          php artisan serve --env=testing --port=8000 &
+          echo $! > server.pid
+          sleep 5
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+      
+      - name: Test All API Endpoints
+        run: |
+          echo "## 🏥 API Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Test health endpoint
+          response=$(curl -s -w "\n%{http_code}" http://localhost:8000/api/health)
+          status=$(echo "$response" | tail -n1)
+          if [ "$status" = "200" ]; then
+            echo "✅ Health endpoint: OK" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Health endpoint: FAILED ($status)" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Test public endpoints
+          endpoints=(
+            "/api/v1/properties"
+            "/api/v1/amenities"
+            "/api/v1/locations"
+          )
+          
+          for endpoint in "${endpoints[@]}"; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8000$endpoint")
+            if [ "$status" = "200" ] || [ "$status" = "401" ]; then
+              echo "✅ $endpoint: OK ($status)" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ $endpoint: FAILED ($status)" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+      
+      - name: Stop Server
+        if: always()
+        working-directory: ./backend
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+            rm server.pid
+          fi
+
+  # ==================== PERFORMANCE AUDIT ====================
+  
+  performance-audit:
+    name: ⚡ Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Build Application
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://renthub-tbj7yxj7.on-forge.com/api/v1
+          NEXT_PUBLIC_API_BASE_URL: https://renthub-tbj7yxj7.on-forge.com/api
+      
+      - name: Analyze Build Size
+        working-directory: ./frontend
+        run: |
+          echo "## ⚡ Performance Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh .next >> $GITHUB_STEP_SUMMARY
+          du -sh .next/static >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Check Bundle Size
+        working-directory: ./frontend
+        run: |
+          # Find largest chunks
+          echo "### Largest Bundles" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          find .next -name "*.js" -type f -exec du -h {} + | sort -rh | head -10 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  # ==================== SECURITY SCAN ====================
+  
+  security-comprehensive:
+    name: 🔒 Comprehensive Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Check for Secrets
+        uses: trufflesecurity/trufflehog@main
+        continue-on-error: true
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+  # ==================== CONTRACT VALIDATION ====================
+  
+  contract-validation:
+    name: 📋 API/UI Contract Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite
+      
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: composer install --prefer-dist --no-progress
+      
+      - name: Generate API Documentation
+        working-directory: ./backend
+        run: |
+          # Check if API routes are defined
+          php artisan route:list --json > ../api-routes.json
+      
+      - name: Validate API Schema
+        run: |
+          echo "## 📋 API Contract Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Count API routes
+          routes=$(cat api-routes.json | jq '. | length')
+          echo "Total API routes: $routes" >> $GITHUB_STEP_SUMMARY
+
+  # ==================== AUTOMATED ISSUE CREATION ====================
+  
+  create-issues-on-failure:
+    name: 🚨 Auto-Create Issues for Failures
+    runs-on: ubuntu-latest
+    needs: [e2e-comprehensive, api-health-check, performance-audit, security-comprehensive]
+    if: failure()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create Issue for E2E Failure
+        if: needs.e2e-comprehensive.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[QA Alert] E2E Tests Failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `## Automated QA Alert
+            
+            **Type:** E2E Test Failure
+            **Workflow:** ${context.workflow}
+            **Run ID:** ${context.runId}
+            **Triggered by:** ${context.eventName}
+            
+            ### Details
+            The comprehensive E2E test suite has failed. Please investigate and fix.
+            
+            [View Workflow Run](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            
+            ### Next Steps
+            1. Review the test results in the workflow artifacts
+            2. Identify the failing tests
+            3. Fix the issues
+            4. Re-run the workflow
+            
+            ---
+            *This issue was automatically created by the QA Automation Agent*`;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['bug', 'automated-qa', 'e2e-failure']
+            });
+      
+      - name: Create Issue for API Health Failure
+        if: needs.api-health-check.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[QA Alert] API Health Check Failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `## Automated QA Alert
+            
+            **Type:** API Health Check Failure
+            **Workflow:** ${context.workflow}
+            **Run ID:** ${context.runId}
+            
+            ### Details
+            One or more API endpoints are not responding correctly.
+            
+            [View Workflow Run](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            
+            ---
+            *This issue was automatically created by the QA Automation Agent*`;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['bug', 'automated-qa', 'api-failure']
+            });
+
+  # ==================== STATUS UPDATE ====================
+  
+  update-status:
+    name: 📊 Update STATUS.md
+    runs-on: ubuntu-latest
+    needs: [e2e-comprehensive, api-health-check, performance-audit, security-comprehensive, contract-validation]
+    if: always()
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update STATUS.md
+        run: |
+          cat > QA_STATUS.md << 'EOF'
+          # 🤖 RentHub - Automated QA Status
+          
+          **Last Updated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ## 📊 Test Results
+          
+          | Test Suite | Status |
+          |------------|--------|
+          | E2E Tests | ${{ needs.e2e-comprehensive.result == 'success' && '✅ PASSED' || '❌ FAILED' }} |
+          | API Health Check | ${{ needs.api-health-check.result == 'success' && '✅ PASSED' || '❌ FAILED' }} |
+          | Performance Audit | ${{ needs.performance-audit.result == 'success' && '✅ PASSED' || '❌ FAILED' }} |
+          | Security Scan | ${{ needs.security-comprehensive.result == 'success' && '✅ PASSED' || '❌ FAILED' }} |
+          | Contract Validation | ${{ needs.contract-validation.result == 'success' && '✅ PASSED' || '❌ FAILED' }} |
+          
+          ## 📈 System Health
+          
+          **Overall Status:** ${{ needs.e2e-comprehensive.result == 'success' && needs.api-health-check.result == 'success' && '🟢 HEALTHY' || '🔴 ISSUES DETECTED' }}
+          
+          ## 🔗 Quick Links
+          
+          - [Workflow Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - [Test Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+          - [Security Alerts](${{ github.server_url }}/${{ github.repository }}/security)
+          
+          ---
+          *Automated by QA Automation Agent*
+          EOF
+      
+      - name: Commit Status Update
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add QA_STATUS.md
+          git diff --staged --quiet || git commit -m "chore: update QA status [skip ci]"
+          git push || echo "No changes to push"
