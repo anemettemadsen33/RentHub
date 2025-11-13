@@ -23,7 +23,8 @@ return [
         env('FRONTEND_URL', 'http://localhost:3000'),
         'http://127.0.0.1:3000',
         'http://localhost:3001',
-        'https://rent-ljgrpeajm-madsens-projects.vercel.app', // Current Vercel production
+        'https://rent-ljgrpeajm-madsens-projects.vercel.app', // Old Vercel production
+        'https://rent-19xinb37g-madsens-projects.vercel.app', // Current Vercel production
         'https://rent-hub-six.vercel.app',
         'https://rent-hub-beta.vercel.app',
     ],

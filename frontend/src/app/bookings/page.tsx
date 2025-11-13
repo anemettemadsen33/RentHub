@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import apiClient from '@/lib/api-client';
+import apiClient, { ensureCsrfCookie } from '@/lib/api-client';
 import { Booking } from '@/types';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
@@ -59,7 +59,8 @@ export default function BookingsPage() {
   const handleCancelBooking = async (bookingId: number) => {
     setCancelingId(bookingId);
     try {
-      await apiClient.put(`/bookings/${bookingId}/cancel`);
+      await ensureCsrfCookie();
+      await apiClient.post(`/bookings/${bookingId}/cancel`);
       toast({
         title: t('toasts.cancelSuccess.title'),
         description: t('toasts.cancelSuccess.description'),
@@ -165,15 +166,15 @@ export default function BookingsPage() {
         })()}
 
 
-        {/* Filter Tabs */}
+        {/* Filter Controls (radiogroup for single selection) */}
         <TooltipProvider>
-          <div className="flex gap-2 mb-6 overflow-x-auto" role="tablist" aria-label={t('filters.ariaLabel')}>
+          <div className="flex gap-2 mb-6 overflow-x-auto" role="radiogroup" aria-label={t('filters.ariaLabel')}>
             {(['all', 'upcoming', 'past', 'cancelled'] as const).map((tab) => (
               <Tooltip key={tab}>
                 <TooltipTrigger asChild>
                   <Button
-                    role="tab"
-                    aria-selected={filter === tab}
+                    role="radio"
+                    aria-checked={filter === tab}
                     variant={filter === tab ? 'default' : 'outline'}
                     onClick={() => setFilter(tab)}
                     className="capitalize"

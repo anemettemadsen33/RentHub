@@ -215,7 +215,8 @@ return [
     'session' => [
         'secure' => env('SESSION_SECURE_COOKIE', true),
         'http_only' => true,
-        'same_site' => 'strict',
+        // Lax supports normal POST form flows while protecting CSRF; strict can cause 419s
+        'same_site' => env('SECURITY_SESSION_SAME_SITE', 'lax'),
         'lifetime' => 120, // minutes
         'idle_timeout' => 30, // minutes
         'regenerate_on_login' => true,

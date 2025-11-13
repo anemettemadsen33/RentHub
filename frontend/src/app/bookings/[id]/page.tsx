@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import apiClient from '@/lib/api-client';
+import apiClient, { ensureCsrfCookie } from '@/lib/api-client';
 import { Booking } from '@/types';
 import { BookingStatusTimeline } from '@/components/booking/booking-status-timeline';
 import { useTranslations } from '@/lib/i18n-temp';
@@ -125,7 +125,8 @@ export default function BookingDetailPage() {
   const handleCancelBooking = useCallback(async () => {
     setCanceling(true);
     try {
-      await apiClient.put(`/bookings/${params.id}/cancel`);
+      await ensureCsrfCookie();
+      await apiClient.post(`/bookings/${params.id}/cancel`);
       notify.success({
         title: tNotify('success'),
         description: t('cancelBooking'),

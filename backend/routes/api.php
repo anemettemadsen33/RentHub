@@ -232,7 +232,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Unified dashboard stats (authenticated user) - cached & with ETag
     Route::get('/dashboard/stats', function () {
-        $user = auth()->user();
+        $user = \Illuminate\Support\Facades\Auth::user();
         /** @var \App\Services\DashboardService $service */
         $service = app(\App\Services\DashboardService::class);
         $raw = $service->getUserStats($user->id);
