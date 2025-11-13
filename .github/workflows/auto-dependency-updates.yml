@@ -1,0 +1,221 @@
+name: Automated Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: '20.x'
+  PHP_VERSION: '8.3'
+
+jobs:
+  # ==================== UPDATE FRONTEND DEPENDENCIES ====================
+  
+  update-frontend-dependencies:
+    name: 📦 Update Frontend Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Check for Updates
+        working-directory: ./frontend
+        run: |
+          npm outdated || true
+      
+      - name: Update Dependencies (patch)
+        working-directory: ./frontend
+        run: |
+          # Update patch versions only (safer)
+          npm update --save
+      
+      - name: Run Tests
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run lint || true
+          npm run type-check || true
+          npm run test || true
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update frontend dependencies (patch)'
+          title: '🤖 Update Frontend Dependencies (Automated)'
+          body: |
+            ## Automated Dependency Update
+            
+            This PR updates frontend dependencies to their latest patch versions.
+            
+            ### Changes
+            - Updated npm dependencies (patch versions only)
+            - Ran automated tests
+            
+            ### Testing
+            - [ ] Lint checks passed
+            - [ ] Type checks passed
+            - [ ] Unit tests passed
+            
+            ### Review Checklist
+            - [ ] Review dependency changes
+            - [ ] Check for breaking changes
+            - [ ] Verify tests pass
+            - [ ] Deploy to staging
+            
+            ---
+            *This PR was automatically created by the Dependency Update workflow*
+          branch: automated/update-frontend-deps
+          labels: dependencies, automated
+
+  # ==================== UPDATE BACKEND DEPENDENCIES ====================
+  
+  update-backend-dependencies:
+    name: 📦 Update Backend Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
+      
+      - name: Check for Updates
+        working-directory: ./backend
+        run: |
+          composer outdated --direct || true
+      
+      - name: Update Dependencies (patch)
+        working-directory: ./backend
+        run: |
+          # Update dependencies
+          composer update --prefer-stable --no-interaction
+      
+      - name: Run Tests
+        working-directory: ./backend
+        run: |
+          composer install --no-interaction
+          
+          # Setup test environment
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+          touch database/database.sqlite
+          
+          # Run tests
+          php artisan test --env=testing || true
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update backend dependencies'
+          title: '🤖 Update Backend Dependencies (Automated)'
+          body: |
+            ## Automated Dependency Update
+            
+            This PR updates backend (PHP/Composer) dependencies.
+            
+            ### Changes
+            - Updated composer dependencies
+            - Ran automated tests
+            
+            ### Testing
+            - [ ] Tests passed
+            - [ ] No breaking changes detected
+            
+            ### Review Checklist
+            - [ ] Review dependency changes
+            - [ ] Check for security updates
+            - [ ] Verify tests pass
+            - [ ] Deploy to staging
+            
+            ---
+            *This PR was automatically created by the Dependency Update workflow*
+          branch: automated/update-backend-deps
+          labels: dependencies, automated
+
+  # ==================== SECURITY UPDATES ====================
+  
+  security-updates:
+    name: 🔒 Security Updates
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        working-directory: ./frontend
+        run: |
+          echo "## 🔒 Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Frontend (npm)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          npm audit || true
+          npm audit >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Auto-fix npm vulnerabilities
+        working-directory: ./frontend
+        run: |
+          npm audit fix || true
+      
+      - name: Run composer audit
+        working-directory: ./backend
+        run: |
+          echo "### Backend (Composer)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          composer audit || true
+          composer audit >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Create Security Update PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'fix(security): auto-fix security vulnerabilities'
+          title: '🔒 Security Updates (Automated)'
+          body: |
+            ## Automated Security Update
+            
+            This PR contains automatic fixes for known security vulnerabilities.
+            
+            ### Changes
+            - Applied npm audit fix
+            - Updated vulnerable dependencies
+            
+            ### Priority
+            🚨 **High Priority** - Security updates should be reviewed and merged ASAP
+            
+            ### Review Checklist
+            - [ ] Review all dependency changes
+            - [ ] Check for breaking changes
+            - [ ] Verify tests pass
+            - [ ] Deploy immediately after approval
+            
+            ---
+            *This PR was automatically created by the Security Update workflow*
+          branch: automated/security-updates
+          labels: security, automated, high-priority

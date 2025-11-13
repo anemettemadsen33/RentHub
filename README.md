@@ -1,9 +1,10 @@
 # 🏠 RentHub - Property Rental Platform
 
 > **Status**: ✅ Backend-Frontend FULLY CONNECTED & OPERATIONAL  
-> **Last Updated**: 2025-11-07
+> **QA Automation**: 🤖 Active & Monitoring 24/7  
+> **Last Updated**: 2025-11-13
 
-A modern, full-stack property rental platform for long-term and short-term rentals with complete Laravel + Next.js integration.
+A modern, full-stack property rental platform for long-term and short-term rentals with complete Laravel + Next.js integration and professional-grade QA automation.
 
 ## 📋 Description
 
@@ -110,8 +111,16 @@ Ar trebui să vezi:
 3. **[BACKEND_FRONTEND_CONNECTION.md](BACKEND_FRONTEND_CONNECTION.md)** - 📖 Ghid detaliat
 4. **[LINKS_AND_RESOURCES.md](LINKS_AND_RESOURCES.md)** - 🔗 Link-uri & resurse
 
+### 🤖 QA Automation & Monitoring
+
+- **[AUTOMATION_QA_GUIDE.md](AUTOMATION_QA_GUIDE.md)** - 📚 Complete automation system guide
+- **[AUTOMATION_RUNBOOK.md](AUTOMATION_RUNBOOK.md)** - 🔧 Step-by-step procedures
+- **[QA_STATUS.md](QA_STATUS.md)** - 📊 Current system health & metrics
+- **Manual Test Runner**: `./scripts/qa-manual-runner.sh` - Interactive testing tool
+
 ### 🧪 Testing
 
+- **Automated**: GitHub Actions workflows run on every push/PR
 - **PowerShell Script**: `.\test-connection.ps1` - Testare automată
 - **Browser Utils**: Console → `apiTest.testAllEndpoints()` - Test în browser
 - **Manual Testing**: Vezi [BACKEND_FRONTEND_CONNECTION.md](BACKEND_FRONTEND_CONNECTION.md)
