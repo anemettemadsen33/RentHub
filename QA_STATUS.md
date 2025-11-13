@@ -1,7 +1,7 @@
 # 🤖 RentHub - Automated QA Status
 
 **Last Updated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-**Workflow Run:** [#9](https://github.com/anemettemadsen33/RentHub/actions/runs/19334387491)
+**Workflow Run:** [#10](https://github.com/anemettemadsen33/RentHub/actions/runs/19334957855)
 
 ## 📊 Test Results
 
@@ -19,8 +19,8 @@
 
 ## 🔗 Quick Links
 
-- [Workflow Details](https://github.com/anemettemadsen33/RentHub/actions/runs/19334387491)
-- [Test Artifacts](https://github.com/anemettemadsen33/RentHub/actions/runs/19334387491#artifacts)
+- [Workflow Details](https://github.com/anemettemadsen33/RentHub/actions/runs/19334957855)
+- [Test Artifacts](https://github.com/anemettemadsen33/RentHub/actions/runs/19334957855#artifacts)
 - [Security Alerts](https://github.com/anemettemadsen33/RentHub/security)
 
 ---
