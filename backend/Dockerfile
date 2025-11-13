@@ -1,7 +1,7 @@
 # Multi-stage build for Laravel backend
 FROM php:8.3-fpm-alpine AS base
 
-# Install system dependencies and PHP extensions
+# Install system dependencies
 RUN apk add --no-cache \
     git \
     curl \
@@ -15,12 +15,14 @@ RUN apk add --no-cache \
     oniguruma-dev \
     icu-dev \
     nodejs \
-    npm \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_mysql \
+    npm
+
+# Configure and install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+    
+RUN docker-php-ext-install -j$(nproc) \
     pdo_pgsql \
+    pdo_mysql \
     mbstring \
     exif \
     pcntl \
@@ -76,24 +78,11 @@ RUN apk add --no-cache \
     libzip \
     postgresql-libs \
     icu-libs \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    intl
+    oniguruma
 
-# Install Redis extension
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apk del .build-deps
+# Copy and install PHP extensions build artifacts from base
+COPY --from=base /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+COPY --from=base /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
 WORKDIR /var/www
 
