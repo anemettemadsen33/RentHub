@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\QueueMonitorController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SecurityAuditController;
 use App\Http\Controllers\Api\SeoController;
+use App\Http\Controllers\Api\SetupController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\UserVerificationController;
 use App\Http\Controllers\Api\V1\OwnerDashboardController;
@@ -42,6 +43,9 @@ Route::get('/health/liveness', [HealthCheckController::class, 'liveness']);
 Route::get('/health/readiness', [HealthCheckController::class, 'readiness']);
 Route::get('/metrics', [HealthCheckController::class, 'metrics']);
 Route::get('/metrics/prometheus', [HealthCheckController::class, 'prometheus']);
+
+// Setup Route (TEMPORARY - for initial admin user creation)
+Route::post('/setup/create-admin', [SetupController::class, 'createAdminUser']);
 
 // Simple API version negotiation for base endpoints (tests expect /api/properties with X-API-Version header)
 Route::get('/properties', function () {
