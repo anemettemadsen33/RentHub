@@ -1,8 +1,10 @@
 #!/bin/bash
+# Laravel Forge Auto-Deployment Script
+# Paste this in: Forge → Your Site → App → Deployment Script
 
 set -e
 
-echo "🚀 Starting deployment..."
+echo "🚀 Starting Laravel Forge deployment..."
 
 # Navigate to project directory
 cd /home/forge/rental-platform.private.on-forge.com

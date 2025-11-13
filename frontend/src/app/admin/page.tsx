@@ -2,11 +2,12 @@
 
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { MainLayout } from '@/components/layouts/main-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import dynamic from 'next/dynamic';
 import {
   Users,
   Home,
@@ -23,6 +24,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+const DynamicAdminStatsCards = dynamic(() => import('@/components/admin/stats-cards').then(m => m.AdminStatsCards), { ssr: false });
+const DynamicAdminLoading = dynamic(() => import('@/components/admin/loading-skeleton').then(m => m.AdminLoadingSkeleton), { ssr: false });
+
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -37,14 +41,7 @@ export default function AdminDashboardPage() {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-12">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="grid md:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded"></div>
-              ))}
-            </div>
-          </div>
+          <DynamicAdminLoading />
         </div>
       </MainLayout>
     );
@@ -65,60 +62,11 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2,543</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-green-500" />
-                +12% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Active Properties</CardTitle>
-              <Home className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-green-500" />
-                +8% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$124,567</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-green-500" />
-                +15% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Pending Issues</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">Requires attention</p>
-            </CardContent>
-          </Card>
+        {/* Quick Stats (dynamically loaded) */}
+        <div className="mb-8">
+          <Suspense fallback={<div className="h-32" />}>
+            <DynamicAdminStatsCards stats={{ totalUsers: 2543, activeUsers: 312, totalRevenue: 124567, monthlyGrowth: 12 }} />
+          </Suspense>
         </div>
 
         {/* Main Content Tabs */}

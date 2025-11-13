@@ -60,7 +60,6 @@ Route::get('/v{version}/properties', function ($version) {
     if ($version !== '1') {
         return response()->json(['error' => 'Unsupported API version'], 400);
     }
-
     return app(\App\Http\Controllers\Api\PropertyController::class)->index(request());
 })->where('version', '[0-9]+');
 
@@ -197,6 +196,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/gdpr/consent', [GDPRController::class, 'getConsent']);
     Route::put('/gdpr/consent', [GDPRController::class, 'updateConsent']);
 
+    // Host Dashboard
+    Route::get('/host/stats', [\App\Http\Controllers\Api\HostController::class, 'stats']);
+    Route::get('/host/properties', [\App\Http\Controllers\Api\HostController::class, 'properties']);
+
     // Favorites
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
@@ -295,6 +298,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // ID Verification
     Route::post('/verification/government-id', [\App\Http\Controllers\Api\VerificationController::class, 'uploadGovernmentId']);
     Route::get('/verification/status', [\App\Http\Controllers\Api\VerificationController::class, 'getStatus']);
+
+    // Email & SMS Verification
+    Route::post('/verification/email/send', [\App\Http\Controllers\Api\EmailSmsVerificationController::class, 'sendEmailCode']);
+    Route::post('/verification/email/verify', [\App\Http\Controllers\Api\EmailSmsVerificationController::class, 'verifyEmailCode']);
+    Route::post('/verification/sms/send', [\App\Http\Controllers\Api\EmailSmsVerificationController::class, 'sendSmsCode']);
+    Route::post('/verification/sms/verify', [\App\Http\Controllers\Api\EmailSmsVerificationController::class, 'verifySmsCode']);
 
     // Admin: ID Verification Management
     Route::post('/admin/verification/{userId}/approve', [\App\Http\Controllers\Api\VerificationController::class, 'approveGovernmentId']);
@@ -404,6 +413,21 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{payment}/status', [\App\Http\Controllers\Api\PaymentController::class, 'updateStatus']);
     Route::post('/payments/{payment}/confirm', [\App\Http\Controllers\Api\PaymentController::class, 'confirm']);
     Route::post('/payments/{payment}/refund', [\App\Http\Controllers\Api\PaymentController::class, 'refund']);
+    
+    // Payment Proofs (Bank Transfer)
+    Route::post('/payments/{payment}/upload-proof', [\App\Http\Controllers\Api\PaymentProofController::class, 'upload']);
+    Route::get('/payments/{payment}/proofs', [\App\Http\Controllers\Api\PaymentProofController::class, 'index']);
+    Route::post('/payment-proofs/{proof}/verify', [\App\Http\Controllers\Api\PaymentProofController::class, 'verify']);
+    Route::get('/payment-proofs/{proof}/download', [\App\Http\Controllers\Api\PaymentProofController::class, 'download']);
+    Route::get('/payment-proofs/pending', [\App\Http\Controllers\Api\PaymentProofController::class, 'pendingForHost']);
+    
+    // Bank Accounts (Host settings)
+    Route::get('/bank-accounts', [\App\Http\Controllers\Api\BankAccountController::class, 'index']);
+    Route::post('/bank-accounts', [\App\Http\Controllers\Api\BankAccountController::class, 'store']);
+    Route::put('/bank-accounts/{id}', [\App\Http\Controllers\Api\BankAccountController::class, 'update']);
+    Route::delete('/bank-accounts/{id}', [\App\Http\Controllers\Api\BankAccountController::class, 'destroy']);
+    Route::get('/payments/{payment}/bank-details', [\App\Http\Controllers\Api\BankAccountController::class, 'getForPayment']);
+    
     Route::get('/payouts', function () {
         return response()->json(['success' => true, 'data' => []]);
     });

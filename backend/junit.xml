@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\laragon\www\RentHub\backend\phpunit.xml" tests="1" assertions="1" errors="0" failures="1" skipped="0" time="9.085126">
+    <testsuite name="Feature" tests="1" assertions="1" errors="0" failures="1" skipped="0" time="9.085126">
+      <testsuite name="Tests\Feature\Api\BankAccountTest" file="C:\laragon\www\RentHub\backend\tests\Feature\Api\BankAccountTest.php" tests="1" assertions="1" errors="0" failures="1" skipped="0" time="9.085126">
+        <testcase name="host_can_create_bank_account" file="C:\laragon\www\RentHub\backend\tests\Feature\Api\BankAccountTest.php" line="27" class="Tests\Feature\Api\BankAccountTest" classname="Tests.Feature.Api.BankAccountTest" assertions="1" time="9.085126">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\Api\BankAccountTest::host_can_create_bank_account&#13;
+Expected response status code [201] but received 500.
+Failed asserting that 500 is identical to 201.
+&#13;
+C:\laragon\www\RentHub\backend\vendor\laravel\framework\src\Illuminate\Testing\TestResponseAssert.php:45
+C:\laragon\www\RentHub\backend\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:160
+C:\laragon\www\RentHub\backend\tests\Feature\Api\BankAccountTest.php:40</failure>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

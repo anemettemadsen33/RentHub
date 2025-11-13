@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
@@ -17,7 +18,7 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/image', () => ({
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} alt={props.alt} />;
+    return React.createElement('img', { ...props, alt: props.alt });
   },
 }));
 

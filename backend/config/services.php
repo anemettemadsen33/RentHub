@@ -58,6 +58,18 @@ return [
         'from' => env('TWILIO_FROM'),
     ],
 
+    'sendgrid' => [
+        'api_key' => env('SENDGRID_API_KEY'),
+        'from_email' => env('MAIL_FROM_ADDRESS', 'noreply@renthub.com'),
+        'from_name' => env('MAIL_FROM_NAME', 'RentHub'),
+    ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
     'beams' => [
         // Pusher Beams (Web Push) configuration
         'instance_id' => env('PUSHER_BEAMS_INSTANCE_ID'),

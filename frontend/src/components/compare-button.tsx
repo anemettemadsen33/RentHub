@@ -62,15 +62,16 @@ export function CompareButton({
       size={size}
       onClick={toggleCompare}
       disabled={loading}
+      aria-label={isComparing ? tButton('comparing') : tButton('compare')}
       className={cn(
         'transition-colors',
         isComparing && 'bg-primary text-primary-foreground'
       )}
     >
       {isComparing ? (
-        <Check className={cn('h-4 w-4', showLabel && 'mr-2')} />
+        <Check className={cn('h-4 w-4', showLabel && 'mr-2')} aria-hidden="true" />
       ) : (
-        <Scale className={cn('h-4 w-4', showLabel && 'mr-2')} />
+        <Scale className={cn('h-4 w-4', showLabel && 'mr-2')} aria-hidden="true" />
       )}
       {showLabel && (isComparing ? tButton('comparing') : tButton('compare'))}
     </Button>

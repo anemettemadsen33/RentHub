@@ -4,7 +4,27 @@ import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Property } from '@/types';
+// Use a minimal shape for this UI component to keep tests flexible
+interface MinimalProperty {
+  id: number;
+  title: string;
+  description?: string;
+  price_per_night?: number;
+  price?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  guests?: number;
+  max_guests?: number;
+  city: string;
+  country: string;
+  rating?: number;
+  reviews_count?: number;
+  images?: Array<string | { url: string; [key: string]: any }>;
+  image_url?: string;
+  amenities?: any[];
+  status?: string;
+  updated_at?: string;
+}
 import { formatCurrency } from '@/lib/utils';
 import { MapPin, Users, Bed, Bath, Star, Heart, Share2, Check } from 'lucide-react';
 import Link from 'next/link';
@@ -15,16 +35,23 @@ import { notify } from '@/lib/notify';
 import { useTranslations } from '@/lib/i18n-temp';
 
 interface PropertyCardProps {
-  property: Property;
+  property: MinimalProperty;
   onFavorite?: (id: number) => void;
   isFavorite?: boolean;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export function PropertyCard({ property, onFavorite, isFavorite = false, className }: PropertyCardProps) {
+export function PropertyCard({ property, onFavorite, isFavorite = false, className, onClick }: PropertyCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [shared, setShared] = useState(false);
-    const images = (property.images && property.images.length > 0) ? property.images : (property.image_url ? [property.image_url] : ['https://images.unsplash.com/photo-1568605114967-8130f3a36994']);
+  const images: string[] = (() => {
+    if (property.images && property.images.length > 0) {
+      return property.images.map((it: any) => (typeof it === 'string' ? it : it?.url)).filter(Boolean);
+    }
+    if (property.image_url) return [property.image_url];
+    return ['https://images.unsplash.com/photo-1568605114967-8130f3a36994'];
+  })();
   const tNotify = useTranslations('notify');
 
   const handlePrevImage = (e: React.MouseEvent) => {
@@ -43,7 +70,7 @@ export function PropertyCard({ property, onFavorite, isFavorite = false, classNa
   };
 
   return (
-    <Link href={`/properties/${property.id}`}>
+  <Link href={`/properties/${property.id}`} onClick={onClick}>
       <Card className={cn('overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group', className)}>
         {/* Image Gallery */}
         <div className="relative h-64 overflow-hidden bg-gray-100">
@@ -203,7 +230,7 @@ export function PropertyCard({ property, onFavorite, isFavorite = false, classNa
           {/* Price */}
           <div className="flex items-center justify-between pt-3 border-t">
             <div>
-              <span className="text-2xl font-bold">{formatCurrency(property.price_per_night || property.price)}</span>
+              <span className="text-2xl font-bold">{formatCurrency((property.price_per_night ?? property.price ?? 0))}</span>
               <span className="text-gray-600 text-sm ml-1">/night</span>
             </div>
             <Button size="sm" variant="outline">View Details</Button>
@@ -213,3 +240,5 @@ export function PropertyCard({ property, onFavorite, isFavorite = false, classNa
     </Link>
   );
 }
+
+export default PropertyCard;

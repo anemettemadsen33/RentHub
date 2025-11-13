@@ -333,6 +333,17 @@ class AuthController extends Controller
         // Create token
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // If the request expects HTML (browser redirect) or has no JSON Accept header,
+        // redirect back to the frontend with the token so the SPA can finalize login.
+        $acceptsJson = request()->wantsJson() || str_contains((string) request()->header('Accept'), 'application/json');
+        $frontendUrl = rtrim(env('FRONTEND_URL', ''), '/');
+
+        if (! $acceptsJson && ! empty($frontendUrl)) {
+            $redirectUrl = $frontendUrl.'/auth/callback?token='.urlencode($token).'&provider='.$provider;
+            return redirect()->away($redirectUrl);
+        }
+
+        // Default JSON response (API callers/tests)
         return response()->json([
             'success' => true,
             'message' => 'Login successful',

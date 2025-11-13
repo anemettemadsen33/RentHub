@@ -27,18 +27,29 @@ class Payment extends Model
         'bank_receipt',
         'initiated_at',
         'completed_at',
+        'paid_at',
         'failed_at',
         'refunded_at',
+        'refunded_amount',
         'failure_reason',
         'notes',
         'metadata',
+        // Bank transfer fields
+        'bank_name',
+        'account_holder',
+        'account_number',
+        'transfer_reference',
+        'transfer_date',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'refunded_amount' => 'decimal:2',
         'initiated_at' => 'datetime',
         'completed_at' => 'datetime',
+        'paid_at' => 'datetime',
         'failed_at' => 'datetime',
+        'transfer_date' => 'datetime',
         'refunded_at' => 'datetime',
         'metadata' => 'array',
     ];
@@ -56,6 +67,11 @@ class Payment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function proofs()
+    {
+        return $this->hasMany(PaymentProof::class);
     }
 
     // Generate unique payment number

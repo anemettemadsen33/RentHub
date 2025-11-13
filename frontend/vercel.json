@@ -53,12 +53,6 @@
       "destination": "/",
       "permanent": true
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://renthub-tbj7yxj7.on-forge.com/api/:path*"
-    }
   ]
 }
 
