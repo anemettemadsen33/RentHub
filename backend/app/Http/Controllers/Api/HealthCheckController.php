@@ -428,4 +428,3 @@ function uptime(): int
 
     return time() - $startTime;
 }
-

@@ -46,5 +46,3 @@ Route::prefix('security')->middleware('auth:sanctum')->group(function () {
     Route::post('/scan', [SecurityAuditController::class, 'runVulnerabilityScan']);
     Route::get('/report', [SecurityAuditController::class, 'getSecurityReport']);
 });
-
-

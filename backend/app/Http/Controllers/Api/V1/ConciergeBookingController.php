@@ -295,4 +295,3 @@ class ConciergeBookingController extends Controller
         ]);
     }
 }
-

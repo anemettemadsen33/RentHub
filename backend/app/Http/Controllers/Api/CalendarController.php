@@ -346,4 +346,3 @@ class CalendarController extends Controller
         return (float) $property->price_per_night;
     }
 }
-

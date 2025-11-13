@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Concerns\PropertyRuleSets;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StorePropertyRequest extends FormRequest
 {

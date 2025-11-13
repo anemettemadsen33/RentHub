@@ -21,8 +21,8 @@ class ReviewController extends Controller
     public function index(Request $request)
     {
         // Create cache key from request parameters
-        $cacheKey = 'reviews_' . md5(json_encode($request->all()));
-        
+        $cacheKey = 'reviews_'.md5(json_encode($request->all()));
+
         // Cache reviews for 10 minutes (they change less frequently than properties)
         $result = Cache::tags(['reviews'])->remember($cacheKey, 600, function () use ($request) {
             $query = Review::with(['user', 'booking', 'responses.user', 'helpfulVotes'])
@@ -465,4 +465,3 @@ class ReviewController extends Controller
         ]);
     }
 }
-

@@ -47,4 +47,3 @@ class PushController extends Controller
         return response()->json(['status' => 'unsubscribed', 'deleted' => $deleted]);
     }
 }
-

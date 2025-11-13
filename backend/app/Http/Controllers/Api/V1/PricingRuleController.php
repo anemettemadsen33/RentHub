@@ -257,4 +257,3 @@ class PricingRuleController extends Controller
         ]);
     }
 }
-

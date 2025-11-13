@@ -3,10 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -18,10 +17,10 @@ class ApiSmokeTestCommand extends Command
 
     public function handle(): int
     {
-    $override = $this->option('base');
-    $baseUrl = rtrim($override ?: (config('app.url') ?: 'http://127.0.0.1'), '/').'/api';
-    $authUserId = $this->option('auth');
-    $bearerToken = $this->option('token');
+        $override = $this->option('base');
+        $baseUrl = rtrim($override ?: (config('app.url') ?: 'http://127.0.0.1'), '/').'/api';
+        $authUserId = $this->option('auth');
+        $bearerToken = $this->option('token');
         $methodFilter = $this->option('method');
         $limit = (int) $this->option('limit');
 
@@ -40,7 +39,7 @@ class ApiSmokeTestCommand extends Command
         })->values();
 
         if ($methodFilter) {
-            $routes = $routes->filter(fn($r) => in_array(strtoupper($methodFilter), $r['methods']));
+            $routes = $routes->filter(fn ($r) => in_array(strtoupper($methodFilter), $r['methods']));
         }
 
         if ($limit > 0) {
@@ -56,6 +55,7 @@ class ApiSmokeTestCommand extends Command
             $user = $userModel::find($authUserId);
             if (! $user) {
                 $this->error('User not found for auth context');
+
                 return 1;
             }
             // Create a personal access token (Sanctum) if available
@@ -110,10 +110,10 @@ class ApiSmokeTestCommand extends Command
                     $json = $this->parseJson($response->body());
                     $code = $response->status();
                     $isSuccess = $response->successful();
-                    
+
                     // Detect potential missing auth when 500 returned without token
                     $authIssue = false;
-                    if (!$isSuccess && $needsAuth && !$token && $code === 500) {
+                    if (! $isSuccess && $needsAuth && ! $token && $code === 500) {
                         $authIssue = true;
                     }
 
@@ -142,30 +142,33 @@ class ApiSmokeTestCommand extends Command
         $total = count($results);
         $success = collect($results)->where('ok', true)->count();
         $authMissing = collect($results)->where('auth', 'missing')->count();
-        $this->table(['Method','URI','Code','Auth','OK','Keys'], array_map(function ($r) {
+        $this->table(['Method', 'URI', 'Code', 'Auth', 'OK', 'Keys'], array_map(function ($r) {
             return [
                 $r['method'] ?? '-',
                 $r['uri'] ?? '-',
                 $r['code'] ?? '-',
                 $r['auth'] ?? '-',
                 isset($r['ok']) && $r['ok'] ? '✔' : '✖',
-                isset($r['json_keys']) && $r['json_keys'] ? implode(',', $r['json_keys']) : ($r['error'] ?? '-')
+                isset($r['json_keys']) && $r['json_keys'] ? implode(',', $r['json_keys']) : ($r['error'] ?? '-'),
             ];
         }, $results));
 
         $this->info("Summary: {$success}/{$total} successful; {$authMissing} auth missing attempts");
 
         Cache::put('api_smoke_results', $results, 300);
-        Log::info('api_smoke_results', ['summary' => compact('total','success','authMissing')]);
+        Log::info('api_smoke_results', ['summary' => compact('total', 'success', 'authMissing')]);
 
         return 0;
     }
 
     protected function parseJson(string $body): ?array
     {
-        if ($body === '') return null;
+        if ($body === '') {
+            return null;
+        }
         try {
             $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
             return is_array($data) ? $data : null;
         } catch (\Throwable) {
             return null;

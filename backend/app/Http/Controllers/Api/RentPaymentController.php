@@ -140,4 +140,3 @@ class RentPaymentController extends Controller
         return $invoice;
     }
 }
-

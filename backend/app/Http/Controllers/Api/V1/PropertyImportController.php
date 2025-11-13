@@ -153,4 +153,3 @@ class PropertyImportController extends Controller
         ]);
     }
 }
-

@@ -511,4 +511,3 @@ class PropertyVerificationController extends Controller
         return response()->json($stats);
     }
 }
-

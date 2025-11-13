@@ -522,4 +522,3 @@ class PerformanceController extends Controller
         return response()->json(['summary' => $result]);
     }
 }
-

@@ -145,4 +145,3 @@ class VerificationController extends Controller
         ]);
     }
 }
-

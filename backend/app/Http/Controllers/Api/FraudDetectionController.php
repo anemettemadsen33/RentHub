@@ -912,4 +912,3 @@ class FraudDetectionController extends Controller
         ];
     }
 }
-

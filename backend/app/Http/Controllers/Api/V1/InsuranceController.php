@@ -265,4 +265,3 @@ class InsuranceController extends Controller
         ]);
     }
 }
-

@@ -256,4 +256,3 @@ class PropertyVerificationController extends Controller
         ]);
     }
 }
-

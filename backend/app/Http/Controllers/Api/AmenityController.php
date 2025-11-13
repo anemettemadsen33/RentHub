@@ -39,4 +39,3 @@ class AmenityController extends Controller
         ]);
     }
 }
-

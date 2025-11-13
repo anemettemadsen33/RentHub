@@ -85,7 +85,7 @@ class AuthenticationTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/logout');
 
         $response->assertStatus(200);
@@ -100,7 +100,7 @@ class AuthenticationTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/me');
 
         $response->assertStatus(200)

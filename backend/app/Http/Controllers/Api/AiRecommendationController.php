@@ -590,4 +590,3 @@ class AiRecommendationController extends Controller
         return array_slice($factorCounts, 0, 5, true);
     }
 }
-

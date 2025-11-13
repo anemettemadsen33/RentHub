@@ -239,4 +239,3 @@ class GuestScreeningController extends Controller
         return response()->json($screening);
     }
 }
-

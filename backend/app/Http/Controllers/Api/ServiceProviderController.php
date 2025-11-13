@@ -237,4 +237,3 @@ class ServiceProviderController extends Controller
         ]);
     }
 }
-

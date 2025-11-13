@@ -125,4 +125,3 @@ class SecurityController extends Controller
         return $recommendations;
     }
 }
-

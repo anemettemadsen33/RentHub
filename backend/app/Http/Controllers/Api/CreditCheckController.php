@@ -210,4 +210,3 @@ class CreditCheckController extends Controller
         return response()->json($creditCheck);
     }
 }
-

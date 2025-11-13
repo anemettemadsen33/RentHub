@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Concerns\PropertyRuleSets;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePropertyRequest extends FormRequest
 {
     use PropertyRuleSets;
+
     /**
      * Determine if the user is authorized to make this request.
      */

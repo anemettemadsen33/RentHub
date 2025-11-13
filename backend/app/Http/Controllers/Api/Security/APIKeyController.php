@@ -72,4 +72,3 @@ class APIKeyController extends Controller
         ]);
     }
 }
-

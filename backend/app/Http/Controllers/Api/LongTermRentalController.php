@@ -298,4 +298,3 @@ class LongTermRentalController extends Controller
         ]);
     }
 }
-

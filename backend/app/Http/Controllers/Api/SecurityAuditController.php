@@ -135,4 +135,3 @@ class SecurityAuditController extends Controller
         ]);
     }
 }
-

@@ -245,4 +245,3 @@ class MaintenanceRequestController extends Controller
         ]);
     }
 }
-

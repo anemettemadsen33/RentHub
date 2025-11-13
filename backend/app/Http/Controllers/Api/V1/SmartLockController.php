@@ -347,4 +347,3 @@ class SmartLockController extends Controller
         ]);
     }
 }
-

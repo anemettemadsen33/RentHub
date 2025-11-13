@@ -74,4 +74,3 @@ class InvoiceController extends Controller
         return response()->json(['error' => 'Failed to resend invoice'], 500);
     }
 }
-

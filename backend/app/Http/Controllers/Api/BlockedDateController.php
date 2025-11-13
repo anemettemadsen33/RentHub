@@ -83,4 +83,3 @@ class BlockedDateController extends Controller
         ]);
     }
 }
-

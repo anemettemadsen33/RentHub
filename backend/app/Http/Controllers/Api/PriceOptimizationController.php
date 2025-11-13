@@ -909,4 +909,3 @@ class PriceOptimizationController extends Controller
         return 'Lowering price may improve occupancy rate and overall revenue';
     }
 }
-

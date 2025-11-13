@@ -267,4 +267,3 @@ class RoleController extends Controller
         return $roles[$role] ?? $roles['guest'];
     }
 }
-

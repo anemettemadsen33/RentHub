@@ -159,4 +159,3 @@ class TwoFactorAuthController extends Controller
         ]);
     }
 }
-

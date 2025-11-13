@@ -113,4 +113,3 @@ class OAuth2Controller extends Controller
         return response()->json($info);
     }
 }
-

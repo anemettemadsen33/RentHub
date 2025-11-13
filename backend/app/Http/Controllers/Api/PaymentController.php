@@ -250,4 +250,3 @@ class PaymentController extends Controller
         return $invoice;
     }
 }
-

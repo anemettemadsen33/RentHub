@@ -137,4 +137,3 @@ class PropertyComparisonController extends Controller
         ]);
     }
 }
-

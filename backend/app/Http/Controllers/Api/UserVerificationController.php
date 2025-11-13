@@ -390,4 +390,3 @@ class UserVerificationController extends Controller
         return response()->json($stats);
     }
 }
-

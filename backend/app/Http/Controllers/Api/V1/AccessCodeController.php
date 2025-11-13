@@ -320,4 +320,3 @@ class AccessCodeController extends Controller
         ]);
     }
 }
-

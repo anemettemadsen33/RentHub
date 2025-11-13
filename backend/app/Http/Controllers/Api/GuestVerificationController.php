@@ -278,4 +278,3 @@ class GuestVerificationController extends Controller
         ]);
     }
 }
-

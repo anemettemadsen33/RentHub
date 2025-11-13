@@ -233,4 +233,3 @@ class MessageController extends Controller
         }
     }
 }
-

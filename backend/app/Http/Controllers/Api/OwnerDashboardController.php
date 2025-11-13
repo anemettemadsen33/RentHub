@@ -37,4 +37,3 @@ class OwnerDashboardController extends Controller
         return response()->json($performance);
     }
 }
-

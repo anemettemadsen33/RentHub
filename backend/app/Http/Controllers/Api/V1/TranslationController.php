@@ -157,4 +157,3 @@ class TranslationController extends Controller
         ]);
     }
 }
-

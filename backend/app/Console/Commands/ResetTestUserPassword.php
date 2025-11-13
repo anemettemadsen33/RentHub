@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class ResetTestUserPassword extends Command
 {
     protected $signature = 'user:reset-password {email} {password}';
+
     protected $description = 'Reset user password';
 
     public function handle()
@@ -17,8 +18,9 @@ class ResetTestUserPassword extends Command
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             $this->error("User {$email} not found!");
+
             return 1;
         }
 
@@ -26,6 +28,7 @@ class ResetTestUserPassword extends Command
         $user->save();
 
         $this->info("✅ Password reset successfully for {$email}");
+
         return 0;
     }
 }

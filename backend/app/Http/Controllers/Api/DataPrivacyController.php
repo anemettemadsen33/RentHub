@@ -257,4 +257,3 @@ class DataPrivacyController extends Controller
         return $csv;
     }
 }
-

@@ -25,7 +25,7 @@ class BookingTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/bookings', [
             'property_id' => $property->id,
             'check_in' => now()->addDays(7)->format('Y-m-d'),
@@ -52,7 +52,7 @@ class BookingTest extends TestCase
     {
         $user = User::factory()->create();
         $property = Property::factory()->create();
-        
+
         Booking::factory()->count(3)->create([
             'user_id' => $user->id,
             'property_id' => $property->id,
@@ -61,7 +61,7 @@ class BookingTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/bookings');
 
         $response->assertStatus(200)
@@ -82,7 +82,7 @@ class BookingTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson("/api/v1/bookings/{$booking->id}/cancel");
 
         $response->assertStatus(200);

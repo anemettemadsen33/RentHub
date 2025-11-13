@@ -319,4 +319,3 @@ class AutomatedMessagingController extends Controller
         ]);
     }
 }
-

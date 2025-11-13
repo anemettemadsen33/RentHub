@@ -324,4 +324,3 @@ class GoogleCalendarController extends Controller
         ]);
     }
 }
-

@@ -303,4 +303,3 @@ class PropertyComparisonController extends Controller
         return $matrix;
     }
 }
-

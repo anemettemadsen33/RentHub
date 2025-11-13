@@ -21,4 +21,3 @@ Schedule::command('saved-searches:send-alerts weekly')->weekly()->withoutOverlap
 
 // Schedule exchange rate updates daily
 Schedule::command('exchange-rates:update')->daily()->withoutOverlapping();
-

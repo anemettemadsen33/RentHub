@@ -279,4 +279,3 @@ class TenantDashboardController extends Controller
         };
     }
 }
-

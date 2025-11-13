@@ -32,16 +32,16 @@ class Currency extends Model
     {
         // First try to get default from settings/config
         $defaultCode = config('app.currency', 'USD');
-        
+
         $currency = static::where('code', $defaultCode)
             ->where('is_active', true)
             ->first();
-            
+
         // If configured default doesn't exist, return first active currency
-        if (!$currency) {
+        if (! $currency) {
             $currency = static::active()->first();
         }
-        
+
         return $currency;
     }
 }

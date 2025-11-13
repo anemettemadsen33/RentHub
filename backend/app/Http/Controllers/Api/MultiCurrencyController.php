@@ -59,4 +59,3 @@ class MultiCurrencyController extends Controller
         return response()->json($result);
     }
 }
-

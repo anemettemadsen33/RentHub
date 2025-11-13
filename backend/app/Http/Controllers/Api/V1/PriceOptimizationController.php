@@ -174,4 +174,3 @@ class PriceOptimizationController extends Controller
         ]);
     }
 }
-

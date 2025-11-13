@@ -166,4 +166,3 @@ class SeoController extends Controller
         return response()->json(['message' => 'SEO cache cleared successfully']);
     }
 }
-

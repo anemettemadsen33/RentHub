@@ -326,4 +326,3 @@ class ExternalCalendarController extends Controller
         ]);
     }
 }
-

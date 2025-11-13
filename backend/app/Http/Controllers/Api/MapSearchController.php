@@ -225,4 +225,3 @@ class MapSearchController extends Controller
         ]);
     }
 }
-

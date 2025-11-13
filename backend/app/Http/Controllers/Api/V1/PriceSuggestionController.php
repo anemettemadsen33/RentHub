@@ -300,4 +300,3 @@ class PriceSuggestionController extends Controller
         ]);
     }
 }
-

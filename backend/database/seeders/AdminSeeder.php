@@ -20,6 +20,7 @@ class AdminSeeder extends Seeder
             $this->command->info('⚠️  Admin user already exists!');
             $this->command->info('📧 Email: admin@renthub.com');
             $this->command->info('🔑 Password: Admin@123456');
+
             return;
         }
 
@@ -31,7 +32,7 @@ class AdminSeeder extends Seeder
             'role' => 'admin',
             'is_admin' => true, // For Filament admin panel access
         ];
-        
+
         $optional = [
             'phone' => '+1234567890',
             'email_verified_at' => now(),
@@ -41,13 +42,13 @@ class AdminSeeder extends Seeder
             'currency' => 'USD',
             'timezone' => 'UTC',
         ];
-        
+
         foreach ($optional as $column => $value) {
             if (\Schema::hasColumn('users', $column)) {
                 $base[$column] = $value;
             }
         }
-        
+
         $admin = User::create($base);
 
         $this->command->info('✅ Admin user created successfully!');

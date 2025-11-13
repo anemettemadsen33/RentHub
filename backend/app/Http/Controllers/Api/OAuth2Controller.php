@@ -184,4 +184,3 @@ class OAuth2Controller extends Controller
         ]);
     }
 }
-

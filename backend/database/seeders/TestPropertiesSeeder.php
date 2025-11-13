@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TestPropertiesSeeder extends Seeder
 {
@@ -172,13 +171,13 @@ class TestPropertiesSeeder extends Seeder
             Property::firstOrCreate(
                 [
                     'title' => $propertyData['title'],
-                    'user_id' => $propertyData['user_id']
+                    'user_id' => $propertyData['user_id'],
                 ],
                 $propertyData
             );
         }
 
-        $this->command->info('✅ Created ' . count($properties) . ' test properties');
+        $this->command->info('✅ Created '.count($properties).' test properties');
         $this->command->info('📧 Test owner email: owner@renthub.test');
         $this->command->info('🔑 Test owner password: password123');
     }

@@ -54,4 +54,3 @@ class SecurityAuditController extends Controller
         return response()->json(['report' => $report]);
     }
 }
-

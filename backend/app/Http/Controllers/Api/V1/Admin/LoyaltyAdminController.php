@@ -196,4 +196,3 @@ class LoyaltyAdminController extends Controller
         ]);
     }
 }
-

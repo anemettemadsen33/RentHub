@@ -16,16 +16,16 @@ class PropertyController extends Controller
     public function index(Request $request): JsonResponse
     {
         // Create cache key from request parameters
-        $cacheKey = 'properties_' . md5(json_encode($request->all()));
-        
+        $cacheKey = 'properties_'.md5(json_encode($request->all()));
+
         // Cache search results for 5 minutes (300 seconds)
         $cacheTTL = 300;
-        
+
         // For simple listing without filters, cache longer (30 minutes)
-        if (!$request->hasAny(['search', 'city', 'country', 'min_price', 'max_price', 'check_in', 'check_out', 'amenities'])) {
+        if (! $request->hasAny(['search', 'city', 'country', 'min_price', 'max_price', 'check_in', 'check_out', 'amenities'])) {
             $cacheTTL = 1800;
         }
-        
+
         $result = Cache::tags(['properties'])->remember($cacheKey, $cacheTTL, function () use ($request) {
             $query = Property::with(['amenities', 'user:id,name,email'])
                 ->where('status', 'available')
@@ -94,6 +94,7 @@ class PropertyController extends Controller
 
             // Pagination (return only items array for legacy tests)
             $perPage = min($request->get('per_page', 15), 50);
+
             return $query->paginate($perPage);
         });
 
@@ -107,7 +108,7 @@ class PropertyController extends Controller
     {
         // Cache individual property for 30 minutes
         $cacheKey = "property_{$property->id}";
-        
+
         $property = Cache::tags(['properties'])->remember($cacheKey, 1800, function () use ($property) {
             $property->load([
                 'amenities:id,name,icon,category',
@@ -129,7 +130,7 @@ class PropertyController extends Controller
             } else {
                 $property->average_rating = 0.0;
             }
-            
+
             return $property;
         });
 
@@ -618,4 +619,3 @@ class PropertyController extends Controller
         ]);
     }
 }
-

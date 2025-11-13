@@ -63,7 +63,7 @@ class PropertyTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/properties', [
             'title' => 'Test Property',
             'description' => 'A beautiful test property with amazing views and great amenities for your perfect vacation stay',
@@ -106,7 +106,7 @@ class PropertyTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->putJson("/api/v1/properties/{$property->id}", [
             'title' => 'Updated Property Title',
             'price_per_night' => 150.00,
@@ -142,7 +142,7 @@ class PropertyTest extends TestCase
         $response = $this->getJson('/api/v1/properties?city=Paris&max_price=150');
 
         $response->assertStatus(200);
-        
+
         $data = $response->json('data');
         $this->assertCount(1, $data);
         $this->assertEquals('Paris', $data[0]['city']);

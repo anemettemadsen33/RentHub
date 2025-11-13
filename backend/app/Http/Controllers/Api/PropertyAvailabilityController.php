@@ -32,4 +32,3 @@ class PropertyAvailabilityController extends Controller
         ]);
     }
 }
-

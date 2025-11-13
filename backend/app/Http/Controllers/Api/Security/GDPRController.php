@@ -91,4 +91,3 @@ class GDPRController extends Controller
         return response()->json(['message' => 'Consent revoked successfully']);
     }
 }
-
