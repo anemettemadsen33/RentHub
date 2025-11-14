@@ -148,9 +148,15 @@ php artisan migrate:fresh --env=testing
 
 ## 🔗 CI/CD
 
-GitHub Actions workflow: `.github/workflows/quality.yml`
+⚠️ **CI/CD workflow is disabled by default** to prevent deployment conflicts.
 
-**Runs on**:
+**Location**: `.github/workflows/quality.yml.disabled`
+
+**To enable**: Rename to `quality.yml` (remove `.disabled`)
+
+**Why disabled**: Vercel and Laravel Forge handle deployments.
+
+**If enabled, runs on**:
 - Push to main/master/develop
 - Pull requests
 - Manual trigger

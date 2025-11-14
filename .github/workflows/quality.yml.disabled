@@ -1,5 +1,14 @@
 name: Quality & Testing Pipeline
 
+# NOTE: This workflow is DISABLED by default to prevent conflicts with existing deployment processes.
+# To enable: rename this file to quality.yml (remove .disabled extension)
+# 
+# IMPORTANT: This repository has Vercel (frontend) and Laravel Forge (backend) deployments.
+# Enabling this workflow may interfere with those deployments. Only enable if you want
+# GitHub Actions to run quality checks on every push/PR.
+#
+# Alternative: Run quality checks locally using commands in TESTING_GUIDE.md
+
 on:
   push:
     branches: [ main, master, develop ]

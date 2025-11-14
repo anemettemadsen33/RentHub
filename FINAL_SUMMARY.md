@@ -232,7 +232,13 @@ npx tsx tools/api-health-check.ts --continuous --interval=30000
 
 ### STEP 9 – CI/CD GitHub Actions ✅ COMPLETE
 
-**Deliverable**: `.github/workflows/quality.yml`
+⚠️ **IMPORTANT**: Workflow is **disabled by default** to prevent deployment conflicts.
+
+**Deliverable**: `.github/workflows/quality.yml.disabled`
+
+**Why disabled**: This repository uses Vercel (frontend) and Laravel Forge (backend) for deployments. Enabling this workflow may interfere with those processes.
+
+**To enable**: Rename file to `quality.yml` (remove `.disabled` extension)
 
 **Pipeline Jobs**:
 

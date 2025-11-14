@@ -366,9 +366,19 @@ The script tests:
 
 ### GitHub Actions Workflow
 
-The project uses `.github/workflows/quality.yml` for automated testing.
+⚠️ **IMPORTANT**: The quality workflow is **disabled by default** to prevent conflicts with existing Vercel and Laravel Forge deployments.
 
-**Triggers:**
+**Location**: `.github/workflows/quality.yml.disabled`
+
+**To enable**: Rename the file to `quality.yml` (remove `.disabled` extension)
+
+**Why disabled**: This repository uses:
+- Vercel for frontend deployments
+- Laravel Forge for backend deployments
+
+Enabling GitHub Actions may interfere with these deployment processes.
+
+**Triggers (when enabled):**
 - Push to `main`, `master`, or `develop` branches
 - Pull requests to these branches
 - Manual workflow dispatch
