@@ -40,7 +40,7 @@ export default function FAQPage() {
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger>What is RentHub?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     RentHub is a comprehensive property rental platform that connects property owners 
                     with renters worldwide. We offer both short-term and long-term rental options with 
                     secure payments, verified listings, and 24/7 customer support.
@@ -48,7 +48,7 @@ export default function FAQPage() {
                 </AccordionItem>
                 <AccordionItem value="item-2">
                   <AccordionTrigger>Is RentHub free to use?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Browsing and searching for properties is completely free. When you book a property, 
                     a service fee is added to your total. Property owners also pay a small commission 
                     on successful bookings.
@@ -56,7 +56,7 @@ export default function FAQPage() {
                 </AccordionItem>
                 <AccordionItem value="item-3">
                   <AccordionTrigger>How do I create an account?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Click the &quot;Sign Up&quot; button in the top right corner, fill in your details, and 
                     verify your email address. You can also sign up using your Google or Facebook account.
                   </AccordionContent>
@@ -70,14 +70,14 @@ export default function FAQPage() {
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="booking-1">
                   <AccordionTrigger>How do I book a property?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Find a property you like, select your dates, review the total price, and click &quot;Book Now&quot;. 
                     You&apos;ll need to provide payment information and agree to the property&apos;s terms and conditions.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="booking-2">
                   <AccordionTrigger>Can I cancel my booking?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Cancellation policies vary by property. Check the specific cancellation policy before booking. 
                     Most properties offer free cancellation up to 48 hours before check-in, but some may have 
                     stricter policies.
@@ -85,14 +85,14 @@ export default function FAQPage() {
                 </AccordionItem>
                 <AccordionItem value="booking-3">
                   <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     We accept major credit cards (Visa, Mastercard, American Express), debit cards, and PayPal. 
                     All payments are processed securely through our encrypted payment system.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="booking-4">
                   <AccordionTrigger>When will I be charged?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     For instant bookings, you&apos;ll be charged immediately after confirmation. For booking requests, 
                     you&apos;ll only be charged once the property owner accepts your request.
                   </AccordionContent>
@@ -106,7 +106,7 @@ export default function FAQPage() {
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="owner-1">
                   <AccordionTrigger>How do I list my property?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Click &quot;List Your Property&quot; in the navigation menu, fill out the property details form, 
                     upload high-quality photos, set your pricing and availability, and submit for review. 
                     Our team typically reviews listings within 24 hours.
@@ -114,14 +114,14 @@ export default function FAQPage() {
                 </AccordionItem>
                 <AccordionItem value="owner-2">
                   <AccordionTrigger>What fees do property owners pay?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Property owners pay a 10% service fee on successful bookings. There are no upfront costs 
                     or subscription fees - you only pay when you get bookings.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="owner-3">
                   <AccordionTrigger>How and when do I get paid?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Payments are released 24 hours after the guest checks in. You can choose to receive payments 
                     via bank transfer or PayPal. Set up your payout method in your account settings.
                   </AccordionContent>
@@ -135,7 +135,7 @@ export default function FAQPage() {
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="safety-1">
                   <AccordionTrigger>Are all properties verified?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Yes, we verify all property listings before they go live. This includes checking property 
                     ownership documents, reviewing photos, and confirming the property details. We also encourage 
                     guests to leave honest reviews after their stay.
@@ -143,14 +143,14 @@ export default function FAQPage() {
                 </AccordionItem>
                 <AccordionItem value="safety-2">
                   <AccordionTrigger>Is my payment information secure?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Absolutely. We use bank-level encryption and never share your payment information with property 
                     owners. All transactions are processed through PCI-compliant payment processors.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="safety-3">
                   <AccordionTrigger>What if something goes wrong during my stay?</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="text-foreground">
                     Contact our 24/7 customer support team immediately. We&apos;ll work with you and the property owner 
                     to resolve any issues. In serious cases, we offer rebooking assistance or refunds according to 
                     our Guest Refund Policy.

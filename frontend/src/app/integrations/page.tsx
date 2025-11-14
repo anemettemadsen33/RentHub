@@ -1,100 +1,21 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { Navbar } from '@/components/navbar';
-import { IntegrationCard } from '@/components/integrations/integration-card';
-import { IntegrationGridSkeleton, IntegrationStatsSkeleton } from '@/components/integrations/integration-skeleton';
-import { useIntegrations } from '@/hooks/use-integrations';
+import { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Zap, TrendingUp, Globe, Lock, CheckCircle, AlertCircle, BarChart3 } from 'lucide-react';
-import { toast } from 'sonner';
+import Link from 'next/link';
+import { CheckCircle, Zap, TrendingUp, Globe, BarChart, Lock } from 'lucide-react';
+import { MainLayout } from '@/components/layouts/main-layout';
+import { TooltipProvider } from '@/components/ui/tooltip';
+
+export const metadata: Metadata = {
+  title: 'Integrations - RentHub',
+  description: 'Connect RentHub with your favorite platforms',
+};
 
 export default function IntegrationsPage() {
-  const {
-    integrations,
-    loading,
-    syncing,
-    connectIntegration,
-    disconnectIntegration,
-    syncIntegration,
-    isConnected,
-  } = useIntegrations();
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const handleConnect = async (platform: string) => {
-    try {
-      await connectIntegration(platform);
-    } catch (error) {
-      toast.error('Failed to connect integration');
-    }
-  };
-
-  const handleDisconnect = async (id: string) => {
-    try {
-      await disconnectIntegration(id);
-    } catch (error) {
-      toast.error('Failed to disconnect integration');
-    }
-  };
-
-  const handleSync = async (id: string) => {
-    return await syncIntegration(id);
-  };
-
-  const platformIntegrations = [
-    {
-      type: 'airbnb',
-      name: 'Airbnb',
-      description: 'Sync your properties with Airbnb\'s 5+ million listings worldwide.',
-      features: [
-        'Two-way calendar synchronization',
-        'Automatic pricing and availability updates',
-        'Unified messaging and booking management',
-      ],
-    },
-    {
-      type: 'booking',
-      name: 'Booking.com',
-      description: 'Reach 28+ million listings across 154,000+ destinations.',
-      features: [
-        'Real-time inventory synchronization',
-        'Dynamic rate management',
-        'Booking confirmation automation',
-      ],
-    },
-    {
-      type: 'vrbo',
-      name: 'Vrbo (Vacation Rentals by Owner)',
-      description: 'Connect with 2+ million vacation rental properties.',
-      features: [
-        'Automated listing distribution',
-        'Payment processing integration',
-        'Review management and sync',
-      ],
-    },
-  ];
-
-  const getIntegrationForPlatform = (platformType: string) => {
-    return integrations.find(integration => integration.type === platformType);
-  };
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <Navbar />
-
+    <TooltipProvider>
+      <MainLayout>
+        <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container mx-auto px-4">
@@ -107,102 +28,159 @@ export default function IntegrationsPage() {
         </div>
       </section>
 
-      {/* Connection Status Alert */}
-      {integrations.some(int => int.status === 'error') && (
-        <section className="container mx-auto px-4 py-4">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Some integrations have connection errors. Please check and reconnect them.
-            </AlertDescription>
-          </Alert>
-        </section>
-      )}
-
       {/* Benefits */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">Why Use Integrations?</h2>
-        {loading ? (
-          <IntegrationStatsSkeleton />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card>
-              <CardHeader>
-                <Zap className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Save Time</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Sync listings across multiple platforms with one click. No more manual updates.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <TrendingUp className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Increase Visibility</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Reach millions more potential tenants by listing on Airbnb, Booking.com, and Vrbo.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <BarChart3 className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Unified Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Track performance across all platforms from one centralized dashboard.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card>
+            <CardHeader>
+              <Zap className="h-12 w-12 text-primary mb-4" />
+              <CardTitle>Save Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Sync listings across multiple platforms with one click. No more manual updates.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <TrendingUp className="h-12 w-12 text-primary mb-4" />
+              <CardTitle>Increase Visibility</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Reach millions more potential tenants by listing on Airbnb, Booking.com, and Vrbo.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <BarChart className="h-12 w-12 text-primary mb-4" />
+              <CardTitle>Unified Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Track performance across all platforms from one centralized dashboard.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
       {/* Main Integrations */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-bold">Featured Integrations</h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Connected:</span>
-              <Badge variant="default" className="bg-green-500">
-                {integrations.filter(int => int.status === 'connected').length}/{platformIntegrations.length}
-              </Badge>
-            </div>
-          </div>
+          <h2 className="text-3xl font-bold text-center mb-12">Featured Integrations</h2>
           
-          {loading ? (
-            <IntegrationGridSkeleton count={3} />
-          ) : (
-            <div className="space-y-8 max-w-4xl mx-auto">
-              {platformIntegrations.map((platform) => {
-                const integration = getIntegrationForPlatform(platform.type);
-                return (
-                  <IntegrationCard
-                    key={platform.type}
-                    integration={integration || {
-                      id: `mock-${platform.type}`,
-                      name: platform.name,
-                      type: platform.type as any,
-                      status: 'disconnected',
-                      settings: {},
-                      created_at: new Date().toISOString(),
-                      updated_at: new Date().toISOString(),
-                    }}
-                    onConnect={handleConnect}
-                    onDisconnect={handleDisconnect}
-                    onSync={handleSync}
-                    syncing={!!syncing[platform.type]}
-                  />
-                );
-              })}
-            </div>
-          )}
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {/* Airbnb */}
+            <Card>
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="w-24 h-24 bg-gradient-to-br from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <svg className="h-16 w-16 text-white" viewBox="0 0 1000 1000" fill="currentColor">
+                        <path d="M499.3 736.7c-51-64-81-120.1-91-168.1-10-39-6-70 11-93 18-27 45-40 80-40s62 13 80 40c17 23 21 54 11 93-11 49-41 105-91 168.1zm362.2 43c-7 47-39 86-83 105-85 37-169.1-22-241.1-102 119.1-149.1 141.1-265.1 90-340.2-30-43-73-64-128.1-64-111 0-172.1 94-148.1 203.1 14 59 51 126.1 110 201.1-37 41-72 70-103 88-24 13-47 21-69 23-101 15-180.1-83-144.1-184.1 5-13 15-37 32-74l1-2c55-120.1 122.1-256.1 199.1-407.2l2-5 22-42c17-31 24-45 51-62 13-8 29-12 47-12 36 0 64 21 76 38 6 9 13 21 22 36l21 41 3 6c77 151.1 144.1 287.1 199.1 407.2l1 1 20 46 12 29c9.2 23.1 11.2 46.1 8.2 70.1z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-2xl font-bold mb-2">Airbnb</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Sync your properties with Airbnb's 5+ million listings worldwide. 
+                      Automatic calendar sync, pricing updates, and booking management.
+                    </p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Two-way calendar synchronization</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Automatic pricing and availability updates</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Unified messaging and booking management</span>
+                      </li>
+                    </ul>
+                    <Button>Connect Airbnb</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Booking.com */}
+            <Card>
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl font-bold text-white">B.com</span>
+                    </div>
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-2xl font-bold mb-2">Booking.com</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Reach 28+ million listings across 154,000+ destinations. 
+                      Perfect for long-term and short-term rentals.
+                    </p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Real-time inventory synchronization</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Dynamic rate management</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Booking confirmation automation</span>
+                      </li>
+                    </ul>
+                    <Button>Connect Booking.com</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Vrbo */}
+            <Card>
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-700 to-blue-500 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl font-bold text-white">Vrbo</span>
+                    </div>
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-2xl font-bold mb-2">Vrbo (Vacation Rentals by Owner)</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Connect with 2+ million vacation rental properties. 
+                      Ideal for family-friendly whole-home rentals.
+                    </p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Automated listing distribution</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Payment processing integration</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <span className="text-sm">Review management and sync</span>
+                      </li>
+                    </ul>
+                    <Button>Connect Vrbo</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
@@ -288,15 +266,17 @@ export default function IntegrationsPage() {
             </p>
             <div className="flex gap-4 justify-center">
               <Button asChild size="lg">
-                <a href="/dashboard/properties">Get Started</a>
+                <Link href="/dashboard/properties">Get Started</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href="/contact">Contact Sales</a>
+                <Link href="/contact">Contact Sales</Link>
               </Button>
             </div>
           </CardContent>
         </Card>
       </section>
-    </div>
+        </div>
+      </MainLayout>
+    </TooltipProvider>
   );
 }

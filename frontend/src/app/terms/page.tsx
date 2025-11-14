@@ -88,7 +88,7 @@ export default function TermsPage() {
             </p>
             <h2>10. Contact Information</h2>
             <p>
-              Dacă ai întrebări despre acești Termeni, contactează-ne:
+              If you have any questions about these Terms, please contact us:
               <br />
               <strong>Email:</strong> legal@renthub.com
               <br />
