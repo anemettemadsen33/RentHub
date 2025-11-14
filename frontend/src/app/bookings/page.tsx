@@ -21,6 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
+export const dynamic = 'force-dynamic';
+
 export default function BookingsPage() {
   const t = useTranslations('bookingsPage');
   const router = useRouter();
@@ -168,7 +170,7 @@ export default function BookingsPage() {
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Error Loading Bookings</h2>
             <p className="text-muted-foreground mb-6">Unable to load your bookings. Please try again later.</p>
-            <Button onClick={() => window.location.reload()}>Retry</Button>
+            <Button onClick={() => typeof window !== 'undefined' && window.location.reload()}>Retry</Button>
           </div>
         </div>
       </MainLayout>

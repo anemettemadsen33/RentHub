@@ -35,7 +35,7 @@ export function usePusher() {
       authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/broadcasting/auth`,
       auth: {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
         },
       },
     });

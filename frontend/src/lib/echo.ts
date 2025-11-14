@@ -126,7 +126,7 @@ export const echoChannels = {
    * User's private notification channel
    */
   userNotifications: (userId: number, authToken: string) => {
-    return subscribeToPrivateChannel(`App.Models.User.${userId}`, authToken);
+    return subscribeToPrivateChannel(`user.${userId}`, authToken);
   },
 
   /**

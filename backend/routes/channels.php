@@ -19,6 +19,11 @@ Broadcast::channel('user.{userId}', function (User $user, int $userId) {
     return (int) $user->id === (int) $userId;
 });
 
+// Laravel's default notification channel (used by broadcast notifications)
+Broadcast::channel('App.Models.User.{userId}', function (User $user, int $userId) {
+    return (int) $user->id === (int) $userId;
+});
+
 // Property updates channel (owner only)
 Broadcast::channel('property.{propertyId}', function (User $user, int $propertyId) {
     return \App\Models\Property::where('id', $propertyId)
