@@ -184,7 +184,7 @@ export default function MessageThreadPage() {
 
         <Card className="overflow-hidden">
           {/* Messages */}
-          <div className="h-[60vh] overflow-y-auto p-4 space-y-4" role="log" aria-live="polite" aria-busy={loading ? 'true' : undefined}>
+          <div className="h-[60vh] overflow-y-auto p-4 space-y-4" role="log" aria-live="polite">
             {loading ? (
               <div className="space-y-3">
                 {[...Array(5)].map((_, i) => (

@@ -365,7 +365,7 @@ export default function NotificationsPage() {
               ) : filtered.length === 0 ? (
                 <div className="p-10 text-center text-gray-500">{t('list.empty')}</div>
               ) : (
-                <ul className="divide-y" role="list">
+                <ul className="divide-y">
                   {filtered.map((notification, idx) => {
                     const selected = selectedIds.has(notification.id);
                     return (

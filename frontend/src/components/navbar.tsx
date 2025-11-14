@@ -35,15 +35,15 @@ export function Navbar() {
               <span className="hidden sm:inline bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">RentHub</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-1" role="menubar">
+            <div className="hidden md:flex items-center gap-1">
               <Button variant="ghost" size="sm" asChild className="hover:bg-accent/50 transition-colors">
-                <Link href="/properties" role="menuitem">Properties</Link>
+                <Link href="/properties">Properties</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild className="hover:bg-accent/50 transition-colors">
-                <Link href="/about" role="menuitem">About</Link>
+                <Link href="/about">About</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild className="hover:bg-accent/50 transition-colors">
-                <Link href="/contact" role="menuitem">Contact</Link>
+                <Link href="/contact">Contact</Link>
               </Button>
             </div>
 
