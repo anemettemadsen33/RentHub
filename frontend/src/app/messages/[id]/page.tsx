@@ -266,7 +266,19 @@ export default function MessageThreadPage() {
               )}
 
               <form onSubmit={handleSend} className="p-4 flex items-end gap-2" aria-label="Send message">
-                <input ref={fileInputRef} type="file" className="hidden" onChange={onFileSelect} multiple accept="image/*,application/pdf,.doc,.docx" />
+              <div>
+                <label htmlFor="file-upload" className="sr-only">Upload files (images, PDFs, documents)</label>
+                <input 
+                  id="file-upload"
+                  ref={fileInputRef} 
+                  type="file" 
+                  className="hidden" 
+                  onChange={onFileSelect} 
+                  multiple 
+                  accept="image/*,application/pdf,.doc,.docx" 
+                  aria-label="Upload files"
+                />
+              </div>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>

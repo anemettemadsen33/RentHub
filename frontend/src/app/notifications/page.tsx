@@ -371,13 +371,16 @@ export default function NotificationsPage() {
                     return (
                       <li
                         key={notification.id}
-                        className={`flex items-start gap-4 p-4 hover:bg-muted/40 transition cursor-pointer animate-fade-in-up ${!notification.is_read ? 'bg-primary/5' : ''}`}
+                        className="animate-fade-in-up"
                         style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}
-                        onClick={() => markAsRead(notification.id, true)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); markAsRead(notification.id, true); } }}
                       >
+                        <div
+                          className={`flex items-start gap-4 p-4 hover:bg-muted/40 transition cursor-pointer ${!notification.is_read ? 'bg-primary/5' : ''}`}
+                          onClick={() => markAsRead(notification.id, true)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); markAsRead(notification.id, true); } }}
+                        >
                         <div className="pt-1">
                           <Checkbox checked={selected} onCheckedChange={() => toggleSelect(notification.id)} aria-label={t('item.aria.select')} />
                         </div>
@@ -407,6 +410,7 @@ export default function NotificationsPage() {
                             </Button>
                           </div>
                         </div>
+                      </div>
                       </li>
                     );
                   })}
