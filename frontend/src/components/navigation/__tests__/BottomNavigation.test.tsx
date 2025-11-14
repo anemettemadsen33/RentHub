@@ -127,3 +127,4 @@ describe('SmartBottomNavigation', () => {
     
     expect(screen.getByRole('navigation', { name: /authenticated bottom navigation/i })).toBeInTheDocument()
   })
+})

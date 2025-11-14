@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 import { useNotifications } from '@/contexts/notification-context';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, User, Bell, Building, MessageSquare, Info } from 'lucide-react';
+import { Home, Menu, User, Bell, Building, MessageSquare, Info, Heart, Calendar } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { BottomNavItem } from '@/components/bottom-nav-item';
@@ -18,7 +18,7 @@ export function Navbar() {
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
-    <React.Fragment>
+    <>
       <nav className="border-b bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
