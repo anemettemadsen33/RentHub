@@ -1,25 +1,31 @@
-// Temporary wrapper to replace next-intl until we configure it properly
-// This allows us to keep the translation keys but return English text
+// Translation hook that uses static English translations
+import enMessages from '../../messages/en.json';
 
 export function useTranslations(namespace?: string) {
   return (key: string, params?: Record<string, any>) => {
-    // Return the key as fallback text (better than crashing)
-    // You can add specific translations here if needed
-    const translations: Record<string, string> = {
-      'properties.title': 'Browse Properties',
-      'properties.searchPlaceholder': 'Search properties...',
-      'properties.filters': 'Filters',
-      'properties.sortBy': 'Sort by',
-      'properties.viewMode': 'View',
-      'navigation.home': 'Home',
-      'navigation.properties': 'Properties',
-      'comparison.add': 'Add to Compare',
-      'comparison.remove': 'Remove from Compare',
-      // Add more as needed
-    };
-
     const fullKey = namespace ? `${namespace}.${key}` : key;
-    return translations[fullKey] || key;
+    
+    // Navigate through nested object
+    const keys = fullKey.split('.');
+    let value: any = enMessages;
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        // Fallback to key if not found
+        return key;
+      }
+    }
+    
+    // If we found a string, replace params if any
+    if (typeof value === 'string' && params) {
+      return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+        return params[paramKey]?.toString() || match;
+      });
+    }
+    
+    return typeof value === 'string' ? value : key;
   };
 }
 
