@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AmenityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OptimizedAuthController;
+use App\Http\Controllers\Api\TokenRefreshController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
@@ -57,7 +58,10 @@ Route::get('/health/production/logs', [ProductionHealthController::class, 'logs'
 Route::get('/health/status', [ProductionHealthController::class, 'health']); // Alias for easier access
 
 // Setup Route (TEMPORARY - for initial admin user creation)
-Route::post('/setup/create-admin', [SetupController::class, 'createAdminUser']);
+// Register ONLY in non-production environments to avoid exposure in prod
+if (env('APP_ENV') !== 'production') {
+    Route::post('/setup/create-admin', [SetupController::class, 'createAdminUser']);
+}
 
 // Simple API version negotiation for base endpoints (tests expect /api/properties with X-API-Version header)
 Route::get('/properties', function () {
@@ -208,6 +212,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Two-Factor Authentication (Settings)
     Route::post('/2fa/enable', [AuthController::class, 'enableTwoFactor']);
     Route::post('/2fa/disable', [AuthController::class, 'disableTwoFactor']);
+
+    // Token Management
+    Route::prefix('token')->group(function () {
+        Route::post('/refresh', [TokenRefreshController::class, 'refresh']);
+        Route::get('/tokens', [TokenRefreshController::class, 'tokens']);
+        Route::delete('/revoke/{tokenId}', [TokenRefreshController::class, 'revoke']);
+        Route::delete('/revoke-all', [TokenRefreshController::class, 'revokeAll']);
+    });
 
     // OAuth 2.0 Protected Endpoints
     Route::post('/oauth/authorize', [OAuth2Controller::class, 'authorizeClient']);

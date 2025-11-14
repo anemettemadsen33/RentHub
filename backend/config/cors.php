@@ -23,20 +23,25 @@ return [
         env('FRONTEND_URL', 'http://localhost:3000'),
         'http://127.0.0.1:3000',
         'http://localhost:3001',
-        'https://rent-ljgrpeajm-madsens-projects.vercel.app', // Old Vercel production
-        'https://rent-19xinb37g-madsens-projects.vercel.app', // Current Vercel production
-        'https://rent-hub-six.vercel.app',
-        'https://rent-hub-beta.vercel.app',
+        'https://rent-hub-beta.vercel.app', // Current production frontend
+        'https://rent-hub-six.vercel.app',  // Alternative frontend
+        'https://renthub-tbj7yxj7.on-forge.com', // Production backend domain
+        'https://renthub-dji696t0.on-forge.com', // Alternative backend domain
     ],
 
-    'allowed_origins_patterns' => [
-        // Matches renthub.com or any subdomain (www.renthub.com, api.renthub.com, etc.)
-        '#^https?://([\w-]+\.)?renthub\.com$#i',
-        // Matches any Vercel deployment (requires subdomain: your-app.vercel.app)
-        '#^https?://[\w-]+\.vercel\.app$#i',
-        // Matches any Forge deployment (requires subdomain: your-site.on-forge.com)
-        '#^https?://[\w-]+\.on-forge\.com$#i',
-    ],
+    'allowed_origins_patterns' => array_merge([
+        // Explicit production domains
+        '#^https://rent-hub-beta\\.vercel\\.app$#i',
+        '#^https://rent-hub-six\\.vercel\\.app$#i',
+        '#^https://renthub-tbj7yxj7\\.on-forge\\.com$#i',
+        // Development patterns
+        '#^http://localhost(:[0-9]+)?$#i',
+        '#^http://127\\.0\\.0\\.1(:[0-9]+)?$#i',
+    ], env('APP_ENV') !== 'production' ? [
+        // Allow wildcard previews only outside production
+        '#^https://[\\w-]+\\.vercel\\.app$#i',
+        '#^https://[\\w-]+\\.on-forge\\.com$#i',
+    ] : []),
 
     'allowed_headers' => ['*'],
 

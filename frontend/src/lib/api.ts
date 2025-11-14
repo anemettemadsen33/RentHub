@@ -18,6 +18,7 @@ export class ApiClient {
 
     const config: RequestInit = {
       ...options,
+      credentials: 'include', // Include cookies for CORS requests
       headers: {
         ...defaultHeaders,
         ...options.headers,

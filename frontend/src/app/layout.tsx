@@ -15,6 +15,7 @@ import { SWUpdatePrompt } from '@/components/pwa/sw-update-prompt';
 import { OrganizationSchema } from '@/components/seo/organization-schema';
 import WebVitalsReporter from '@/components/analytics/web-vitals';
 import { ConsentBanner } from '@/components/consent-banner';
+import { NavigationProvider } from '@/components/navigation/NavigationContainer';
 // TEMP DISABLED: next-intl components causing build errors
 // import { LocaleAutoDetect } from '@/components/locale-auto-detect';
 // import { LocaleDetectionNotification } from '@/components/locale-detection-notification';
@@ -115,8 +116,11 @@ export default async function RootLayout({
         >
           {/* Remove NextIntlClientProvider - not needed without i18n */}
           <Providers>
-              {/* Main application layout/content */}
-              {children}
+              {/* New Navigation System */}
+              <NavigationProvider enableAnalytics={true}>
+                {/* Main application layout/content */}
+                {children}
+              </NavigationProvider>
               {/* Unified toaster already rendered inside Providers; remove duplicate here */}
               <CommandPalette />
               {/* PWA features */}

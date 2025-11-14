@@ -114,6 +114,20 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/auth/login',
+        permanent: true,
+      },
+      {
+        source: '/register',
+        destination: '/auth/register',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
@@ -123,6 +137,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'api.renthub.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'renthub-tbj7yxj7.on-forge.com',
       },
       {
         protocol: 'https',
@@ -143,6 +161,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.simpleicons.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
     ],
     formats: ['image/avif', 'image/webp'], // Modern formats for better compression

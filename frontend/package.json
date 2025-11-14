@@ -21,12 +21,12 @@
     "e2e:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
     "e2e:tablet": "playwright test --project=tablet-ipad --project=tablet-android",
     "e2e:all-browsers": "playwright test --project=chromium --project=firefox --project=webkit --project=edge",
-      "e2e:all-pages": "playwright test complete-all-pages",
-      "e2e:dynamic-pages": "playwright test complete-dynamic-pages",
-      "e2e:navigation": "playwright test complete-navigation",
-      "e2e:performance": "playwright test complete-performance",
-      "e2e:responsive": "playwright test complete-responsive",
-      "e2e:full": "playwright test complete-all-pages complete-dynamic-pages complete-navigation complete-performance complete-responsive",
+    "e2e:all-pages": "playwright test complete-all-pages",
+    "e2e:dynamic-pages": "playwright test complete-dynamic-pages",
+    "e2e:navigation": "playwright test complete-navigation",
+    "e2e:performance": "playwright test complete-performance",
+    "e2e:responsive": "playwright test complete-responsive",
+    "e2e:full": "playwright test complete-all-pages complete-dynamic-pages complete-navigation complete-performance complete-responsive",
     "e2e:report": "playwright show-report",
     "e2e:codegen": "playwright codegen http://localhost:3000",
     "test:all": "npm run test && npm run e2e"
@@ -97,7 +97,8 @@
     "vaul": "^1.1.2",
     "web-vitals": "^4.2.4",
     "workbox-window": "^7.3.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
