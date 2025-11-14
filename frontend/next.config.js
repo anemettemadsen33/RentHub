@@ -51,6 +51,22 @@ const nextConfig = {
       },
     ];
   },
+  
+  // Redirect old auth routes to new ones
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/auth/login',
+        permanent: true,
+      },
+      {
+        source: '/register',
+        destination: '/auth/register',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

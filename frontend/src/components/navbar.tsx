@@ -271,17 +271,27 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Navigation */}
-      {isAuthenticated && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 safe-bottom shadow-lg">
-          <div className="grid grid-cols-5 h-16">
-            <BottomNavItem href="/dashboard" icon={<Home className="h-5 w-5" />} label="Home" />
-            <BottomNavItem href="/properties" icon={<Building className="h-5 w-5" />} label="Browse" />
-            <BottomNavItem href="/bookings" icon={<Calendar className="h-5 w-5" />} label="Bookings" />
-            <BottomNavItem href="/messages" icon={<MessageSquare className="h-5 w-5" />} label="Messages" badge={0} />
-            <BottomNavItem href="/notifications" icon={<Bell className="h-5 w-5" />} label="Alerts" badge={unreadCount} />
-          </div>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 safe-bottom shadow-lg">
+        <div className="grid grid-cols-5 h-16">
+          {isAuthenticated ? (
+            <>
+              <BottomNavItem href="/dashboard" icon={<Home className="h-5 w-5" />} label="Home" />
+              <BottomNavItem href="/properties" icon={<Building className="h-5 w-5" />} label="Browse" />
+              <BottomNavItem href="/bookings" icon={<Calendar className="h-5 w-5" />} label="Bookings" />
+              <BottomNavItem href="/messages" icon={<MessageSquare className="h-5 w-5" />} label="Messages" badge={0} />
+              <BottomNavItem href="/notifications" icon={<Bell className="h-5 w-5" />} label="Alerts" badge={unreadCount} />
+            </>
+          ) : (
+            <>
+              <BottomNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" />
+              <BottomNavItem href="/properties" icon={<Building className="h-5 w-5" />} label="Browse" />
+              <BottomNavItem href="/about" icon={<Heart className="h-5 w-5" />} label="About" />
+              <BottomNavItem href="/contact" icon={<MessageSquare className="h-5 w-5" />} label="Contact" />
+              <BottomNavItem href="/auth/login" icon={<User className="h-5 w-5" />} label="Login" />
+            </>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 }

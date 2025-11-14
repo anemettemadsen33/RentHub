@@ -200,6 +200,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/user', [AuthController::class, 'me']); // Alias for /me
+    Route::get('/auth/user', [AuthController::class, 'me']); // Alias for /me (for frontend compatibility)
     Route::post('/resend-verification', [AuthController::class, 'resendVerification']);
     Route::post('/send-phone-verification', [AuthController::class, 'sendPhoneVerification']);
     Route::post('/verify-phone', [AuthController::class, 'verifyPhone']);
