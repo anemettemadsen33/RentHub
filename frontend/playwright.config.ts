@@ -4,73 +4,102 @@ const env: any = (globalThis as any).process?.env || {};
 const isCI = !!env.CI;
 
 export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: true,
+  testDir: './e2e',
+  fullyParallel: !isCI, // Run in parallel locally, sequential in CI
   forbidOnly: !!env.CI,
-  retries: env.CI ? 2 : 0,
-  workers: env.CI ? 1 : undefined,
+  retries: env.CI ? 2 : 1,
+  workers: env.CI ? 1 : 4,
+  timeout: 60 * 1000, // 60 seconds per test
   reporter: isCI
     ? [
         ['html'],
         ['json', { outputFile: 'playwright-report.json' }],
-      ]
-    : 'html',
-  
-  use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-  },
-
-  projects: isCI
-    ? [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
+        ['junit', { outputFile: 'test-results/junit.xml' }],
       ]
     : [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'] },
-        },
-        {
-          name: 'webkit',
-          use: { ...devices['Desktop Safari'] },
-        },
-        // Mobile viewports
-        {
-          name: 'Mobile Chrome',
-          use: { ...devices['Pixel 5'] },
-        },
-        {
-          name: 'Mobile Safari',
-          use: { ...devices['iPhone 12'] },
-        },
+        ['html'],
+        ['list'],
       ],
+  
+  use: {
+    baseURL: env.BASE_URL || 'http://localhost:3000',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    actionTimeout: 15 * 1000,
+  },
 
-  // Start both frontend and backend; Playwright supports an array of webServer configs.
-  webServer: [
+  projects: [
+    // Desktop Browsers
     {
-      command: 'npm run dev',
-      url: 'http://localhost:3000',
-  reuseExistingServer: !env.CI,
-      env: {
-  NEXT_PUBLIC_E2E: 'true',
-  ...env,
+      name: 'chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
       },
-      timeout: 120 * 1000,
     },
     {
-      // Start backend - wrapper exits after confirming ready, server runs detached
-      command: 'node ../scripts/playwright-start-backend.js',
-      port: 8000,
-  reuseExistingServer: !env.CI,
-      timeout: 180 * 1000, // Extended for migrations
+      name: 'firefox',
+      use: { 
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1920, height: 1080 },
+      },
+    },
+    {
+      name: 'webkit',
+      use: { 
+        ...devices['Desktop Safari'],
+        viewport: { width: 1920, height: 1080 },
+      },
+    },
+    {
+      name: 'edge',
+      use: {
+        ...devices['Desktop Edge'],
+        channel: 'msedge',
+        viewport: { width: 1920, height: 1080 },
+      },
+    },
+    
+    // Mobile Browsers
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 12'] },
+    },
+    {
+      name: 'mobile-safari-landscape',
+      use: {
+        ...devices['iPhone 12'],
+        viewport: { width: 844, height: 390 },
+      },
+    },
+    
+    // Tablet
+    {
+      name: 'tablet-ipad',
+      use: { ...devices['iPad Pro'] },
+    },
+    {
+      name: 'tablet-android',
+      use: {
+        ...devices['Galaxy Tab S4'],
+      },
     },
   ],
+
+  // Start frontend dev server
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !env.CI,
+    env: {
+      NEXT_PUBLIC_E2E: 'true',
+      ...env,
+    },
+    timeout: 120 * 1000,
+  },
 });

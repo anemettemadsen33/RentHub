@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e6]: "404"
+    - heading "Page Not Found" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
+    - generic [ref=e9]:
+      - link "Go Home" [ref=e10] [cursor=pointer]:
+        - /url: /
+        - img
+        - text: Go Home
+      - link "Browse Properties" [ref=e11] [cursor=pointer]:
+        - /url: /properties
+        - img
+        - text: Browse Properties
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - checkbox "Analytics" [checked] [ref=e18]
+          - text: Analytics
+        - generic [ref=e19]:
+          - checkbox "Performance" [checked] [ref=e20]
+          - text: Performance
+        - generic [ref=e21]:
+          - checkbox "Marketing (optional)" [ref=e22]
+          - text: Marketing (optional)
+    - generic [ref=e23]:
+      - button "Decline" [ref=e24] [cursor=pointer]
+      - button "Accept" [ref=e25] [cursor=pointer]
+  - status [ref=e26]:
+    - generic [ref=e27]:
+      - img [ref=e28]
+      - text: Back online
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e32]
+```

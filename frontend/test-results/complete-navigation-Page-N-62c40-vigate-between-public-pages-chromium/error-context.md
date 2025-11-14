@@ -1,0 +1,158 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - link "Skip to main content" [ref=e5] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e6]:
+      - generic [ref=e8]:
+        - link "RentHub home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: RentHub
+        - menubar [ref=e15]:
+          - menuitem "Properties" [ref=e16] [cursor=pointer]
+          - menuitem "About" [ref=e17] [cursor=pointer]
+          - menuitem "Contact" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - button "Current theme system, open menu Toggle theme" [ref=e21] [cursor=pointer]:
+            - img "Current theme system, open menu"
+            - img
+            - generic [ref=e22]: Toggle theme
+          - link "Login" [ref=e24] [cursor=pointer]:
+            - /url: /auth/login
+          - link "Sign Up" [ref=e25] [cursor=pointer]:
+            - /url: /auth/register
+    - button "Current theme system, open menu Toggle theme" [ref=e27] [cursor=pointer]:
+      - img "Current theme system, open menu"
+      - img
+      - generic [ref=e28]: Toggle theme
+    - main [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: About Us
+          - heading "Simplifying Property Rentals Worldwide" [level=1] [ref=e33]
+          - paragraph [ref=e34]: RentHub is on a mission to make finding and renting properties easier, faster, and more transparent for everyone.
+        - generic [ref=e35]:
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e43]: 50K+
+            - generic [ref=e44]: Active Users
+          - generic [ref=e46]:
+            - img [ref=e47]
+            - generic [ref=e50]: 100+
+            - generic [ref=e51]: Countries
+          - generic [ref=e53]:
+            - img [ref=e54]
+            - generic [ref=e57]: 10K+
+            - generic [ref=e58]: Properties
+          - generic [ref=e60]:
+            - img [ref=e61]
+            - generic [ref=e64]: 98%
+            - generic [ref=e65]: Satisfaction
+        - generic [ref=e66]:
+          - heading "Our Story" [level=2] [ref=e67]
+          - generic [ref=e68]:
+            - paragraph [ref=e69]: "Founded in 2024, RentHub was born from a simple idea: renting a property shouldn't be complicated. Our founders experienced firsthand the frustrations of traditional rental processes and set out to create a better solution."
+            - paragraph [ref=e70]: Today, RentHub connects property owners and renters in over 100 countries, offering a seamless, transparent, and secure platform for all your rental needs. Whether you're looking for a short-term vacation rental or a long-term home, we're here to help.
+        - generic [ref=e71]:
+          - heading "Our Mission & Values" [level=2] [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e76]:
+                - img [ref=e78]
+                - text: Accessibility
+              - paragraph [ref=e82]: Making property rentals accessible to everyone, everywhere, with transparent pricing and clear terms.
+            - generic [ref=e83]:
+              - generic [ref=e85]:
+                - img [ref=e87]
+                - text: Trust
+              - paragraph [ref=e91]: Building trust through verified listings, secure payments, and honest reviews from real users.
+            - generic [ref=e92]:
+              - generic [ref=e94]:
+                - img [ref=e96]
+                - text: Innovation
+              - paragraph [ref=e100]: Continuously improving our platform with cutting-edge technology and user feedback.
+        - generic [ref=e101]:
+          - heading "Join Our Team" [level=2] [ref=e102]
+          - paragraph [ref=e103]: We're always looking for talented people to join our mission. Check out our open positions and be part of something special.
+          - link "View Open Positions" [ref=e104] [cursor=pointer]:
+            - /url: /careers
+    - contentinfo "Site footer" [ref=e105]:
+      - generic [ref=e106]:
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - generic [ref=e111]: R
+              - generic [ref=e112]: RentHub
+            - paragraph [ref=e113]: Your trusted platform for finding and listing rental properties worldwide.
+          - navigation "Company links" [ref=e114]:
+            - heading "Company" [level=4] [ref=e115]
+            - list [ref=e116]:
+              - listitem [ref=e117]:
+                - link "About Us" [ref=e118] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e119]:
+                - link "Careers" [ref=e120] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e121]:
+                - link "Press" [ref=e122] [cursor=pointer]:
+                  - /url: /press
+          - navigation "Support links" [ref=e123]:
+            - heading "Support" [level=4] [ref=e124]
+            - list [ref=e125]:
+              - listitem [ref=e126]:
+                - link "Help Center" [ref=e127] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e128]:
+                - link "Contact Us" [ref=e129] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e130]:
+                - link "FAQ" [ref=e131] [cursor=pointer]:
+                  - /url: /faq
+          - navigation "Legal links" [ref=e132]:
+            - heading "Legal" [level=4] [ref=e133]
+            - list [ref=e134]:
+              - listitem [ref=e135]:
+                - link "Terms of Service" [ref=e136] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e137]:
+                - link "Privacy Policy" [ref=e138] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e139]:
+                - link "Cookie Policy" [ref=e140] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e142]:
+          - paragraph [ref=e143]: © 2025 RentHub. All rights reserved.
+          - generic [ref=e144]:
+            - link "Twitter" [ref=e145] [cursor=pointer]:
+              - /url: https://twitter.com
+            - link "GitHub" [ref=e146] [cursor=pointer]:
+              - /url: https://github.com
+            - link "LinkedIn" [ref=e147] [cursor=pointer]:
+              - /url: https://linkedin.com
+  - generic [ref=e150]:
+    - generic [ref=e151]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e152]:
+        - generic [ref=e153]:
+          - checkbox "Analytics" [checked] [ref=e154]
+          - text: Analytics
+        - generic [ref=e155]:
+          - checkbox "Performance" [checked] [ref=e156]
+          - text: Performance
+        - generic [ref=e157]:
+          - checkbox "Marketing (optional)" [ref=e158]
+          - text: Marketing (optional)
+    - generic [ref=e159]:
+      - button "Decline" [ref=e160] [cursor=pointer]
+      - button "Accept" [ref=e161] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e167] [cursor=pointer]:
+    - img [ref=e168]
+  - alert [ref=e171]: About RentHub | Our Story & Mission | RentHub
+```

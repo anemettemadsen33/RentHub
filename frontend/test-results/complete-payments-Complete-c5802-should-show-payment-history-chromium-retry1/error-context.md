@@ -1,0 +1,129 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - link "Skip to main content" [ref=e5] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e6]:
+      - generic [ref=e8]:
+        - link "RentHub home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: RentHub
+        - menubar [ref=e15]:
+          - menuitem "Properties" [ref=e16] [cursor=pointer]
+          - menuitem "About" [ref=e17] [cursor=pointer]
+          - menuitem "Contact" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - button "Current theme system, open menu Toggle theme" [ref=e21] [cursor=pointer]:
+            - img "Current theme system, open menu"
+            - img
+            - generic [ref=e22]: Toggle theme
+          - link "Login" [ref=e24] [cursor=pointer]:
+            - /url: /auth/login
+          - link "Sign Up" [ref=e25] [cursor=pointer]:
+            - /url: /auth/register
+    - button "Current theme system, open menu Toggle theme" [ref=e27] [cursor=pointer]:
+      - img "Current theme system, open menu"
+      - img
+      - generic [ref=e28]: Toggle theme
+    - main [ref=e29]:
+      - main [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - heading "title" [level=1] [ref=e33]
+            - combobox [ref=e34]:
+              - option "all" [selected]
+              - option "pending"
+              - option "completed"
+              - option "failed"
+              - option "refunded"
+              - option "cancelled"
+          - paragraph [ref=e35]: loading
+    - contentinfo "Site footer" [ref=e36]:
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - generic [ref=e42]: R
+              - generic [ref=e43]: RentHub
+            - paragraph [ref=e44]: Your trusted platform for finding and listing rental properties worldwide.
+          - navigation "Company links" [ref=e45]:
+            - heading "Company" [level=4] [ref=e46]
+            - list [ref=e47]:
+              - listitem [ref=e48]:
+                - link "About Us" [ref=e49] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e50]:
+                - link "Careers" [ref=e51] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e52]:
+                - link "Press" [ref=e53] [cursor=pointer]:
+                  - /url: /press
+          - navigation "Support links" [ref=e54]:
+            - heading "Support" [level=4] [ref=e55]
+            - list [ref=e56]:
+              - listitem [ref=e57]:
+                - link "Help Center" [ref=e58] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e59]:
+                - link "Contact Us" [ref=e60] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e61]:
+                - link "FAQ" [ref=e62] [cursor=pointer]:
+                  - /url: /faq
+          - navigation "Legal links" [ref=e63]:
+            - heading "Legal" [level=4] [ref=e64]
+            - list [ref=e65]:
+              - listitem [ref=e66]:
+                - link "Terms of Service" [ref=e67] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e68]:
+                - link "Privacy Policy" [ref=e69] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e70]:
+                - link "Cookie Policy" [ref=e71] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e73]:
+          - paragraph [ref=e74]: © 2025 RentHub. All rights reserved.
+          - generic [ref=e75]:
+            - link "Twitter" [ref=e76] [cursor=pointer]:
+              - /url: https://twitter.com
+            - link "GitHub" [ref=e77] [cursor=pointer]:
+              - /url: https://github.com
+            - link "LinkedIn" [ref=e78] [cursor=pointer]:
+              - /url: https://linkedin.com
+  - generic [ref=e81]:
+    - generic [ref=e82]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - checkbox "Analytics" [checked] [ref=e85]
+          - text: Analytics
+        - generic [ref=e86]:
+          - checkbox "Performance" [checked] [ref=e87]
+          - text: Performance
+        - generic [ref=e88]:
+          - checkbox "Marketing (optional)" [ref=e89]
+          - text: Marketing (optional)
+    - generic [ref=e90]:
+      - button "Decline" [ref=e91] [cursor=pointer]
+      - button "Accept" [ref=e92] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e97] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e98]:
+      - img [ref=e99]
+    - generic [ref=e102]:
+      - button "Open issues overlay" [ref=e103]:
+        - generic [ref=e104]:
+          - generic [ref=e105]: "0"
+          - generic [ref=e106]: "1"
+        - generic [ref=e107]: Issue
+      - button "Collapse issues badge" [ref=e108]:
+        - img [ref=e109]
+  - alert [ref=e111]
+```

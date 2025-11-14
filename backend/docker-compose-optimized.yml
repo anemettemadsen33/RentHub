@@ -1,0 +1,215 @@
+# Optimized Docker Compose for RentHub with Performance Enhancements
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: 8.2
+        NODE_VERSION: 18
+    container_name: renthub-app-optimized
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/php-optimized.ini:/usr/local/etc/php/conf.d/99-optimized.ini
+      - ./docker/php/php-fpm-optimized.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    environment:
+      # Application Environment
+      APP_NAME: RentHub
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:8000
+      
+      # Database Configuration
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: renthub
+      DB_USERNAME: renthub
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      
+      # Connection Pool Configuration
+      DB_PERSISTENT: "true"
+      DB_TIMEOUT: "30"
+      DB_POOL_MAX_CONNECTIONS: "50"
+      DB_POOL_MIN_CONNECTIONS: "10"
+      DB_POOL_CONNECTION_TIMEOUT: "30"
+      DB_POOL_IDLE_TIMEOUT: "300"
+      DB_POOL_HEALTH_CHECK_ENABLED: "true"
+      DB_POOL_SLOW_QUERY_ENABLED: "true"
+      DB_POOL_SLOW_QUERY_THRESHOLD: "0.5"
+      
+      # Redis Configuration
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-null}
+      REDIS_PORT: 6379
+      
+      # Queue Configuration
+      QUEUE_CONNECTION: redis
+      QUEUE_RETRY_AFTER: 90
+      
+      # Cache Configuration
+      CACHE_DRIVER: redis
+      CACHE_PREFIX: renthub
+      
+      # Session Configuration
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      
+      # Mail Configuration
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: null
+      MAIL_PASSWORD: null
+      MAIL_ENCRYPTION: null
+      MAIL_FROM_ADDRESS: noreply@renthub.local
+      MAIL_FROM_NAME: "${APP_NAME}"
+      
+      # Performance Optimization
+      PHP_MEMORY_LIMIT: 512M
+      PHP_MAX_EXECUTION_TIME: 300
+      PHP_OPCACHE_ENABLE: "1"
+      PHP_OPCACHE_MEMORY_CONSUMPTION: 512
+      PHP_OPCACHE_MAX_ACCELERATED_FILES: 50000
+      
+      # Security
+      SANCTUM_STATEFUL_DOMAINS: localhost,localhost:3000,localhost:8000,127.0.0.1,127.0.0.1:8000,::1
+      SESSION_SECURE_COOKIE: "false"
+      
+    depends_on:
+      - db
+      - redis
+    networks:
+      - renthub-network
+    command: >
+      bash -c "
+        php artisan config:cache &&
+        php artisan route:cache &&
+        php artisan view:cache &&
+        php-fpm -R
+      "
+
+  nginx:
+    image: nginx:alpine
+    container_name: renthub-nginx-optimized
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+      - "8443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/nginx-optimized.conf:/etc/nginx/nginx.conf:ro
+      - ./storage/logs:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - renthub-network
+
+  db:
+    image: mysql:8.0
+    container_name: renthub-db-optimized
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: renthub
+      MYSQL_USER: renthub
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+      MYSQL_INITDB_SKIP_TZINFO: 1
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - renthub-network
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --innodb_buffer_pool_size=1G
+      --innodb_log_file_size=256M
+      --innodb_flush_log_at_trx_commit=2
+      --innodb_flush_method=O_DIRECT
+      --max_connections=500
+      --query_cache_size=64M
+      --query_cache_type=1
+      --thread_cache_size=50
+      --table_open_cache=4000
+      --sort_buffer_size=2M
+      --read_buffer_size=1M
+      --read_rnd_buffer_size=4M
+      --join_buffer_size=2M
+      --tmp_table_size=64M
+      --max_heap_table_size=64M
+      --slow_query_log=1
+      --slow_query_log_file=/var/log/mysql/slow.log
+      --long_query_time=1
+
+  redis:
+    image: redis:7-alpine
+    container_name: renthub-redis-optimized
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - renthub-network
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: renthub-queue-optimized
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+      - redis
+    networks:
+      - renthub-network
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 --max-time=3600
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: renthub-scheduler-optimized
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+      - redis
+    networks:
+      - renthub-network
+    command: php artisan schedule:work
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: renthub-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - renthub-network
+
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  renthub-network:
+    driver: bridge

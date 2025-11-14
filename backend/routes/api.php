@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AmenityController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OptimizedAuthController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CalendarController;
@@ -19,7 +20,12 @@ use App\Http\Controllers\Api\HealthCheckController;
 use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\MapSearchController;
 use App\Http\Controllers\Api\OAuth2Controller;
+use App\Http\Controllers\Api\OptimizedPaymentController;
+use App\Http\Controllers\Api\OptimizedPaymentWithPoolController;
+use App\Http\Controllers\Api\OptimizedPaymentWithCircuitBreakerController;
+use App\Http\Controllers\Api\OptimizedPaymentProofController;
 use App\Http\Controllers\Api\PerformanceController;
+use App\Http\Controllers\Api\ProductionHealthController;
 use App\Http\Controllers\Api\PropertyAvailabilityController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyVerificationController;
@@ -43,6 +49,11 @@ Route::get('/health/liveness', [HealthCheckController::class, 'liveness']);
 Route::get('/health/readiness', [HealthCheckController::class, 'readiness']);
 Route::get('/metrics', [HealthCheckController::class, 'metrics']);
 Route::get('/metrics/prometheus', [HealthCheckController::class, 'prometheus']);
+
+// Production Health Check Routes (detailed monitoring)
+Route::get('/health/production', [ProductionHealthController::class, 'health']);
+Route::get('/health/production/logs', [ProductionHealthController::class, 'logs']);
+Route::get('/health/status', [ProductionHealthController::class, 'health']); // Alias for easier access
 
 // Setup Route (TEMPORARY - for initial admin user creation)
 Route::post('/setup/create-admin', [SetupController::class, 'createAdminUser']);
@@ -95,6 +106,13 @@ Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+    
+    // Optimized Authentication Routes (for better performance)
+    Route::prefix('auth')->group(function () {
+        Route::post('/register-optimized', [OptimizedAuthController::class, 'register']);
+        Route::post('/login-optimized', [OptimizedAuthController::class, 'login']);
+        Route::get('/verify-email-optimized/{id}/{hash}', [OptimizedAuthController::class, 'verifyEmail'])->name('verification.verify.optimized');
+    });
 
     // Password Reset
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
@@ -418,6 +436,21 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{payment}/confirm', [\App\Http\Controllers\Api\PaymentController::class, 'confirm']);
     Route::post('/payments/{payment}/refund', [\App\Http\Controllers\Api\PaymentController::class, 'refund']);
     
+    // Optimized Payment Routes (High Performance)
+    Route::get('/optimized/payment-methods', [OptimizedPaymentController::class, 'getPaymentMethods']);
+    Route::get('/optimized/bank-accounts', [OptimizedPaymentController::class, 'getBankAccounts']);
+    Route::post('/optimized/payments', [OptimizedPaymentController::class, 'createPayment'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/payments/{payment}/status', [OptimizedPaymentController::class, 'getPaymentStatus']);
+    Route::post('/optimized/payments/{payment}/complete', [OptimizedPaymentController::class, 'completePayment'])->middleware('role:admin');
+    Route::post('/optimized/payments/{payment}/refund', [OptimizedPaymentController::class, 'refundPayment'])->middleware('role:admin');
+    
+    // Optimized Payment Proof Routes
+    Route::post('/optimized/payments/{payment}/upload-proof', [OptimizedPaymentProofController::class, 'upload'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/payments/{payment}/proofs', [OptimizedPaymentProofController::class, 'index']);
+    Route::post('/optimized/payment-proofs/{proof}/verify', [OptimizedPaymentProofController::class, 'verify'])->middleware('role:owner,admin');
+    Route::get('/optimized/payment-proofs/{proof}/download', [OptimizedPaymentProofController::class, 'download']);
+    Route::get('/optimized/payment-proofs/pending', [OptimizedPaymentProofController::class, 'pendingForHost'])->middleware('role:owner,admin');
+    
     // Payment Proofs (Bank Transfer)
     Route::post('/payments/{payment}/upload-proof', [\App\Http\Controllers\Api\PaymentProofController::class, 'upload']);
     Route::get('/payments/{payment}/proofs', [\App\Http\Controllers\Api\PaymentProofController::class, 'index']);
@@ -431,6 +464,31 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/bank-accounts/{id}', [\App\Http\Controllers\Api\BankAccountController::class, 'update']);
     Route::delete('/bank-accounts/{id}', [\App\Http\Controllers\Api\BankAccountController::class, 'destroy']);
     Route::get('/payments/{payment}/bank-details', [\App\Http\Controllers\Api\BankAccountController::class, 'getForPayment']);
+
+    // Optimized Payment Routes (High Performance)
+    Route::get('/optimized/payments', [OptimizedPaymentController::class, 'index']);
+    Route::post('/optimized/payments', [OptimizedPaymentController::class, 'store'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/payments/{payment}', [OptimizedPaymentController::class, 'show']);
+    Route::post('/optimized/payments/{payment}/status', [OptimizedPaymentController::class, 'updateStatus']);
+    Route::post('/optimized/payments/{payment}/confirm', [OptimizedPaymentController::class, 'confirm']);
+    Route::post('/optimized/payments/{payment}/refund', [OptimizedPaymentController::class, 'refund']);
+
+    // Connection Pool Optimized Payment Routes
+    Route::post('/optimized/pool/payments', [OptimizedPaymentWithPoolController::class, 'createPayment'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/pool/payment-stats', [OptimizedPaymentWithPoolController::class, 'getPaymentStats'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/pool/connection-stats', [OptimizedPaymentWithPoolController::class, 'getPoolStats'])->middleware('role:admin');
+
+    // Circuit Breaker Optimized Payment Routes
+    Route::post('/optimized/circuit/payments', [OptimizedPaymentWithCircuitBreakerController::class, 'createPayment'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/circuit/stats', [OptimizedPaymentWithCircuitBreakerController::class, 'getCircuitBreakerStats'])->middleware('role:admin');
+    Route::post('/optimized/circuit/reset', [OptimizedPaymentWithCircuitBreakerController::class, 'resetCircuitBreakers'])->middleware('role:admin');
+    
+    // Optimized Payment Proof Routes
+    Route::post('/optimized/payments/{payment}/upload-proof', [OptimizedPaymentProofController::class, 'upload'])->middleware('role:tenant,owner,admin');
+    Route::get('/optimized/payments/{payment}/proofs', [OptimizedPaymentProofController::class, 'index']);
+    Route::post('/optimized/payment-proofs/{proof}/verify', [OptimizedPaymentProofController::class, 'verify'])->middleware('role:owner,admin');
+    Route::get('/optimized/payment-proofs/{proof}/download', [OptimizedPaymentProofController::class, 'download']);
+    Route::get('/optimized/payment-proofs/pending', [OptimizedPaymentProofController::class, 'pendingForHost'])->middleware('role:owner,admin');
     
     Route::get('/payouts', function () {
         return response()->json(['success' => true, 'data' => []]);
@@ -471,6 +529,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::patch('/conversations/{id}/unarchive', [\App\Http\Controllers\Api\ConversationController::class, 'unarchive']);
     Route::delete('/conversations/{id}', [\App\Http\Controllers\Api\ConversationController::class, 'destroy']);
     Route::post('/conversations/{id}/mark-all-read', [\App\Http\Controllers\Api\ConversationController::class, 'markAllAsRead']);
+
+    // Optimized Conversations (High Performance)
+    Route::get('/conversations/optimized', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'index']);
+    Route::post('/conversations/optimized', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'store']);
+    Route::get('/conversations/optimized/{id}', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'show']);
+    Route::patch('/conversations/optimized/{id}/archive', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'archive']);
+    Route::patch('/conversations/optimized/{id}/unarchive', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'unarchive']);
+    Route::delete('/conversations/optimized/{id}', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'destroy']);
+    Route::post('/conversations/optimized/{id}/mark-all-read', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'markAllAsRead']);
+    Route::get('/conversations/optimized/stats', [\App\Http\Controllers\Api\OptimizedConversationController::class, 'stats']);
 
     // Messages
     Route::get('/messages', [\App\Http\Controllers\Api\MessageController::class, 'myMessages']);

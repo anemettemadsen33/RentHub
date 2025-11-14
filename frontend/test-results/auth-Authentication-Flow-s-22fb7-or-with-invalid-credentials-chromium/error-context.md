@@ -1,0 +1,173 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - img [ref=e8]
+          - generic [ref=e12]: RentHub
+        - navigation [ref=e13]:
+          - link "About" [ref=e14] [cursor=pointer]:
+            - /url: /about
+          - link "Contact" [ref=e15] [cursor=pointer]:
+            - /url: /contact
+          - link "Login" [ref=e16] [cursor=pointer]:
+            - /url: /auth/login
+    - generic [ref=e17]:
+      - heading "Find Your Perfect Rental" [level=1] [ref=e18]
+      - paragraph [ref=e19]: Discover thousands of verified properties in cities around the world
+      - generic [ref=e20]:
+        - link "Browse Properties" [ref=e21] [cursor=pointer]:
+          - /url: /properties
+        - link "Get Started" [ref=e22] [cursor=pointer]:
+          - /url: /auth/register
+    - generic [ref=e24]:
+      - generic [ref=e26]:
+        - img [ref=e27]
+        - generic [ref=e31]: 12,345
+        - generic [ref=e32]: Properties
+      - generic [ref=e34]:
+        - img [ref=e35]
+        - generic [ref=e40]: 45,678
+        - generic [ref=e41]: Happy Tenants
+      - generic [ref=e43]:
+        - img [ref=e44]
+        - generic [ref=e47]: 150+
+        - generic [ref=e48]: Cities
+      - generic [ref=e50]:
+        - img [ref=e51]
+        - generic [ref=e53]: 8,920
+        - generic [ref=e54]: Verified Hosts
+    - generic [ref=e55]:
+      - heading "Why Choose RentHub?" [level=2] [ref=e56]
+      - generic [ref=e57]:
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - heading "Easy Search" [level=3] [ref=e63]
+          - paragraph [ref=e64]: Advanced filters to find exactly what you're looking for. Search by location, price, amenities, and more.
+        - generic [ref=e66]:
+          - img [ref=e67]
+          - heading "Verified Listings" [level=3] [ref=e69]
+          - paragraph [ref=e70]: All properties are verified by our team. Photos, descriptions, and reviews you can trust.
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - heading "Real Reviews" [level=3] [ref=e75]
+          - paragraph [ref=e76]: Honest reviews from real tenants. Make informed decisions based on actual experiences.
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - heading "Our Global Partners" [level=2] [ref=e79]
+        - paragraph [ref=e80]: We partner with the world's leading platforms to bring you the best rental options
+      - generic [ref=e81]:
+        - generic [ref=e83]:
+          - img [ref=e85]
+          - heading "Airbnb" [level=3] [ref=e87]
+          - paragraph [ref=e88]: Access millions of unique homes and experiences worldwide
+          - generic [ref=e89]:
+            - img [ref=e90]
+            - generic [ref=e93]: 5M+ Properties
+        - generic [ref=e95]:
+          - generic [ref=e97]: Booking.com
+          - heading "Booking.com" [level=3] [ref=e98]
+          - paragraph [ref=e99]: Trusted accommodation booking platform for travelers
+          - generic [ref=e100]:
+            - img [ref=e101]
+            - generic [ref=e104]: 28M+ Listings
+        - generic [ref=e106]:
+          - generic [ref=e108]: VRBO
+          - heading "Vrbo" [level=3] [ref=e109]
+          - paragraph [ref=e110]: Vacation rentals with whole homes for the whole family
+          - generic [ref=e111]:
+            - img [ref=e112]
+            - generic [ref=e115]: 2M+ Properties
+      - generic [ref=e116]:
+        - paragraph [ref=e117]: Seamlessly sync your listings across all platforms from one dashboard
+        - link "Learn About Integrations" [ref=e118] [cursor=pointer]:
+          - /url: /integrations
+    - generic [ref=e119]:
+      - heading "How It Works" [level=2] [ref=e120]
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - generic [ref=e124]: "1"
+          - heading "Create Account" [level=3] [ref=e125]
+          - paragraph [ref=e126]: Sign up for free in under 2 minutes
+        - generic [ref=e127]:
+          - generic [ref=e129]: "2"
+          - heading "Search Properties" [level=3] [ref=e130]
+          - paragraph [ref=e131]: Browse thousands of verified listings
+        - generic [ref=e132]:
+          - generic [ref=e134]: "3"
+          - heading "Book Online" [level=3] [ref=e135]
+          - paragraph [ref=e136]: Secure booking with instant confirmation
+        - generic [ref=e137]:
+          - generic [ref=e139]: "4"
+          - heading "Move In" [level=3] [ref=e140]
+          - paragraph [ref=e141]: Get keys and enjoy your new home
+    - generic [ref=e142]:
+      - heading "What Our Users Say" [level=2] [ref=e143]
+      - generic [ref=e144]:
+        - generic [ref=e146]:
+          - generic [ref=e147]:
+            - img [ref=e148]
+            - img [ref=e150]
+            - img [ref=e152]
+            - img [ref=e154]
+            - img [ref=e156]
+          - paragraph [ref=e158]: "\"RentHub made finding my apartment so easy! The search filters are amazing and all listings are verified.\""
+          - generic [ref=e159]: Sarah Johnson
+          - generic [ref=e160]: New York, NY
+        - generic [ref=e162]:
+          - generic [ref=e163]:
+            - img [ref=e164]
+            - img [ref=e166]
+            - img [ref=e168]
+            - img [ref=e170]
+            - img [ref=e172]
+          - paragraph [ref=e174]: "\"As a property owner, the multi-platform sync saves me hours every week. Highly recommended!\""
+          - generic [ref=e175]: Michael Chen
+          - generic [ref=e176]: San Francisco, CA
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - img [ref=e180]
+            - img [ref=e182]
+            - img [ref=e184]
+            - img [ref=e186]
+            - img [ref=e188]
+          - paragraph [ref=e190]: "\"Best rental platform I've used. The booking process is seamless and customer support is excellent.\""
+          - generic [ref=e191]: Emma Davis
+          - generic [ref=e192]: Austin, TX
+    - generic [ref=e195]:
+      - heading "Ready to Get Started?" [level=2] [ref=e196]
+      - paragraph [ref=e197]: Join thousands of satisfied users and find your perfect rental today.
+      - generic [ref=e198]:
+        - link "Create Free Account" [ref=e199] [cursor=pointer]:
+          - /url: /auth/register
+        - link "Contact Sales" [ref=e200] [cursor=pointer]:
+          - /url: /contact
+    - contentinfo [ref=e201]:
+      - paragraph [ref=e203]: © 2025 RentHub. All rights reserved.
+  - generic [ref=e206]:
+    - generic [ref=e207]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e208]:
+        - generic [ref=e209]:
+          - checkbox "Analytics" [checked] [ref=e210]
+          - text: Analytics
+        - generic [ref=e211]:
+          - checkbox "Performance" [checked] [ref=e212]
+          - text: Performance
+        - generic [ref=e213]:
+          - checkbox "Marketing (optional)" [ref=e214]
+          - text: Marketing (optional)
+    - generic [ref=e215]:
+      - button "Decline" [ref=e216] [cursor=pointer]
+      - button "Accept" [ref=e217] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e223] [cursor=pointer]:
+    - img [ref=e224]
+  - alert [ref=e227]
+```

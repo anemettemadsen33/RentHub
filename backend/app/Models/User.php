@@ -22,31 +22,78 @@ class User extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::created(function ($user) {
-            // Create default wishlist for new users
-            $user->wishlists()->create([
-                'name' => 'Favorites',
-                'is_default' => true,
-            ]);
+            // Only create related records if not in testing environment
+            // and if we're not in an authentication-only context
+            if (config('app.env') !== 'testing' && !static::isAuthContext()) {
+                // Create default wishlist for new users
+                try {
+                    $user->wishlists()->create([
+                        'name' => 'Favorites',
+                        'is_default' => true,
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::warning('Failed to auto-create wishlist: '.$e->getMessage());
+                }
 
-            // Create default notification preference record (single row) for tests
-            try {
-                \App\Models\NotificationPreference::firstOrCreate([
-                    'user_id' => $user->id,
-                    'notification_type' => \App\Models\NotificationPreference::TYPE_ACCOUNT,
-                ], [
-                    'channel_email' => true,
-                    'channel_database' => true,
-                    'email_enabled' => true,
-                    'sms_enabled' => false,
-                    'push_enabled' => false,
-                    'booking_updates' => true,
-                    'payment_updates' => true,
-                    'message_updates' => true,
-                ]);
-            } catch (\Throwable $e) {
-                \Log::warning('Failed to auto-create notification preferences: '.$e->getMessage());
+                // Create default notification preference record
+                try {
+                    \App\Models\NotificationPreference::firstOrCreate([
+                        'user_id' => $user->id,
+                        'notification_type' => \App\Models\NotificationPreference::TYPE_ACCOUNT,
+                    ], [
+                        'channel_email' => true,
+                        'channel_database' => true,
+                        'email_enabled' => true,
+                        'sms_enabled' => false,
+                        'push_enabled' => false,
+                        'booking_updates' => true,
+                        'payment_updates' => true,
+                        'message_updates' => true,
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::warning('Failed to auto-create notification preferences: '.$e->getMessage());
+                }
             }
         });
+    }
+    
+    /**
+     * Check if we're in an authentication context where we don't need extra data
+     */
+    protected static function isAuthContext(): bool
+    {
+        // Check if this is an authentication request by looking at the current route
+        if (app()->runningInConsole()) {
+            return false;
+        }
+        
+        try {
+            $currentRoute = request()->route();
+            if (!$currentRoute) {
+                return false;
+            }
+            
+            $routeName = $currentRoute->getName();
+            $routeAction = $currentRoute->getActionName();
+            
+            // Check if this is an auth route
+            $authPatterns = [
+                'login', 'register', 'logout', 'password', 'auth',
+                'verification', 'two-factor', '2fa'
+            ];
+            
+            foreach ($authPatterns as $pattern) {
+                if (str_contains(strtolower($routeName ?: ''), $pattern) || 
+                    str_contains(strtolower($routeAction), $pattern)) {
+                    return true;
+                }
+            }
+        } catch (\Throwable $e) {
+            // If we can't determine the context, assume it's not auth-only
+            return false;
+        }
+        
+        return false;
     }
 
     /**

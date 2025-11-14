@@ -1,0 +1,67 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e9]: R
+      - generic [ref=e10]: Welcome back
+      - generic [ref=e11]: Enter your credentials to access your account
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - text: Email
+            - generic [ref=e16]: "*"
+          - textbox "Email *" [ref=e17]:
+            - /placeholder: m@example.com
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - text: Password
+            - generic [ref=e20]: "*"
+          - textbox "Password *" [ref=e21]:
+            - /placeholder: ••••••••
+        - link "Forgot password?" [ref=e23] [cursor=pointer]:
+          - /url: /auth/forgot-password
+      - generic [ref=e24]:
+        - button "Sign in" [ref=e25] [cursor=pointer]
+        - generic [ref=e27]: or continue with
+        - generic [ref=e28]:
+          - button "Continue with Google" [ref=e29] [cursor=pointer]:
+            - img
+            - text: Google
+          - button "Continue with Facebook" [ref=e30] [cursor=pointer]:
+            - img
+            - text: Facebook
+        - paragraph [ref=e31]:
+          - text: Don't have an account?
+          - link "Sign up" [ref=e32] [cursor=pointer]:
+            - /url: /auth/register
+  - generic [ref=e35]:
+    - generic [ref=e36]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - checkbox "Analytics" [checked] [ref=e39]
+          - text: Analytics
+        - generic [ref=e40]:
+          - checkbox "Performance" [checked] [ref=e41]
+          - text: Performance
+        - generic [ref=e42]:
+          - checkbox "Marketing (optional)" [ref=e43]
+          - text: Marketing (optional)
+    - generic [ref=e44]:
+      - button "Decline" [ref=e45] [cursor=pointer]
+      - button "Accept" [ref=e46] [cursor=pointer]
+  - status [ref=e47]:
+    - generic [ref=e48]:
+      - img [ref=e49]
+      - text: Back online
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e58] [cursor=pointer]:
+    - img [ref=e59]
+  - alert [ref=e62]
+```

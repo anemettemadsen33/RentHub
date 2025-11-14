@@ -1,0 +1,142 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - link "Skip to main content" [ref=e5] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e6]:
+      - generic [ref=e8]:
+        - link "RentHub home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: RentHub
+        - menubar [ref=e15]:
+          - menuitem "Properties" [ref=e16] [cursor=pointer]
+          - menuitem "About" [ref=e17] [cursor=pointer]
+          - menuitem "Contact" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - button "Current theme system, open menu Toggle theme" [ref=e21] [cursor=pointer]:
+            - img "Current theme system, open menu"
+            - img
+            - generic [ref=e22]: Toggle theme
+          - link "Login" [ref=e24] [cursor=pointer]:
+            - /url: /auth/login
+          - link "Sign Up" [ref=e25] [cursor=pointer]:
+            - /url: /auth/register
+    - button "Current theme system, open menu Toggle theme" [ref=e27] [cursor=pointer]:
+      - img "Current theme system, open menu"
+      - img
+      - generic [ref=e28]: Toggle theme
+    - main [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - heading "title" [level=1] [ref=e33]:
+              - img [ref=e34]
+              - text: title
+            - paragraph [ref=e37]: subtitle
+            - generic [ref=e38]: list.unreadBadge
+          - generic [ref=e39]:
+            - button "actions.markAllRead" [ref=e40] [cursor=pointer]
+            - button "actions.markRead" [disabled]
+            - button "actions.markUnread" [disabled]
+            - button "actions.delete" [disabled]
+        - generic [ref=e41]:
+          - generic [ref=e43]: filters.title
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - img [ref=e47]
+              - textbox "filters.searchPlaceholder" [ref=e50]
+            - tablist [ref=e52]:
+              - tab "filters.all" [selected] [ref=e53] [cursor=pointer]
+              - tab "notificationsPage.types.booking_created" [ref=e54] [cursor=pointer]
+              - tab "notificationsPage.types.booking_confirmed" [ref=e55] [cursor=pointer]
+              - tab "notificationsPage.types.booking_cancelled" [ref=e56] [cursor=pointer]
+              - tab "notificationsPage.types.payment_received" [ref=e57] [cursor=pointer]
+              - tab "notificationsPage.types.maintenance" [ref=e58] [cursor=pointer]
+              - tab "notificationsPage.types.message" [ref=e59] [cursor=pointer]
+              - tab "notificationsPage.types.system" [ref=e60] [cursor=pointer]
+        - generic [ref=e61]:
+          - generic [ref=e63]: preferences.title
+          - paragraph [ref=e65]: preferences.loading
+        - generic [ref=e68]:
+          - text: list.title
+          - generic [ref=e69]: list.unreadBadge
+    - contentinfo "Site footer" [ref=e124]:
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e130]: R
+              - generic [ref=e131]: RentHub
+            - paragraph [ref=e132]: Your trusted platform for finding and listing rental properties worldwide.
+          - navigation "Company links" [ref=e133]:
+            - heading "Company" [level=4] [ref=e134]
+            - list [ref=e135]:
+              - listitem [ref=e136]:
+                - link "About Us" [ref=e137] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e138]:
+                - link "Careers" [ref=e139] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e140]:
+                - link "Press" [ref=e141] [cursor=pointer]:
+                  - /url: /press
+          - navigation "Support links" [ref=e142]:
+            - heading "Support" [level=4] [ref=e143]
+            - list [ref=e144]:
+              - listitem [ref=e145]:
+                - link "Help Center" [ref=e146] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e147]:
+                - link "Contact Us" [ref=e148] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e149]:
+                - link "FAQ" [ref=e150] [cursor=pointer]:
+                  - /url: /faq
+          - navigation "Legal links" [ref=e151]:
+            - heading "Legal" [level=4] [ref=e152]
+            - list [ref=e153]:
+              - listitem [ref=e154]:
+                - link "Terms of Service" [ref=e155] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e156]:
+                - link "Privacy Policy" [ref=e157] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e158]:
+                - link "Cookie Policy" [ref=e159] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e161]:
+          - paragraph [ref=e162]: © 2025 RentHub. All rights reserved.
+          - generic [ref=e163]:
+            - link "Twitter" [ref=e164] [cursor=pointer]:
+              - /url: https://twitter.com
+            - link "GitHub" [ref=e165] [cursor=pointer]:
+              - /url: https://github.com
+            - link "LinkedIn" [ref=e166] [cursor=pointer]:
+              - /url: https://linkedin.com
+  - generic [ref=e169]:
+    - generic [ref=e170]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e171]:
+        - generic [ref=e172]:
+          - checkbox "Analytics" [checked] [ref=e173]
+          - text: Analytics
+        - generic [ref=e174]:
+          - checkbox "Performance" [checked] [ref=e175]
+          - text: Performance
+        - generic [ref=e176]:
+          - checkbox "Marketing (optional)" [ref=e177]
+          - text: Marketing (optional)
+    - generic [ref=e178]:
+      - button "Decline" [ref=e179] [cursor=pointer]
+      - button "Accept" [ref=e180] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e186] [cursor=pointer]:
+    - img [ref=e187]
+  - alert [ref=e190]
+```

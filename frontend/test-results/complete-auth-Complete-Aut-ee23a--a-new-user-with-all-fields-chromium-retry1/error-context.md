@@ -1,0 +1,69 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e9]: R
+      - generic [ref=e10]: Create an account
+      - generic [ref=e11]: Enter your information to get started
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - text: Full Name
+            - generic [ref=e16]: "*"
+          - textbox "Full Name *" [ref=e17]:
+            - /placeholder: John Doe
+            - text: John Doe
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - text: Email
+            - generic [ref=e20]: "*"
+          - textbox "Email *" [ref=e21]:
+            - /placeholder: m@example.com
+            - text: test1763100559824@example.com
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - text: Password
+            - generic [ref=e24]: "*"
+          - textbox "Password *" [active] [ref=e25]:
+            - /placeholder: ••••••••
+            - text: Password123!
+          - paragraph [ref=e26]: Must be at least 8 characters with uppercase, lowercase, and number
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - text: Confirm Password
+            - generic [ref=e29]: "*"
+          - textbox "Confirm Password *" [ref=e30]:
+            - /placeholder: ••••••••
+      - generic [ref=e31]:
+        - button "Create account" [ref=e32] [cursor=pointer]
+        - paragraph [ref=e33]:
+          - text: Already have an account?
+          - link "Sign in" [ref=e34] [cursor=pointer]:
+            - /url: /auth/login
+  - generic [ref=e37]:
+    - generic [ref=e38]:
+      - text: We use cookies to measure performance (Web Vitals), analytics (usage & conversions) and optional marketing. Choose categories or accept all.
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - checkbox "Analytics" [checked] [ref=e41]
+          - text: Analytics
+        - generic [ref=e42]:
+          - checkbox "Performance" [checked] [ref=e43]
+          - text: Performance
+        - generic [ref=e44]:
+          - checkbox "Marketing (optional)" [ref=e45]
+          - text: Marketing (optional)
+    - generic [ref=e46]:
+      - button "Decline" [ref=e47] [cursor=pointer]
+      - button "Accept" [ref=e48] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e54] [cursor=pointer]:
+    - img [ref=e55]
+  - alert [ref=e58]
+```
