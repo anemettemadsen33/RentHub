@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\Api\ExternalCalendarController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\GDPRController;
+use App\Http\Controllers\Api\IntegrationController;
 // GoogleCalendarController temporarily not imported to avoid Google Calendar dependency at boot
 // use App\Http\Controllers\Api\GoogleCalendarController;
 use App\Http\Controllers\Api\GuestReferenceController;
@@ -746,6 +747,19 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/{googleCalendarToken}/import', [\App\Http\Controllers\Api\GoogleCalendarController::class, 'import'])->middleware('role:owner,admin');
         Route::post('/{googleCalendarToken}/refresh-webhook', [\App\Http\Controllers\Api\GoogleCalendarController::class, 'refreshWebhook'])->middleware('role:owner,admin');
         Route::delete('/{googleCalendarToken}', [\App\Http\Controllers\Api\GoogleCalendarController::class, 'disconnect'])->middleware('role:owner,admin');
+    });
+
+    // Platform Integrations (Airbnb, Booking.com, VRBO, etc.)
+    Route::prefix('integrations')->group(function () {
+        Route::get('/', [IntegrationController::class, 'index']);
+        Route::get('/{id}', [IntegrationController::class, 'show']);
+        Route::get('/oauth-url', [IntegrationController::class, 'getOAuthUrl']);
+        Route::post('/connect', [IntegrationController::class, 'connect']);
+        Route::get('/callback/{platform}', [IntegrationController::class, 'callback'])->name('api.integrations.callback');
+        Route::delete('/{id}', [IntegrationController::class, 'disconnect']);
+        Route::post('/{id}/sync', [IntegrationController::class, 'sync']);
+        Route::put('/{id}/settings', [IntegrationController::class, 'updateSettings']);
+        Route::get('/{id}/sync-history', [IntegrationController::class, 'getSyncHistory']);
     });
 
     // Dashboard Analytics Routes

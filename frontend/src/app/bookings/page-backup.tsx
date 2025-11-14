@@ -1,82 +1,78 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import apiClient, { ensureCsrfCookie } from '@/lib/api-client';
 import { Booking } from '@/types';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { MainLayout } from '@/components/layouts/main-layout';
+import { BookingListSkeleton } from '@/components/skeletons';
+import { Skeleton } from '@/components/ui/skeleton';
+import { NoBookings } from '@/components/empty-states';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle, XCircle, Download, Printer, Filter, Search } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { Calendar, MapPin, Users, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { mockBookings } from '@/lib/mock-data';
+import { Metadata } from 'next';
 // TEMP: Using simple wrapper instead of next-intl
 import { useTranslations } from '@/lib/i18n-temp';
-import { useBookings, useCancelBooking, useExportBookings } from '@/hooks/use-bookings';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 export default function BookingsPage() {
   const t = useTranslations('bookingsPage');
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past' | 'cancelled'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [cancelingId, setCancelingId] = useState<number | null>(null);
 
-  // Use React Query hooks
-  const { data: bookingsData, isLoading, error } = useBookings({ filter, page, limit });
-  const cancelBooking = useCancelBooking();
-  const exportBookings = useExportBookings();
+  const fetchBookings = useCallback(async () => {
+    try {
+      const { data } = await apiClient.get('/bookings');
+      setBookings(data.data || []);
+    } catch (error) {
+      toast({
+        title: t('errors.load.title'),
+        description: t('errors.load.description'),
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast, t]);
 
-  const bookings = bookingsData?.data || [];
-
-  if (!user) {
-    router.push('/auth/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    fetchBookings();
+  }, [user, router, fetchBookings]);
 
   const handleCancelBooking = async (bookingId: number) => {
+    setCancelingId(bookingId);
     try {
-      await cancelBooking.mutateAsync(bookingId);
+      await ensureCsrfCookie();
+      await apiClient.post(`/bookings/${bookingId}/cancel`);
       toast({
         title: t('toasts.cancelSuccess.title'),
         description: t('toasts.cancelSuccess.description'),
       });
+      fetchBookings();
     } catch (error: any) {
       toast({
         title: t('toasts.cancelError.title'),
         description: error.response?.data?.message || t('toasts.cancelError.description'),
         variant: 'destructive',
       });
-    }
-  };
-
-  const handleExport = async (format: 'pdf' | 'csv' | 'excel') => {
-    try {
-      await exportBookings.mutateAsync(format);
-      toast({
-        title: 'Export Successful',
-        description: `Bookings exported as ${format.toUpperCase()}`,
-      });
-    } catch (error) {
-      toast({
-        title: 'Export Failed',
-        description: 'Unable to export bookings. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handlePrint = () => {
-    window.print();
+    } finally { setCancelingId((id) => (id === bookingId ? null : id)); }
   };
 
   const getStatusIcon = (status: string) => {
@@ -107,69 +103,33 @@ export default function BookingsPage() {
     }
   };
 
-  const filteredBookings = bookings.filter((booking: Booking) => {
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        booking.property?.title?.toLowerCase().includes(query) ||
-        booking.property?.address?.toLowerCase().includes(query) ||
-        booking.property?.city?.toLowerCase().includes(query)
-      );
+  const filteredBookings = bookings.filter((booking) => {
+    if (filter === 'all') return true;
+    if (filter === 'upcoming') {
+      return new Date(booking.check_in) > new Date() && booking.status !== 'cancelled';
+    }
+    if (filter === 'past') {
+      return new Date(booking.check_out) < new Date() || booking.status === 'completed';
+    }
+    if (filter === 'cancelled') {
+      return booking.status === 'cancelled';
     }
     return true;
   });
 
-  if (isLoading) {
+  if (!user) {
+    return null;
+  }
+
+  if (loading) {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">
-            <div className="h-9 w-48 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-5 w-64 bg-gray-200 rounded animate-pulse" />
+            <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+            <p className="text-gray-600">{t('subtitle')}</p>
           </div>
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="md:flex">
-                    <div className="md:w-1/3 h-48 md:h-auto bg-gray-200" />
-                    <div className="flex-1 p-6">
-                      <div className="space-y-3">
-                        <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse" />
-                        <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {[1, 2, 3, 4].map((j) => (
-                            <div key={j} className="space-y-1">
-                              <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
-                              <div className="h-5 w-20 bg-gray-200 rounded animate-pulse" />
-                            </div>
-                          ))}
-                        </div>
-                        <div className="flex gap-2">
-                          <div className="h-10 w-24 bg-gray-200 rounded animate-pulse" />
-                          <div className="h-10 w-20 bg-gray-200 rounded animate-pulse" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <MainLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Error Loading Bookings</h2>
-            <p className="text-muted-foreground mb-6">Unable to load your bookings. Please try again later.</p>
-            <Button onClick={() => window.location.reload()}>Retry</Button>
-          </div>
+          <BookingListSkeleton items={4} />
         </div>
       </MainLayout>
     );
@@ -178,55 +138,10 @@ export default function BookingsPage() {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        {/* Header with Actions */}
         <div className="mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
-              <p className="text-gray-600">{t('subtitle')}</p>
-            </div>
-            <div className="flex gap-2 mt-4 md:mt-0">
-              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
-                <Download className="h-4 w-4 mr-2" />
-                Export PDF
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('csv')}>
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
-              </Button>
-              <Button variant="outline" size="sm" onClick={handlePrint}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print
-              </Button>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
           <span className="sr-only" aria-live="polite">{t('aria.showing', { count: filteredBookings.length, filter })}</span>
-        </div>
-
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search bookings..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={filter} onValueChange={(value) => setFilter(value as any)}>
-            <SelectTrigger className="w-[180px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter bookings" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Bookings</SelectItem>
-              <SelectItem value="upcoming">Upcoming</SelectItem>
-              <SelectItem value="past">Past</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         {/* Confirmation Discount Banner */}
@@ -250,25 +165,45 @@ export default function BookingsPage() {
           } catch { return null; }
         })()}
 
+
+        {/* Filter Controls (radiogroup for single selection) */}
+        <TooltipProvider>
+          <div className="flex gap-2 mb-6 overflow-x-auto" role="radiogroup" aria-label={t('filters.ariaLabel')}>
+            {(['all', 'upcoming', 'past', 'cancelled'] as const).map((tab) => (
+              <Tooltip key={tab}>
+                <TooltipTrigger asChild>
+                  <Button
+                    role="radio"
+                    aria-checked={filter === tab}
+                    variant={filter === tab ? 'default' : 'outline'}
+                    onClick={() => setFilter(tab)}
+                    className="capitalize"
+                  >
+                    {t(`filters.${tab}`)}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('filters.tooltip', { tab: t(`filters.${tab}`) })}</TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
+
         {/* Bookings List */}
         {filteredBookings.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Calendar className="h-16 w-16 text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No bookings found</h3>
-              <p className="text-gray-600 mb-4">
-                {searchQuery ? 'No bookings match your search criteria.' : 'You don\'t have any bookings yet.'}
-              </p>
-              {!searchQuery && (
-                <Button onClick={() => router.push('/properties')}>
-                  Browse Properties
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          filter === 'all' ? (
+            <NoBookings onCreate={() => router.push('/properties')} />
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Calendar className="h-16 w-16 text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{t('empty.title', { filter: t(`filters.${filter}`) })}</h3>
+                <p className="text-gray-600">{t('empty.description')}</p>
+              </CardContent>
+            </Card>
+          )
         ) : (
           <div className="space-y-4">
-            {filteredBookings.map((booking: Booking, idx: number) => (
+            {filteredBookings.map((booking, idx) => (
               <Card key={booking.id} className="overflow-hidden animate-fade-in-up" style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}>
                 <CardContent className="p-0">
                   <div className="md:flex">
@@ -352,16 +287,11 @@ export default function BookingsPage() {
                             <AlertDialogTrigger asChild>
                               <Button
                                 variant="destructive"
-                                disabled={cancelBooking.isPending}
+                                aria-busy={cancelingId === booking.id}
+                                disabled={cancelingId === booking.id}
                               >
-                                {cancelBooking.isPending ? (
-                                  <span className="inline-flex items-center">
-                                    <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
-                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                                    </svg>
-                                    {t('actions.canceling')}
-                                  </span>
+                                {cancelingId === booking.id ? (
+                                  <span className="inline-flex items-center"><svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>{t('actions.canceling')}</span>
                                 ) : t('actions.cancel')}
                               </Button>
                             </AlertDialogTrigger>

@@ -75,7 +75,14 @@ export async function parse<T>(schema: z.ZodSchema<T>, data: unknown): Promise<T
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const res = await apiClient.get('/dashboard/stats');
-  return parse(DashboardStatsSchema, res.data);
+  const raw = res.data?.data ?? res.data;
+  const normalized = {
+    properties: Number(raw?.properties ?? raw?.total_properties ?? 0),
+    bookingsUpcoming: Number(raw?.bookingsUpcoming ?? raw?.active_bookings ?? 0),
+    revenueLast30: Number(raw?.revenueLast30 ?? raw?.total_revenue ?? 0),
+    guestsUnique: Number(raw?.guestsUnique ?? 0),
+  };
+  return parse(DashboardStatsSchema, normalized);
 }
 
 export async function getComparisonProperties(): Promise<ComparisonProperty[]> {
