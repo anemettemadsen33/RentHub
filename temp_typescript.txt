@@ -1,5 +1,0 @@
-
-> renthub-frontend@1.0.0 type-check
-> tsc --noEmit
-
-src/components/navigation/__tests__/BottomNavigation.test.tsx(129,5): error TS1005: '}' expected.
