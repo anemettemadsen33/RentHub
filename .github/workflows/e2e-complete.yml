@@ -13,7 +13,7 @@ permissions:
 
 env:
   NODE_VERSION: '20'
-  PHP_VERSION: '8.2'
+  PHP_VERSION: '8.3'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
