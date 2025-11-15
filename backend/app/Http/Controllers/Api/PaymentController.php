@@ -10,6 +10,7 @@ use App\Services\InvoiceEmailService;
 use App\Services\InvoicePdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -34,14 +35,60 @@ class PaymentController extends Controller
         ]);
     }
 
+    public function createPaymentIntent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'booking_id' => 'required|exists:bookings,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = $request->user();
+        $booking = Booking::with('property')->findOrFail($request->booking_id);
+
+        if ($booking->user_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Check if payment already completed
+        $hasCompleted = Payment::where('booking_id', $booking->id)
+            ->where('status', 'completed')
+            ->exists();
+        if ($hasCompleted) {
+            return response()->json([
+                'error' => 'Payment already completed for this booking',
+            ], 422);
+        }
+
+        try {
+            // For testing without Stripe SDK, return mock client secret
+            // In production, you would use: \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+            // $paymentIntent = \Stripe\PaymentIntent::create([...]);
+            
+            $clientSecret = 'pi_test_' . bin2hex(random_bytes(16));
+            
+            return response()->json([
+                'clientSecret' => $clientSecret,
+                'amount' => $booking->total_price,
+                'currency' => 'ron',
+                'booking_id' => $booking->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create payment intent: '.$e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'booking_id' => 'required|exists:bookings,id',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:bank_transfer,paypal,cash',
+            'payment_method' => 'required|in:bank_transfer,paypal,cash,stripe,card',
             'type' => 'sometimes|in:full,deposit,balance',
             'bank_reference' => 'nullable|string',
+            'stripe_payment_intent_id' => 'nullable|string',
             'notes' => 'nullable|string',
         ]);
 
@@ -88,12 +135,19 @@ class PaymentController extends Controller
                 'amount' => $request->amount,
                 'currency' => 'EUR',
                 'type' => $request->input('type', 'full'),
-                'status' => 'pending',
+                'status' => in_array($request->payment_method, ['stripe', 'card']) ? 'completed' : 'pending',
                 'payment_method' => $request->payment_method,
                 'bank_reference' => $request->bank_reference,
+                'transaction_id' => $request->stripe_payment_intent_id,
                 'notes' => $request->notes,
                 'initiated_at' => now(),
+                'completed_at' => in_array($request->payment_method, ['stripe', 'card']) ? now() : null,
             ]);
+
+            // Update booking status if payment is completed
+            if ($payment->status === 'completed') {
+                $booking->update(['payment_status' => 'paid']);
+            }
 
             // Create invoice if it doesn't exist (best-effort; do not fail payment creation)
             try {
@@ -116,7 +170,7 @@ class PaymentController extends Controller
                     }
                 }
             } catch (\Throwable $e) {
-                \Log::warning('Failed to send payment received notification: '.$e->getMessage());
+                Log::warning('Failed to send payment received notification: '.$e->getMessage());
             }
 
             DB::commit();

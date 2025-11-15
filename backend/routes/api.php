@@ -442,6 +442,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/payment-methods', function () {
         return response()->json(['success' => true, 'data' => []]);
     });
+    Route::post('/payments/create-intent', [\App\Http\Controllers\Api\PaymentController::class, 'createPaymentIntent'])->middleware('role:tenant,owner,admin');
     Route::get('/transactions', [\App\Http\Controllers\Api\PaymentController::class, 'index']); // Alias for payment history
     Route::get('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store'])->middleware('role:tenant,owner,admin');

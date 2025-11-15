@@ -11,8 +11,10 @@ import { notify } from '@/lib/notify';
 import { StatusPill } from '@/components/ui/status-pill';
 import { generateInvoicePDF, previewInvoicePDF } from '@/lib/invoice-generator';
 import { bookingsService, invoicesService } from '@/lib/api-service';
+import { paymentsService } from '@/services/paymentsService';
 import { formatCurrency } from '@/lib/utils';
 import { useTranslations } from '@/lib/i18n-temp';
+import StripePaymentForm from '@/components/payments/StripePaymentForm';
 import {
   Building2,
   Calendar,
@@ -67,6 +69,9 @@ export default function PaymentPage() {
   const [invoice, setInvoice] = useState<InvoiceApi | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [showStripeForm, setShowStripeForm] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentMode, setPaymentMode] = useState<'stripe' | 'bank_transfer'>('stripe');
 
   useEffect(() => {
     const load = async () => {
@@ -89,6 +94,61 @@ export default function PaymentPage() {
     };
     load();
   }, [params.id, tNotify]);
+
+  const handleInitiateStripePayment = async () => {
+    if (!booking) return;
+    
+    setProcessingPayment(true);
+    try {
+      const paymentIntent = await paymentsService.createPaymentIntent(booking.id.toString());
+      setClientSecret(paymentIntent.clientSecret);
+      setShowStripeForm(true);
+    } catch (error) {
+      notify.error({ 
+        title: tNotify('error'), 
+        description: 'Failed to initialize payment. Please try again.' 
+      });
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  const handleStripeSuccess = async () => {
+    if (!booking) return;
+    
+    try {
+      // Create payment record in backend
+      await paymentsService.createPayment({
+        booking_id: booking.id.toString(),
+        amount: total,
+        payment_method: 'stripe',
+        type: 'full',
+        notes: 'Payment completed via Stripe',
+      });
+      
+      notify.success({ 
+        title: 'Payment Successful!', 
+        description: 'Your payment has been processed successfully.' 
+      });
+      
+      // Redirect to confirmation page
+      setTimeout(() => {
+        router.push(`/bookings/${booking.id}/confirmation`);
+      }, 1500);
+    } catch (error) {
+      notify.error({ 
+        title: tNotify('error'), 
+        description: 'Payment processed but failed to update booking. Please contact support.' 
+      });
+    }
+  };
+
+  const handleStripeError = (error: string) => {
+    notify.error({ 
+      title: 'Payment Failed', 
+      description: error 
+    });
+  };
 
   const t = useTranslations('invoice');
   const tBooking = useTranslations('bookingDetail');
@@ -255,50 +315,110 @@ export default function PaymentPage() {
                   {t('paymentMethod')}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="border-2 border-primary rounded-lg p-4 bg-primary/5">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="h-6 w-6 text-primary mt-1" />
-                    <div className="flex-1">
-                      <h4 className="font-semibold mb-2">{t('bankTransfer')}</h4>
-                      <p className="text-sm text-gray-600 mb-4">
-                        Efectuați plata prin transfer bancar folosind detaliile
-                        de mai jos.
-                      </p>
-                      <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Bancă:</span>
-                          <span className="font-medium">Banca Transilvania</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Beneficiar:</span>
-                          <span className="font-medium">RentHub SRL</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">IBAN:</span>
-                          <span className="font-mono font-medium">
-                            RO49 AAAA 1B31 0075 9384 0000
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">SWIFT:</span>
-                          <span className="font-mono font-medium">BTRLRO22</span>
-                        </div>
-                        <div className="flex justify-between pt-2 border-t">
-                          <span className="text-gray-600">Descriere:</span>
-                          <span className="font-medium">
-                            INV-{booking.id.toString().padStart(6, '0')}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-sm text-amber-800">
-                          {t('important')}
+              <CardContent className="space-y-4">
+                {/* Payment Method Selection */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <button
+                    onClick={() => setPaymentMode('stripe')}
+                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                      paymentMode === 'stripe'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 hover:border-primary/50'
+                    }`}
+                  >
+                    <CreditCard className="h-6 w-6 mx-auto mb-2 text-primary" />
+                    <div className="font-semibold">Card Payment</div>
+                    <div className="text-xs text-gray-500">Instant confirmation</div>
+                  </button>
+                  <button
+                    onClick={() => setPaymentMode('bank_transfer')}
+                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                      paymentMode === 'bank_transfer'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 hover:border-primary/50'
+                    }`}
+                  >
+                    <Building2 className="h-6 w-6 mx-auto mb-2 text-primary" />
+                    <div className="font-semibold">Bank Transfer</div>
+                    <div className="text-xs text-gray-500">Manual verification</div>
+                  </button>
+                </div>
+
+                {/* Stripe Payment Form */}
+                {paymentMode === 'stripe' && (
+                  <div className="border-2 border-primary rounded-lg p-4 bg-primary/5">
+                    {!showStripeForm ? (
+                      <div className="flex items-center justify-center flex-col gap-4">
+                        <p className="text-sm text-center text-gray-600">
+                          Pay securely with your credit or debit card
                         </p>
+                        <Button 
+                          onClick={handleInitiateStripePayment} 
+                          disabled={processingPayment}
+                          size="lg"
+                          className="w-full"
+                        >
+                          {processingPayment ? 'Initializing...' : 'Pay with Card'}
+                        </Button>
+                      </div>
+                    ) : clientSecret ? (
+                      <StripePaymentForm
+                        clientSecret={clientSecret}
+                        amount={total}
+                        bookingId={booking?.id.toString() || ''}
+                        onSuccess={handleStripeSuccess}
+                        onError={handleStripeError}
+                      />
+                    ) : null}
+                  </div>
+                )}
+
+                {/* Bank Transfer Instructions */}
+                {paymentMode === 'bank_transfer' && (
+                  <div className="border-2 border-primary rounded-lg p-4 bg-primary/5">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-6 w-6 text-primary mt-1" />
+                      <div className="flex-1">
+                        <h4 className="font-semibold mb-2">{t('bankTransfer')}</h4>
+                        <p className="text-sm text-gray-600 mb-4">
+                          Efectuați plata prin transfer bancar folosind detaliile
+                          de mai jos.
+                        </p>
+                        <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Bancă:</span>
+                            <span className="font-medium">Banca Transilvania</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Beneficiar:</span>
+                            <span className="font-medium">RentHub SRL</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">IBAN:</span>
+                            <span className="font-mono font-medium">
+                              RO49 AAAA 1B31 0075 9384 0000
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">SWIFT:</span>
+                            <span className="font-mono font-medium">BTRLRO22</span>
+                          </div>
+                          <div className="flex justify-between pt-2 border-t">
+                            <span className="text-gray-600">Descriere:</span>
+                            <span className="font-medium">
+                              INV-{booking?.id.toString().padStart(6, '0')}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                          <p className="text-sm text-amber-800">
+                            {t('important')}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
