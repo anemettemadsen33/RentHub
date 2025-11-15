@@ -7,7 +7,7 @@ export interface StructuredDataProps {
 }
 
 export function generatePropertyStructuredData({ property, reviews = [], rating }: StructuredDataProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international';
   
   // Product Schema for Property
   const productSchema: any = {
@@ -83,7 +83,7 @@ export function generatePropertyStructuredData({ property, reviews = [], rating 
 }
 
 export function generateReviewStructuredData(reviews: any[], propertyId: number) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international';
   
   return reviews.map((review) => ({
     '@context': 'https://schema.org',

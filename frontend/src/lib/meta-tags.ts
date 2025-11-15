@@ -25,7 +25,7 @@ export function generateMetaTags(options: MetaTagsOptions): Metadata {
     canonical,
   } = options;
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://renthub.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international';
   const fullUrl = url ? `${baseUrl}${url}` : baseUrl;
   const fullImage = image.startsWith('http') ? image : `${baseUrl}${image}`;
 
@@ -84,7 +84,7 @@ export function generateMetaTags(options: MetaTagsOptions): Metadata {
  * Generate meta tags specifically for property pages
  */
 export function generatePropertyMetaTags(property: Property): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://renthub.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international';
   const image = property.images?.[0] || '/og-image.png';
   const amenityNames = (property.amenities || []).map((a: any) => (typeof a === 'string' ? a : a?.name)).filter(Boolean);
   const amenitiesText = amenityNames.slice(0, 5).join(', ') || '';

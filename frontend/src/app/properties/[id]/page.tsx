@@ -70,7 +70,7 @@ const fetchSeoMetadata = cache(async (id: string): Promise<PropertySeoMetadata |
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   const resolvedParams = await params;
   const data = await fetchSeoMetadata(resolvedParams.id);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://renthub.international';
   if (!data) {
     return {
       title: 'Property Not Found',
@@ -105,7 +105,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 }
 
 function PropertyJsonLd({ data }: { data: PropertySeoMetadata }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international';
   const canonical = `${siteUrl}/properties/${data.id}`;
   
   // Convert SEO metadata to Property format for utility function

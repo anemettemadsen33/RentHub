@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 const siteConfig = {
   name: 'RentHub',
   description: 'Find and book unique accommodations worldwide. Rent apartments, houses, and villas from local hosts.',
-  url: process.env.NEXT_PUBLIC_APP_URL || 'https://rent-ljgrpeajm-madsens-projects.vercel.app',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://renthub.international',
   ogImage: '/og-image.jpg',
   links: {
     twitter: 'https://twitter.com/renthub',
