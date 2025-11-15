@@ -24,7 +24,7 @@ class ReviewController extends Controller
         $cacheKey = 'reviews_' . md5(json_encode($request->all()));
         
         // Cache reviews for 10 minutes (they change less frequently than properties)
-        $result = Cache::remember($cacheKey, 600, function () use ($request) {
+        $result = Cache::tags(['reviews'])->remember($cacheKey, 600, function () use ($request) {
             $query = Review::with(['user', 'booking', 'responses.user', 'helpfulVotes'])
                 ->approved();
 
@@ -312,7 +312,7 @@ class ReviewController extends Controller
         $review->delete();
 
         // Invalidate review cache
-        Cache::flush();
+        Cache::tags(['reviews'])->flush();
 
         return response()->json([
             'success' => true,

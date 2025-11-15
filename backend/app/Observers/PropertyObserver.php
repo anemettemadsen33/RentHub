@@ -56,7 +56,7 @@ class PropertyObserver
     protected function invalidateCaches(Property $property): void
     {
         try {
-            Cache::flush();
+            Cache::tags(['properties'])->flush();
         } catch (\Throwable $e) {
             // Driver without tag support – ignore
         }
