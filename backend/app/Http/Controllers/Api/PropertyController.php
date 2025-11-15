@@ -26,7 +26,7 @@ class PropertyController extends Controller
             $cacheTTL = 1800;
         }
         
-        $result = Cache::tags(['properties'])->remember($cacheKey, $cacheTTL, function () use ($request) {
+        $result = Cache::remember($cacheKey, $cacheTTL, function () use ($request) {
             $query = Property::with(['amenities', 'user:id,name,email'])
                 ->where('status', 'available')
                 ->withCount('reviews')
@@ -108,7 +108,7 @@ class PropertyController extends Controller
         // Cache individual property for 30 minutes
         $cacheKey = "property_{$property->id}";
         
-        $property = Cache::tags(['properties'])->remember($cacheKey, 1800, function () use ($property) {
+        $property = Cache::remember($cacheKey, 1800, function () use ($property) {
             $property->load([
                 'amenities:id,name,icon,category',
                 'user:id,name,email,phone,bio,avatar',
@@ -207,7 +207,7 @@ class PropertyController extends Controller
         $property->load(['amenities', 'user:id,name,email,avatar']);
 
         // Invalidate property cache
-        Cache::tags(['properties'])->flush();
+        Cache::flush();
 
         return response()->json([
             'success' => true,
@@ -223,7 +223,7 @@ class PropertyController extends Controller
         $property->delete();
 
         // Invalidate property cache
-        Cache::tags(['properties'])->flush();
+        Cache::flush();
 
         return response()->json([
             'success' => true,
