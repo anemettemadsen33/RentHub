@@ -19,18 +19,24 @@ export {
   selectError
 } from './store'
 
-// Types
+// Export types
 export type {
   NavItem,
   NavSection,
   NavigationConfig,
+  NavigationProps,
+  NavigationItemProps,
+  NavigationSectionProps,
   NavigationState,
   NavigationActions,
+  UseNavigationReturn,
+  NavigationUtils,
   UserRole,
-  NavigationPreferences,
-  NavigationHistoryItem,
-  NavigationItemClasses,
-  NavigationUtils
+  BottomNavItem,
+  UserMenuProps,
+  AuthMenuProps,
+  NavigationPerformanceOptions,
+  NavigationAccessibilityOptions,
 } from './types'
 
 // Utilities
@@ -54,4 +60,5 @@ export {
 } from './utils'
 
 // Configuration
-export { getNavigationItems, createNavigationConfig } from './config'
+// Export config and utilities
+export { getNavigationItems, navigationConfig } from './config'

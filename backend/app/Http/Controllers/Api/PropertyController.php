@@ -8,7 +8,9 @@ use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
@@ -150,11 +152,10 @@ class PropertyController extends Controller
         if (isset($data['price_per_night']) && ! isset($data['price'])) {
             $data['price'] = $data['price_per_night'];
         }
-
         // Set default values
-        $data['user_id'] = auth()->id();
+        $data['user_id'] = Auth::id();
         // Maintain owner_id for tests expecting this column
-        $data['owner_id'] = auth()->id();
+        $data['owner_id'] = Auth::id();
         // Align with enum: available/booked/maintenance
         $data['status'] = $data['status'] ?? 'available';
         // Consider available as active by default
@@ -313,7 +314,7 @@ class PropertyController extends Controller
                 'data' => $properties,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Property search failed: '.$e->getMessage(), [
+            Log::error('Property search failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
@@ -330,7 +331,7 @@ class PropertyController extends Controller
     public function myProperties(Request $request): JsonResponse
     {
         $query = Property::with(['amenities:id,name,icon'])
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->withCount('bookings')
             ->withCount('reviews')
             ->withAvg('reviews as average_rating', 'rating');
@@ -347,7 +348,6 @@ class PropertyController extends Controller
             'data' => $properties,
         ]);
     }
-
     /**
      * Publish property
      */

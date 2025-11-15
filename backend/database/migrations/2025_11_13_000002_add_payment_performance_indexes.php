@@ -23,30 +23,40 @@ return new class extends Migration
         $this->addIndexIfNotExists('payments', 'payments_user_status_index', ['user_id', 'status']);
         $this->addIndexIfNotExists('payments', 'payments_booking_status_index', ['booking_id', 'status']);
 
-        // Add indexes for invoices table
-        $this->addIndexIfNotExists('invoices', 'invoices_payment_id_index', ['payment_id']);
+        // Add indexes for invoices table (only if columns exist)
+        if (Schema::hasColumn('invoices', 'payment_id')) {
+            $this->addIndexIfNotExists('invoices', 'invoices_payment_id_index', ['payment_id']);
+            $this->addIndexIfNotExists('invoices', 'invoices_payment_status_index', ['payment_id', 'status']);
+        }
         $this->addIndexIfNotExists('invoices', 'invoices_booking_id_index', ['booking_id']);
         $this->addIndexIfNotExists('invoices', 'invoices_user_id_index', ['user_id']);
         $this->addIndexIfNotExists('invoices', 'invoices_status_index', ['status']);
-        $this->addIndexIfNotExists('invoices', 'invoices_invoice_number_index', ['invoice_number']);
+        if (Schema::hasColumn('invoices', 'invoice_number')) {
+            $this->addIndexIfNotExists('invoices', 'invoices_invoice_number_index', ['invoice_number']);
+        }
         $this->addIndexIfNotExists('invoices', 'invoices_created_at_index', ['created_at']);
-        
-        // Add composite indexes for common queries
         $this->addIndexIfNotExists('invoices', 'invoices_user_status_index', ['user_id', 'status']);
-        $this->addIndexIfNotExists('invoices', 'invoices_payment_status_index', ['payment_id', 'status']);
 
         // Add indexes for bank_accounts table
-        $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_is_active_index', ['is_active']);
-        $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_bank_name_index', ['bank_name']);
-        $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_created_at_index', ['created_at']);
+        if (Schema::hasTable('bank_accounts')) {
+            if (Schema::hasColumn('bank_accounts', 'is_active')) {
+                $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_is_active_index', ['is_active']);
+            }
+            if (Schema::hasColumn('bank_accounts', 'bank_name')) {
+                $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_bank_name_index', ['bank_name']);
+            }
+            $this->addIndexIfNotExists('bank_accounts', 'bank_accounts_created_at_index', ['created_at']);
+        }
 
-        // Add indexes for payment_proofs table
-        $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_payment_id_index', ['payment_id']);
-        $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_status_index', ['status']);
-        $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_created_at_index', ['created_at']);
-        
-        // Add composite indexes for common queries
-        $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_payment_status_index', ['payment_id', 'status']);
+        // Add indexes for payment_proofs table (only if columns exist)
+        if (Schema::hasTable('payment_proofs')) {
+            if (Schema::hasColumn('payment_proofs', 'payment_id')) {
+                $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_payment_id_index', ['payment_id']);
+                $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_payment_status_index', ['payment_id', 'status']);
+            }
+            $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_status_index', ['status']);
+            $this->addIndexIfNotExists('payment_proofs', 'payment_proofs_created_at_index', ['created_at']);
+        }
     }
 
     /**

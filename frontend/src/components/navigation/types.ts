@@ -38,6 +38,14 @@ export interface NavItem {
   external?: boolean;
   target?: string;
   hideFromBottomNav?: boolean;
+  section?: string;
+  priority?: number;
+  onClick?: () => void;
+  disabled?: boolean;
+  exact?: boolean;
+  ariaLabel?: string;
+  tooltip?: string;
+  children?: React.ReactNode;
 }
 
 /**

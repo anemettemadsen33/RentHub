@@ -108,7 +108,7 @@ export const NavigationItem: React.FC<NavigationItemProps> = React.memo(({
         'w-4 h-4 flex items-center justify-center',
         'animate-pulse'
       )}>
-        {item.badge}
+        {item.badge.count > 99 ? '99+' : item.badge.count}
       </span>
     )
 
@@ -157,19 +157,25 @@ export const NavigationItem: React.FC<NavigationItemProps> = React.memo(({
     onClick: handleClick,
     'aria-label': item.ariaLabel || item.label,
     'aria-disabled': isDisabled,
-    'aria-current': isActive ? 'page' : undefined,
+    'aria-current': (isActive ? 'page' : undefined) as 'page' | undefined,
     title: item.tooltip || item.label,
   }
 
   // Render as button if no href or has onClick
   if (!item.href || item.onClick) {
+    const buttonProps = {
+      type: 'button' as const,
+      disabled: isDisabled,
+      className: cn(linkProps.className, 'w-full text-left'),
+      onClick: linkProps.onClick,
+      'aria-label': linkProps['aria-label'],
+      'aria-disabled': linkProps['aria-disabled'],
+      'aria-current': linkProps['aria-current'],
+      title: linkProps.title,
+    }
+    
     return (
-      <button
-        {...linkProps}
-        type="button"
-        disabled={isDisabled}
-        className={cn(linkProps.className, 'w-full text-left')}
-      >
+      <button {...buttonProps}>
         {content}
       </button>
     )

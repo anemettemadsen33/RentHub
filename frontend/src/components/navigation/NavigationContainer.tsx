@@ -22,7 +22,7 @@ export const NavigationContainer: React.FC<NavigationContainerProps> = ({
   enableAnalytics = true,
 }) => {
   const pathname = usePathname()
-  const { setActiveSection, setActiveItem, trackNavigation } = useNavigationStore()
+  const { setActiveSection, setActiveItem, trackNavigation, closeNavigation } = useNavigationStore()
   const { role } = useUserRole()
 
   // Sync navigation state with current path
@@ -80,9 +80,9 @@ export const NavigationContainer: React.FC<NavigationContainerProps> = ({
     const handleResize = () => {
       // Close mobile navigation on desktop
       if (window.innerWidth >= 768) {
-        const { isOpen, close } = useNavigationStore.getState()
+        const { isOpen, closeNavigation } = useNavigationStore.getState()
         if (isOpen) {
-          close()
+          closeNavigation()
         }
       }
     }
