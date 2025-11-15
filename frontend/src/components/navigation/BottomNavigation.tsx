@@ -28,7 +28,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = React.memo(({
     
     // For bottom navigation, we want primary items only
     const primaryItems = sorted.filter(item => 
-      item.priority >= 80 && !item.hideFromBottomNav
+      (item.mobile?.priority ?? 0) >= 80 && !item.hideFromBottomNav
     )
     
     // Limit to maxItems
@@ -83,7 +83,7 @@ export const AuthenticatedBottomNavigation: React.FC<BottomNavigationProps> = Re
     
     // Include both primary and secondary items for authenticated users
     const items = sorted.filter(item => 
-      item.priority >= 60 && !item.hideFromBottomNav
+      (item.mobile?.priority ?? 0) >= 60 && !item.hideFromBottomNav
     )
     
     return items.slice(0, maxItems)

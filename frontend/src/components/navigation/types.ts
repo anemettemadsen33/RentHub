@@ -37,6 +37,7 @@ export interface NavItem {
   submenu?: NavItem[];
   external?: boolean;
   target?: string;
+  hideFromBottomNav?: boolean;
 }
 
 /**

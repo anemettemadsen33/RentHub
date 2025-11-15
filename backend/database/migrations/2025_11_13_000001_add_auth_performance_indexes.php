@@ -94,11 +94,14 @@ return new class extends Migration
                 if (!$this->indexExists('two_factor_auth', 'two_factor_auth_user_id_index')) {
                     $table->index('user_id');
                 }
-                if (!$this->indexExists('two_factor_auth', 'two_factor_auth_expires_at_index')) {
-                    $table->index('expires_at');
-                }
-                if (!$this->indexExists('two_factor_auth', 'two_factor_auth_user_id_expires_at_index')) {
-                    $table->index(['user_id', 'expires_at']);
+                // Only add expires_at index if column exists
+                if (Schema::hasColumn('two_factor_auth', 'expires_at')) {
+                    if (!$this->indexExists('two_factor_auth', 'two_factor_auth_expires_at_index')) {
+                        $table->index('expires_at');
+                    }
+                    if (!$this->indexExists('two_factor_auth', 'two_factor_auth_user_id_expires_at_index')) {
+                        $table->index(['user_id', 'expires_at']);
+                    }
                 }
             });
         }
