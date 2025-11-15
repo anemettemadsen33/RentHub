@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\CreateAdmin::class,
         \App\Console\Commands\FixPropertiesStatus::class,
+        \App\Console\Commands\AdminDiagnose::class,
     ];
     protected function schedule(Schedule $schedule): void
     {

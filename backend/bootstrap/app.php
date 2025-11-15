@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust all proxies (Cloudflare / Nginx) so HTTPS detection works in prod
+        $middleware->trustProxies(at: '*');
         // In E2E / testing we use stateless token auth; skip Sanctum stateful middleware to avoid CSRF 419s.
         // REMOVED CustomCorsMiddleware - Laravel handles CORS via config/cors.php for consistency
         // Added RobustAuthMiddleware for enhanced authentication validation
