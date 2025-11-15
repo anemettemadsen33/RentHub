@@ -7,6 +7,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array<class-string>
+     */
+    protected $commands = [
+        \App\Console\Commands\CreateAdmin::class,
+        \App\Console\Commands\FixPropertiesStatus::class,
+    ];
     protected function schedule(Schedule $schedule): void
     {
         // Daily prune analytics events at 02:15 server time
