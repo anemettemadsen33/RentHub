@@ -139,21 +139,40 @@ export interface AuthMenuProps {
  * Navigation state management
  */
 export interface NavigationState {
-  activePath: string;
-  expandedSections: string[];
-  mobileMenuOpen: boolean;
-  userMenuOpen: boolean;
+  isOpen: boolean;
+  activeSection: string;
+  activeItem: NavItem | null;
+  userRole: UserRole;
+  isLoading: boolean;
+  error: string | null;
+  history: Array<{ section: string; timestamp: number }>;
+  preferences: {
+    autoCollapse: boolean;
+    showLabels: boolean;
+    compactMode: boolean;
+    animations: boolean;
+  };
 }
 
 /**
  * Navigation actions
  */
 export interface NavigationActions {
-  setActivePath: (path: string) => void;
-  toggleSection: (sectionId: string) => void;
-  toggleMobileMenu: () => void;
-  toggleUserMenu: () => void;
-  closeAllMenus: () => void;
+  toggleNavigation: () => void;
+  openNavigation: () => void;
+  closeNavigation: () => void;
+  setActiveSection: (section: string) => void;
+  setActiveItem: (item: NavItem | null) => void;
+  setUserRole: (role: UserRole) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
+  updatePreferences: (preferences: Partial<NavigationState['preferences']>) => void;
+  clearHistory: () => void;
+  resetNavigation: () => void;
+  navigateToItem: (item: NavItem) => Promise<void>;
+  batchUpdate: (updates: Partial<NavigationState>) => void;
+  trackNavigation: (action: string, metadata?: Record<string, any>) => void;
 }
 
 /**
