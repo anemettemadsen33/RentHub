@@ -17,7 +17,7 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        $currencies = Cache::tags(['currencies'])->remember('active_currencies', 86400, function () {
+        $currencies = Cache::remember('active_currencies', 86400, function () {
             return Currency::active()->get();
         });
 
@@ -29,7 +29,7 @@ class CurrencyController extends Controller
 
     public function show(string $code): JsonResponse
     {
-        $currency = Cache::tags(['currencies'])->remember("currency_{$code}", 86400, function () use ($code) {
+        $currency = Cache::remember("currency_{$code}", 86400, function () use ($code) {
             return Currency::where('code', $code)
                 ->where('is_active', true)
                 ->firstOrFail();
@@ -43,7 +43,7 @@ class CurrencyController extends Controller
 
     public function getDefault(): JsonResponse
     {
-        $currency = Cache::tags(['currencies'])->remember('default_currency', 86400, function () {
+        $currency = Cache::remember('default_currency', 86400, function () {
             return Currency::getDefault();
         });
 

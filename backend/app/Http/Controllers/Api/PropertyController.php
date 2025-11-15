@@ -171,7 +171,7 @@ class PropertyController extends Controller
         $property->load(['amenities', 'user:id,name,email,avatar']);
 
         // Invalidate property cache
-        Cache::tags(['properties'])->flush();
+        Cache::flush();
 
         return response()->json([
             'success' => true,

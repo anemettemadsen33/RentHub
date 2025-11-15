@@ -14,7 +14,7 @@ class AmenityController extends Controller
      */
     public function index(): JsonResponse
     {
-        $amenities = Cache::tags(['amenities'])->remember('all_amenities', 86400, function () {
+        $amenities = Cache::remember('all_amenities', 86400, function () {
             return Amenity::orderBy('name')->get();
         });
 
@@ -29,7 +29,7 @@ class AmenityController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $amenity = Cache::tags(['amenities'])->remember("amenity_{$id}", 86400, function () use ($id) {
+        $amenity = Cache::remember("amenity_{$id}", 86400, function () use ($id) {
             return Amenity::findOrFail($id);
         });
 

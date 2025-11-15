@@ -156,7 +156,7 @@ class BookingObserver
     private function invalidateCaches(Booking $booking): void
     {
         try {
-            Cache::tags(['bookings', 'calendar', 'availability'])->flush();
+            Cache::flush();
         } catch (\Throwable $e) {
             // ignore if driver doesn't support tags
         }
