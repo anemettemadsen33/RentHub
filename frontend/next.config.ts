@@ -37,7 +37,7 @@ const withPWA = withPWAInit({
     },
     // Images from allowed remote hosts
     {
-      urlPattern: /^https?:\/\/(images\.unsplash\.com|.*\.amazonaws\.com|.*\.cloudfront\.net|api\.renthub\.com|localhost)\/.+\.(png|jpg|jpeg|gif|webp|avif)$/,
+      urlPattern: /^https?:\/\/(images\.unsplash\.com|.*\.amazonaws\.com|.*\.cloudfront\.net|.*\.on-forge\.com|api\.renthub\.com|localhost)\/.+\.(png|jpg|jpeg|gif|webp|avif)$/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'image-cache',

@@ -17,6 +17,17 @@ echo "📦 Step 2: Installing/Updating Composer dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction
 
 echo ""
+echo "🗝️  Step 2.1: Ensuring APP_KEY exists..."
+if ! grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+	echo "APP_KEY missing. Generating a new key..."
+	php artisan key:generate --force || {
+		echo "Failed to generate APP_KEY"; exit 1;
+	}
+else
+	echo "APP_KEY is set."
+fi
+
+echo ""
 echo "🧹 Step 3: Clearing caches..."
 php artisan config:clear
 php artisan route:clear
@@ -25,9 +36,11 @@ php artisan cache:clear
 
 echo ""
 echo "⚙️  Step 4: Optimizing application..."
+php artisan optimize:clear || true
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan event:cache || true
 
 echo ""
 echo "🗄️  Step 5: Running database migrations..."
@@ -45,6 +58,10 @@ sudo service php8.3-fpm reload || sudo service php8.2-fpm reload || sudo service
 
 # Restart queue workers if using queues
 php artisan queue:restart 2>/dev/null || true
+
+echo ""
+echo "🔗 Step 8: Ensuring storage symlink exists..."
+php artisan storage:link 2>/dev/null || true
 
 echo ""
 echo "✅ Deployment completed successfully!"

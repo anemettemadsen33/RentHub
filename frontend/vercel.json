@@ -11,6 +11,10 @@
       "maxDuration": 30
     }
   },
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://renthub-tbj7yxj7.on-forge.com",
+    "NEXT_PUBLIC_API_BASE_URL": "https://renthub-tbj7yxj7.on-forge.com/api/v1"
+  },
   "headers": [
     {
       "source": "/api/(.*)",
