@@ -9,11 +9,14 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormData } from '@/lib/validation-schemas';
 import { FormInput, FormErrorSummary } from '@/components/form/form-components';
+import { Facebook, Globe } from 'lucide-react';
+import { useMemo } from 'react';
 
 const registerLogger = createLogger('RegisterPage');
 
 export default function RegisterPage() {
   const { register: registerUser } = useAuth();
+  const apiBase = useMemo(() => (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1'), []);
   
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -39,6 +42,12 @@ export default function RegisterPage() {
         status: error?.response?.status,
       });
     }
+  };
+
+  const handleSocial = (provider: 'google' | 'facebook') => {
+    // Navigate the browser to backend OAuth endpoint; backend will redirect back to /auth/callback
+    const url = `${apiBase}/auth/social/${provider}/redirect`;
+    window.location.href = url;
   };
 
   return (
@@ -101,6 +110,22 @@ export default function RegisterPage() {
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Creating account...' : 'Create account'}
               </Button>
+
+              <div className="flex items-center gap-2">
+                <div className="h-px bg-border flex-1" />
+                <span className="text-xs text-muted-foreground">or continue with</span>
+                <div className="h-px bg-border flex-1" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button type="button" variant="outline" onClick={() => handleSocial('google')} aria-label="Continue with Google">
+                  <Globe className="h-4 w-4 mr-2" /> Google
+                </Button>
+                <Button type="button" variant="outline" onClick={() => handleSocial('facebook')} aria-label="Continue with Facebook">
+                  <Facebook className="h-4 w-4 mr-2" /> Facebook
+                </Button>
+              </div>
+
               <p className="text-sm text-center text-muted-foreground">
                 Already have an account?{' '}
                 <Link href="/auth/login" className="text-primary hover:underline">

@@ -76,16 +76,17 @@ class SocialAuthController extends Controller
             // Create token
             $token = $user->createToken('social-auth')->plainTextToken;
 
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'token' => $token,
-            ]);
+            // Redirect to frontend callback with token
+            $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
+            $callbackUrl = $frontendUrl . '/auth/callback?token=' . $token;
+            
+            return redirect($callbackUrl);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Authentication failed',
-                'message' => $e->getMessage(),
-            ], 500);
+            // On error, redirect to login with error message
+            $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
+            $errorUrl = $frontendUrl . '/auth/login?error=' . urlencode($e->getMessage());
+            
+            return redirect($errorUrl);
         }
     }
 }

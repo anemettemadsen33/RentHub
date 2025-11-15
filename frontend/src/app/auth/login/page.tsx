@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   const handleSocial = (provider: 'google' | 'facebook') => {
     // Navigate the browser to backend OAuth endpoint; backend will redirect back to /auth/callback
-    const url = `${apiBase}/auth/${provider}`;
+    const url = `${apiBase}/auth/social/${provider}/redirect`;
     window.location.href = url;
   };
 

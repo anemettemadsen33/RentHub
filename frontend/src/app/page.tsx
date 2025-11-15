@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Building2, Users, MapPin, Shield, Search, Star, TrendingUp, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'RentHub - Modern Property Rental Platform',
@@ -295,11 +296,7 @@ export default function HomePage() {
       </section>
 
       {/* Simple Footer */}
-      <footer className="border-t mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© 2025 RentHub. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
