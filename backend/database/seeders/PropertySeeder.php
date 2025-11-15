@@ -36,7 +36,10 @@ class PropertySeeder extends Seeder
         ];
 
         foreach ($amenities as $amenity) {
-            Amenity::firstOrCreate(['slug' => $amenity['slug']], $amenity);
+            $slug = \Illuminate\Support\Str::slug($amenity['name']);
+            $data = $amenity;
+            $data['slug'] = $slug;
+            Amenity::firstOrCreate(['slug' => $slug], $data);
         }
 
         // Create test properties
@@ -104,7 +107,15 @@ class PropertySeeder extends Seeder
         ];
 
         foreach ($properties as $propertyData) {
-            $property = Property::create($propertyData);
+            // Ensure status is available for public listing
+            $propertyData['status'] = 'available';
+            $propertyData['is_active'] = true;
+
+            // Avoid duplicates on repeated seeds by using title as a natural key
+            $property = Property::firstOrCreate(
+                ['title' => $propertyData['title']],
+                $propertyData
+            );
 
             // Attach random amenities
             $randomAmenities = Amenity::inRandomOrder()->take(rand(2, 4))->get();
