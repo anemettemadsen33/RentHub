@@ -53,11 +53,10 @@ class DashboardService
         }
 
         try {
-            // Cache tags disabled - use simple cache
-            return Cache::remember($cacheKey, $ttl, $resolver);
+            return Cache::tags($tags)->remember($cacheKey, $ttl, $resolver);
         } catch (\Throwable $e) {
-            // Fallback if cache fails
-            return $resolver();
+            // Fallback if tags not supported by driver
+            return Cache::remember($cacheKey, $ttl, $resolver);
         }
     }
 
@@ -68,10 +67,9 @@ class DashboardService
     {
         $cacheKey = "dashboard:stats:user:{$userId}";
         try {
-            // Cache tags disabled - use forget
-            Cache::forget($cacheKey);
+            Cache::tags(['dashboard', "user:{$userId}"])->flush();
         } catch (\Throwable $e) {
-            // Ignore errors
+            Cache::forget($cacheKey);
         }
     }
 }

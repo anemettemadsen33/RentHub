@@ -15,11 +15,22 @@ class PropertyController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        // Cache disabled temporarily for debugging
-        $query = Property::with(['amenities', 'user:id,name,email'])
-            ->where('status', 'available')
-            ->withCount('reviews')
-            ->withAvg('reviews as average_rating', 'rating');
+        // Create cache key from request parameters
+        $cacheKey = 'properties_' . md5(json_encode($request->all()));
+        
+        // Cache search results for 5 minutes (300 seconds)
+        $cacheTTL = 300;
+        
+        // For simple listing without filters, cache longer (30 minutes)
+        if (!$request->hasAny(['search', 'city', 'country', 'min_price', 'max_price', 'check_in', 'check_out', 'amenities'])) {
+            $cacheTTL = 1800;
+        }
+        
+        $result = Cache::tags(['properties'])->remember($cacheKey, $cacheTTL, function () use ($request) {
+            $query = Property::with(['amenities', 'user:id,name,email'])
+                ->where('status', 'available')
+                ->withCount('reviews')
+                ->withAvg('reviews as average_rating', 'rating');
 
             // Search filters
             if ($request->filled('search')) {
@@ -83,8 +94,8 @@ class PropertyController extends Controller
 
             // Pagination (return only items array for legacy tests)
             $perPage = min($request->get('per_page', 15), 50);
-            $result = $query->paginate($perPage);
-        // }); // Cache disabled temporarily
+            return $query->paginate($perPage);
+        });
         
         return response()->json([
             'success' => true,
@@ -196,7 +207,7 @@ class PropertyController extends Controller
         $property->load(['amenities', 'user:id,name,email,avatar']);
 
         // Invalidate property cache
-        Cache::flush();
+        Cache::tags(['properties'])->flush();
 
         return response()->json([
             'success' => true,
@@ -212,7 +223,7 @@ class PropertyController extends Controller
         $property->delete();
 
         // Invalidate property cache
-        Cache::flush();
+        Cache::tags(['properties'])->flush();
 
         return response()->json([
             'success' => true,
