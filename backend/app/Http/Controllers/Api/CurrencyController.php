@@ -8,6 +8,7 @@ use App\Services\ExchangeRateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class CurrencyController extends Controller
 {
@@ -17,8 +18,10 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        // Temporary: test without cache
+        // Debug: add logging
+        Log::info('Currency API called');
         $currencies = Currency::active()->get();
+        Log::info('Currencies found', ['count' => $currencies->count(), 'first' => $currencies->first()?->code]);
 
         return response()->json([
             'success' => true,
