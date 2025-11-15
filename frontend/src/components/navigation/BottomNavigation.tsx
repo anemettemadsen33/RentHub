@@ -24,7 +24,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = React.memo(({
   const navigationItems = useMemo(() => {
     const allItems = getNavigationItems(role)
     const filtered = filterItemsByRole(allItems, role)
-    const sorted = sortItemsByPriority(filtered)
+    const sorted = sortItemsByPriority(filtered, 'mobile')
     
     // For bottom navigation, we want primary items only
     const primaryItems = sorted.filter(item => 
@@ -79,7 +79,7 @@ export const AuthenticatedBottomNavigation: React.FC<BottomNavigationProps> = Re
   const navigationItems = useMemo(() => {
     const allItems = getNavigationItems(role)
     const filtered = filterItemsByRole(allItems, role)
-    const sorted = sortItemsByPriority(filtered)
+    const sorted = sortItemsByPriority(filtered, 'mobile')
     
     // Include both primary and secondary items for authenticated users
     const items = sorted.filter(item => 

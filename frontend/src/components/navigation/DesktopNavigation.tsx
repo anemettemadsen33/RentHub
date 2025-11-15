@@ -29,7 +29,7 @@ export const DesktopNavigation: React.FC<DesktopNavigationProps> = React.memo(({
   const navigationData = useMemo(() => {
     const allItems = getNavigationItems(role)
     const filtered = filterItemsByRole(allItems, role)
-    const sorted = sortItemsByPriority(filtered)
+    const sorted = sortItemsByPriority(filtered, 'desktop')
     const grouped = groupItemsBySection(sorted)
     
     return { items: sorted, grouped }
