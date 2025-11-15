@@ -90,15 +90,21 @@ return new class extends Migration
      */
     private function addIndexIfNotExists(string $table, string $indexName, array $columns): void
     {
-        // Check if index exists using SQLite PRAGMA
-        $existingIndexes = DB::select("PRAGMA index_list('{$table}')");
+        $connection = DB::connection()->getDriverName();
         $indexExists = false;
         
-        foreach ($existingIndexes as $index) {
-            if ($index->name === $indexName) {
-                $indexExists = true;
-                break;
+        if ($connection === 'sqlite') {
+            $existingIndexes = DB::select("PRAGMA index_list('{$table}')");
+            foreach ($existingIndexes as $index) {
+                if ($index->name === $indexName) {
+                    $indexExists = true;
+                    break;
+                }
             }
+        } else {
+            // MySQL, PostgreSQL, etc.
+            $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
+            $indexExists = !empty($indexes);
         }
 
         if (!$indexExists) {
@@ -113,15 +119,21 @@ return new class extends Migration
      */
     private function dropIndexIfExists(string $table, string $indexName): void
     {
-        // Check if index exists using SQLite PRAGMA
-        $existingIndexes = DB::select("PRAGMA index_list('{$table}')");
+        $connection = DB::connection()->getDriverName();
         $indexExists = false;
         
-        foreach ($existingIndexes as $index) {
-            if ($index->name === $indexName) {
-                $indexExists = true;
-                break;
+        if ($connection === 'sqlite') {
+            $existingIndexes = DB::select("PRAGMA index_list('{$table}')");
+            foreach ($existingIndexes as $index) {
+                if ($index->name === $indexName) {
+                    $indexExists = true;
+                    break;
+                }
             }
+        } else {
+            // MySQL, PostgreSQL, etc.
+            $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
+            $indexExists = !empty($indexes);
         }
 
         if ($indexExists) {
