@@ -17,9 +17,8 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        $currencies = Cache::tags(['currencies'])->remember('active_currencies', 86400, function () {
-            return Currency::active()->get();
-        });
+        // Temporary: test without cache
+        $currencies = Currency::active()->get();
 
         return response()->json([
             'success' => true,
