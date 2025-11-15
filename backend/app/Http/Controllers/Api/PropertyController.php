@@ -235,22 +235,25 @@ class PropertyController extends Controller
     public function featured(): JsonResponse
     {
         try {
-            $properties = Property::select(['id', 'title', 'price_per_night', 'status', 'user_id', 'is_featured', 'street_address', 'city', 'country'])
+            $properties = Property::select(['id', 'title', 'price_per_night', 'status', 'user_id', 'is_featured', 'street_address', 'city', 'country', 'main_image', 'images'])
                 ->where('status', 'available')
                 ->where('is_featured', true)
-                ->with(['images' => function ($query) {
-                    $query->where('is_primary', true)->select('id', 'property_id', 'image_path', 'is_primary');
-                }])
                 ->take(8)
                 ->get()
                 ->map(function ($property) {
+                    $image = $property->main_image;
+                    if (! $image) {
+                        $imgs = is_array($property->images) ? $property->images : [];
+                        $image = $imgs[0] ?? null;
+                    }
+
                     return [
                         'id' => $property->id,
                         'title' => $property->title,
                         'price_per_night' => (float) $property->price_per_night,
                         'status' => $property->status,
                         'location' => $property->city.', '.$property->country,
-                        'image' => $property->images->first()?->image_path,
+                        'image' => $image,
                     ];
                 });
 
