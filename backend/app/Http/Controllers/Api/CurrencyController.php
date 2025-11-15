@@ -18,10 +18,9 @@ class CurrencyController extends Controller
 
     public function index(): JsonResponse
     {
-        // Debug: add logging
-        Log::info('Currency API called');
-        $currencies = Currency::active()->get();
-        Log::info('Currencies found', ['count' => $currencies->count(), 'first' => $currencies->first()?->code]);
+        $currencies = Cache::tags(['currencies'])->remember('active_currencies', 86400, function () {
+            return Currency::active()->get();
+        });
 
         return response()->json([
             'success' => true,
